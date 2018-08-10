@@ -1,2 +1,2 @@
-# goest
-Golang testing and sandbox for the Computable Protocol
+# Goest
+**Go**lang t**est**ing and sandbox for the Computable Protocol
