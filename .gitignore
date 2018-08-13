@@ -10,3 +10,13 @@
 
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
+
+# vim files
+*.swo
+*.swp
+
+# Mac files
+*.DS_Store
+
+# we may use a secrets file
+secrets.json
