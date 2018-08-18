@@ -1,4 +1,4 @@
-package burnable
+package basic
 
 import (
 	"math/big"
@@ -11,16 +11,17 @@ var context *ctx
 var deployed *dep
 var deployedError error
 
-func TestDeployConstructableBurnable(t *testing.T) {
-	t.Log("Burnable token contract should deploy correctly")
+func TestDeployConstructableBasic(t *testing.T) {
+	t.Log("Basic token contract should deploy correctly")
 
 	if deployedError != nil {
-		t.Fatalf("Failed to deploy the burnable token contract: %v", deployedError)
+		t.Fatalf("Failed to deploy the basic token contract: %v", deployedError)
 	}
 
 	if len(deployed.Address.Bytes()) == 0 {
 		t.Error("Expected a valid deployment address to be returned from deploy, got empty byte array instead")
 	}
+
 }
 
 // we'll locate our testmain in these deploy_foo_test files as a pattern.

@@ -1,4 +1,4 @@
-package burnable
+package basic
 
 import (
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
@@ -17,13 +17,13 @@ type ctx struct {
 
 type dep struct {
 	Address     common.Address
-	Contract    *ConstructableBurnable
+	Contract    *ConstructableBasic
 	Transaction *types.Transaction
 }
 
 func Deploy(initialBalance *big.Int, c *ctx) (*dep, error) {
 	// this method is generated in the burnable.go compiled sol class
-	addr, trans, cont, err := DeployConstructableBurnable(
+	addr, trans, cont, err := DeployConstructableBasic(
 		c.Auth,
 		c.Blockchain,
 		c.Auth.From,
