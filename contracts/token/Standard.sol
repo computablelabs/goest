@@ -30,9 +30,9 @@ contract Standard is ERC20, Basic {
     public
     returns (bool)
   {
-    require(to != address(0));
-    require(value <= balances[from]);
-    require(value <= allowed[from][msg.sender]);
+    require(to != address(0), "Error:Standard.transferFrom - 'to' address may not be owner");
+    require(value <= balances[from], "Error:Standard.transferFrom - Value exceeds available balance");
+    require(value <= allowed[from][msg.sender], "Error.Standard.transferFrom - Value exceeds allowed amount");
 
     balances[from] = balances[from].sub(value);
     balances[to] = balances[to].add(value);

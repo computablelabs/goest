@@ -25,7 +25,7 @@ contract Burnable is Standard {
    * @param value uint256 The amount of token to be burned
    */
   function burnFrom(address from, uint256 value) public {
-    require(value <= allowed[from][msg.sender]);
+    require(value <= allowed[from][msg.sender], "Error:Burnable.burnFrom - Value exceeds allowed amount");
     // Should https://github.com/OpenZeppelin/zeppelin-solidity/issues/707 be accepted,
     // this function needs to emit an event with the updated approval.
     allowed[from][msg.sender] = allowed[from][msg.sender].sub(value);
@@ -36,7 +36,7 @@ contract Burnable is Standard {
    * Abstracted logic for burning used by both `burn` and `burnFrom`
    */
   function doBurn(address who, uint256 value) internal {
-    require(value <= balances[who]);
+    require(value <= balances[who], "Error:Burnable.doBurn - Value exceeds available balance");
     // no need to require value <= supply, since that would imply the
     // sender's balance is greater than the supply, which *should* be an assertion failure
 

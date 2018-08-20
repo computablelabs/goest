@@ -1,0 +1,13 @@
+{
+  "extends": "solium:recommended",
+  "plugins": ["security"],
+  "rules": {
+    "arg-overflow": ["warning", 3],
+    "quotes": ["error", "double"],
+    "indentation": ["error", 2],
+    "no-empty-blocks": "off",
+    "security/enforce-explicit-visibility": ["error"],
+    "security/no-block-members": ["warning"],
+    "security/no-inline-assembly": ["warning"]
+  }
+}

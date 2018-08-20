@@ -29,8 +29,8 @@ contract Basic is ERC20Basic {
   * @param value The amount to be transferred.
   */
   function transfer(address to, uint256 value) public returns (bool) {
-    require(to != address(0));
-    require(value <= balances[msg.sender]);
+    require(to != address(0), "Error:Basic.transfer - 'to' address cannot be owner");
+    require(value <= balances[msg.sender], "Error:Basic.transfer - Value exceeds the balance of msg.sender");
 
     balances[msg.sender] = balances[msg.sender].sub(value);
     balances[to] = balances[to].add(value);
