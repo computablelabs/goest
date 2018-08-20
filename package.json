@@ -1,0 +1,33 @@
+{
+  "name": "goest",
+  "version": "0.1.0",
+  "description": "Golang testing sandbox for the Computable Protocol",
+  "main": "index.js",
+  "scripts": {
+    "lint:solium": "node_modules/.bin/solium -d contracts",
+    "compile:token:basic": "~/go/bin/abigen -sol contracts/token/ConstructableBasic.sol -pkg basic -out contracts/token/basic/basic.go",
+    "compile:token:standard": "~/go/bin/abigen -sol contracts/token/ConstructableStandard.sol -pkg standard -out contracts/token/standard/standard.go",
+    "compile:token:burnable": "~/go/bin/abigen -sol contracts/token/ConstructableBurnable.sol -pkg burnable -out contracts/token/burnable/burnable.go",
+    "test": "go test -v ./..."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/computablelabs/goest.git"
+  },
+  "keywords": [
+    "Go",
+    "golang",
+    "Solidity",
+    "Computable",
+    "Badass"
+  ],
+  "author": "computable.io",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/computablelabs/goest/issues"
+  },
+  "homepage": "https://github.com/computablelabs/goest#readme",
+  "devDependencies": {
+    "solium": "^1.1.8"
+  }
+}

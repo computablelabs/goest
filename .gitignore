@@ -20,3 +20,6 @@
 
 # we may use a secrets file
 secrets.json
+
+# dont store node deps
+node_modules
