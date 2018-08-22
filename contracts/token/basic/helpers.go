@@ -46,8 +46,8 @@ func SetupBlockchain(accountBalance *big.Int) *ctx {
 	auth := bind.NewKeyedTransactor(key)
 	alloc := make(core.GenesisAlloc)
 	alloc[auth.From] = core.GenesisAccount{Balance: accountBalance}
-	// 2nd arg is a gas limit, a uint64. we'll use 5 million
-	bc := backends.NewSimulatedBackend(alloc, 5000000)
+	// 2nd arg is a gas limit, a uint64. 500k seems to work...
+	bc := backends.NewSimulatedBackend(alloc, 500000)
 
 	return &ctx{Auth: auth, Blockchain: bc}
 }
