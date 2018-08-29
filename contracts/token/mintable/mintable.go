@@ -1,7 +1,7 @@
 // Code generated - DO NOT EDIT.
 // This file is a generated binding and any manual changes will be lost.
 
-package standard
+package mintable
 
 import (
 	"math/big"
@@ -391,123 +391,123 @@ func (_Basic *BasicFilterer) WatchTransfer(opts *bind.WatchOpts, sink chan<- *Ba
 	}), nil
 }
 
-// ConstructableStandardABI is the input ABI used to generate the binding from.
-const ConstructableStandardABI = "[{\"constant\":false,\"inputs\":[{\"name\":\"spender\",\"type\":\"address\"},{\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"approve\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"totalSupply\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"from\",\"type\":\"address\"},{\"name\":\"to\",\"type\":\"address\"},{\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"transferFrom\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"spender\",\"type\":\"address\"},{\"name\":\"subtractedValue\",\"type\":\"uint256\"}],\"name\":\"decreaseApproval\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"holder\",\"type\":\"address\"}],\"name\":\"balanceOf\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"to\",\"type\":\"address\"},{\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"transfer\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"spender\",\"type\":\"address\"},{\"name\":\"addedValue\",\"type\":\"uint256\"}],\"name\":\"increaseApproval\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"holder\",\"type\":\"address\"},{\"name\":\"spender\",\"type\":\"address\"}],\"name\":\"allowance\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"name\":\"initialAccount\",\"type\":\"address\"},{\"name\":\"initialBalance\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"holder\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"spender\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"Approval\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"from\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"to\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"Transfer\",\"type\":\"event\"}]"
+// ConstructableMintableABI is the input ABI used to generate the binding from.
+const ConstructableMintableABI = "[{\"constant\":false,\"inputs\":[{\"name\":\"spender\",\"type\":\"address\"},{\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"approve\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"totalSupply\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"from\",\"type\":\"address\"},{\"name\":\"to\",\"type\":\"address\"},{\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"transferFrom\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[],\"name\":\"stopMinting\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"to\",\"type\":\"address\"},{\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"mint\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"spender\",\"type\":\"address\"},{\"name\":\"subtractedValue\",\"type\":\"uint256\"}],\"name\":\"decreaseApproval\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"holder\",\"type\":\"address\"}],\"name\":\"balanceOf\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"to\",\"type\":\"address\"},{\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"transfer\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"spender\",\"type\":\"address\"},{\"name\":\"addedValue\",\"type\":\"uint256\"}],\"name\":\"increaseApproval\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"holder\",\"type\":\"address\"},{\"name\":\"spender\",\"type\":\"address\"}],\"name\":\"allowance\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"mintingStopped\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"name\":\"initialAccount\",\"type\":\"address\"},{\"name\":\"initialBalance\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"to\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"Mint\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[],\"name\":\"MintStopped\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"holder\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"spender\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"Approval\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"from\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"to\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"Transfer\",\"type\":\"event\"}]"
 
-// ConstructableStandardBin is the compiled bytecode used for deploying new contracts.
-const ConstructableStandardBin = `0x608060405234801561001057600080fd5b5060405160408061093e8339810160409081528151602092830151600160a060020a0390911660009081529283905291208190556001556108e8806100566000396000f30060806040526004361061008d5763ffffffff7c0100000000000000000000000000000000000000000000000000000000600035041663095ea7b3811461009257806318160ddd146100ca57806323b872dd146100f1578063661884631461011b57806370a082311461013f578063a9059cbb14610160578063d73dd62314610184578063dd62ed3e146101a8575b600080fd5b34801561009e57600080fd5b506100b6600160a060020a03600435166024356101cf565b604080519115158252519081900360200190f35b3480156100d657600080fd5b506100df610235565b60408051918252519081900360200190f35b3480156100fd57600080fd5b506100b6600160a060020a036004358116906024351660443561023b565b34801561012757600080fd5b506100b6600160a060020a0360043516602435610505565b34801561014b57600080fd5b506100df600160a060020a03600435166105f5565b34801561016c57600080fd5b506100b6600160a060020a0360043516602435610610565b34801561019057600080fd5b506100b6600160a060020a03600435166024356107d3565b3480156101b457600080fd5b506100df600160a060020a036004358116906024351661086c565b336000818152600260209081526040808320600160a060020a038716808552908352818420869055815186815291519394909390927f8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925928290030190a350600192915050565b60015490565b6000600160a060020a03831615156102c3576040805160e560020a62461bcd02815260206004820152603e60248201527f4572726f723a5374616e646172642e7472616e7366657246726f6d202d20277460448201527f6f27206d6179206e6f7420626520746865207a65726f2d616464726573730000606482015290519081900360840190fd5b600160a060020a038416600090815260208190526040902054821115610359576040805160e560020a62461bcd02815260206004820152603d60248201527f4572726f723a5374616e646172642e7472616e7366657246726f6d202d20566160448201527f6c7565206578636565647320617661696c61626c652062616c616e6365000000606482015290519081900360840190fd5b600160a060020a03841660009081526002602090815260408083203384529091529020548211156103fa576040805160e560020a62461bcd02815260206004820152603a60248201527f4572726f722e5374616e646172642e7472616e7366657246726f6d202d20566160448201527f6c7565206578636565647320616c6c6f77656420616d6f756e74000000000000606482015290519081900360840190fd5b600160a060020a038416600090815260208190526040902054610423908363ffffffff61089716565b600160a060020a038086166000908152602081905260408082209390935590851681522054610458908363ffffffff6108a916565b600160a060020a0380851660009081526020818152604080832094909455918716815260028252828120338252909152205461049a908363ffffffff61089716565b600160a060020a03808616600081815260026020908152604080832033845282529182902094909455805186815290519287169391927fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef929181900390910190a35060019392505050565b336000908152600260209081526040808320600160a060020a03861684529091528120548083111561055a57336000908152600260209081526040808320600160a060020a038816845290915281205561058f565b61056a818463ffffffff61089716565b336000908152600260209081526040808320600160a060020a03891684529091529020555b336000818152600260209081526040808320600160a060020a0389168085529083529281902054815190815290519293927f8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925929181900390910190a35060019392505050565b600160a060020a031660009081526020819052604090205490565b6000600160a060020a0383161515610698576040805160e560020a62461bcd02815260206004820152603660248201527f4572726f723a42617369632e7472616e73666572202d2027746f272063616e6e60448201527f6f7420626520746865207a65726f2d6164647265737300000000000000000000606482015290519081900360840190fd5b33600090815260208190526040902054821115610725576040805160e560020a62461bcd02815260206004820152603e60248201527f4572726f723a42617369632e7472616e73666572202d2056616c75652065786360448201527f65656473207468652062616c616e6365206f66206d73672e73656e6465720000606482015290519081900360840190fd5b33600090815260208190526040902054610745908363ffffffff61089716565b3360009081526020819052604080822092909255600160a060020a03851681522054610777908363ffffffff6108a916565b600160a060020a038416600081815260208181526040918290209390935580518581529051919233927fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef9281900390910190a350600192915050565b336000908152600260209081526040808320600160a060020a0386168452909152812054610807908363ffffffff6108a916565b336000818152600260209081526040808320600160a060020a0389168085529083529281902085905580519485525191937f8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925929081900390910190a350600192915050565b600160a060020a03918216600090815260026020908152604080832093909416825291909152205490565b6000828211156108a357fe5b50900390565b818101828110156108b657fe5b929150505600a165627a7a723058208c74ad85c48265ec123fa459cc06ef6ec62aba0183583bf8d72bd6542e7a510e0029`
+// ConstructableMintableBin is the compiled bytecode used for deploying new contracts.
+const ConstructableMintableBin = `0x60806040526003805460ff1916905534801561001a57600080fd5b50604051604080610de6833981016040908152815160209283015160038054610100330261010060a860020a0319909116179055600160a060020a039091166000908152928390529120819055600155610d6d806100796000396000f3006080604052600436106100b95763ffffffff7c0100000000000000000000000000000000000000000000000000000000600035041663095ea7b381146100be57806318160ddd146100f657806323b872dd1461011d5780633e3e0b121461014757806340c10f191461015c578063661884631461018057806370a08231146101a45780638da5cb5b146101c5578063a9059cbb146101f6578063d73dd6231461021a578063dd62ed3e1461023e578063f339292f14610265575b600080fd5b3480156100ca57600080fd5b506100e2600160a060020a036004351660243561027a565b604080519115158252519081900360200190f35b34801561010257600080fd5b5061010b6102e0565b60408051918252519081900360200190f35b34801561012957600080fd5b506100e2600160a060020a03600435811690602435166044356102e6565b34801561015357600080fd5b506100e26105b0565b34801561016857600080fd5b506100e2600160a060020a03600435166024356106fd565b34801561018c57600080fd5b506100e2600160a060020a036004351660243561096d565b3480156101b057600080fd5b5061010b600160a060020a0360043516610a5d565b3480156101d157600080fd5b506101da610a78565b60408051600160a060020a039092168252519081900360200190f35b34801561020257600080fd5b506100e2600160a060020a0360043516602435610a8c565b34801561022657600080fd5b506100e2600160a060020a0360043516602435610c4f565b34801561024a57600080fd5b5061010b600160a060020a0360043581169060243516610ce8565b34801561027157600080fd5b506100e2610d13565b336000818152600260209081526040808320600160a060020a038716808552908352818420869055815186815291519394909390927f8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925928290030190a350600192915050565b60015490565b6000600160a060020a038316151561036e576040805160e560020a62461bcd02815260206004820152603e60248201527f4572726f723a5374616e646172642e7472616e7366657246726f6d202d20277460448201527f6f27206d6179206e6f7420626520746865207a65726f2d616464726573730000606482015290519081900360840190fd5b600160a060020a038416600090815260208190526040902054821115610404576040805160e560020a62461bcd02815260206004820152603d60248201527f4572726f723a5374616e646172642e7472616e7366657246726f6d202d20566160448201527f6c7565206578636565647320617661696c61626c652062616c616e6365000000606482015290519081900360840190fd5b600160a060020a03841660009081526002602090815260408083203384529091529020548211156104a5576040805160e560020a62461bcd02815260206004820152603a60248201527f4572726f722e5374616e646172642e7472616e7366657246726f6d202d20566160448201527f6c7565206578636565647320616c6c6f77656420616d6f756e74000000000000606482015290519081900360840190fd5b600160a060020a0384166000908152602081905260409020546104ce908363ffffffff610d1c16565b600160a060020a038086166000908152602081905260408082209390935590851681522054610503908363ffffffff610d2e16565b600160a060020a03808516600090815260208181526040808320949094559187168152600282528281203382529091522054610545908363ffffffff610d1c16565b600160a060020a03808616600081815260026020908152604080832033845282529182902094909455805186815290519287169391927fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef929181900390910190a35060019392505050565b6003546000906101009004600160a060020a03163314610640576040805160e560020a62461bcd02815260206004820152603760248201527f4572726f723a4d696e7461626c652e6861734d696e745065726d697373696f6e60448201527f202d2043616c6c6572206d757374206265206f776e6572000000000000000000606482015290519081900360840190fd5b60035460ff16156106c1576040805160e560020a62461bcd02815260206004820152603160248201527f4572726f723a4d696e7461626c652e63616e4d696e74202d204d696e74696e6760448201527f20686173206265656e2073746f70706564000000000000000000000000000000606482015290519081900360840190fd5b6003805460ff191660011790556040517f58e0e1f03176dfa647922b700f27e00bfa7f939db5a6fb7dd47cc6dcd3cf619c90600090a150600190565b6003546000906101009004600160a060020a0316331461078d576040805160e560020a62461bcd02815260206004820152603760248201527f4572726f723a4d696e7461626c652e6861734d696e745065726d697373696f6e60448201527f202d2043616c6c6572206d757374206265206f776e6572000000000000000000606482015290519081900360840190fd5b60035460ff161561080e576040805160e560020a62461bcd02815260206004820152603160248201527f4572726f723a4d696e7461626c652e63616e4d696e74202d204d696e74696e6760448201527f20686173206265656e2073746f70706564000000000000000000000000000000606482015290519081900360840190fd5b600160a060020a0383161515610894576040805160e560020a62461bcd02815260206004820152602f60248201527f4572726f723a4d696e7461626c652e6d696e74202d2027746f27206163636f7560448201527f6e74206d6179206e6f7420626520300000000000000000000000000000000000606482015290519081900360840190fd5b6001546108a7908363ffffffff610d2e16565b600155600160a060020a0383166000908152602081905260409020546108d3908363ffffffff610d2e16565b600160a060020a0384166000818152602081815260408083209490945583518681529351929391927fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef9281900390910190a3604080518381529051600160a060020a038516917f0f6798a560793a54c3bcfe86a93cde1e73087d944c0ea20544137d4121396885919081900360200190a250600192915050565b336000908152600260209081526040808320600160a060020a0386168452909152812054808311156109c257336000908152600260209081526040808320600160a060020a03881684529091528120556109f7565b6109d2818463ffffffff610d1c16565b336000908152600260209081526040808320600160a060020a03891684529091529020555b336000818152600260209081526040808320600160a060020a0389168085529083529281902054815190815290519293927f8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925929181900390910190a35060019392505050565b600160a060020a031660009081526020819052604090205490565b6003546101009004600160a060020a031681565b6000600160a060020a0383161515610b14576040805160e560020a62461bcd02815260206004820152603660248201527f4572726f723a42617369632e7472616e73666572202d2027746f272063616e6e60448201527f6f7420626520746865207a65726f2d6164647265737300000000000000000000606482015290519081900360840190fd5b33600090815260208190526040902054821115610ba1576040805160e560020a62461bcd02815260206004820152603e60248201527f4572726f723a42617369632e7472616e73666572202d2056616c75652065786360448201527f65656473207468652062616c616e6365206f66206d73672e73656e6465720000606482015290519081900360840190fd5b33600090815260208190526040902054610bc1908363ffffffff610d1c16565b3360009081526020819052604080822092909255600160a060020a03851681522054610bf3908363ffffffff610d2e16565b600160a060020a038416600081815260208181526040918290209390935580518581529051919233927fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef9281900390910190a350600192915050565b336000908152600260209081526040808320600160a060020a0386168452909152812054610c83908363ffffffff610d2e16565b336000818152600260209081526040808320600160a060020a0389168085529083529281902085905580519485525191937f8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925929081900390910190a350600192915050565b600160a060020a03918216600090815260026020908152604080832093909416825291909152205490565b60035460ff1681565b600082821115610d2857fe5b50900390565b81810182811015610d3b57fe5b929150505600a165627a7a723058209d09b575d3b7b043b7f45d36b5e4f24042854f465e02b6782a69ff27f730b41b0029`
 
-// DeployConstructableStandard deploys a new Ethereum contract, binding an instance of ConstructableStandard to it.
-func DeployConstructableStandard(auth *bind.TransactOpts, backend bind.ContractBackend, initialAccount common.Address, initialBalance *big.Int) (common.Address, *types.Transaction, *ConstructableStandard, error) {
-	parsed, err := abi.JSON(strings.NewReader(ConstructableStandardABI))
+// DeployConstructableMintable deploys a new Ethereum contract, binding an instance of ConstructableMintable to it.
+func DeployConstructableMintable(auth *bind.TransactOpts, backend bind.ContractBackend, initialAccount common.Address, initialBalance *big.Int) (common.Address, *types.Transaction, *ConstructableMintable, error) {
+	parsed, err := abi.JSON(strings.NewReader(ConstructableMintableABI))
 	if err != nil {
 		return common.Address{}, nil, nil, err
 	}
-	address, tx, contract, err := bind.DeployContract(auth, parsed, common.FromHex(ConstructableStandardBin), backend, initialAccount, initialBalance)
+	address, tx, contract, err := bind.DeployContract(auth, parsed, common.FromHex(ConstructableMintableBin), backend, initialAccount, initialBalance)
 	if err != nil {
 		return common.Address{}, nil, nil, err
 	}
-	return address, tx, &ConstructableStandard{ConstructableStandardCaller: ConstructableStandardCaller{contract: contract}, ConstructableStandardTransactor: ConstructableStandardTransactor{contract: contract}, ConstructableStandardFilterer: ConstructableStandardFilterer{contract: contract}}, nil
+	return address, tx, &ConstructableMintable{ConstructableMintableCaller: ConstructableMintableCaller{contract: contract}, ConstructableMintableTransactor: ConstructableMintableTransactor{contract: contract}, ConstructableMintableFilterer: ConstructableMintableFilterer{contract: contract}}, nil
 }
 
-// ConstructableStandard is an auto generated Go binding around an Ethereum contract.
-type ConstructableStandard struct {
-	ConstructableStandardCaller     // Read-only binding to the contract
-	ConstructableStandardTransactor // Write-only binding to the contract
-	ConstructableStandardFilterer   // Log filterer for contract events
+// ConstructableMintable is an auto generated Go binding around an Ethereum contract.
+type ConstructableMintable struct {
+	ConstructableMintableCaller     // Read-only binding to the contract
+	ConstructableMintableTransactor // Write-only binding to the contract
+	ConstructableMintableFilterer   // Log filterer for contract events
 }
 
-// ConstructableStandardCaller is an auto generated read-only Go binding around an Ethereum contract.
-type ConstructableStandardCaller struct {
+// ConstructableMintableCaller is an auto generated read-only Go binding around an Ethereum contract.
+type ConstructableMintableCaller struct {
 	contract *bind.BoundContract // Generic contract wrapper for the low level calls
 }
 
-// ConstructableStandardTransactor is an auto generated write-only Go binding around an Ethereum contract.
-type ConstructableStandardTransactor struct {
+// ConstructableMintableTransactor is an auto generated write-only Go binding around an Ethereum contract.
+type ConstructableMintableTransactor struct {
 	contract *bind.BoundContract // Generic contract wrapper for the low level calls
 }
 
-// ConstructableStandardFilterer is an auto generated log filtering Go binding around an Ethereum contract events.
-type ConstructableStandardFilterer struct {
+// ConstructableMintableFilterer is an auto generated log filtering Go binding around an Ethereum contract events.
+type ConstructableMintableFilterer struct {
 	contract *bind.BoundContract // Generic contract wrapper for the low level calls
 }
 
-// ConstructableStandardSession is an auto generated Go binding around an Ethereum contract,
+// ConstructableMintableSession is an auto generated Go binding around an Ethereum contract,
 // with pre-set call and transact options.
-type ConstructableStandardSession struct {
-	Contract     *ConstructableStandard // Generic contract binding to set the session for
+type ConstructableMintableSession struct {
+	Contract     *ConstructableMintable // Generic contract binding to set the session for
 	CallOpts     bind.CallOpts          // Call options to use throughout this session
 	TransactOpts bind.TransactOpts      // Transaction auth options to use throughout this session
 }
 
-// ConstructableStandardCallerSession is an auto generated read-only Go binding around an Ethereum contract,
+// ConstructableMintableCallerSession is an auto generated read-only Go binding around an Ethereum contract,
 // with pre-set call options.
-type ConstructableStandardCallerSession struct {
-	Contract *ConstructableStandardCaller // Generic contract caller binding to set the session for
+type ConstructableMintableCallerSession struct {
+	Contract *ConstructableMintableCaller // Generic contract caller binding to set the session for
 	CallOpts bind.CallOpts                // Call options to use throughout this session
 }
 
-// ConstructableStandardTransactorSession is an auto generated write-only Go binding around an Ethereum contract,
+// ConstructableMintableTransactorSession is an auto generated write-only Go binding around an Ethereum contract,
 // with pre-set transact options.
-type ConstructableStandardTransactorSession struct {
-	Contract     *ConstructableStandardTransactor // Generic contract transactor binding to set the session for
+type ConstructableMintableTransactorSession struct {
+	Contract     *ConstructableMintableTransactor // Generic contract transactor binding to set the session for
 	TransactOpts bind.TransactOpts                // Transaction auth options to use throughout this session
 }
 
-// ConstructableStandardRaw is an auto generated low-level Go binding around an Ethereum contract.
-type ConstructableStandardRaw struct {
-	Contract *ConstructableStandard // Generic contract binding to access the raw methods on
+// ConstructableMintableRaw is an auto generated low-level Go binding around an Ethereum contract.
+type ConstructableMintableRaw struct {
+	Contract *ConstructableMintable // Generic contract binding to access the raw methods on
 }
 
-// ConstructableStandardCallerRaw is an auto generated low-level read-only Go binding around an Ethereum contract.
-type ConstructableStandardCallerRaw struct {
-	Contract *ConstructableStandardCaller // Generic read-only contract binding to access the raw methods on
+// ConstructableMintableCallerRaw is an auto generated low-level read-only Go binding around an Ethereum contract.
+type ConstructableMintableCallerRaw struct {
+	Contract *ConstructableMintableCaller // Generic read-only contract binding to access the raw methods on
 }
 
-// ConstructableStandardTransactorRaw is an auto generated low-level write-only Go binding around an Ethereum contract.
-type ConstructableStandardTransactorRaw struct {
-	Contract *ConstructableStandardTransactor // Generic write-only contract binding to access the raw methods on
+// ConstructableMintableTransactorRaw is an auto generated low-level write-only Go binding around an Ethereum contract.
+type ConstructableMintableTransactorRaw struct {
+	Contract *ConstructableMintableTransactor // Generic write-only contract binding to access the raw methods on
 }
 
-// NewConstructableStandard creates a new instance of ConstructableStandard, bound to a specific deployed contract.
-func NewConstructableStandard(address common.Address, backend bind.ContractBackend) (*ConstructableStandard, error) {
-	contract, err := bindConstructableStandard(address, backend, backend, backend)
+// NewConstructableMintable creates a new instance of ConstructableMintable, bound to a specific deployed contract.
+func NewConstructableMintable(address common.Address, backend bind.ContractBackend) (*ConstructableMintable, error) {
+	contract, err := bindConstructableMintable(address, backend, backend, backend)
 	if err != nil {
 		return nil, err
 	}
-	return &ConstructableStandard{ConstructableStandardCaller: ConstructableStandardCaller{contract: contract}, ConstructableStandardTransactor: ConstructableStandardTransactor{contract: contract}, ConstructableStandardFilterer: ConstructableStandardFilterer{contract: contract}}, nil
+	return &ConstructableMintable{ConstructableMintableCaller: ConstructableMintableCaller{contract: contract}, ConstructableMintableTransactor: ConstructableMintableTransactor{contract: contract}, ConstructableMintableFilterer: ConstructableMintableFilterer{contract: contract}}, nil
 }
 
-// NewConstructableStandardCaller creates a new read-only instance of ConstructableStandard, bound to a specific deployed contract.
-func NewConstructableStandardCaller(address common.Address, caller bind.ContractCaller) (*ConstructableStandardCaller, error) {
-	contract, err := bindConstructableStandard(address, caller, nil, nil)
+// NewConstructableMintableCaller creates a new read-only instance of ConstructableMintable, bound to a specific deployed contract.
+func NewConstructableMintableCaller(address common.Address, caller bind.ContractCaller) (*ConstructableMintableCaller, error) {
+	contract, err := bindConstructableMintable(address, caller, nil, nil)
 	if err != nil {
 		return nil, err
 	}
-	return &ConstructableStandardCaller{contract: contract}, nil
+	return &ConstructableMintableCaller{contract: contract}, nil
 }
 
-// NewConstructableStandardTransactor creates a new write-only instance of ConstructableStandard, bound to a specific deployed contract.
-func NewConstructableStandardTransactor(address common.Address, transactor bind.ContractTransactor) (*ConstructableStandardTransactor, error) {
-	contract, err := bindConstructableStandard(address, nil, transactor, nil)
+// NewConstructableMintableTransactor creates a new write-only instance of ConstructableMintable, bound to a specific deployed contract.
+func NewConstructableMintableTransactor(address common.Address, transactor bind.ContractTransactor) (*ConstructableMintableTransactor, error) {
+	contract, err := bindConstructableMintable(address, nil, transactor, nil)
 	if err != nil {
 		return nil, err
 	}
-	return &ConstructableStandardTransactor{contract: contract}, nil
+	return &ConstructableMintableTransactor{contract: contract}, nil
 }
 
-// NewConstructableStandardFilterer creates a new log filterer instance of ConstructableStandard, bound to a specific deployed contract.
-func NewConstructableStandardFilterer(address common.Address, filterer bind.ContractFilterer) (*ConstructableStandardFilterer, error) {
-	contract, err := bindConstructableStandard(address, nil, nil, filterer)
+// NewConstructableMintableFilterer creates a new log filterer instance of ConstructableMintable, bound to a specific deployed contract.
+func NewConstructableMintableFilterer(address common.Address, filterer bind.ContractFilterer) (*ConstructableMintableFilterer, error) {
+	contract, err := bindConstructableMintable(address, nil, nil, filterer)
 	if err != nil {
 		return nil, err
 	}
-	return &ConstructableStandardFilterer{contract: contract}, nil
+	return &ConstructableMintableFilterer{contract: contract}, nil
 }
 
-// bindConstructableStandard binds a generic wrapper to an already deployed contract.
-func bindConstructableStandard(address common.Address, caller bind.ContractCaller, transactor bind.ContractTransactor, filterer bind.ContractFilterer) (*bind.BoundContract, error) {
-	parsed, err := abi.JSON(strings.NewReader(ConstructableStandardABI))
+// bindConstructableMintable binds a generic wrapper to an already deployed contract.
+func bindConstructableMintable(address common.Address, caller bind.ContractCaller, transactor bind.ContractTransactor, filterer bind.ContractFilterer) (*bind.BoundContract, error) {
+	parsed, err := abi.JSON(strings.NewReader(ConstructableMintableABI))
 	if err != nil {
 		return nil, err
 	}
@@ -518,226 +518,320 @@ func bindConstructableStandard(address common.Address, caller bind.ContractCalle
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_ConstructableStandard *ConstructableStandardRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
-	return _ConstructableStandard.Contract.ConstructableStandardCaller.contract.Call(opts, result, method, params...)
+func (_ConstructableMintable *ConstructableMintableRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
+	return _ConstructableMintable.Contract.ConstructableMintableCaller.contract.Call(opts, result, method, params...)
 }
 
 // Transfer initiates a plain transaction to move funds to the contract, calling
 // its default method if one is available.
-func (_ConstructableStandard *ConstructableStandardRaw) Transfer(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _ConstructableStandard.Contract.ConstructableStandardTransactor.contract.Transfer(opts)
+func (_ConstructableMintable *ConstructableMintableRaw) Transfer(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _ConstructableMintable.Contract.ConstructableMintableTransactor.contract.Transfer(opts)
 }
 
 // Transact invokes the (paid) contract method with params as input values.
-func (_ConstructableStandard *ConstructableStandardRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*types.Transaction, error) {
-	return _ConstructableStandard.Contract.ConstructableStandardTransactor.contract.Transact(opts, method, params...)
+func (_ConstructableMintable *ConstructableMintableRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*types.Transaction, error) {
+	return _ConstructableMintable.Contract.ConstructableMintableTransactor.contract.Transact(opts, method, params...)
 }
 
 // Call invokes the (constant) contract method with params as input values and
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_ConstructableStandard *ConstructableStandardCallerRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
-	return _ConstructableStandard.Contract.contract.Call(opts, result, method, params...)
+func (_ConstructableMintable *ConstructableMintableCallerRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
+	return _ConstructableMintable.Contract.contract.Call(opts, result, method, params...)
 }
 
 // Transfer initiates a plain transaction to move funds to the contract, calling
 // its default method if one is available.
-func (_ConstructableStandard *ConstructableStandardTransactorRaw) Transfer(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _ConstructableStandard.Contract.contract.Transfer(opts)
+func (_ConstructableMintable *ConstructableMintableTransactorRaw) Transfer(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _ConstructableMintable.Contract.contract.Transfer(opts)
 }
 
 // Transact invokes the (paid) contract method with params as input values.
-func (_ConstructableStandard *ConstructableStandardTransactorRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*types.Transaction, error) {
-	return _ConstructableStandard.Contract.contract.Transact(opts, method, params...)
+func (_ConstructableMintable *ConstructableMintableTransactorRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*types.Transaction, error) {
+	return _ConstructableMintable.Contract.contract.Transact(opts, method, params...)
 }
 
 // Allowance is a free data retrieval call binding the contract method 0xdd62ed3e.
 //
 // Solidity: function allowance(holder address, spender address) constant returns(uint256)
-func (_ConstructableStandard *ConstructableStandardCaller) Allowance(opts *bind.CallOpts, holder common.Address, spender common.Address) (*big.Int, error) {
+func (_ConstructableMintable *ConstructableMintableCaller) Allowance(opts *bind.CallOpts, holder common.Address, spender common.Address) (*big.Int, error) {
 	var (
 		ret0 = new(*big.Int)
 	)
 	out := ret0
-	err := _ConstructableStandard.contract.Call(opts, out, "allowance", holder, spender)
+	err := _ConstructableMintable.contract.Call(opts, out, "allowance", holder, spender)
 	return *ret0, err
 }
 
 // Allowance is a free data retrieval call binding the contract method 0xdd62ed3e.
 //
 // Solidity: function allowance(holder address, spender address) constant returns(uint256)
-func (_ConstructableStandard *ConstructableStandardSession) Allowance(holder common.Address, spender common.Address) (*big.Int, error) {
-	return _ConstructableStandard.Contract.Allowance(&_ConstructableStandard.CallOpts, holder, spender)
+func (_ConstructableMintable *ConstructableMintableSession) Allowance(holder common.Address, spender common.Address) (*big.Int, error) {
+	return _ConstructableMintable.Contract.Allowance(&_ConstructableMintable.CallOpts, holder, spender)
 }
 
 // Allowance is a free data retrieval call binding the contract method 0xdd62ed3e.
 //
 // Solidity: function allowance(holder address, spender address) constant returns(uint256)
-func (_ConstructableStandard *ConstructableStandardCallerSession) Allowance(holder common.Address, spender common.Address) (*big.Int, error) {
-	return _ConstructableStandard.Contract.Allowance(&_ConstructableStandard.CallOpts, holder, spender)
+func (_ConstructableMintable *ConstructableMintableCallerSession) Allowance(holder common.Address, spender common.Address) (*big.Int, error) {
+	return _ConstructableMintable.Contract.Allowance(&_ConstructableMintable.CallOpts, holder, spender)
 }
 
 // BalanceOf is a free data retrieval call binding the contract method 0x70a08231.
 //
 // Solidity: function balanceOf(holder address) constant returns(uint256)
-func (_ConstructableStandard *ConstructableStandardCaller) BalanceOf(opts *bind.CallOpts, holder common.Address) (*big.Int, error) {
+func (_ConstructableMintable *ConstructableMintableCaller) BalanceOf(opts *bind.CallOpts, holder common.Address) (*big.Int, error) {
 	var (
 		ret0 = new(*big.Int)
 	)
 	out := ret0
-	err := _ConstructableStandard.contract.Call(opts, out, "balanceOf", holder)
+	err := _ConstructableMintable.contract.Call(opts, out, "balanceOf", holder)
 	return *ret0, err
 }
 
 // BalanceOf is a free data retrieval call binding the contract method 0x70a08231.
 //
 // Solidity: function balanceOf(holder address) constant returns(uint256)
-func (_ConstructableStandard *ConstructableStandardSession) BalanceOf(holder common.Address) (*big.Int, error) {
-	return _ConstructableStandard.Contract.BalanceOf(&_ConstructableStandard.CallOpts, holder)
+func (_ConstructableMintable *ConstructableMintableSession) BalanceOf(holder common.Address) (*big.Int, error) {
+	return _ConstructableMintable.Contract.BalanceOf(&_ConstructableMintable.CallOpts, holder)
 }
 
 // BalanceOf is a free data retrieval call binding the contract method 0x70a08231.
 //
 // Solidity: function balanceOf(holder address) constant returns(uint256)
-func (_ConstructableStandard *ConstructableStandardCallerSession) BalanceOf(holder common.Address) (*big.Int, error) {
-	return _ConstructableStandard.Contract.BalanceOf(&_ConstructableStandard.CallOpts, holder)
+func (_ConstructableMintable *ConstructableMintableCallerSession) BalanceOf(holder common.Address) (*big.Int, error) {
+	return _ConstructableMintable.Contract.BalanceOf(&_ConstructableMintable.CallOpts, holder)
+}
+
+// MintingStopped is a free data retrieval call binding the contract method 0xf339292f.
+//
+// Solidity: function mintingStopped() constant returns(bool)
+func (_ConstructableMintable *ConstructableMintableCaller) MintingStopped(opts *bind.CallOpts) (bool, error) {
+	var (
+		ret0 = new(bool)
+	)
+	out := ret0
+	err := _ConstructableMintable.contract.Call(opts, out, "mintingStopped")
+	return *ret0, err
+}
+
+// MintingStopped is a free data retrieval call binding the contract method 0xf339292f.
+//
+// Solidity: function mintingStopped() constant returns(bool)
+func (_ConstructableMintable *ConstructableMintableSession) MintingStopped() (bool, error) {
+	return _ConstructableMintable.Contract.MintingStopped(&_ConstructableMintable.CallOpts)
+}
+
+// MintingStopped is a free data retrieval call binding the contract method 0xf339292f.
+//
+// Solidity: function mintingStopped() constant returns(bool)
+func (_ConstructableMintable *ConstructableMintableCallerSession) MintingStopped() (bool, error) {
+	return _ConstructableMintable.Contract.MintingStopped(&_ConstructableMintable.CallOpts)
+}
+
+// Owner is a free data retrieval call binding the contract method 0x8da5cb5b.
+//
+// Solidity: function owner() constant returns(address)
+func (_ConstructableMintable *ConstructableMintableCaller) Owner(opts *bind.CallOpts) (common.Address, error) {
+	var (
+		ret0 = new(common.Address)
+	)
+	out := ret0
+	err := _ConstructableMintable.contract.Call(opts, out, "owner")
+	return *ret0, err
+}
+
+// Owner is a free data retrieval call binding the contract method 0x8da5cb5b.
+//
+// Solidity: function owner() constant returns(address)
+func (_ConstructableMintable *ConstructableMintableSession) Owner() (common.Address, error) {
+	return _ConstructableMintable.Contract.Owner(&_ConstructableMintable.CallOpts)
+}
+
+// Owner is a free data retrieval call binding the contract method 0x8da5cb5b.
+//
+// Solidity: function owner() constant returns(address)
+func (_ConstructableMintable *ConstructableMintableCallerSession) Owner() (common.Address, error) {
+	return _ConstructableMintable.Contract.Owner(&_ConstructableMintable.CallOpts)
 }
 
 // TotalSupply is a free data retrieval call binding the contract method 0x18160ddd.
 //
 // Solidity: function totalSupply() constant returns(uint256)
-func (_ConstructableStandard *ConstructableStandardCaller) TotalSupply(opts *bind.CallOpts) (*big.Int, error) {
+func (_ConstructableMintable *ConstructableMintableCaller) TotalSupply(opts *bind.CallOpts) (*big.Int, error) {
 	var (
 		ret0 = new(*big.Int)
 	)
 	out := ret0
-	err := _ConstructableStandard.contract.Call(opts, out, "totalSupply")
+	err := _ConstructableMintable.contract.Call(opts, out, "totalSupply")
 	return *ret0, err
 }
 
 // TotalSupply is a free data retrieval call binding the contract method 0x18160ddd.
 //
 // Solidity: function totalSupply() constant returns(uint256)
-func (_ConstructableStandard *ConstructableStandardSession) TotalSupply() (*big.Int, error) {
-	return _ConstructableStandard.Contract.TotalSupply(&_ConstructableStandard.CallOpts)
+func (_ConstructableMintable *ConstructableMintableSession) TotalSupply() (*big.Int, error) {
+	return _ConstructableMintable.Contract.TotalSupply(&_ConstructableMintable.CallOpts)
 }
 
 // TotalSupply is a free data retrieval call binding the contract method 0x18160ddd.
 //
 // Solidity: function totalSupply() constant returns(uint256)
-func (_ConstructableStandard *ConstructableStandardCallerSession) TotalSupply() (*big.Int, error) {
-	return _ConstructableStandard.Contract.TotalSupply(&_ConstructableStandard.CallOpts)
+func (_ConstructableMintable *ConstructableMintableCallerSession) TotalSupply() (*big.Int, error) {
+	return _ConstructableMintable.Contract.TotalSupply(&_ConstructableMintable.CallOpts)
 }
 
 // Approve is a paid mutator transaction binding the contract method 0x095ea7b3.
 //
 // Solidity: function approve(spender address, value uint256) returns(bool)
-func (_ConstructableStandard *ConstructableStandardTransactor) Approve(opts *bind.TransactOpts, spender common.Address, value *big.Int) (*types.Transaction, error) {
-	return _ConstructableStandard.contract.Transact(opts, "approve", spender, value)
+func (_ConstructableMintable *ConstructableMintableTransactor) Approve(opts *bind.TransactOpts, spender common.Address, value *big.Int) (*types.Transaction, error) {
+	return _ConstructableMintable.contract.Transact(opts, "approve", spender, value)
 }
 
 // Approve is a paid mutator transaction binding the contract method 0x095ea7b3.
 //
 // Solidity: function approve(spender address, value uint256) returns(bool)
-func (_ConstructableStandard *ConstructableStandardSession) Approve(spender common.Address, value *big.Int) (*types.Transaction, error) {
-	return _ConstructableStandard.Contract.Approve(&_ConstructableStandard.TransactOpts, spender, value)
+func (_ConstructableMintable *ConstructableMintableSession) Approve(spender common.Address, value *big.Int) (*types.Transaction, error) {
+	return _ConstructableMintable.Contract.Approve(&_ConstructableMintable.TransactOpts, spender, value)
 }
 
 // Approve is a paid mutator transaction binding the contract method 0x095ea7b3.
 //
 // Solidity: function approve(spender address, value uint256) returns(bool)
-func (_ConstructableStandard *ConstructableStandardTransactorSession) Approve(spender common.Address, value *big.Int) (*types.Transaction, error) {
-	return _ConstructableStandard.Contract.Approve(&_ConstructableStandard.TransactOpts, spender, value)
+func (_ConstructableMintable *ConstructableMintableTransactorSession) Approve(spender common.Address, value *big.Int) (*types.Transaction, error) {
+	return _ConstructableMintable.Contract.Approve(&_ConstructableMintable.TransactOpts, spender, value)
 }
 
 // DecreaseApproval is a paid mutator transaction binding the contract method 0x66188463.
 //
 // Solidity: function decreaseApproval(spender address, subtractedValue uint256) returns(bool)
-func (_ConstructableStandard *ConstructableStandardTransactor) DecreaseApproval(opts *bind.TransactOpts, spender common.Address, subtractedValue *big.Int) (*types.Transaction, error) {
-	return _ConstructableStandard.contract.Transact(opts, "decreaseApproval", spender, subtractedValue)
+func (_ConstructableMintable *ConstructableMintableTransactor) DecreaseApproval(opts *bind.TransactOpts, spender common.Address, subtractedValue *big.Int) (*types.Transaction, error) {
+	return _ConstructableMintable.contract.Transact(opts, "decreaseApproval", spender, subtractedValue)
 }
 
 // DecreaseApproval is a paid mutator transaction binding the contract method 0x66188463.
 //
 // Solidity: function decreaseApproval(spender address, subtractedValue uint256) returns(bool)
-func (_ConstructableStandard *ConstructableStandardSession) DecreaseApproval(spender common.Address, subtractedValue *big.Int) (*types.Transaction, error) {
-	return _ConstructableStandard.Contract.DecreaseApproval(&_ConstructableStandard.TransactOpts, spender, subtractedValue)
+func (_ConstructableMintable *ConstructableMintableSession) DecreaseApproval(spender common.Address, subtractedValue *big.Int) (*types.Transaction, error) {
+	return _ConstructableMintable.Contract.DecreaseApproval(&_ConstructableMintable.TransactOpts, spender, subtractedValue)
 }
 
 // DecreaseApproval is a paid mutator transaction binding the contract method 0x66188463.
 //
 // Solidity: function decreaseApproval(spender address, subtractedValue uint256) returns(bool)
-func (_ConstructableStandard *ConstructableStandardTransactorSession) DecreaseApproval(spender common.Address, subtractedValue *big.Int) (*types.Transaction, error) {
-	return _ConstructableStandard.Contract.DecreaseApproval(&_ConstructableStandard.TransactOpts, spender, subtractedValue)
+func (_ConstructableMintable *ConstructableMintableTransactorSession) DecreaseApproval(spender common.Address, subtractedValue *big.Int) (*types.Transaction, error) {
+	return _ConstructableMintable.Contract.DecreaseApproval(&_ConstructableMintable.TransactOpts, spender, subtractedValue)
 }
 
 // IncreaseApproval is a paid mutator transaction binding the contract method 0xd73dd623.
 //
 // Solidity: function increaseApproval(spender address, addedValue uint256) returns(bool)
-func (_ConstructableStandard *ConstructableStandardTransactor) IncreaseApproval(opts *bind.TransactOpts, spender common.Address, addedValue *big.Int) (*types.Transaction, error) {
-	return _ConstructableStandard.contract.Transact(opts, "increaseApproval", spender, addedValue)
+func (_ConstructableMintable *ConstructableMintableTransactor) IncreaseApproval(opts *bind.TransactOpts, spender common.Address, addedValue *big.Int) (*types.Transaction, error) {
+	return _ConstructableMintable.contract.Transact(opts, "increaseApproval", spender, addedValue)
 }
 
 // IncreaseApproval is a paid mutator transaction binding the contract method 0xd73dd623.
 //
 // Solidity: function increaseApproval(spender address, addedValue uint256) returns(bool)
-func (_ConstructableStandard *ConstructableStandardSession) IncreaseApproval(spender common.Address, addedValue *big.Int) (*types.Transaction, error) {
-	return _ConstructableStandard.Contract.IncreaseApproval(&_ConstructableStandard.TransactOpts, spender, addedValue)
+func (_ConstructableMintable *ConstructableMintableSession) IncreaseApproval(spender common.Address, addedValue *big.Int) (*types.Transaction, error) {
+	return _ConstructableMintable.Contract.IncreaseApproval(&_ConstructableMintable.TransactOpts, spender, addedValue)
 }
 
 // IncreaseApproval is a paid mutator transaction binding the contract method 0xd73dd623.
 //
 // Solidity: function increaseApproval(spender address, addedValue uint256) returns(bool)
-func (_ConstructableStandard *ConstructableStandardTransactorSession) IncreaseApproval(spender common.Address, addedValue *big.Int) (*types.Transaction, error) {
-	return _ConstructableStandard.Contract.IncreaseApproval(&_ConstructableStandard.TransactOpts, spender, addedValue)
+func (_ConstructableMintable *ConstructableMintableTransactorSession) IncreaseApproval(spender common.Address, addedValue *big.Int) (*types.Transaction, error) {
+	return _ConstructableMintable.Contract.IncreaseApproval(&_ConstructableMintable.TransactOpts, spender, addedValue)
+}
+
+// Mint is a paid mutator transaction binding the contract method 0x40c10f19.
+//
+// Solidity: function mint(to address, amount uint256) returns(bool)
+func (_ConstructableMintable *ConstructableMintableTransactor) Mint(opts *bind.TransactOpts, to common.Address, amount *big.Int) (*types.Transaction, error) {
+	return _ConstructableMintable.contract.Transact(opts, "mint", to, amount)
+}
+
+// Mint is a paid mutator transaction binding the contract method 0x40c10f19.
+//
+// Solidity: function mint(to address, amount uint256) returns(bool)
+func (_ConstructableMintable *ConstructableMintableSession) Mint(to common.Address, amount *big.Int) (*types.Transaction, error) {
+	return _ConstructableMintable.Contract.Mint(&_ConstructableMintable.TransactOpts, to, amount)
+}
+
+// Mint is a paid mutator transaction binding the contract method 0x40c10f19.
+//
+// Solidity: function mint(to address, amount uint256) returns(bool)
+func (_ConstructableMintable *ConstructableMintableTransactorSession) Mint(to common.Address, amount *big.Int) (*types.Transaction, error) {
+	return _ConstructableMintable.Contract.Mint(&_ConstructableMintable.TransactOpts, to, amount)
+}
+
+// StopMinting is a paid mutator transaction binding the contract method 0x3e3e0b12.
+//
+// Solidity: function stopMinting() returns(bool)
+func (_ConstructableMintable *ConstructableMintableTransactor) StopMinting(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _ConstructableMintable.contract.Transact(opts, "stopMinting")
+}
+
+// StopMinting is a paid mutator transaction binding the contract method 0x3e3e0b12.
+//
+// Solidity: function stopMinting() returns(bool)
+func (_ConstructableMintable *ConstructableMintableSession) StopMinting() (*types.Transaction, error) {
+	return _ConstructableMintable.Contract.StopMinting(&_ConstructableMintable.TransactOpts)
+}
+
+// StopMinting is a paid mutator transaction binding the contract method 0x3e3e0b12.
+//
+// Solidity: function stopMinting() returns(bool)
+func (_ConstructableMintable *ConstructableMintableTransactorSession) StopMinting() (*types.Transaction, error) {
+	return _ConstructableMintable.Contract.StopMinting(&_ConstructableMintable.TransactOpts)
 }
 
 // Transfer is a paid mutator transaction binding the contract method 0xa9059cbb.
 //
 // Solidity: function transfer(to address, value uint256) returns(bool)
-func (_ConstructableStandard *ConstructableStandardTransactor) Transfer(opts *bind.TransactOpts, to common.Address, value *big.Int) (*types.Transaction, error) {
-	return _ConstructableStandard.contract.Transact(opts, "transfer", to, value)
+func (_ConstructableMintable *ConstructableMintableTransactor) Transfer(opts *bind.TransactOpts, to common.Address, value *big.Int) (*types.Transaction, error) {
+	return _ConstructableMintable.contract.Transact(opts, "transfer", to, value)
 }
 
 // Transfer is a paid mutator transaction binding the contract method 0xa9059cbb.
 //
 // Solidity: function transfer(to address, value uint256) returns(bool)
-func (_ConstructableStandard *ConstructableStandardSession) Transfer(to common.Address, value *big.Int) (*types.Transaction, error) {
-	return _ConstructableStandard.Contract.Transfer(&_ConstructableStandard.TransactOpts, to, value)
+func (_ConstructableMintable *ConstructableMintableSession) Transfer(to common.Address, value *big.Int) (*types.Transaction, error) {
+	return _ConstructableMintable.Contract.Transfer(&_ConstructableMintable.TransactOpts, to, value)
 }
 
 // Transfer is a paid mutator transaction binding the contract method 0xa9059cbb.
 //
 // Solidity: function transfer(to address, value uint256) returns(bool)
-func (_ConstructableStandard *ConstructableStandardTransactorSession) Transfer(to common.Address, value *big.Int) (*types.Transaction, error) {
-	return _ConstructableStandard.Contract.Transfer(&_ConstructableStandard.TransactOpts, to, value)
+func (_ConstructableMintable *ConstructableMintableTransactorSession) Transfer(to common.Address, value *big.Int) (*types.Transaction, error) {
+	return _ConstructableMintable.Contract.Transfer(&_ConstructableMintable.TransactOpts, to, value)
 }
 
 // TransferFrom is a paid mutator transaction binding the contract method 0x23b872dd.
 //
 // Solidity: function transferFrom(from address, to address, value uint256) returns(bool)
-func (_ConstructableStandard *ConstructableStandardTransactor) TransferFrom(opts *bind.TransactOpts, from common.Address, to common.Address, value *big.Int) (*types.Transaction, error) {
-	return _ConstructableStandard.contract.Transact(opts, "transferFrom", from, to, value)
+func (_ConstructableMintable *ConstructableMintableTransactor) TransferFrom(opts *bind.TransactOpts, from common.Address, to common.Address, value *big.Int) (*types.Transaction, error) {
+	return _ConstructableMintable.contract.Transact(opts, "transferFrom", from, to, value)
 }
 
 // TransferFrom is a paid mutator transaction binding the contract method 0x23b872dd.
 //
 // Solidity: function transferFrom(from address, to address, value uint256) returns(bool)
-func (_ConstructableStandard *ConstructableStandardSession) TransferFrom(from common.Address, to common.Address, value *big.Int) (*types.Transaction, error) {
-	return _ConstructableStandard.Contract.TransferFrom(&_ConstructableStandard.TransactOpts, from, to, value)
+func (_ConstructableMintable *ConstructableMintableSession) TransferFrom(from common.Address, to common.Address, value *big.Int) (*types.Transaction, error) {
+	return _ConstructableMintable.Contract.TransferFrom(&_ConstructableMintable.TransactOpts, from, to, value)
 }
 
 // TransferFrom is a paid mutator transaction binding the contract method 0x23b872dd.
 //
 // Solidity: function transferFrom(from address, to address, value uint256) returns(bool)
-func (_ConstructableStandard *ConstructableStandardTransactorSession) TransferFrom(from common.Address, to common.Address, value *big.Int) (*types.Transaction, error) {
-	return _ConstructableStandard.Contract.TransferFrom(&_ConstructableStandard.TransactOpts, from, to, value)
+func (_ConstructableMintable *ConstructableMintableTransactorSession) TransferFrom(from common.Address, to common.Address, value *big.Int) (*types.Transaction, error) {
+	return _ConstructableMintable.Contract.TransferFrom(&_ConstructableMintable.TransactOpts, from, to, value)
 }
 
-// ConstructableStandardApprovalIterator is returned from FilterApproval and is used to iterate over the raw logs and unpacked data for Approval events raised by the ConstructableStandard contract.
-type ConstructableStandardApprovalIterator struct {
-	Event *ConstructableStandardApproval // Event containing the contract specifics and raw log
+// ConstructableMintableApprovalIterator is returned from FilterApproval and is used to iterate over the raw logs and unpacked data for Approval events raised by the ConstructableMintable contract.
+type ConstructableMintableApprovalIterator struct {
+	Event *ConstructableMintableApproval // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -751,7 +845,7 @@ type ConstructableStandardApprovalIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *ConstructableStandardApprovalIterator) Next() bool {
+func (it *ConstructableMintableApprovalIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -760,7 +854,7 @@ func (it *ConstructableStandardApprovalIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(ConstructableStandardApproval)
+			it.Event = new(ConstructableMintableApproval)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -775,7 +869,7 @@ func (it *ConstructableStandardApprovalIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(ConstructableStandardApproval)
+		it.Event = new(ConstructableMintableApproval)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -791,19 +885,19 @@ func (it *ConstructableStandardApprovalIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *ConstructableStandardApprovalIterator) Error() error {
+func (it *ConstructableMintableApprovalIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *ConstructableStandardApprovalIterator) Close() error {
+func (it *ConstructableMintableApprovalIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// ConstructableStandardApproval represents a Approval event raised by the ConstructableStandard contract.
-type ConstructableStandardApproval struct {
+// ConstructableMintableApproval represents a Approval event raised by the ConstructableMintable contract.
+type ConstructableMintableApproval struct {
 	Holder  common.Address
 	Spender common.Address
 	Value   *big.Int
@@ -813,7 +907,7 @@ type ConstructableStandardApproval struct {
 // FilterApproval is a free log retrieval operation binding the contract event 0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925.
 //
 // Solidity: e Approval(holder indexed address, spender indexed address, value uint256)
-func (_ConstructableStandard *ConstructableStandardFilterer) FilterApproval(opts *bind.FilterOpts, holder []common.Address, spender []common.Address) (*ConstructableStandardApprovalIterator, error) {
+func (_ConstructableMintable *ConstructableMintableFilterer) FilterApproval(opts *bind.FilterOpts, holder []common.Address, spender []common.Address) (*ConstructableMintableApprovalIterator, error) {
 
 	var holderRule []interface{}
 	for _, holderItem := range holder {
@@ -824,17 +918,17 @@ func (_ConstructableStandard *ConstructableStandardFilterer) FilterApproval(opts
 		spenderRule = append(spenderRule, spenderItem)
 	}
 
-	logs, sub, err := _ConstructableStandard.contract.FilterLogs(opts, "Approval", holderRule, spenderRule)
+	logs, sub, err := _ConstructableMintable.contract.FilterLogs(opts, "Approval", holderRule, spenderRule)
 	if err != nil {
 		return nil, err
 	}
-	return &ConstructableStandardApprovalIterator{contract: _ConstructableStandard.contract, event: "Approval", logs: logs, sub: sub}, nil
+	return &ConstructableMintableApprovalIterator{contract: _ConstructableMintable.contract, event: "Approval", logs: logs, sub: sub}, nil
 }
 
 // WatchApproval is a free log subscription operation binding the contract event 0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925.
 //
 // Solidity: e Approval(holder indexed address, spender indexed address, value uint256)
-func (_ConstructableStandard *ConstructableStandardFilterer) WatchApproval(opts *bind.WatchOpts, sink chan<- *ConstructableStandardApproval, holder []common.Address, spender []common.Address) (event.Subscription, error) {
+func (_ConstructableMintable *ConstructableMintableFilterer) WatchApproval(opts *bind.WatchOpts, sink chan<- *ConstructableMintableApproval, holder []common.Address, spender []common.Address) (event.Subscription, error) {
 
 	var holderRule []interface{}
 	for _, holderItem := range holder {
@@ -845,7 +939,7 @@ func (_ConstructableStandard *ConstructableStandardFilterer) WatchApproval(opts 
 		spenderRule = append(spenderRule, spenderItem)
 	}
 
-	logs, sub, err := _ConstructableStandard.contract.WatchLogs(opts, "Approval", holderRule, spenderRule)
+	logs, sub, err := _ConstructableMintable.contract.WatchLogs(opts, "Approval", holderRule, spenderRule)
 	if err != nil {
 		return nil, err
 	}
@@ -855,8 +949,8 @@ func (_ConstructableStandard *ConstructableStandardFilterer) WatchApproval(opts 
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(ConstructableStandardApproval)
-				if err := _ConstructableStandard.contract.UnpackLog(event, "Approval", log); err != nil {
+				event := new(ConstructableMintableApproval)
+				if err := _ConstructableMintable.contract.UnpackLog(event, "Approval", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -877,9 +971,9 @@ func (_ConstructableStandard *ConstructableStandardFilterer) WatchApproval(opts 
 	}), nil
 }
 
-// ConstructableStandardTransferIterator is returned from FilterTransfer and is used to iterate over the raw logs and unpacked data for Transfer events raised by the ConstructableStandard contract.
-type ConstructableStandardTransferIterator struct {
-	Event *ConstructableStandardTransfer // Event containing the contract specifics and raw log
+// ConstructableMintableMintIterator is returned from FilterMint and is used to iterate over the raw logs and unpacked data for Mint events raised by the ConstructableMintable contract.
+type ConstructableMintableMintIterator struct {
+	Event *ConstructableMintableMint // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -893,7 +987,7 @@ type ConstructableStandardTransferIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *ConstructableStandardTransferIterator) Next() bool {
+func (it *ConstructableMintableMintIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -902,7 +996,7 @@ func (it *ConstructableStandardTransferIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(ConstructableStandardTransfer)
+			it.Event = new(ConstructableMintableMint)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -917,7 +1011,7 @@ func (it *ConstructableStandardTransferIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(ConstructableStandardTransfer)
+		it.Event = new(ConstructableMintableMint)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -933,61 +1027,52 @@ func (it *ConstructableStandardTransferIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *ConstructableStandardTransferIterator) Error() error {
+func (it *ConstructableMintableMintIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *ConstructableStandardTransferIterator) Close() error {
+func (it *ConstructableMintableMintIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// ConstructableStandardTransfer represents a Transfer event raised by the ConstructableStandard contract.
-type ConstructableStandardTransfer struct {
-	From  common.Address
-	To    common.Address
-	Value *big.Int
-	Raw   types.Log // Blockchain specific contextual infos
+// ConstructableMintableMint represents a Mint event raised by the ConstructableMintable contract.
+type ConstructableMintableMint struct {
+	To     common.Address
+	Amount *big.Int
+	Raw    types.Log // Blockchain specific contextual infos
 }
 
-// FilterTransfer is a free log retrieval operation binding the contract event 0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef.
+// FilterMint is a free log retrieval operation binding the contract event 0x0f6798a560793a54c3bcfe86a93cde1e73087d944c0ea20544137d4121396885.
 //
-// Solidity: e Transfer(from indexed address, to indexed address, value uint256)
-func (_ConstructableStandard *ConstructableStandardFilterer) FilterTransfer(opts *bind.FilterOpts, from []common.Address, to []common.Address) (*ConstructableStandardTransferIterator, error) {
+// Solidity: e Mint(to indexed address, amount uint256)
+func (_ConstructableMintable *ConstructableMintableFilterer) FilterMint(opts *bind.FilterOpts, to []common.Address) (*ConstructableMintableMintIterator, error) {
 
-	var fromRule []interface{}
-	for _, fromItem := range from {
-		fromRule = append(fromRule, fromItem)
-	}
 	var toRule []interface{}
 	for _, toItem := range to {
 		toRule = append(toRule, toItem)
 	}
 
-	logs, sub, err := _ConstructableStandard.contract.FilterLogs(opts, "Transfer", fromRule, toRule)
+	logs, sub, err := _ConstructableMintable.contract.FilterLogs(opts, "Mint", toRule)
 	if err != nil {
 		return nil, err
 	}
-	return &ConstructableStandardTransferIterator{contract: _ConstructableStandard.contract, event: "Transfer", logs: logs, sub: sub}, nil
+	return &ConstructableMintableMintIterator{contract: _ConstructableMintable.contract, event: "Mint", logs: logs, sub: sub}, nil
 }
 
-// WatchTransfer is a free log subscription operation binding the contract event 0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef.
+// WatchMint is a free log subscription operation binding the contract event 0x0f6798a560793a54c3bcfe86a93cde1e73087d944c0ea20544137d4121396885.
 //
-// Solidity: e Transfer(from indexed address, to indexed address, value uint256)
-func (_ConstructableStandard *ConstructableStandardFilterer) WatchTransfer(opts *bind.WatchOpts, sink chan<- *ConstructableStandardTransfer, from []common.Address, to []common.Address) (event.Subscription, error) {
+// Solidity: e Mint(to indexed address, amount uint256)
+func (_ConstructableMintable *ConstructableMintableFilterer) WatchMint(opts *bind.WatchOpts, sink chan<- *ConstructableMintableMint, to []common.Address) (event.Subscription, error) {
 
-	var fromRule []interface{}
-	for _, fromItem := range from {
-		fromRule = append(fromRule, fromItem)
-	}
 	var toRule []interface{}
 	for _, toItem := range to {
 		toRule = append(toRule, toItem)
 	}
 
-	logs, sub, err := _ConstructableStandard.contract.WatchLogs(opts, "Transfer", fromRule, toRule)
+	logs, sub, err := _ConstructableMintable.contract.WatchLogs(opts, "Mint", toRule)
 	if err != nil {
 		return nil, err
 	}
@@ -997,8 +1082,271 @@ func (_ConstructableStandard *ConstructableStandardFilterer) WatchTransfer(opts 
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(ConstructableStandardTransfer)
-				if err := _ConstructableStandard.contract.UnpackLog(event, "Transfer", log); err != nil {
+				event := new(ConstructableMintableMint)
+				if err := _ConstructableMintable.contract.UnpackLog(event, "Mint", log); err != nil {
+					return err
+				}
+				event.Raw = log
+
+				select {
+				case sink <- event:
+				case err := <-sub.Err():
+					return err
+				case <-quit:
+					return nil
+				}
+			case err := <-sub.Err():
+				return err
+			case <-quit:
+				return nil
+			}
+		}
+	}), nil
+}
+
+// ConstructableMintableMintStoppedIterator is returned from FilterMintStopped and is used to iterate over the raw logs and unpacked data for MintStopped events raised by the ConstructableMintable contract.
+type ConstructableMintableMintStoppedIterator struct {
+	Event *ConstructableMintableMintStopped // Event containing the contract specifics and raw log
+
+	contract *bind.BoundContract // Generic contract to use for unpacking event data
+	event    string              // Event name to use for unpacking event data
+
+	logs chan types.Log        // Log channel receiving the found contract events
+	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	done bool                  // Whether the subscription completed delivering logs
+	fail error                 // Occurred error to stop iteration
+}
+
+// Next advances the iterator to the subsequent event, returning whether there
+// are any more events found. In case of a retrieval or parsing error, false is
+// returned and Error() can be queried for the exact failure.
+func (it *ConstructableMintableMintStoppedIterator) Next() bool {
+	// If the iterator failed, stop iterating
+	if it.fail != nil {
+		return false
+	}
+	// If the iterator completed, deliver directly whatever's available
+	if it.done {
+		select {
+		case log := <-it.logs:
+			it.Event = new(ConstructableMintableMintStopped)
+			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+				it.fail = err
+				return false
+			}
+			it.Event.Raw = log
+			return true
+
+		default:
+			return false
+		}
+	}
+	// Iterator still in progress, wait for either a data or an error event
+	select {
+	case log := <-it.logs:
+		it.Event = new(ConstructableMintableMintStopped)
+		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+			it.fail = err
+			return false
+		}
+		it.Event.Raw = log
+		return true
+
+	case err := <-it.sub.Err():
+		it.done = true
+		it.fail = err
+		return it.Next()
+	}
+}
+
+// Error returns any retrieval or parsing error occurred during filtering.
+func (it *ConstructableMintableMintStoppedIterator) Error() error {
+	return it.fail
+}
+
+// Close terminates the iteration process, releasing any pending underlying
+// resources.
+func (it *ConstructableMintableMintStoppedIterator) Close() error {
+	it.sub.Unsubscribe()
+	return nil
+}
+
+// ConstructableMintableMintStopped represents a MintStopped event raised by the ConstructableMintable contract.
+type ConstructableMintableMintStopped struct {
+	Raw types.Log // Blockchain specific contextual infos
+}
+
+// FilterMintStopped is a free log retrieval operation binding the contract event 0x58e0e1f03176dfa647922b700f27e00bfa7f939db5a6fb7dd47cc6dcd3cf619c.
+//
+// Solidity: e MintStopped()
+func (_ConstructableMintable *ConstructableMintableFilterer) FilterMintStopped(opts *bind.FilterOpts) (*ConstructableMintableMintStoppedIterator, error) {
+
+	logs, sub, err := _ConstructableMintable.contract.FilterLogs(opts, "MintStopped")
+	if err != nil {
+		return nil, err
+	}
+	return &ConstructableMintableMintStoppedIterator{contract: _ConstructableMintable.contract, event: "MintStopped", logs: logs, sub: sub}, nil
+}
+
+// WatchMintStopped is a free log subscription operation binding the contract event 0x58e0e1f03176dfa647922b700f27e00bfa7f939db5a6fb7dd47cc6dcd3cf619c.
+//
+// Solidity: e MintStopped()
+func (_ConstructableMintable *ConstructableMintableFilterer) WatchMintStopped(opts *bind.WatchOpts, sink chan<- *ConstructableMintableMintStopped) (event.Subscription, error) {
+
+	logs, sub, err := _ConstructableMintable.contract.WatchLogs(opts, "MintStopped")
+	if err != nil {
+		return nil, err
+	}
+	return event.NewSubscription(func(quit <-chan struct{}) error {
+		defer sub.Unsubscribe()
+		for {
+			select {
+			case log := <-logs:
+				// New log arrived, parse the event and forward to the user
+				event := new(ConstructableMintableMintStopped)
+				if err := _ConstructableMintable.contract.UnpackLog(event, "MintStopped", log); err != nil {
+					return err
+				}
+				event.Raw = log
+
+				select {
+				case sink <- event:
+				case err := <-sub.Err():
+					return err
+				case <-quit:
+					return nil
+				}
+			case err := <-sub.Err():
+				return err
+			case <-quit:
+				return nil
+			}
+		}
+	}), nil
+}
+
+// ConstructableMintableTransferIterator is returned from FilterTransfer and is used to iterate over the raw logs and unpacked data for Transfer events raised by the ConstructableMintable contract.
+type ConstructableMintableTransferIterator struct {
+	Event *ConstructableMintableTransfer // Event containing the contract specifics and raw log
+
+	contract *bind.BoundContract // Generic contract to use for unpacking event data
+	event    string              // Event name to use for unpacking event data
+
+	logs chan types.Log        // Log channel receiving the found contract events
+	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	done bool                  // Whether the subscription completed delivering logs
+	fail error                 // Occurred error to stop iteration
+}
+
+// Next advances the iterator to the subsequent event, returning whether there
+// are any more events found. In case of a retrieval or parsing error, false is
+// returned and Error() can be queried for the exact failure.
+func (it *ConstructableMintableTransferIterator) Next() bool {
+	// If the iterator failed, stop iterating
+	if it.fail != nil {
+		return false
+	}
+	// If the iterator completed, deliver directly whatever's available
+	if it.done {
+		select {
+		case log := <-it.logs:
+			it.Event = new(ConstructableMintableTransfer)
+			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+				it.fail = err
+				return false
+			}
+			it.Event.Raw = log
+			return true
+
+		default:
+			return false
+		}
+	}
+	// Iterator still in progress, wait for either a data or an error event
+	select {
+	case log := <-it.logs:
+		it.Event = new(ConstructableMintableTransfer)
+		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+			it.fail = err
+			return false
+		}
+		it.Event.Raw = log
+		return true
+
+	case err := <-it.sub.Err():
+		it.done = true
+		it.fail = err
+		return it.Next()
+	}
+}
+
+// Error returns any retrieval or parsing error occurred during filtering.
+func (it *ConstructableMintableTransferIterator) Error() error {
+	return it.fail
+}
+
+// Close terminates the iteration process, releasing any pending underlying
+// resources.
+func (it *ConstructableMintableTransferIterator) Close() error {
+	it.sub.Unsubscribe()
+	return nil
+}
+
+// ConstructableMintableTransfer represents a Transfer event raised by the ConstructableMintable contract.
+type ConstructableMintableTransfer struct {
+	From  common.Address
+	To    common.Address
+	Value *big.Int
+	Raw   types.Log // Blockchain specific contextual infos
+}
+
+// FilterTransfer is a free log retrieval operation binding the contract event 0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef.
+//
+// Solidity: e Transfer(from indexed address, to indexed address, value uint256)
+func (_ConstructableMintable *ConstructableMintableFilterer) FilterTransfer(opts *bind.FilterOpts, from []common.Address, to []common.Address) (*ConstructableMintableTransferIterator, error) {
+
+	var fromRule []interface{}
+	for _, fromItem := range from {
+		fromRule = append(fromRule, fromItem)
+	}
+	var toRule []interface{}
+	for _, toItem := range to {
+		toRule = append(toRule, toItem)
+	}
+
+	logs, sub, err := _ConstructableMintable.contract.FilterLogs(opts, "Transfer", fromRule, toRule)
+	if err != nil {
+		return nil, err
+	}
+	return &ConstructableMintableTransferIterator{contract: _ConstructableMintable.contract, event: "Transfer", logs: logs, sub: sub}, nil
+}
+
+// WatchTransfer is a free log subscription operation binding the contract event 0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef.
+//
+// Solidity: e Transfer(from indexed address, to indexed address, value uint256)
+func (_ConstructableMintable *ConstructableMintableFilterer) WatchTransfer(opts *bind.WatchOpts, sink chan<- *ConstructableMintableTransfer, from []common.Address, to []common.Address) (event.Subscription, error) {
+
+	var fromRule []interface{}
+	for _, fromItem := range from {
+		fromRule = append(fromRule, fromItem)
+	}
+	var toRule []interface{}
+	for _, toItem := range to {
+		toRule = append(toRule, toItem)
+	}
+
+	logs, sub, err := _ConstructableMintable.contract.WatchLogs(opts, "Transfer", fromRule, toRule)
+	if err != nil {
+		return nil, err
+	}
+	return event.NewSubscription(func(quit <-chan struct{}) error {
+		defer sub.Unsubscribe()
+		for {
+			select {
+			case log := <-logs:
+				// New log arrived, parse the event and forward to the user
+				event := new(ConstructableMintableTransfer)
+				if err := _ConstructableMintable.contract.UnpackLog(event, "Transfer", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -1961,6 +2309,982 @@ func (_ERC20Basic *ERC20BasicFilterer) WatchTransfer(opts *bind.WatchOpts, sink 
 				// New log arrived, parse the event and forward to the user
 				event := new(ERC20BasicTransfer)
 				if err := _ERC20Basic.contract.UnpackLog(event, "Transfer", log); err != nil {
+					return err
+				}
+				event.Raw = log
+
+				select {
+				case sink <- event:
+				case err := <-sub.Err():
+					return err
+				case <-quit:
+					return nil
+				}
+			case err := <-sub.Err():
+				return err
+			case <-quit:
+				return nil
+			}
+		}
+	}), nil
+}
+
+// MintableABI is the input ABI used to generate the binding from.
+const MintableABI = "[{\"constant\":false,\"inputs\":[{\"name\":\"spender\",\"type\":\"address\"},{\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"approve\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"totalSupply\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"from\",\"type\":\"address\"},{\"name\":\"to\",\"type\":\"address\"},{\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"transferFrom\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[],\"name\":\"stopMinting\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"to\",\"type\":\"address\"},{\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"mint\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"spender\",\"type\":\"address\"},{\"name\":\"subtractedValue\",\"type\":\"uint256\"}],\"name\":\"decreaseApproval\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"holder\",\"type\":\"address\"}],\"name\":\"balanceOf\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"to\",\"type\":\"address\"},{\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"transfer\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"spender\",\"type\":\"address\"},{\"name\":\"addedValue\",\"type\":\"uint256\"}],\"name\":\"increaseApproval\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"holder\",\"type\":\"address\"},{\"name\":\"spender\",\"type\":\"address\"}],\"name\":\"allowance\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"mintingStopped\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"to\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"Mint\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[],\"name\":\"MintStopped\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"holder\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"spender\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"Approval\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"from\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"to\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"Transfer\",\"type\":\"event\"}]"
+
+// MintableBin is the compiled bytecode used for deploying new contracts.
+const MintableBin = `0x60806040526003805460ff1916905534801561001a57600080fd5b50610d6d8061002a6000396000f3006080604052600436106100b95763ffffffff7c0100000000000000000000000000000000000000000000000000000000600035041663095ea7b381146100be57806318160ddd146100f657806323b872dd1461011d5780633e3e0b121461014757806340c10f191461015c578063661884631461018057806370a08231146101a45780638da5cb5b146101c5578063a9059cbb146101f6578063d73dd6231461021a578063dd62ed3e1461023e578063f339292f14610265575b600080fd5b3480156100ca57600080fd5b506100e2600160a060020a036004351660243561027a565b604080519115158252519081900360200190f35b34801561010257600080fd5b5061010b6102e0565b60408051918252519081900360200190f35b34801561012957600080fd5b506100e2600160a060020a03600435811690602435166044356102e6565b34801561015357600080fd5b506100e26105b0565b34801561016857600080fd5b506100e2600160a060020a03600435166024356106fd565b34801561018c57600080fd5b506100e2600160a060020a036004351660243561096d565b3480156101b057600080fd5b5061010b600160a060020a0360043516610a5d565b3480156101d157600080fd5b506101da610a78565b60408051600160a060020a039092168252519081900360200190f35b34801561020257600080fd5b506100e2600160a060020a0360043516602435610a8c565b34801561022657600080fd5b506100e2600160a060020a0360043516602435610c4f565b34801561024a57600080fd5b5061010b600160a060020a0360043581169060243516610ce8565b34801561027157600080fd5b506100e2610d13565b336000818152600260209081526040808320600160a060020a038716808552908352818420869055815186815291519394909390927f8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925928290030190a350600192915050565b60015490565b6000600160a060020a038316151561036e576040805160e560020a62461bcd02815260206004820152603e60248201527f4572726f723a5374616e646172642e7472616e7366657246726f6d202d20277460448201527f6f27206d6179206e6f7420626520746865207a65726f2d616464726573730000606482015290519081900360840190fd5b600160a060020a038416600090815260208190526040902054821115610404576040805160e560020a62461bcd02815260206004820152603d60248201527f4572726f723a5374616e646172642e7472616e7366657246726f6d202d20566160448201527f6c7565206578636565647320617661696c61626c652062616c616e6365000000606482015290519081900360840190fd5b600160a060020a03841660009081526002602090815260408083203384529091529020548211156104a5576040805160e560020a62461bcd02815260206004820152603a60248201527f4572726f722e5374616e646172642e7472616e7366657246726f6d202d20566160448201527f6c7565206578636565647320616c6c6f77656420616d6f756e74000000000000606482015290519081900360840190fd5b600160a060020a0384166000908152602081905260409020546104ce908363ffffffff610d1c16565b600160a060020a038086166000908152602081905260408082209390935590851681522054610503908363ffffffff610d2e16565b600160a060020a03808516600090815260208181526040808320949094559187168152600282528281203382529091522054610545908363ffffffff610d1c16565b600160a060020a03808616600081815260026020908152604080832033845282529182902094909455805186815290519287169391927fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef929181900390910190a35060019392505050565b6003546000906101009004600160a060020a03163314610640576040805160e560020a62461bcd02815260206004820152603760248201527f4572726f723a4d696e7461626c652e6861734d696e745065726d697373696f6e60448201527f202d2043616c6c6572206d757374206265206f776e6572000000000000000000606482015290519081900360840190fd5b60035460ff16156106c1576040805160e560020a62461bcd02815260206004820152603160248201527f4572726f723a4d696e7461626c652e63616e4d696e74202d204d696e74696e6760448201527f20686173206265656e2073746f70706564000000000000000000000000000000606482015290519081900360840190fd5b6003805460ff191660011790556040517f58e0e1f03176dfa647922b700f27e00bfa7f939db5a6fb7dd47cc6dcd3cf619c90600090a150600190565b6003546000906101009004600160a060020a0316331461078d576040805160e560020a62461bcd02815260206004820152603760248201527f4572726f723a4d696e7461626c652e6861734d696e745065726d697373696f6e60448201527f202d2043616c6c6572206d757374206265206f776e6572000000000000000000606482015290519081900360840190fd5b60035460ff161561080e576040805160e560020a62461bcd02815260206004820152603160248201527f4572726f723a4d696e7461626c652e63616e4d696e74202d204d696e74696e6760448201527f20686173206265656e2073746f70706564000000000000000000000000000000606482015290519081900360840190fd5b600160a060020a0383161515610894576040805160e560020a62461bcd02815260206004820152602f60248201527f4572726f723a4d696e7461626c652e6d696e74202d2027746f27206163636f7560448201527f6e74206d6179206e6f7420626520300000000000000000000000000000000000606482015290519081900360840190fd5b6001546108a7908363ffffffff610d2e16565b600155600160a060020a0383166000908152602081905260409020546108d3908363ffffffff610d2e16565b600160a060020a0384166000818152602081815260408083209490945583518681529351929391927fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef9281900390910190a3604080518381529051600160a060020a038516917f0f6798a560793a54c3bcfe86a93cde1e73087d944c0ea20544137d4121396885919081900360200190a250600192915050565b336000908152600260209081526040808320600160a060020a0386168452909152812054808311156109c257336000908152600260209081526040808320600160a060020a03881684529091528120556109f7565b6109d2818463ffffffff610d1c16565b336000908152600260209081526040808320600160a060020a03891684529091529020555b336000818152600260209081526040808320600160a060020a0389168085529083529281902054815190815290519293927f8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925929181900390910190a35060019392505050565b600160a060020a031660009081526020819052604090205490565b6003546101009004600160a060020a031681565b6000600160a060020a0383161515610b14576040805160e560020a62461bcd02815260206004820152603660248201527f4572726f723a42617369632e7472616e73666572202d2027746f272063616e6e60448201527f6f7420626520746865207a65726f2d6164647265737300000000000000000000606482015290519081900360840190fd5b33600090815260208190526040902054821115610ba1576040805160e560020a62461bcd02815260206004820152603e60248201527f4572726f723a42617369632e7472616e73666572202d2056616c75652065786360448201527f65656473207468652062616c616e6365206f66206d73672e73656e6465720000606482015290519081900360840190fd5b33600090815260208190526040902054610bc1908363ffffffff610d1c16565b3360009081526020819052604080822092909255600160a060020a03851681522054610bf3908363ffffffff610d2e16565b600160a060020a038416600081815260208181526040918290209390935580518581529051919233927fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef9281900390910190a350600192915050565b336000908152600260209081526040808320600160a060020a0386168452909152812054610c83908363ffffffff610d2e16565b336000818152600260209081526040808320600160a060020a0389168085529083529281902085905580519485525191937f8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925929081900390910190a350600192915050565b600160a060020a03918216600090815260026020908152604080832093909416825291909152205490565b60035460ff1681565b600082821115610d2857fe5b50900390565b81810182811015610d3b57fe5b929150505600a165627a7a72305820465d6d089dbe8db0485c0cc08c043c73ad13c732124c0a2875f551a2ab52b7b30029`
+
+// DeployMintable deploys a new Ethereum contract, binding an instance of Mintable to it.
+func DeployMintable(auth *bind.TransactOpts, backend bind.ContractBackend) (common.Address, *types.Transaction, *Mintable, error) {
+	parsed, err := abi.JSON(strings.NewReader(MintableABI))
+	if err != nil {
+		return common.Address{}, nil, nil, err
+	}
+	address, tx, contract, err := bind.DeployContract(auth, parsed, common.FromHex(MintableBin), backend)
+	if err != nil {
+		return common.Address{}, nil, nil, err
+	}
+	return address, tx, &Mintable{MintableCaller: MintableCaller{contract: contract}, MintableTransactor: MintableTransactor{contract: contract}, MintableFilterer: MintableFilterer{contract: contract}}, nil
+}
+
+// Mintable is an auto generated Go binding around an Ethereum contract.
+type Mintable struct {
+	MintableCaller     // Read-only binding to the contract
+	MintableTransactor // Write-only binding to the contract
+	MintableFilterer   // Log filterer for contract events
+}
+
+// MintableCaller is an auto generated read-only Go binding around an Ethereum contract.
+type MintableCaller struct {
+	contract *bind.BoundContract // Generic contract wrapper for the low level calls
+}
+
+// MintableTransactor is an auto generated write-only Go binding around an Ethereum contract.
+type MintableTransactor struct {
+	contract *bind.BoundContract // Generic contract wrapper for the low level calls
+}
+
+// MintableFilterer is an auto generated log filtering Go binding around an Ethereum contract events.
+type MintableFilterer struct {
+	contract *bind.BoundContract // Generic contract wrapper for the low level calls
+}
+
+// MintableSession is an auto generated Go binding around an Ethereum contract,
+// with pre-set call and transact options.
+type MintableSession struct {
+	Contract     *Mintable         // Generic contract binding to set the session for
+	CallOpts     bind.CallOpts     // Call options to use throughout this session
+	TransactOpts bind.TransactOpts // Transaction auth options to use throughout this session
+}
+
+// MintableCallerSession is an auto generated read-only Go binding around an Ethereum contract,
+// with pre-set call options.
+type MintableCallerSession struct {
+	Contract *MintableCaller // Generic contract caller binding to set the session for
+	CallOpts bind.CallOpts   // Call options to use throughout this session
+}
+
+// MintableTransactorSession is an auto generated write-only Go binding around an Ethereum contract,
+// with pre-set transact options.
+type MintableTransactorSession struct {
+	Contract     *MintableTransactor // Generic contract transactor binding to set the session for
+	TransactOpts bind.TransactOpts   // Transaction auth options to use throughout this session
+}
+
+// MintableRaw is an auto generated low-level Go binding around an Ethereum contract.
+type MintableRaw struct {
+	Contract *Mintable // Generic contract binding to access the raw methods on
+}
+
+// MintableCallerRaw is an auto generated low-level read-only Go binding around an Ethereum contract.
+type MintableCallerRaw struct {
+	Contract *MintableCaller // Generic read-only contract binding to access the raw methods on
+}
+
+// MintableTransactorRaw is an auto generated low-level write-only Go binding around an Ethereum contract.
+type MintableTransactorRaw struct {
+	Contract *MintableTransactor // Generic write-only contract binding to access the raw methods on
+}
+
+// NewMintable creates a new instance of Mintable, bound to a specific deployed contract.
+func NewMintable(address common.Address, backend bind.ContractBackend) (*Mintable, error) {
+	contract, err := bindMintable(address, backend, backend, backend)
+	if err != nil {
+		return nil, err
+	}
+	return &Mintable{MintableCaller: MintableCaller{contract: contract}, MintableTransactor: MintableTransactor{contract: contract}, MintableFilterer: MintableFilterer{contract: contract}}, nil
+}
+
+// NewMintableCaller creates a new read-only instance of Mintable, bound to a specific deployed contract.
+func NewMintableCaller(address common.Address, caller bind.ContractCaller) (*MintableCaller, error) {
+	contract, err := bindMintable(address, caller, nil, nil)
+	if err != nil {
+		return nil, err
+	}
+	return &MintableCaller{contract: contract}, nil
+}
+
+// NewMintableTransactor creates a new write-only instance of Mintable, bound to a specific deployed contract.
+func NewMintableTransactor(address common.Address, transactor bind.ContractTransactor) (*MintableTransactor, error) {
+	contract, err := bindMintable(address, nil, transactor, nil)
+	if err != nil {
+		return nil, err
+	}
+	return &MintableTransactor{contract: contract}, nil
+}
+
+// NewMintableFilterer creates a new log filterer instance of Mintable, bound to a specific deployed contract.
+func NewMintableFilterer(address common.Address, filterer bind.ContractFilterer) (*MintableFilterer, error) {
+	contract, err := bindMintable(address, nil, nil, filterer)
+	if err != nil {
+		return nil, err
+	}
+	return &MintableFilterer{contract: contract}, nil
+}
+
+// bindMintable binds a generic wrapper to an already deployed contract.
+func bindMintable(address common.Address, caller bind.ContractCaller, transactor bind.ContractTransactor, filterer bind.ContractFilterer) (*bind.BoundContract, error) {
+	parsed, err := abi.JSON(strings.NewReader(MintableABI))
+	if err != nil {
+		return nil, err
+	}
+	return bind.NewBoundContract(address, parsed, caller, transactor, filterer), nil
+}
+
+// Call invokes the (constant) contract method with params as input values and
+// sets the output to result. The result type might be a single field for simple
+// returns, a slice of interfaces for anonymous returns and a struct for named
+// returns.
+func (_Mintable *MintableRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
+	return _Mintable.Contract.MintableCaller.contract.Call(opts, result, method, params...)
+}
+
+// Transfer initiates a plain transaction to move funds to the contract, calling
+// its default method if one is available.
+func (_Mintable *MintableRaw) Transfer(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _Mintable.Contract.MintableTransactor.contract.Transfer(opts)
+}
+
+// Transact invokes the (paid) contract method with params as input values.
+func (_Mintable *MintableRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*types.Transaction, error) {
+	return _Mintable.Contract.MintableTransactor.contract.Transact(opts, method, params...)
+}
+
+// Call invokes the (constant) contract method with params as input values and
+// sets the output to result. The result type might be a single field for simple
+// returns, a slice of interfaces for anonymous returns and a struct for named
+// returns.
+func (_Mintable *MintableCallerRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
+	return _Mintable.Contract.contract.Call(opts, result, method, params...)
+}
+
+// Transfer initiates a plain transaction to move funds to the contract, calling
+// its default method if one is available.
+func (_Mintable *MintableTransactorRaw) Transfer(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _Mintable.Contract.contract.Transfer(opts)
+}
+
+// Transact invokes the (paid) contract method with params as input values.
+func (_Mintable *MintableTransactorRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*types.Transaction, error) {
+	return _Mintable.Contract.contract.Transact(opts, method, params...)
+}
+
+// Allowance is a free data retrieval call binding the contract method 0xdd62ed3e.
+//
+// Solidity: function allowance(holder address, spender address) constant returns(uint256)
+func (_Mintable *MintableCaller) Allowance(opts *bind.CallOpts, holder common.Address, spender common.Address) (*big.Int, error) {
+	var (
+		ret0 = new(*big.Int)
+	)
+	out := ret0
+	err := _Mintable.contract.Call(opts, out, "allowance", holder, spender)
+	return *ret0, err
+}
+
+// Allowance is a free data retrieval call binding the contract method 0xdd62ed3e.
+//
+// Solidity: function allowance(holder address, spender address) constant returns(uint256)
+func (_Mintable *MintableSession) Allowance(holder common.Address, spender common.Address) (*big.Int, error) {
+	return _Mintable.Contract.Allowance(&_Mintable.CallOpts, holder, spender)
+}
+
+// Allowance is a free data retrieval call binding the contract method 0xdd62ed3e.
+//
+// Solidity: function allowance(holder address, spender address) constant returns(uint256)
+func (_Mintable *MintableCallerSession) Allowance(holder common.Address, spender common.Address) (*big.Int, error) {
+	return _Mintable.Contract.Allowance(&_Mintable.CallOpts, holder, spender)
+}
+
+// BalanceOf is a free data retrieval call binding the contract method 0x70a08231.
+//
+// Solidity: function balanceOf(holder address) constant returns(uint256)
+func (_Mintable *MintableCaller) BalanceOf(opts *bind.CallOpts, holder common.Address) (*big.Int, error) {
+	var (
+		ret0 = new(*big.Int)
+	)
+	out := ret0
+	err := _Mintable.contract.Call(opts, out, "balanceOf", holder)
+	return *ret0, err
+}
+
+// BalanceOf is a free data retrieval call binding the contract method 0x70a08231.
+//
+// Solidity: function balanceOf(holder address) constant returns(uint256)
+func (_Mintable *MintableSession) BalanceOf(holder common.Address) (*big.Int, error) {
+	return _Mintable.Contract.BalanceOf(&_Mintable.CallOpts, holder)
+}
+
+// BalanceOf is a free data retrieval call binding the contract method 0x70a08231.
+//
+// Solidity: function balanceOf(holder address) constant returns(uint256)
+func (_Mintable *MintableCallerSession) BalanceOf(holder common.Address) (*big.Int, error) {
+	return _Mintable.Contract.BalanceOf(&_Mintable.CallOpts, holder)
+}
+
+// MintingStopped is a free data retrieval call binding the contract method 0xf339292f.
+//
+// Solidity: function mintingStopped() constant returns(bool)
+func (_Mintable *MintableCaller) MintingStopped(opts *bind.CallOpts) (bool, error) {
+	var (
+		ret0 = new(bool)
+	)
+	out := ret0
+	err := _Mintable.contract.Call(opts, out, "mintingStopped")
+	return *ret0, err
+}
+
+// MintingStopped is a free data retrieval call binding the contract method 0xf339292f.
+//
+// Solidity: function mintingStopped() constant returns(bool)
+func (_Mintable *MintableSession) MintingStopped() (bool, error) {
+	return _Mintable.Contract.MintingStopped(&_Mintable.CallOpts)
+}
+
+// MintingStopped is a free data retrieval call binding the contract method 0xf339292f.
+//
+// Solidity: function mintingStopped() constant returns(bool)
+func (_Mintable *MintableCallerSession) MintingStopped() (bool, error) {
+	return _Mintable.Contract.MintingStopped(&_Mintable.CallOpts)
+}
+
+// Owner is a free data retrieval call binding the contract method 0x8da5cb5b.
+//
+// Solidity: function owner() constant returns(address)
+func (_Mintable *MintableCaller) Owner(opts *bind.CallOpts) (common.Address, error) {
+	var (
+		ret0 = new(common.Address)
+	)
+	out := ret0
+	err := _Mintable.contract.Call(opts, out, "owner")
+	return *ret0, err
+}
+
+// Owner is a free data retrieval call binding the contract method 0x8da5cb5b.
+//
+// Solidity: function owner() constant returns(address)
+func (_Mintable *MintableSession) Owner() (common.Address, error) {
+	return _Mintable.Contract.Owner(&_Mintable.CallOpts)
+}
+
+// Owner is a free data retrieval call binding the contract method 0x8da5cb5b.
+//
+// Solidity: function owner() constant returns(address)
+func (_Mintable *MintableCallerSession) Owner() (common.Address, error) {
+	return _Mintable.Contract.Owner(&_Mintable.CallOpts)
+}
+
+// TotalSupply is a free data retrieval call binding the contract method 0x18160ddd.
+//
+// Solidity: function totalSupply() constant returns(uint256)
+func (_Mintable *MintableCaller) TotalSupply(opts *bind.CallOpts) (*big.Int, error) {
+	var (
+		ret0 = new(*big.Int)
+	)
+	out := ret0
+	err := _Mintable.contract.Call(opts, out, "totalSupply")
+	return *ret0, err
+}
+
+// TotalSupply is a free data retrieval call binding the contract method 0x18160ddd.
+//
+// Solidity: function totalSupply() constant returns(uint256)
+func (_Mintable *MintableSession) TotalSupply() (*big.Int, error) {
+	return _Mintable.Contract.TotalSupply(&_Mintable.CallOpts)
+}
+
+// TotalSupply is a free data retrieval call binding the contract method 0x18160ddd.
+//
+// Solidity: function totalSupply() constant returns(uint256)
+func (_Mintable *MintableCallerSession) TotalSupply() (*big.Int, error) {
+	return _Mintable.Contract.TotalSupply(&_Mintable.CallOpts)
+}
+
+// Approve is a paid mutator transaction binding the contract method 0x095ea7b3.
+//
+// Solidity: function approve(spender address, value uint256) returns(bool)
+func (_Mintable *MintableTransactor) Approve(opts *bind.TransactOpts, spender common.Address, value *big.Int) (*types.Transaction, error) {
+	return _Mintable.contract.Transact(opts, "approve", spender, value)
+}
+
+// Approve is a paid mutator transaction binding the contract method 0x095ea7b3.
+//
+// Solidity: function approve(spender address, value uint256) returns(bool)
+func (_Mintable *MintableSession) Approve(spender common.Address, value *big.Int) (*types.Transaction, error) {
+	return _Mintable.Contract.Approve(&_Mintable.TransactOpts, spender, value)
+}
+
+// Approve is a paid mutator transaction binding the contract method 0x095ea7b3.
+//
+// Solidity: function approve(spender address, value uint256) returns(bool)
+func (_Mintable *MintableTransactorSession) Approve(spender common.Address, value *big.Int) (*types.Transaction, error) {
+	return _Mintable.Contract.Approve(&_Mintable.TransactOpts, spender, value)
+}
+
+// DecreaseApproval is a paid mutator transaction binding the contract method 0x66188463.
+//
+// Solidity: function decreaseApproval(spender address, subtractedValue uint256) returns(bool)
+func (_Mintable *MintableTransactor) DecreaseApproval(opts *bind.TransactOpts, spender common.Address, subtractedValue *big.Int) (*types.Transaction, error) {
+	return _Mintable.contract.Transact(opts, "decreaseApproval", spender, subtractedValue)
+}
+
+// DecreaseApproval is a paid mutator transaction binding the contract method 0x66188463.
+//
+// Solidity: function decreaseApproval(spender address, subtractedValue uint256) returns(bool)
+func (_Mintable *MintableSession) DecreaseApproval(spender common.Address, subtractedValue *big.Int) (*types.Transaction, error) {
+	return _Mintable.Contract.DecreaseApproval(&_Mintable.TransactOpts, spender, subtractedValue)
+}
+
+// DecreaseApproval is a paid mutator transaction binding the contract method 0x66188463.
+//
+// Solidity: function decreaseApproval(spender address, subtractedValue uint256) returns(bool)
+func (_Mintable *MintableTransactorSession) DecreaseApproval(spender common.Address, subtractedValue *big.Int) (*types.Transaction, error) {
+	return _Mintable.Contract.DecreaseApproval(&_Mintable.TransactOpts, spender, subtractedValue)
+}
+
+// IncreaseApproval is a paid mutator transaction binding the contract method 0xd73dd623.
+//
+// Solidity: function increaseApproval(spender address, addedValue uint256) returns(bool)
+func (_Mintable *MintableTransactor) IncreaseApproval(opts *bind.TransactOpts, spender common.Address, addedValue *big.Int) (*types.Transaction, error) {
+	return _Mintable.contract.Transact(opts, "increaseApproval", spender, addedValue)
+}
+
+// IncreaseApproval is a paid mutator transaction binding the contract method 0xd73dd623.
+//
+// Solidity: function increaseApproval(spender address, addedValue uint256) returns(bool)
+func (_Mintable *MintableSession) IncreaseApproval(spender common.Address, addedValue *big.Int) (*types.Transaction, error) {
+	return _Mintable.Contract.IncreaseApproval(&_Mintable.TransactOpts, spender, addedValue)
+}
+
+// IncreaseApproval is a paid mutator transaction binding the contract method 0xd73dd623.
+//
+// Solidity: function increaseApproval(spender address, addedValue uint256) returns(bool)
+func (_Mintable *MintableTransactorSession) IncreaseApproval(spender common.Address, addedValue *big.Int) (*types.Transaction, error) {
+	return _Mintable.Contract.IncreaseApproval(&_Mintable.TransactOpts, spender, addedValue)
+}
+
+// Mint is a paid mutator transaction binding the contract method 0x40c10f19.
+//
+// Solidity: function mint(to address, amount uint256) returns(bool)
+func (_Mintable *MintableTransactor) Mint(opts *bind.TransactOpts, to common.Address, amount *big.Int) (*types.Transaction, error) {
+	return _Mintable.contract.Transact(opts, "mint", to, amount)
+}
+
+// Mint is a paid mutator transaction binding the contract method 0x40c10f19.
+//
+// Solidity: function mint(to address, amount uint256) returns(bool)
+func (_Mintable *MintableSession) Mint(to common.Address, amount *big.Int) (*types.Transaction, error) {
+	return _Mintable.Contract.Mint(&_Mintable.TransactOpts, to, amount)
+}
+
+// Mint is a paid mutator transaction binding the contract method 0x40c10f19.
+//
+// Solidity: function mint(to address, amount uint256) returns(bool)
+func (_Mintable *MintableTransactorSession) Mint(to common.Address, amount *big.Int) (*types.Transaction, error) {
+	return _Mintable.Contract.Mint(&_Mintable.TransactOpts, to, amount)
+}
+
+// StopMinting is a paid mutator transaction binding the contract method 0x3e3e0b12.
+//
+// Solidity: function stopMinting() returns(bool)
+func (_Mintable *MintableTransactor) StopMinting(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _Mintable.contract.Transact(opts, "stopMinting")
+}
+
+// StopMinting is a paid mutator transaction binding the contract method 0x3e3e0b12.
+//
+// Solidity: function stopMinting() returns(bool)
+func (_Mintable *MintableSession) StopMinting() (*types.Transaction, error) {
+	return _Mintable.Contract.StopMinting(&_Mintable.TransactOpts)
+}
+
+// StopMinting is a paid mutator transaction binding the contract method 0x3e3e0b12.
+//
+// Solidity: function stopMinting() returns(bool)
+func (_Mintable *MintableTransactorSession) StopMinting() (*types.Transaction, error) {
+	return _Mintable.Contract.StopMinting(&_Mintable.TransactOpts)
+}
+
+// Transfer is a paid mutator transaction binding the contract method 0xa9059cbb.
+//
+// Solidity: function transfer(to address, value uint256) returns(bool)
+func (_Mintable *MintableTransactor) Transfer(opts *bind.TransactOpts, to common.Address, value *big.Int) (*types.Transaction, error) {
+	return _Mintable.contract.Transact(opts, "transfer", to, value)
+}
+
+// Transfer is a paid mutator transaction binding the contract method 0xa9059cbb.
+//
+// Solidity: function transfer(to address, value uint256) returns(bool)
+func (_Mintable *MintableSession) Transfer(to common.Address, value *big.Int) (*types.Transaction, error) {
+	return _Mintable.Contract.Transfer(&_Mintable.TransactOpts, to, value)
+}
+
+// Transfer is a paid mutator transaction binding the contract method 0xa9059cbb.
+//
+// Solidity: function transfer(to address, value uint256) returns(bool)
+func (_Mintable *MintableTransactorSession) Transfer(to common.Address, value *big.Int) (*types.Transaction, error) {
+	return _Mintable.Contract.Transfer(&_Mintable.TransactOpts, to, value)
+}
+
+// TransferFrom is a paid mutator transaction binding the contract method 0x23b872dd.
+//
+// Solidity: function transferFrom(from address, to address, value uint256) returns(bool)
+func (_Mintable *MintableTransactor) TransferFrom(opts *bind.TransactOpts, from common.Address, to common.Address, value *big.Int) (*types.Transaction, error) {
+	return _Mintable.contract.Transact(opts, "transferFrom", from, to, value)
+}
+
+// TransferFrom is a paid mutator transaction binding the contract method 0x23b872dd.
+//
+// Solidity: function transferFrom(from address, to address, value uint256) returns(bool)
+func (_Mintable *MintableSession) TransferFrom(from common.Address, to common.Address, value *big.Int) (*types.Transaction, error) {
+	return _Mintable.Contract.TransferFrom(&_Mintable.TransactOpts, from, to, value)
+}
+
+// TransferFrom is a paid mutator transaction binding the contract method 0x23b872dd.
+//
+// Solidity: function transferFrom(from address, to address, value uint256) returns(bool)
+func (_Mintable *MintableTransactorSession) TransferFrom(from common.Address, to common.Address, value *big.Int) (*types.Transaction, error) {
+	return _Mintable.Contract.TransferFrom(&_Mintable.TransactOpts, from, to, value)
+}
+
+// MintableApprovalIterator is returned from FilterApproval and is used to iterate over the raw logs and unpacked data for Approval events raised by the Mintable contract.
+type MintableApprovalIterator struct {
+	Event *MintableApproval // Event containing the contract specifics and raw log
+
+	contract *bind.BoundContract // Generic contract to use for unpacking event data
+	event    string              // Event name to use for unpacking event data
+
+	logs chan types.Log        // Log channel receiving the found contract events
+	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	done bool                  // Whether the subscription completed delivering logs
+	fail error                 // Occurred error to stop iteration
+}
+
+// Next advances the iterator to the subsequent event, returning whether there
+// are any more events found. In case of a retrieval or parsing error, false is
+// returned and Error() can be queried for the exact failure.
+func (it *MintableApprovalIterator) Next() bool {
+	// If the iterator failed, stop iterating
+	if it.fail != nil {
+		return false
+	}
+	// If the iterator completed, deliver directly whatever's available
+	if it.done {
+		select {
+		case log := <-it.logs:
+			it.Event = new(MintableApproval)
+			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+				it.fail = err
+				return false
+			}
+			it.Event.Raw = log
+			return true
+
+		default:
+			return false
+		}
+	}
+	// Iterator still in progress, wait for either a data or an error event
+	select {
+	case log := <-it.logs:
+		it.Event = new(MintableApproval)
+		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+			it.fail = err
+			return false
+		}
+		it.Event.Raw = log
+		return true
+
+	case err := <-it.sub.Err():
+		it.done = true
+		it.fail = err
+		return it.Next()
+	}
+}
+
+// Error returns any retrieval or parsing error occurred during filtering.
+func (it *MintableApprovalIterator) Error() error {
+	return it.fail
+}
+
+// Close terminates the iteration process, releasing any pending underlying
+// resources.
+func (it *MintableApprovalIterator) Close() error {
+	it.sub.Unsubscribe()
+	return nil
+}
+
+// MintableApproval represents a Approval event raised by the Mintable contract.
+type MintableApproval struct {
+	Holder  common.Address
+	Spender common.Address
+	Value   *big.Int
+	Raw     types.Log // Blockchain specific contextual infos
+}
+
+// FilterApproval is a free log retrieval operation binding the contract event 0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925.
+//
+// Solidity: e Approval(holder indexed address, spender indexed address, value uint256)
+func (_Mintable *MintableFilterer) FilterApproval(opts *bind.FilterOpts, holder []common.Address, spender []common.Address) (*MintableApprovalIterator, error) {
+
+	var holderRule []interface{}
+	for _, holderItem := range holder {
+		holderRule = append(holderRule, holderItem)
+	}
+	var spenderRule []interface{}
+	for _, spenderItem := range spender {
+		spenderRule = append(spenderRule, spenderItem)
+	}
+
+	logs, sub, err := _Mintable.contract.FilterLogs(opts, "Approval", holderRule, spenderRule)
+	if err != nil {
+		return nil, err
+	}
+	return &MintableApprovalIterator{contract: _Mintable.contract, event: "Approval", logs: logs, sub: sub}, nil
+}
+
+// WatchApproval is a free log subscription operation binding the contract event 0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925.
+//
+// Solidity: e Approval(holder indexed address, spender indexed address, value uint256)
+func (_Mintable *MintableFilterer) WatchApproval(opts *bind.WatchOpts, sink chan<- *MintableApproval, holder []common.Address, spender []common.Address) (event.Subscription, error) {
+
+	var holderRule []interface{}
+	for _, holderItem := range holder {
+		holderRule = append(holderRule, holderItem)
+	}
+	var spenderRule []interface{}
+	for _, spenderItem := range spender {
+		spenderRule = append(spenderRule, spenderItem)
+	}
+
+	logs, sub, err := _Mintable.contract.WatchLogs(opts, "Approval", holderRule, spenderRule)
+	if err != nil {
+		return nil, err
+	}
+	return event.NewSubscription(func(quit <-chan struct{}) error {
+		defer sub.Unsubscribe()
+		for {
+			select {
+			case log := <-logs:
+				// New log arrived, parse the event and forward to the user
+				event := new(MintableApproval)
+				if err := _Mintable.contract.UnpackLog(event, "Approval", log); err != nil {
+					return err
+				}
+				event.Raw = log
+
+				select {
+				case sink <- event:
+				case err := <-sub.Err():
+					return err
+				case <-quit:
+					return nil
+				}
+			case err := <-sub.Err():
+				return err
+			case <-quit:
+				return nil
+			}
+		}
+	}), nil
+}
+
+// MintableMintIterator is returned from FilterMint and is used to iterate over the raw logs and unpacked data for Mint events raised by the Mintable contract.
+type MintableMintIterator struct {
+	Event *MintableMint // Event containing the contract specifics and raw log
+
+	contract *bind.BoundContract // Generic contract to use for unpacking event data
+	event    string              // Event name to use for unpacking event data
+
+	logs chan types.Log        // Log channel receiving the found contract events
+	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	done bool                  // Whether the subscription completed delivering logs
+	fail error                 // Occurred error to stop iteration
+}
+
+// Next advances the iterator to the subsequent event, returning whether there
+// are any more events found. In case of a retrieval or parsing error, false is
+// returned and Error() can be queried for the exact failure.
+func (it *MintableMintIterator) Next() bool {
+	// If the iterator failed, stop iterating
+	if it.fail != nil {
+		return false
+	}
+	// If the iterator completed, deliver directly whatever's available
+	if it.done {
+		select {
+		case log := <-it.logs:
+			it.Event = new(MintableMint)
+			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+				it.fail = err
+				return false
+			}
+			it.Event.Raw = log
+			return true
+
+		default:
+			return false
+		}
+	}
+	// Iterator still in progress, wait for either a data or an error event
+	select {
+	case log := <-it.logs:
+		it.Event = new(MintableMint)
+		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+			it.fail = err
+			return false
+		}
+		it.Event.Raw = log
+		return true
+
+	case err := <-it.sub.Err():
+		it.done = true
+		it.fail = err
+		return it.Next()
+	}
+}
+
+// Error returns any retrieval or parsing error occurred during filtering.
+func (it *MintableMintIterator) Error() error {
+	return it.fail
+}
+
+// Close terminates the iteration process, releasing any pending underlying
+// resources.
+func (it *MintableMintIterator) Close() error {
+	it.sub.Unsubscribe()
+	return nil
+}
+
+// MintableMint represents a Mint event raised by the Mintable contract.
+type MintableMint struct {
+	To     common.Address
+	Amount *big.Int
+	Raw    types.Log // Blockchain specific contextual infos
+}
+
+// FilterMint is a free log retrieval operation binding the contract event 0x0f6798a560793a54c3bcfe86a93cde1e73087d944c0ea20544137d4121396885.
+//
+// Solidity: e Mint(to indexed address, amount uint256)
+func (_Mintable *MintableFilterer) FilterMint(opts *bind.FilterOpts, to []common.Address) (*MintableMintIterator, error) {
+
+	var toRule []interface{}
+	for _, toItem := range to {
+		toRule = append(toRule, toItem)
+	}
+
+	logs, sub, err := _Mintable.contract.FilterLogs(opts, "Mint", toRule)
+	if err != nil {
+		return nil, err
+	}
+	return &MintableMintIterator{contract: _Mintable.contract, event: "Mint", logs: logs, sub: sub}, nil
+}
+
+// WatchMint is a free log subscription operation binding the contract event 0x0f6798a560793a54c3bcfe86a93cde1e73087d944c0ea20544137d4121396885.
+//
+// Solidity: e Mint(to indexed address, amount uint256)
+func (_Mintable *MintableFilterer) WatchMint(opts *bind.WatchOpts, sink chan<- *MintableMint, to []common.Address) (event.Subscription, error) {
+
+	var toRule []interface{}
+	for _, toItem := range to {
+		toRule = append(toRule, toItem)
+	}
+
+	logs, sub, err := _Mintable.contract.WatchLogs(opts, "Mint", toRule)
+	if err != nil {
+		return nil, err
+	}
+	return event.NewSubscription(func(quit <-chan struct{}) error {
+		defer sub.Unsubscribe()
+		for {
+			select {
+			case log := <-logs:
+				// New log arrived, parse the event and forward to the user
+				event := new(MintableMint)
+				if err := _Mintable.contract.UnpackLog(event, "Mint", log); err != nil {
+					return err
+				}
+				event.Raw = log
+
+				select {
+				case sink <- event:
+				case err := <-sub.Err():
+					return err
+				case <-quit:
+					return nil
+				}
+			case err := <-sub.Err():
+				return err
+			case <-quit:
+				return nil
+			}
+		}
+	}), nil
+}
+
+// MintableMintStoppedIterator is returned from FilterMintStopped and is used to iterate over the raw logs and unpacked data for MintStopped events raised by the Mintable contract.
+type MintableMintStoppedIterator struct {
+	Event *MintableMintStopped // Event containing the contract specifics and raw log
+
+	contract *bind.BoundContract // Generic contract to use for unpacking event data
+	event    string              // Event name to use for unpacking event data
+
+	logs chan types.Log        // Log channel receiving the found contract events
+	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	done bool                  // Whether the subscription completed delivering logs
+	fail error                 // Occurred error to stop iteration
+}
+
+// Next advances the iterator to the subsequent event, returning whether there
+// are any more events found. In case of a retrieval or parsing error, false is
+// returned and Error() can be queried for the exact failure.
+func (it *MintableMintStoppedIterator) Next() bool {
+	// If the iterator failed, stop iterating
+	if it.fail != nil {
+		return false
+	}
+	// If the iterator completed, deliver directly whatever's available
+	if it.done {
+		select {
+		case log := <-it.logs:
+			it.Event = new(MintableMintStopped)
+			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+				it.fail = err
+				return false
+			}
+			it.Event.Raw = log
+			return true
+
+		default:
+			return false
+		}
+	}
+	// Iterator still in progress, wait for either a data or an error event
+	select {
+	case log := <-it.logs:
+		it.Event = new(MintableMintStopped)
+		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+			it.fail = err
+			return false
+		}
+		it.Event.Raw = log
+		return true
+
+	case err := <-it.sub.Err():
+		it.done = true
+		it.fail = err
+		return it.Next()
+	}
+}
+
+// Error returns any retrieval or parsing error occurred during filtering.
+func (it *MintableMintStoppedIterator) Error() error {
+	return it.fail
+}
+
+// Close terminates the iteration process, releasing any pending underlying
+// resources.
+func (it *MintableMintStoppedIterator) Close() error {
+	it.sub.Unsubscribe()
+	return nil
+}
+
+// MintableMintStopped represents a MintStopped event raised by the Mintable contract.
+type MintableMintStopped struct {
+	Raw types.Log // Blockchain specific contextual infos
+}
+
+// FilterMintStopped is a free log retrieval operation binding the contract event 0x58e0e1f03176dfa647922b700f27e00bfa7f939db5a6fb7dd47cc6dcd3cf619c.
+//
+// Solidity: e MintStopped()
+func (_Mintable *MintableFilterer) FilterMintStopped(opts *bind.FilterOpts) (*MintableMintStoppedIterator, error) {
+
+	logs, sub, err := _Mintable.contract.FilterLogs(opts, "MintStopped")
+	if err != nil {
+		return nil, err
+	}
+	return &MintableMintStoppedIterator{contract: _Mintable.contract, event: "MintStopped", logs: logs, sub: sub}, nil
+}
+
+// WatchMintStopped is a free log subscription operation binding the contract event 0x58e0e1f03176dfa647922b700f27e00bfa7f939db5a6fb7dd47cc6dcd3cf619c.
+//
+// Solidity: e MintStopped()
+func (_Mintable *MintableFilterer) WatchMintStopped(opts *bind.WatchOpts, sink chan<- *MintableMintStopped) (event.Subscription, error) {
+
+	logs, sub, err := _Mintable.contract.WatchLogs(opts, "MintStopped")
+	if err != nil {
+		return nil, err
+	}
+	return event.NewSubscription(func(quit <-chan struct{}) error {
+		defer sub.Unsubscribe()
+		for {
+			select {
+			case log := <-logs:
+				// New log arrived, parse the event and forward to the user
+				event := new(MintableMintStopped)
+				if err := _Mintable.contract.UnpackLog(event, "MintStopped", log); err != nil {
+					return err
+				}
+				event.Raw = log
+
+				select {
+				case sink <- event:
+				case err := <-sub.Err():
+					return err
+				case <-quit:
+					return nil
+				}
+			case err := <-sub.Err():
+				return err
+			case <-quit:
+				return nil
+			}
+		}
+	}), nil
+}
+
+// MintableTransferIterator is returned from FilterTransfer and is used to iterate over the raw logs and unpacked data for Transfer events raised by the Mintable contract.
+type MintableTransferIterator struct {
+	Event *MintableTransfer // Event containing the contract specifics and raw log
+
+	contract *bind.BoundContract // Generic contract to use for unpacking event data
+	event    string              // Event name to use for unpacking event data
+
+	logs chan types.Log        // Log channel receiving the found contract events
+	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	done bool                  // Whether the subscription completed delivering logs
+	fail error                 // Occurred error to stop iteration
+}
+
+// Next advances the iterator to the subsequent event, returning whether there
+// are any more events found. In case of a retrieval or parsing error, false is
+// returned and Error() can be queried for the exact failure.
+func (it *MintableTransferIterator) Next() bool {
+	// If the iterator failed, stop iterating
+	if it.fail != nil {
+		return false
+	}
+	// If the iterator completed, deliver directly whatever's available
+	if it.done {
+		select {
+		case log := <-it.logs:
+			it.Event = new(MintableTransfer)
+			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+				it.fail = err
+				return false
+			}
+			it.Event.Raw = log
+			return true
+
+		default:
+			return false
+		}
+	}
+	// Iterator still in progress, wait for either a data or an error event
+	select {
+	case log := <-it.logs:
+		it.Event = new(MintableTransfer)
+		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+			it.fail = err
+			return false
+		}
+		it.Event.Raw = log
+		return true
+
+	case err := <-it.sub.Err():
+		it.done = true
+		it.fail = err
+		return it.Next()
+	}
+}
+
+// Error returns any retrieval or parsing error occurred during filtering.
+func (it *MintableTransferIterator) Error() error {
+	return it.fail
+}
+
+// Close terminates the iteration process, releasing any pending underlying
+// resources.
+func (it *MintableTransferIterator) Close() error {
+	it.sub.Unsubscribe()
+	return nil
+}
+
+// MintableTransfer represents a Transfer event raised by the Mintable contract.
+type MintableTransfer struct {
+	From  common.Address
+	To    common.Address
+	Value *big.Int
+	Raw   types.Log // Blockchain specific contextual infos
+}
+
+// FilterTransfer is a free log retrieval operation binding the contract event 0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef.
+//
+// Solidity: e Transfer(from indexed address, to indexed address, value uint256)
+func (_Mintable *MintableFilterer) FilterTransfer(opts *bind.FilterOpts, from []common.Address, to []common.Address) (*MintableTransferIterator, error) {
+
+	var fromRule []interface{}
+	for _, fromItem := range from {
+		fromRule = append(fromRule, fromItem)
+	}
+	var toRule []interface{}
+	for _, toItem := range to {
+		toRule = append(toRule, toItem)
+	}
+
+	logs, sub, err := _Mintable.contract.FilterLogs(opts, "Transfer", fromRule, toRule)
+	if err != nil {
+		return nil, err
+	}
+	return &MintableTransferIterator{contract: _Mintable.contract, event: "Transfer", logs: logs, sub: sub}, nil
+}
+
+// WatchTransfer is a free log subscription operation binding the contract event 0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef.
+//
+// Solidity: e Transfer(from indexed address, to indexed address, value uint256)
+func (_Mintable *MintableFilterer) WatchTransfer(opts *bind.WatchOpts, sink chan<- *MintableTransfer, from []common.Address, to []common.Address) (event.Subscription, error) {
+
+	var fromRule []interface{}
+	for _, fromItem := range from {
+		fromRule = append(fromRule, fromItem)
+	}
+	var toRule []interface{}
+	for _, toItem := range to {
+		toRule = append(toRule, toItem)
+	}
+
+	logs, sub, err := _Mintable.contract.WatchLogs(opts, "Transfer", fromRule, toRule)
+	if err != nil {
+		return nil, err
+	}
+	return event.NewSubscription(func(quit <-chan struct{}) error {
+		defer sub.Unsubscribe()
+		for {
+			select {
+			case log := <-logs:
+				// New log arrived, parse the event and forward to the user
+				event := new(MintableTransfer)
+				if err := _Mintable.contract.UnpackLog(event, "Transfer", log); err != nil {
 					return err
 				}
 				event.Raw = log

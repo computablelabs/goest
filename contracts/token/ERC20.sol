@@ -8,7 +8,7 @@ import "./ERC20Basic.sol";
  * See https://github.com/ethereum/EIPs/issues/20
  */
 contract ERC20 is ERC20Basic {
-  function allowance(address owner, address spender)
+  function allowance(address holder, address spender)
     public view returns (uint256);
 
   function transferFrom(address from, address to, uint256 value)
@@ -16,7 +16,7 @@ contract ERC20 is ERC20Basic {
 
   function approve(address spender, uint256 value) public returns (bool);
   event Approval(
-    address indexed owner,
+    address indexed holder,
     address indexed spender,
     uint256 value
   );

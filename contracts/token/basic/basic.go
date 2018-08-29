@@ -16,10 +16,10 @@ import (
 )
 
 // BasicABI is the input ABI used to generate the binding from.
-const BasicABI = "[{\"constant\":true,\"inputs\":[],\"name\":\"totalSupply\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"owner\",\"type\":\"address\"}],\"name\":\"balanceOf\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"to\",\"type\":\"address\"},{\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"transfer\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"from\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"to\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"Transfer\",\"type\":\"event\"}]"
+const BasicABI = "[{\"constant\":true,\"inputs\":[],\"name\":\"totalSupply\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"holder\",\"type\":\"address\"}],\"name\":\"balanceOf\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"to\",\"type\":\"address\"},{\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"transfer\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"from\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"to\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"Transfer\",\"type\":\"event\"}]"
 
 // BasicBin is the compiled bytecode used for deploying new contracts.
-const BasicBin = `0x608060405234801561001057600080fd5b5061038c806100206000396000f3006080604052600436106100565763ffffffff7c010000000000000000000000000000000000000000000000000000000060003504166318160ddd811461005b57806370a0823114610082578063a9059cbb146100b0575b600080fd5b34801561006757600080fd5b506100706100f5565b60408051918252519081900360200190f35b34801561008e57600080fd5b5061007073ffffffffffffffffffffffffffffffffffffffff600435166100fb565b3480156100bc57600080fd5b506100e173ffffffffffffffffffffffffffffffffffffffff60043516602435610123565b604080519115158252519081900360200190f35b60015490565b73ffffffffffffffffffffffffffffffffffffffff1660009081526020819052604090205490565b600073ffffffffffffffffffffffffffffffffffffffff831615156101cf57604080517f08c379a000000000000000000000000000000000000000000000000000000000815260206004820152603360248201527f4572726f723a42617369632e7472616e73666572202d2027746f27206164647260448201527f6573732063616e6e6f74206265206f776e657200000000000000000000000000606482015290519081900360840190fd5b3360009081526020819052604090205482111561027357604080517f08c379a000000000000000000000000000000000000000000000000000000000815260206004820152603e60248201527f4572726f723a42617369632e7472616e73666572202d2056616c75652065786360448201527f65656473207468652062616c616e6365206f66206d73672e73656e6465720000606482015290519081900360840190fd5b33600090815260208190526040902054610293908363ffffffff61033b16565b336000908152602081905260408082209290925573ffffffffffffffffffffffffffffffffffffffff8516815220546102d2908363ffffffff61034d16565b73ffffffffffffffffffffffffffffffffffffffff8416600081815260208181526040918290209390935580518581529051919233927fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef9281900390910190a350600192915050565b60008282111561034757fe5b50900390565b8181018281101561035a57fe5b929150505600a165627a7a72305820a766921f2cf3ce2caf1a554d6ac3398950a472e7859423bb978ebc6e546017780029`
+const BasicBin = `0x608060405234801561001057600080fd5b5061038c806100206000396000f3006080604052600436106100565763ffffffff7c010000000000000000000000000000000000000000000000000000000060003504166318160ddd811461005b57806370a0823114610082578063a9059cbb146100b0575b600080fd5b34801561006757600080fd5b506100706100f5565b60408051918252519081900360200190f35b34801561008e57600080fd5b5061007073ffffffffffffffffffffffffffffffffffffffff600435166100fb565b3480156100bc57600080fd5b506100e173ffffffffffffffffffffffffffffffffffffffff60043516602435610123565b604080519115158252519081900360200190f35b60015490565b73ffffffffffffffffffffffffffffffffffffffff1660009081526020819052604090205490565b600073ffffffffffffffffffffffffffffffffffffffff831615156101cf57604080517f08c379a000000000000000000000000000000000000000000000000000000000815260206004820152603660248201527f4572726f723a42617369632e7472616e73666572202d2027746f272063616e6e60448201527f6f7420626520746865207a65726f2d6164647265737300000000000000000000606482015290519081900360840190fd5b3360009081526020819052604090205482111561027357604080517f08c379a000000000000000000000000000000000000000000000000000000000815260206004820152603e60248201527f4572726f723a42617369632e7472616e73666572202d2056616c75652065786360448201527f65656473207468652062616c616e6365206f66206d73672e73656e6465720000606482015290519081900360840190fd5b33600090815260208190526040902054610293908363ffffffff61033b16565b336000908152602081905260408082209290925573ffffffffffffffffffffffffffffffffffffffff8516815220546102d2908363ffffffff61034d16565b73ffffffffffffffffffffffffffffffffffffffff8416600081815260208181526040918290209390935580518581529051919233927fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef9281900390910190a350600192915050565b60008282111561034757fe5b50900390565b8181018281101561035a57fe5b929150505600a165627a7a72305820076670c4788c0b614013b9dd92a5b9ab10b6bc305b7721ff41ff474aee0055cb0029`
 
 // DeployBasic deploys a new Ethereum contract, binding an instance of Basic to it.
 func DeployBasic(auth *bind.TransactOpts, backend bind.ContractBackend) (common.Address, *types.Transaction, *Basic, error) {
@@ -178,28 +178,28 @@ func (_Basic *BasicTransactorRaw) Transact(opts *bind.TransactOpts, method strin
 
 // BalanceOf is a free data retrieval call binding the contract method 0x70a08231.
 //
-// Solidity: function balanceOf(owner address) constant returns(uint256)
-func (_Basic *BasicCaller) BalanceOf(opts *bind.CallOpts, owner common.Address) (*big.Int, error) {
+// Solidity: function balanceOf(holder address) constant returns(uint256)
+func (_Basic *BasicCaller) BalanceOf(opts *bind.CallOpts, holder common.Address) (*big.Int, error) {
 	var (
 		ret0 = new(*big.Int)
 	)
 	out := ret0
-	err := _Basic.contract.Call(opts, out, "balanceOf", owner)
+	err := _Basic.contract.Call(opts, out, "balanceOf", holder)
 	return *ret0, err
 }
 
 // BalanceOf is a free data retrieval call binding the contract method 0x70a08231.
 //
-// Solidity: function balanceOf(owner address) constant returns(uint256)
-func (_Basic *BasicSession) BalanceOf(owner common.Address) (*big.Int, error) {
-	return _Basic.Contract.BalanceOf(&_Basic.CallOpts, owner)
+// Solidity: function balanceOf(holder address) constant returns(uint256)
+func (_Basic *BasicSession) BalanceOf(holder common.Address) (*big.Int, error) {
+	return _Basic.Contract.BalanceOf(&_Basic.CallOpts, holder)
 }
 
 // BalanceOf is a free data retrieval call binding the contract method 0x70a08231.
 //
-// Solidity: function balanceOf(owner address) constant returns(uint256)
-func (_Basic *BasicCallerSession) BalanceOf(owner common.Address) (*big.Int, error) {
-	return _Basic.Contract.BalanceOf(&_Basic.CallOpts, owner)
+// Solidity: function balanceOf(holder address) constant returns(uint256)
+func (_Basic *BasicCallerSession) BalanceOf(holder common.Address) (*big.Int, error) {
+	return _Basic.Contract.BalanceOf(&_Basic.CallOpts, holder)
 }
 
 // TotalSupply is a free data retrieval call binding the contract method 0x18160ddd.
@@ -392,10 +392,10 @@ func (_Basic *BasicFilterer) WatchTransfer(opts *bind.WatchOpts, sink chan<- *Ba
 }
 
 // ConstructableBasicABI is the input ABI used to generate the binding from.
-const ConstructableBasicABI = "[{\"constant\":true,\"inputs\":[],\"name\":\"totalSupply\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"owner\",\"type\":\"address\"}],\"name\":\"balanceOf\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"to\",\"type\":\"address\"},{\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"transfer\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"name\":\"initialAccount\",\"type\":\"address\"},{\"name\":\"initialBalance\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"from\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"to\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"Transfer\",\"type\":\"event\"}]"
+const ConstructableBasicABI = "[{\"constant\":true,\"inputs\":[],\"name\":\"totalSupply\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"holder\",\"type\":\"address\"}],\"name\":\"balanceOf\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"to\",\"type\":\"address\"},{\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"transfer\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"name\":\"initialAccount\",\"type\":\"address\"},{\"name\":\"initialBalance\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"from\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"to\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"Transfer\",\"type\":\"event\"}]"
 
 // ConstructableBasicBin is the compiled bytecode used for deploying new contracts.
-const ConstructableBasicBin = `0x608060405234801561001057600080fd5b506040516040806103e28339810160409081528151602092830151600160a060020a03909116600090815292839052912081905560015561038c806100566000396000f3006080604052600436106100565763ffffffff7c010000000000000000000000000000000000000000000000000000000060003504166318160ddd811461005b57806370a0823114610082578063a9059cbb146100b0575b600080fd5b34801561006757600080fd5b506100706100f5565b60408051918252519081900360200190f35b34801561008e57600080fd5b5061007073ffffffffffffffffffffffffffffffffffffffff600435166100fb565b3480156100bc57600080fd5b506100e173ffffffffffffffffffffffffffffffffffffffff60043516602435610123565b604080519115158252519081900360200190f35b60015490565b73ffffffffffffffffffffffffffffffffffffffff1660009081526020819052604090205490565b600073ffffffffffffffffffffffffffffffffffffffff831615156101cf57604080517f08c379a000000000000000000000000000000000000000000000000000000000815260206004820152603360248201527f4572726f723a42617369632e7472616e73666572202d2027746f27206164647260448201527f6573732063616e6e6f74206265206f776e657200000000000000000000000000606482015290519081900360840190fd5b3360009081526020819052604090205482111561027357604080517f08c379a000000000000000000000000000000000000000000000000000000000815260206004820152603e60248201527f4572726f723a42617369632e7472616e73666572202d2056616c75652065786360448201527f65656473207468652062616c616e6365206f66206d73672e73656e6465720000606482015290519081900360840190fd5b33600090815260208190526040902054610293908363ffffffff61033b16565b336000908152602081905260408082209290925573ffffffffffffffffffffffffffffffffffffffff8516815220546102d2908363ffffffff61034d16565b73ffffffffffffffffffffffffffffffffffffffff8416600081815260208181526040918290209390935580518581529051919233927fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef9281900390910190a350600192915050565b60008282111561034757fe5b50900390565b8181018281101561035a57fe5b929150505600a165627a7a7230582005e3791bedd76c9834e218b857726f067f36ed929d2155644c5f77d65c3e8a6d0029`
+const ConstructableBasicBin = `0x608060405234801561001057600080fd5b506040516040806103e28339810160409081528151602092830151600160a060020a03909116600090815292839052912081905560015561038c806100566000396000f3006080604052600436106100565763ffffffff7c010000000000000000000000000000000000000000000000000000000060003504166318160ddd811461005b57806370a0823114610082578063a9059cbb146100b0575b600080fd5b34801561006757600080fd5b506100706100f5565b60408051918252519081900360200190f35b34801561008e57600080fd5b5061007073ffffffffffffffffffffffffffffffffffffffff600435166100fb565b3480156100bc57600080fd5b506100e173ffffffffffffffffffffffffffffffffffffffff60043516602435610123565b604080519115158252519081900360200190f35b60015490565b73ffffffffffffffffffffffffffffffffffffffff1660009081526020819052604090205490565b600073ffffffffffffffffffffffffffffffffffffffff831615156101cf57604080517f08c379a000000000000000000000000000000000000000000000000000000000815260206004820152603660248201527f4572726f723a42617369632e7472616e73666572202d2027746f272063616e6e60448201527f6f7420626520746865207a65726f2d6164647265737300000000000000000000606482015290519081900360840190fd5b3360009081526020819052604090205482111561027357604080517f08c379a000000000000000000000000000000000000000000000000000000000815260206004820152603e60248201527f4572726f723a42617369632e7472616e73666572202d2056616c75652065786360448201527f65656473207468652062616c616e6365206f66206d73672e73656e6465720000606482015290519081900360840190fd5b33600090815260208190526040902054610293908363ffffffff61033b16565b336000908152602081905260408082209290925573ffffffffffffffffffffffffffffffffffffffff8516815220546102d2908363ffffffff61034d16565b73ffffffffffffffffffffffffffffffffffffffff8416600081815260208181526040918290209390935580518581529051919233927fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef9281900390910190a350600192915050565b60008282111561034757fe5b50900390565b8181018281101561035a57fe5b929150505600a165627a7a72305820b5adf1cd2033017a400c0624b9b5b0598874a8b89cf6fe8a6b79f1e54301c9d60029`
 
 // DeployConstructableBasic deploys a new Ethereum contract, binding an instance of ConstructableBasic to it.
 func DeployConstructableBasic(auth *bind.TransactOpts, backend bind.ContractBackend, initialAccount common.Address, initialBalance *big.Int) (common.Address, *types.Transaction, *ConstructableBasic, error) {
@@ -554,28 +554,28 @@ func (_ConstructableBasic *ConstructableBasicTransactorRaw) Transact(opts *bind.
 
 // BalanceOf is a free data retrieval call binding the contract method 0x70a08231.
 //
-// Solidity: function balanceOf(owner address) constant returns(uint256)
-func (_ConstructableBasic *ConstructableBasicCaller) BalanceOf(opts *bind.CallOpts, owner common.Address) (*big.Int, error) {
+// Solidity: function balanceOf(holder address) constant returns(uint256)
+func (_ConstructableBasic *ConstructableBasicCaller) BalanceOf(opts *bind.CallOpts, holder common.Address) (*big.Int, error) {
 	var (
 		ret0 = new(*big.Int)
 	)
 	out := ret0
-	err := _ConstructableBasic.contract.Call(opts, out, "balanceOf", owner)
+	err := _ConstructableBasic.contract.Call(opts, out, "balanceOf", holder)
 	return *ret0, err
 }
 
 // BalanceOf is a free data retrieval call binding the contract method 0x70a08231.
 //
-// Solidity: function balanceOf(owner address) constant returns(uint256)
-func (_ConstructableBasic *ConstructableBasicSession) BalanceOf(owner common.Address) (*big.Int, error) {
-	return _ConstructableBasic.Contract.BalanceOf(&_ConstructableBasic.CallOpts, owner)
+// Solidity: function balanceOf(holder address) constant returns(uint256)
+func (_ConstructableBasic *ConstructableBasicSession) BalanceOf(holder common.Address) (*big.Int, error) {
+	return _ConstructableBasic.Contract.BalanceOf(&_ConstructableBasic.CallOpts, holder)
 }
 
 // BalanceOf is a free data retrieval call binding the contract method 0x70a08231.
 //
-// Solidity: function balanceOf(owner address) constant returns(uint256)
-func (_ConstructableBasic *ConstructableBasicCallerSession) BalanceOf(owner common.Address) (*big.Int, error) {
-	return _ConstructableBasic.Contract.BalanceOf(&_ConstructableBasic.CallOpts, owner)
+// Solidity: function balanceOf(holder address) constant returns(uint256)
+func (_ConstructableBasic *ConstructableBasicCallerSession) BalanceOf(holder common.Address) (*big.Int, error) {
+	return _ConstructableBasic.Contract.BalanceOf(&_ConstructableBasic.CallOpts, holder)
 }
 
 // TotalSupply is a free data retrieval call binding the contract method 0x18160ddd.
