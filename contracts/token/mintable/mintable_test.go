@@ -45,7 +45,6 @@ func TestMint(t *testing.T) {
 		From:     context.Auth.From,
 		Signer:   context.Auth.Signer,
 		GasLimit: 200000,
-		Value:    nil,
 	}, user, big.NewInt(200))
 
 	if err != nil {
@@ -63,5 +62,51 @@ func TestMint(t *testing.T) {
 	// will have increased the total supply by the minted amount
 	if supply, _ := deployed.Contract.TotalSupply(nil); supply.Cmp(big.NewInt(1200)) != 0 {
 		t.Errorf("Expected total supply to equal initial balance + minted, got %v", supply)
+	}
+
+	// total supply is increased but the balance of the initial holder did not
+	ownerBal, _ := deployed.Contract.BalanceOf(&bind.CallOpts{From: context.Auth.From}, context.Auth.From)
+
+	if ownerBal.Cmp(big.NewInt(1000)) != 0 {
+		t.Errorf("Expected owner balance of 1000, got %v", ownerBal)
+	}
+}
+
+func TestStopMinting(t *testing.T) {
+	t.Log("Mintable token can stop minting on demand (by owner)")
+	// minting stopped is false by default
+	if stopped, _ := deployed.Contract.MintingStopped(&bind.CallOpts{From: context.Auth.From}); stopped != false {
+		t.Errorf("Expected minting stopped to be false, got %v", stopped)
+	}
+	// stop and (re)check
+	_, err := deployed.Contract.StopMinting(&bind.TransactOpts{
+		From:   context.Auth.From,
+		Signer: context.Auth.Signer,
+	})
+
+	if err != nil {
+		t.Fatalf("Error stopping minting: %v", err)
+	}
+
+	context.Blockchain.Commit()
+
+	if stopped, _ := deployed.Contract.MintingStopped(&bind.CallOpts{From: context.Auth.From}); stopped != true {
+		t.Errorf("Expected minting stopped to be true, got %v", stopped)
+	}
+
+	// no more minting can be done
+	_, noMint := deployed.Contract.Mint(&bind.TransactOpts{
+		From:     context.Auth.From,
+		Signer:   context.Auth.Signer,
+		GasLimit: 200000,
+	}, common.HexToAddress("0xdef"), big.NewInt(100))
+
+	if noMint != nil {
+		t.Fatal("Error checking that no minting occurred")
+	}
+
+	// did not actually mint anything
+	if supply, _ := deployed.Contract.TotalSupply(nil); supply.Cmp(big.NewInt(1200)) != 0 {
+		t.Errorf("Expected total supply to remain 1200, got %v", supply)
 	}
 }
