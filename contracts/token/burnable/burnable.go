@@ -16,10 +16,10 @@ import (
 )
 
 // BasicABI is the input ABI used to generate the binding from.
-const BasicABI = "[{\"constant\":true,\"inputs\":[],\"name\":\"totalSupply\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"owner\",\"type\":\"address\"}],\"name\":\"balanceOf\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"to\",\"type\":\"address\"},{\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"transfer\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"from\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"to\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"Transfer\",\"type\":\"event\"}]"
+const BasicABI = "[{\"constant\":true,\"inputs\":[],\"name\":\"totalSupply\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"holder\",\"type\":\"address\"}],\"name\":\"balanceOf\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"to\",\"type\":\"address\"},{\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"transfer\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"from\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"to\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"Transfer\",\"type\":\"event\"}]"
 
 // BasicBin is the compiled bytecode used for deploying new contracts.
-const BasicBin = `0x608060405234801561001057600080fd5b5061038c806100206000396000f3006080604052600436106100565763ffffffff7c010000000000000000000000000000000000000000000000000000000060003504166318160ddd811461005b57806370a0823114610082578063a9059cbb146100b0575b600080fd5b34801561006757600080fd5b506100706100f5565b60408051918252519081900360200190f35b34801561008e57600080fd5b5061007073ffffffffffffffffffffffffffffffffffffffff600435166100fb565b3480156100bc57600080fd5b506100e173ffffffffffffffffffffffffffffffffffffffff60043516602435610123565b604080519115158252519081900360200190f35b60015490565b73ffffffffffffffffffffffffffffffffffffffff1660009081526020819052604090205490565b600073ffffffffffffffffffffffffffffffffffffffff831615156101cf57604080517f08c379a000000000000000000000000000000000000000000000000000000000815260206004820152603360248201527f4572726f723a42617369632e7472616e73666572202d2027746f27206164647260448201527f6573732063616e6e6f74206265206f776e657200000000000000000000000000606482015290519081900360840190fd5b3360009081526020819052604090205482111561027357604080517f08c379a000000000000000000000000000000000000000000000000000000000815260206004820152603e60248201527f4572726f723a42617369632e7472616e73666572202d2056616c75652065786360448201527f65656473207468652062616c616e6365206f66206d73672e73656e6465720000606482015290519081900360840190fd5b33600090815260208190526040902054610293908363ffffffff61033b16565b336000908152602081905260408082209290925573ffffffffffffffffffffffffffffffffffffffff8516815220546102d2908363ffffffff61034d16565b73ffffffffffffffffffffffffffffffffffffffff8416600081815260208181526040918290209390935580518581529051919233927fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef9281900390910190a350600192915050565b60008282111561034757fe5b50900390565b8181018281101561035a57fe5b929150505600a165627a7a72305820a766921f2cf3ce2caf1a554d6ac3398950a472e7859423bb978ebc6e546017780029`
+const BasicBin = `0x608060405234801561001057600080fd5b5061038c806100206000396000f3006080604052600436106100565763ffffffff7c010000000000000000000000000000000000000000000000000000000060003504166318160ddd811461005b57806370a0823114610082578063a9059cbb146100b0575b600080fd5b34801561006757600080fd5b506100706100f5565b60408051918252519081900360200190f35b34801561008e57600080fd5b5061007073ffffffffffffffffffffffffffffffffffffffff600435166100fb565b3480156100bc57600080fd5b506100e173ffffffffffffffffffffffffffffffffffffffff60043516602435610123565b604080519115158252519081900360200190f35b60015490565b73ffffffffffffffffffffffffffffffffffffffff1660009081526020819052604090205490565b600073ffffffffffffffffffffffffffffffffffffffff831615156101cf57604080517f08c379a000000000000000000000000000000000000000000000000000000000815260206004820152603660248201527f4572726f723a42617369632e7472616e73666572202d2027746f272063616e6e60448201527f6f7420626520746865207a65726f2d6164647265737300000000000000000000606482015290519081900360840190fd5b3360009081526020819052604090205482111561027357604080517f08c379a000000000000000000000000000000000000000000000000000000000815260206004820152603e60248201527f4572726f723a42617369632e7472616e73666572202d2056616c75652065786360448201527f65656473207468652062616c616e6365206f66206d73672e73656e6465720000606482015290519081900360840190fd5b33600090815260208190526040902054610293908363ffffffff61033b16565b336000908152602081905260408082209290925573ffffffffffffffffffffffffffffffffffffffff8516815220546102d2908363ffffffff61034d16565b73ffffffffffffffffffffffffffffffffffffffff8416600081815260208181526040918290209390935580518581529051919233927fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef9281900390910190a350600192915050565b60008282111561034757fe5b50900390565b8181018281101561035a57fe5b929150505600a165627a7a72305820076670c4788c0b614013b9dd92a5b9ab10b6bc305b7721ff41ff474aee0055cb0029`
 
 // DeployBasic deploys a new Ethereum contract, binding an instance of Basic to it.
 func DeployBasic(auth *bind.TransactOpts, backend bind.ContractBackend) (common.Address, *types.Transaction, *Basic, error) {
@@ -178,28 +178,28 @@ func (_Basic *BasicTransactorRaw) Transact(opts *bind.TransactOpts, method strin
 
 // BalanceOf is a free data retrieval call binding the contract method 0x70a08231.
 //
-// Solidity: function balanceOf(owner address) constant returns(uint256)
-func (_Basic *BasicCaller) BalanceOf(opts *bind.CallOpts, owner common.Address) (*big.Int, error) {
+// Solidity: function balanceOf(holder address) constant returns(uint256)
+func (_Basic *BasicCaller) BalanceOf(opts *bind.CallOpts, holder common.Address) (*big.Int, error) {
 	var (
 		ret0 = new(*big.Int)
 	)
 	out := ret0
-	err := _Basic.contract.Call(opts, out, "balanceOf", owner)
+	err := _Basic.contract.Call(opts, out, "balanceOf", holder)
 	return *ret0, err
 }
 
 // BalanceOf is a free data retrieval call binding the contract method 0x70a08231.
 //
-// Solidity: function balanceOf(owner address) constant returns(uint256)
-func (_Basic *BasicSession) BalanceOf(owner common.Address) (*big.Int, error) {
-	return _Basic.Contract.BalanceOf(&_Basic.CallOpts, owner)
+// Solidity: function balanceOf(holder address) constant returns(uint256)
+func (_Basic *BasicSession) BalanceOf(holder common.Address) (*big.Int, error) {
+	return _Basic.Contract.BalanceOf(&_Basic.CallOpts, holder)
 }
 
 // BalanceOf is a free data retrieval call binding the contract method 0x70a08231.
 //
-// Solidity: function balanceOf(owner address) constant returns(uint256)
-func (_Basic *BasicCallerSession) BalanceOf(owner common.Address) (*big.Int, error) {
-	return _Basic.Contract.BalanceOf(&_Basic.CallOpts, owner)
+// Solidity: function balanceOf(holder address) constant returns(uint256)
+func (_Basic *BasicCallerSession) BalanceOf(holder common.Address) (*big.Int, error) {
+	return _Basic.Contract.BalanceOf(&_Basic.CallOpts, holder)
 }
 
 // TotalSupply is a free data retrieval call binding the contract method 0x18160ddd.
@@ -392,10 +392,10 @@ func (_Basic *BasicFilterer) WatchTransfer(opts *bind.WatchOpts, sink chan<- *Ba
 }
 
 // BurnableABI is the input ABI used to generate the binding from.
-const BurnableABI = "[{\"constant\":false,\"inputs\":[{\"name\":\"spender\",\"type\":\"address\"},{\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"approve\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"totalSupply\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"from\",\"type\":\"address\"},{\"name\":\"to\",\"type\":\"address\"},{\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"transferFrom\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"burn\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"spender\",\"type\":\"address\"},{\"name\":\"subtractedValue\",\"type\":\"uint256\"}],\"name\":\"decreaseApproval\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"owner\",\"type\":\"address\"}],\"name\":\"balanceOf\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"from\",\"type\":\"address\"},{\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"burnFrom\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"to\",\"type\":\"address\"},{\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"transfer\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"spender\",\"type\":\"address\"},{\"name\":\"addedValue\",\"type\":\"uint256\"}],\"name\":\"increaseApproval\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"owner\",\"type\":\"address\"},{\"name\":\"spender\",\"type\":\"address\"}],\"name\":\"allowance\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"burner\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"Burn\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"owner\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"spender\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"Approval\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"from\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"to\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"Transfer\",\"type\":\"event\"}]"
+const BurnableABI = "[{\"constant\":false,\"inputs\":[{\"name\":\"spender\",\"type\":\"address\"},{\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"approve\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"totalSupply\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"from\",\"type\":\"address\"},{\"name\":\"to\",\"type\":\"address\"},{\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"transferFrom\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"burn\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"spender\",\"type\":\"address\"},{\"name\":\"subtractedValue\",\"type\":\"uint256\"}],\"name\":\"decreaseApproval\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"holder\",\"type\":\"address\"}],\"name\":\"balanceOf\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"from\",\"type\":\"address\"},{\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"burnFrom\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"to\",\"type\":\"address\"},{\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"transfer\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"spender\",\"type\":\"address\"},{\"name\":\"addedValue\",\"type\":\"uint256\"}],\"name\":\"increaseApproval\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"holder\",\"type\":\"address\"},{\"name\":\"spender\",\"type\":\"address\"}],\"name\":\"allowance\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"burner\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"Burn\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"holder\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"spender\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"Approval\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"from\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"to\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"Transfer\",\"type\":\"event\"}]"
 
 // BurnableBin is the compiled bytecode used for deploying new contracts.
-const BurnableBin = `0x608060405234801561001057600080fd5b50610bc2806100206000396000f3006080604052600436106100a35763ffffffff7c0100000000000000000000000000000000000000000000000000000000600035041663095ea7b381146100a857806318160ddd146100e057806323b872dd1461010757806342966c6814610131578063661884631461014b57806370a082311461016f57806379cc679014610190578063a9059cbb146101b4578063d73dd623146101d8578063dd62ed3e146101fc575b600080fd5b3480156100b457600080fd5b506100cc600160a060020a0360043516602435610223565b604080519115158252519081900360200190f35b3480156100ec57600080fd5b506100f5610289565b60408051918252519081900360200190f35b34801561011357600080fd5b506100cc600160a060020a036004358116906024351660443561028f565b34801561013d57600080fd5b50610149600435610559565b005b34801561015757600080fd5b506100cc600160a060020a0360043516602435610566565b34801561017b57600080fd5b506100f5600160a060020a0360043516610656565b34801561019c57600080fd5b50610149600160a060020a0360043516602435610671565b3480156101c057600080fd5b506100cc600160a060020a0360043516602435610778565b3480156101e457600080fd5b506100cc600160a060020a036004351660243561093b565b34801561020857600080fd5b506100f5600160a060020a03600435811690602435166109d4565b336000818152600260209081526040808320600160a060020a038716808552908352818420869055815186815291519394909390927f8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925928290030190a350600192915050565b60015490565b6000600160a060020a0383161515610317576040805160e560020a62461bcd02815260206004820152603b60248201527f4572726f723a5374616e646172642e7472616e7366657246726f6d202d20277460448201527f6f272061646472657373206d6179206e6f74206265206f776e65720000000000606482015290519081900360840190fd5b600160a060020a0384166000908152602081905260409020548211156103ad576040805160e560020a62461bcd02815260206004820152603d60248201527f4572726f723a5374616e646172642e7472616e7366657246726f6d202d20566160448201527f6c7565206578636565647320617661696c61626c652062616c616e6365000000606482015290519081900360840190fd5b600160a060020a038416600090815260026020908152604080832033845290915290205482111561044e576040805160e560020a62461bcd02815260206004820152603a60248201527f4572726f722e5374616e646172642e7472616e7366657246726f6d202d20566160448201527f6c7565206578636565647320616c6c6f77656420616d6f756e74000000000000606482015290519081900360840190fd5b600160a060020a038416600090815260208190526040902054610477908363ffffffff6109ff16565b600160a060020a0380861660009081526020819052604080822093909355908516815220546104ac908363ffffffff610a1116565b600160a060020a038085166000908152602081815260408083209490945591871681526002825282812033825290915220546104ee908363ffffffff6109ff16565b600160a060020a03808616600081815260026020908152604080832033845282529182902094909455805186815290519287169391927fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef929181900390910190a35060019392505050565b6105633382610a24565b50565b336000908152600260209081526040808320600160a060020a0386168452909152812054808311156105bb57336000908152600260209081526040808320600160a060020a03881684529091528120556105f0565b6105cb818463ffffffff6109ff16565b336000908152600260209081526040808320600160a060020a03891684529091529020555b336000818152600260209081526040808320600160a060020a0389168085529083529281902054815190815290519293927f8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925929181900390910190a35060019392505050565b600160a060020a031660009081526020819052604090205490565b600160a060020a0382166000908152600260209081526040808320338452909152902054811115610712576040805160e560020a62461bcd02815260206004820152603660248201527f4572726f723a4275726e61626c652e6275726e46726f6d202d2056616c75652060448201527f6578636565647320616c6c6f77656420616d6f756e7400000000000000000000606482015290519081900360840190fd5b600160a060020a0382166000908152600260209081526040808320338452909152902054610746908263ffffffff6109ff16565b600160a060020a03831660009081526002602090815260408083203384529091529020556107748282610a24565b5050565b6000600160a060020a0383161515610800576040805160e560020a62461bcd02815260206004820152603360248201527f4572726f723a42617369632e7472616e73666572202d2027746f27206164647260448201527f6573732063616e6e6f74206265206f776e657200000000000000000000000000606482015290519081900360840190fd5b3360009081526020819052604090205482111561088d576040805160e560020a62461bcd02815260206004820152603e60248201527f4572726f723a42617369632e7472616e73666572202d2056616c75652065786360448201527f65656473207468652062616c616e6365206f66206d73672e73656e6465720000606482015290519081900360840190fd5b336000908152602081905260409020546108ad908363ffffffff6109ff16565b3360009081526020819052604080822092909255600160a060020a038516815220546108df908363ffffffff610a1116565b600160a060020a038416600081815260208181526040918290209390935580518581529051919233927fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef9281900390910190a350600192915050565b336000908152600260209081526040808320600160a060020a038616845290915281205461096f908363ffffffff610a1116565b336000818152600260209081526040808320600160a060020a0389168085529083529281902085905580519485525191937f8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925929081900390910190a350600192915050565b600160a060020a03918216600090815260026020908152604080832093909416825291909152205490565b600082821115610a0b57fe5b50900390565b81810182811015610a1e57fe5b92915050565b600160a060020a038216600090815260208190526040902054811115610aba576040805160e560020a62461bcd02815260206004820152603760248201527f4572726f723a4275726e61626c652e646f4275726e202d2056616c756520657860448201527f636565647320617661696c61626c652062616c616e6365000000000000000000606482015290519081900360840190fd5b600160a060020a038216600090815260208190526040902054610ae3908263ffffffff6109ff16565b600160a060020a038316600090815260208190526040902055600154610b0f908263ffffffff6109ff16565b600155604080518281529051600160a060020a038416917fcc16f5dbb4873280815c1ee09dbd06736cffcc184412cf7a71a0fdb75d397ca5919081900360200190a2604080518281529051600091600160a060020a038516917fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef9181900360200190a350505600a165627a7a72305820499a16ca06aefd5ea23c108b8f48eed543d228c531438819b3b2c3e2ff3c7b9c0029`
+const BurnableBin = `0x608060405234801561001057600080fd5b50610bc2806100206000396000f3006080604052600436106100a35763ffffffff7c0100000000000000000000000000000000000000000000000000000000600035041663095ea7b381146100a857806318160ddd146100e057806323b872dd1461010757806342966c6814610131578063661884631461014b57806370a082311461016f57806379cc679014610190578063a9059cbb146101b4578063d73dd623146101d8578063dd62ed3e146101fc575b600080fd5b3480156100b457600080fd5b506100cc600160a060020a0360043516602435610223565b604080519115158252519081900360200190f35b3480156100ec57600080fd5b506100f5610289565b60408051918252519081900360200190f35b34801561011357600080fd5b506100cc600160a060020a036004358116906024351660443561028f565b34801561013d57600080fd5b50610149600435610559565b005b34801561015757600080fd5b506100cc600160a060020a0360043516602435610566565b34801561017b57600080fd5b506100f5600160a060020a0360043516610656565b34801561019c57600080fd5b50610149600160a060020a0360043516602435610671565b3480156101c057600080fd5b506100cc600160a060020a0360043516602435610778565b3480156101e457600080fd5b506100cc600160a060020a036004351660243561093b565b34801561020857600080fd5b506100f5600160a060020a03600435811690602435166109d4565b336000818152600260209081526040808320600160a060020a038716808552908352818420869055815186815291519394909390927f8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925928290030190a350600192915050565b60015490565b6000600160a060020a0383161515610317576040805160e560020a62461bcd02815260206004820152603e60248201527f4572726f723a5374616e646172642e7472616e7366657246726f6d202d20277460448201527f6f27206d6179206e6f7420626520746865207a65726f2d616464726573730000606482015290519081900360840190fd5b600160a060020a0384166000908152602081905260409020548211156103ad576040805160e560020a62461bcd02815260206004820152603d60248201527f4572726f723a5374616e646172642e7472616e7366657246726f6d202d20566160448201527f6c7565206578636565647320617661696c61626c652062616c616e6365000000606482015290519081900360840190fd5b600160a060020a038416600090815260026020908152604080832033845290915290205482111561044e576040805160e560020a62461bcd02815260206004820152603a60248201527f4572726f722e5374616e646172642e7472616e7366657246726f6d202d20566160448201527f6c7565206578636565647320616c6c6f77656420616d6f756e74000000000000606482015290519081900360840190fd5b600160a060020a038416600090815260208190526040902054610477908363ffffffff6109ff16565b600160a060020a0380861660009081526020819052604080822093909355908516815220546104ac908363ffffffff610a1116565b600160a060020a038085166000908152602081815260408083209490945591871681526002825282812033825290915220546104ee908363ffffffff6109ff16565b600160a060020a03808616600081815260026020908152604080832033845282529182902094909455805186815290519287169391927fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef929181900390910190a35060019392505050565b6105633382610a24565b50565b336000908152600260209081526040808320600160a060020a0386168452909152812054808311156105bb57336000908152600260209081526040808320600160a060020a03881684529091528120556105f0565b6105cb818463ffffffff6109ff16565b336000908152600260209081526040808320600160a060020a03891684529091529020555b336000818152600260209081526040808320600160a060020a0389168085529083529281902054815190815290519293927f8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925929181900390910190a35060019392505050565b600160a060020a031660009081526020819052604090205490565b600160a060020a0382166000908152600260209081526040808320338452909152902054811115610712576040805160e560020a62461bcd02815260206004820152603660248201527f4572726f723a4275726e61626c652e6275726e46726f6d202d2056616c75652060448201527f6578636565647320616c6c6f77656420616d6f756e7400000000000000000000606482015290519081900360840190fd5b600160a060020a0382166000908152600260209081526040808320338452909152902054610746908263ffffffff6109ff16565b600160a060020a03831660009081526002602090815260408083203384529091529020556107748282610a24565b5050565b6000600160a060020a0383161515610800576040805160e560020a62461bcd02815260206004820152603660248201527f4572726f723a42617369632e7472616e73666572202d2027746f272063616e6e60448201527f6f7420626520746865207a65726f2d6164647265737300000000000000000000606482015290519081900360840190fd5b3360009081526020819052604090205482111561088d576040805160e560020a62461bcd02815260206004820152603e60248201527f4572726f723a42617369632e7472616e73666572202d2056616c75652065786360448201527f65656473207468652062616c616e6365206f66206d73672e73656e6465720000606482015290519081900360840190fd5b336000908152602081905260409020546108ad908363ffffffff6109ff16565b3360009081526020819052604080822092909255600160a060020a038516815220546108df908363ffffffff610a1116565b600160a060020a038416600081815260208181526040918290209390935580518581529051919233927fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef9281900390910190a350600192915050565b336000908152600260209081526040808320600160a060020a038616845290915281205461096f908363ffffffff610a1116565b336000818152600260209081526040808320600160a060020a0389168085529083529281902085905580519485525191937f8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925929081900390910190a350600192915050565b600160a060020a03918216600090815260026020908152604080832093909416825291909152205490565b600082821115610a0b57fe5b50900390565b81810182811015610a1e57fe5b92915050565b600160a060020a038216600090815260208190526040902054811115610aba576040805160e560020a62461bcd02815260206004820152603760248201527f4572726f723a4275726e61626c652e646f4275726e202d2056616c756520657860448201527f636565647320617661696c61626c652062616c616e6365000000000000000000606482015290519081900360840190fd5b600160a060020a038216600090815260208190526040902054610ae3908263ffffffff6109ff16565b600160a060020a038316600090815260208190526040902055600154610b0f908263ffffffff6109ff16565b600155604080518281529051600160a060020a038416917fcc16f5dbb4873280815c1ee09dbd06736cffcc184412cf7a71a0fdb75d397ca5919081900360200190a2604080518281529051600091600160a060020a038516917fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef9181900360200190a350505600a165627a7a72305820abc0769af8dc5c4fdc7881c073659f5babe3250443438beab58300d6d59d8a5e0029`
 
 // DeployBurnable deploys a new Ethereum contract, binding an instance of Burnable to it.
 func DeployBurnable(auth *bind.TransactOpts, backend bind.ContractBackend) (common.Address, *types.Transaction, *Burnable, error) {
@@ -554,54 +554,54 @@ func (_Burnable *BurnableTransactorRaw) Transact(opts *bind.TransactOpts, method
 
 // Allowance is a free data retrieval call binding the contract method 0xdd62ed3e.
 //
-// Solidity: function allowance(owner address, spender address) constant returns(uint256)
-func (_Burnable *BurnableCaller) Allowance(opts *bind.CallOpts, owner common.Address, spender common.Address) (*big.Int, error) {
+// Solidity: function allowance(holder address, spender address) constant returns(uint256)
+func (_Burnable *BurnableCaller) Allowance(opts *bind.CallOpts, holder common.Address, spender common.Address) (*big.Int, error) {
 	var (
 		ret0 = new(*big.Int)
 	)
 	out := ret0
-	err := _Burnable.contract.Call(opts, out, "allowance", owner, spender)
+	err := _Burnable.contract.Call(opts, out, "allowance", holder, spender)
 	return *ret0, err
 }
 
 // Allowance is a free data retrieval call binding the contract method 0xdd62ed3e.
 //
-// Solidity: function allowance(owner address, spender address) constant returns(uint256)
-func (_Burnable *BurnableSession) Allowance(owner common.Address, spender common.Address) (*big.Int, error) {
-	return _Burnable.Contract.Allowance(&_Burnable.CallOpts, owner, spender)
+// Solidity: function allowance(holder address, spender address) constant returns(uint256)
+func (_Burnable *BurnableSession) Allowance(holder common.Address, spender common.Address) (*big.Int, error) {
+	return _Burnable.Contract.Allowance(&_Burnable.CallOpts, holder, spender)
 }
 
 // Allowance is a free data retrieval call binding the contract method 0xdd62ed3e.
 //
-// Solidity: function allowance(owner address, spender address) constant returns(uint256)
-func (_Burnable *BurnableCallerSession) Allowance(owner common.Address, spender common.Address) (*big.Int, error) {
-	return _Burnable.Contract.Allowance(&_Burnable.CallOpts, owner, spender)
+// Solidity: function allowance(holder address, spender address) constant returns(uint256)
+func (_Burnable *BurnableCallerSession) Allowance(holder common.Address, spender common.Address) (*big.Int, error) {
+	return _Burnable.Contract.Allowance(&_Burnable.CallOpts, holder, spender)
 }
 
 // BalanceOf is a free data retrieval call binding the contract method 0x70a08231.
 //
-// Solidity: function balanceOf(owner address) constant returns(uint256)
-func (_Burnable *BurnableCaller) BalanceOf(opts *bind.CallOpts, owner common.Address) (*big.Int, error) {
+// Solidity: function balanceOf(holder address) constant returns(uint256)
+func (_Burnable *BurnableCaller) BalanceOf(opts *bind.CallOpts, holder common.Address) (*big.Int, error) {
 	var (
 		ret0 = new(*big.Int)
 	)
 	out := ret0
-	err := _Burnable.contract.Call(opts, out, "balanceOf", owner)
+	err := _Burnable.contract.Call(opts, out, "balanceOf", holder)
 	return *ret0, err
 }
 
 // BalanceOf is a free data retrieval call binding the contract method 0x70a08231.
 //
-// Solidity: function balanceOf(owner address) constant returns(uint256)
-func (_Burnable *BurnableSession) BalanceOf(owner common.Address) (*big.Int, error) {
-	return _Burnable.Contract.BalanceOf(&_Burnable.CallOpts, owner)
+// Solidity: function balanceOf(holder address) constant returns(uint256)
+func (_Burnable *BurnableSession) BalanceOf(holder common.Address) (*big.Int, error) {
+	return _Burnable.Contract.BalanceOf(&_Burnable.CallOpts, holder)
 }
 
 // BalanceOf is a free data retrieval call binding the contract method 0x70a08231.
 //
-// Solidity: function balanceOf(owner address) constant returns(uint256)
-func (_Burnable *BurnableCallerSession) BalanceOf(owner common.Address) (*big.Int, error) {
-	return _Burnable.Contract.BalanceOf(&_Burnable.CallOpts, owner)
+// Solidity: function balanceOf(holder address) constant returns(uint256)
+func (_Burnable *BurnableCallerSession) BalanceOf(holder common.Address) (*big.Int, error) {
+	return _Burnable.Contract.BalanceOf(&_Burnable.CallOpts, holder)
 }
 
 // TotalSupply is a free data retrieval call binding the contract method 0x18160ddd.
@@ -846,7 +846,7 @@ func (it *BurnableApprovalIterator) Close() error {
 
 // BurnableApproval represents a Approval event raised by the Burnable contract.
 type BurnableApproval struct {
-	Owner   common.Address
+	Holder  common.Address
 	Spender common.Address
 	Value   *big.Int
 	Raw     types.Log // Blockchain specific contextual infos
@@ -854,19 +854,19 @@ type BurnableApproval struct {
 
 // FilterApproval is a free log retrieval operation binding the contract event 0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925.
 //
-// Solidity: e Approval(owner indexed address, spender indexed address, value uint256)
-func (_Burnable *BurnableFilterer) FilterApproval(opts *bind.FilterOpts, owner []common.Address, spender []common.Address) (*BurnableApprovalIterator, error) {
+// Solidity: e Approval(holder indexed address, spender indexed address, value uint256)
+func (_Burnable *BurnableFilterer) FilterApproval(opts *bind.FilterOpts, holder []common.Address, spender []common.Address) (*BurnableApprovalIterator, error) {
 
-	var ownerRule []interface{}
-	for _, ownerItem := range owner {
-		ownerRule = append(ownerRule, ownerItem)
+	var holderRule []interface{}
+	for _, holderItem := range holder {
+		holderRule = append(holderRule, holderItem)
 	}
 	var spenderRule []interface{}
 	for _, spenderItem := range spender {
 		spenderRule = append(spenderRule, spenderItem)
 	}
 
-	logs, sub, err := _Burnable.contract.FilterLogs(opts, "Approval", ownerRule, spenderRule)
+	logs, sub, err := _Burnable.contract.FilterLogs(opts, "Approval", holderRule, spenderRule)
 	if err != nil {
 		return nil, err
 	}
@@ -875,19 +875,19 @@ func (_Burnable *BurnableFilterer) FilterApproval(opts *bind.FilterOpts, owner [
 
 // WatchApproval is a free log subscription operation binding the contract event 0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925.
 //
-// Solidity: e Approval(owner indexed address, spender indexed address, value uint256)
-func (_Burnable *BurnableFilterer) WatchApproval(opts *bind.WatchOpts, sink chan<- *BurnableApproval, owner []common.Address, spender []common.Address) (event.Subscription, error) {
+// Solidity: e Approval(holder indexed address, spender indexed address, value uint256)
+func (_Burnable *BurnableFilterer) WatchApproval(opts *bind.WatchOpts, sink chan<- *BurnableApproval, holder []common.Address, spender []common.Address) (event.Subscription, error) {
 
-	var ownerRule []interface{}
-	for _, ownerItem := range owner {
-		ownerRule = append(ownerRule, ownerItem)
+	var holderRule []interface{}
+	for _, holderItem := range holder {
+		holderRule = append(holderRule, holderItem)
 	}
 	var spenderRule []interface{}
 	for _, spenderItem := range spender {
 		spenderRule = append(spenderRule, spenderItem)
 	}
 
-	logs, sub, err := _Burnable.contract.WatchLogs(opts, "Approval", ownerRule, spenderRule)
+	logs, sub, err := _Burnable.contract.WatchLogs(opts, "Approval", holderRule, spenderRule)
 	if err != nil {
 		return nil, err
 	}
@@ -1195,10 +1195,10 @@ func (_Burnable *BurnableFilterer) WatchTransfer(opts *bind.WatchOpts, sink chan
 }
 
 // ConstructableBurnableABI is the input ABI used to generate the binding from.
-const ConstructableBurnableABI = "[{\"constant\":false,\"inputs\":[{\"name\":\"spender\",\"type\":\"address\"},{\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"approve\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"totalSupply\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"from\",\"type\":\"address\"},{\"name\":\"to\",\"type\":\"address\"},{\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"transferFrom\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"burn\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"spender\",\"type\":\"address\"},{\"name\":\"subtractedValue\",\"type\":\"uint256\"}],\"name\":\"decreaseApproval\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"owner\",\"type\":\"address\"}],\"name\":\"balanceOf\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"from\",\"type\":\"address\"},{\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"burnFrom\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"to\",\"type\":\"address\"},{\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"transfer\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"spender\",\"type\":\"address\"},{\"name\":\"addedValue\",\"type\":\"uint256\"}],\"name\":\"increaseApproval\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"owner\",\"type\":\"address\"},{\"name\":\"spender\",\"type\":\"address\"}],\"name\":\"allowance\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"name\":\"initialAccount\",\"type\":\"address\"},{\"name\":\"initialBalance\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"burner\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"Burn\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"owner\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"spender\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"Approval\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"from\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"to\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"Transfer\",\"type\":\"event\"}]"
+const ConstructableBurnableABI = "[{\"constant\":false,\"inputs\":[{\"name\":\"spender\",\"type\":\"address\"},{\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"approve\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"totalSupply\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"from\",\"type\":\"address\"},{\"name\":\"to\",\"type\":\"address\"},{\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"transferFrom\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"burn\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"spender\",\"type\":\"address\"},{\"name\":\"subtractedValue\",\"type\":\"uint256\"}],\"name\":\"decreaseApproval\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"holder\",\"type\":\"address\"}],\"name\":\"balanceOf\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"from\",\"type\":\"address\"},{\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"burnFrom\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"to\",\"type\":\"address\"},{\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"transfer\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"spender\",\"type\":\"address\"},{\"name\":\"addedValue\",\"type\":\"uint256\"}],\"name\":\"increaseApproval\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"holder\",\"type\":\"address\"},{\"name\":\"spender\",\"type\":\"address\"}],\"name\":\"allowance\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"name\":\"initialAccount\",\"type\":\"address\"},{\"name\":\"initialBalance\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"burner\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"Burn\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"holder\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"spender\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"Approval\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"from\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"to\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"Transfer\",\"type\":\"event\"}]"
 
 // ConstructableBurnableBin is the compiled bytecode used for deploying new contracts.
-const ConstructableBurnableBin = `0x608060405234801561001057600080fd5b50604051604080610c188339810160409081528151602092830151600160a060020a039091166000908152928390529120819055600155610bc2806100566000396000f3006080604052600436106100a35763ffffffff7c0100000000000000000000000000000000000000000000000000000000600035041663095ea7b381146100a857806318160ddd146100e057806323b872dd1461010757806342966c6814610131578063661884631461014b57806370a082311461016f57806379cc679014610190578063a9059cbb146101b4578063d73dd623146101d8578063dd62ed3e146101fc575b600080fd5b3480156100b457600080fd5b506100cc600160a060020a0360043516602435610223565b604080519115158252519081900360200190f35b3480156100ec57600080fd5b506100f5610289565b60408051918252519081900360200190f35b34801561011357600080fd5b506100cc600160a060020a036004358116906024351660443561028f565b34801561013d57600080fd5b50610149600435610559565b005b34801561015757600080fd5b506100cc600160a060020a0360043516602435610566565b34801561017b57600080fd5b506100f5600160a060020a0360043516610656565b34801561019c57600080fd5b50610149600160a060020a0360043516602435610671565b3480156101c057600080fd5b506100cc600160a060020a0360043516602435610778565b3480156101e457600080fd5b506100cc600160a060020a036004351660243561093b565b34801561020857600080fd5b506100f5600160a060020a03600435811690602435166109d4565b336000818152600260209081526040808320600160a060020a038716808552908352818420869055815186815291519394909390927f8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925928290030190a350600192915050565b60015490565b6000600160a060020a0383161515610317576040805160e560020a62461bcd02815260206004820152603b60248201527f4572726f723a5374616e646172642e7472616e7366657246726f6d202d20277460448201527f6f272061646472657373206d6179206e6f74206265206f776e65720000000000606482015290519081900360840190fd5b600160a060020a0384166000908152602081905260409020548211156103ad576040805160e560020a62461bcd02815260206004820152603d60248201527f4572726f723a5374616e646172642e7472616e7366657246726f6d202d20566160448201527f6c7565206578636565647320617661696c61626c652062616c616e6365000000606482015290519081900360840190fd5b600160a060020a038416600090815260026020908152604080832033845290915290205482111561044e576040805160e560020a62461bcd02815260206004820152603a60248201527f4572726f722e5374616e646172642e7472616e7366657246726f6d202d20566160448201527f6c7565206578636565647320616c6c6f77656420616d6f756e74000000000000606482015290519081900360840190fd5b600160a060020a038416600090815260208190526040902054610477908363ffffffff6109ff16565b600160a060020a0380861660009081526020819052604080822093909355908516815220546104ac908363ffffffff610a1116565b600160a060020a038085166000908152602081815260408083209490945591871681526002825282812033825290915220546104ee908363ffffffff6109ff16565b600160a060020a03808616600081815260026020908152604080832033845282529182902094909455805186815290519287169391927fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef929181900390910190a35060019392505050565b6105633382610a24565b50565b336000908152600260209081526040808320600160a060020a0386168452909152812054808311156105bb57336000908152600260209081526040808320600160a060020a03881684529091528120556105f0565b6105cb818463ffffffff6109ff16565b336000908152600260209081526040808320600160a060020a03891684529091529020555b336000818152600260209081526040808320600160a060020a0389168085529083529281902054815190815290519293927f8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925929181900390910190a35060019392505050565b600160a060020a031660009081526020819052604090205490565b600160a060020a0382166000908152600260209081526040808320338452909152902054811115610712576040805160e560020a62461bcd02815260206004820152603660248201527f4572726f723a4275726e61626c652e6275726e46726f6d202d2056616c75652060448201527f6578636565647320616c6c6f77656420616d6f756e7400000000000000000000606482015290519081900360840190fd5b600160a060020a0382166000908152600260209081526040808320338452909152902054610746908263ffffffff6109ff16565b600160a060020a03831660009081526002602090815260408083203384529091529020556107748282610a24565b5050565b6000600160a060020a0383161515610800576040805160e560020a62461bcd02815260206004820152603360248201527f4572726f723a42617369632e7472616e73666572202d2027746f27206164647260448201527f6573732063616e6e6f74206265206f776e657200000000000000000000000000606482015290519081900360840190fd5b3360009081526020819052604090205482111561088d576040805160e560020a62461bcd02815260206004820152603e60248201527f4572726f723a42617369632e7472616e73666572202d2056616c75652065786360448201527f65656473207468652062616c616e6365206f66206d73672e73656e6465720000606482015290519081900360840190fd5b336000908152602081905260409020546108ad908363ffffffff6109ff16565b3360009081526020819052604080822092909255600160a060020a038516815220546108df908363ffffffff610a1116565b600160a060020a038416600081815260208181526040918290209390935580518581529051919233927fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef9281900390910190a350600192915050565b336000908152600260209081526040808320600160a060020a038616845290915281205461096f908363ffffffff610a1116565b336000818152600260209081526040808320600160a060020a0389168085529083529281902085905580519485525191937f8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925929081900390910190a350600192915050565b600160a060020a03918216600090815260026020908152604080832093909416825291909152205490565b600082821115610a0b57fe5b50900390565b81810182811015610a1e57fe5b92915050565b600160a060020a038216600090815260208190526040902054811115610aba576040805160e560020a62461bcd02815260206004820152603760248201527f4572726f723a4275726e61626c652e646f4275726e202d2056616c756520657860448201527f636565647320617661696c61626c652062616c616e6365000000000000000000606482015290519081900360840190fd5b600160a060020a038216600090815260208190526040902054610ae3908263ffffffff6109ff16565b600160a060020a038316600090815260208190526040902055600154610b0f908263ffffffff6109ff16565b600155604080518281529051600160a060020a038416917fcc16f5dbb4873280815c1ee09dbd06736cffcc184412cf7a71a0fdb75d397ca5919081900360200190a2604080518281529051600091600160a060020a038516917fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef9181900360200190a350505600a165627a7a72305820ebe8f650d525b8ad72d3d9c5cf6d1cf21d440fc259c6fc24378d7c90a18c6a150029`
+const ConstructableBurnableBin = `0x608060405234801561001057600080fd5b50604051604080610c188339810160409081528151602092830151600160a060020a039091166000908152928390529120819055600155610bc2806100566000396000f3006080604052600436106100a35763ffffffff7c0100000000000000000000000000000000000000000000000000000000600035041663095ea7b381146100a857806318160ddd146100e057806323b872dd1461010757806342966c6814610131578063661884631461014b57806370a082311461016f57806379cc679014610190578063a9059cbb146101b4578063d73dd623146101d8578063dd62ed3e146101fc575b600080fd5b3480156100b457600080fd5b506100cc600160a060020a0360043516602435610223565b604080519115158252519081900360200190f35b3480156100ec57600080fd5b506100f5610289565b60408051918252519081900360200190f35b34801561011357600080fd5b506100cc600160a060020a036004358116906024351660443561028f565b34801561013d57600080fd5b50610149600435610559565b005b34801561015757600080fd5b506100cc600160a060020a0360043516602435610566565b34801561017b57600080fd5b506100f5600160a060020a0360043516610656565b34801561019c57600080fd5b50610149600160a060020a0360043516602435610671565b3480156101c057600080fd5b506100cc600160a060020a0360043516602435610778565b3480156101e457600080fd5b506100cc600160a060020a036004351660243561093b565b34801561020857600080fd5b506100f5600160a060020a03600435811690602435166109d4565b336000818152600260209081526040808320600160a060020a038716808552908352818420869055815186815291519394909390927f8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925928290030190a350600192915050565b60015490565b6000600160a060020a0383161515610317576040805160e560020a62461bcd02815260206004820152603e60248201527f4572726f723a5374616e646172642e7472616e7366657246726f6d202d20277460448201527f6f27206d6179206e6f7420626520746865207a65726f2d616464726573730000606482015290519081900360840190fd5b600160a060020a0384166000908152602081905260409020548211156103ad576040805160e560020a62461bcd02815260206004820152603d60248201527f4572726f723a5374616e646172642e7472616e7366657246726f6d202d20566160448201527f6c7565206578636565647320617661696c61626c652062616c616e6365000000606482015290519081900360840190fd5b600160a060020a038416600090815260026020908152604080832033845290915290205482111561044e576040805160e560020a62461bcd02815260206004820152603a60248201527f4572726f722e5374616e646172642e7472616e7366657246726f6d202d20566160448201527f6c7565206578636565647320616c6c6f77656420616d6f756e74000000000000606482015290519081900360840190fd5b600160a060020a038416600090815260208190526040902054610477908363ffffffff6109ff16565b600160a060020a0380861660009081526020819052604080822093909355908516815220546104ac908363ffffffff610a1116565b600160a060020a038085166000908152602081815260408083209490945591871681526002825282812033825290915220546104ee908363ffffffff6109ff16565b600160a060020a03808616600081815260026020908152604080832033845282529182902094909455805186815290519287169391927fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef929181900390910190a35060019392505050565b6105633382610a24565b50565b336000908152600260209081526040808320600160a060020a0386168452909152812054808311156105bb57336000908152600260209081526040808320600160a060020a03881684529091528120556105f0565b6105cb818463ffffffff6109ff16565b336000908152600260209081526040808320600160a060020a03891684529091529020555b336000818152600260209081526040808320600160a060020a0389168085529083529281902054815190815290519293927f8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925929181900390910190a35060019392505050565b600160a060020a031660009081526020819052604090205490565b600160a060020a0382166000908152600260209081526040808320338452909152902054811115610712576040805160e560020a62461bcd02815260206004820152603660248201527f4572726f723a4275726e61626c652e6275726e46726f6d202d2056616c75652060448201527f6578636565647320616c6c6f77656420616d6f756e7400000000000000000000606482015290519081900360840190fd5b600160a060020a0382166000908152600260209081526040808320338452909152902054610746908263ffffffff6109ff16565b600160a060020a03831660009081526002602090815260408083203384529091529020556107748282610a24565b5050565b6000600160a060020a0383161515610800576040805160e560020a62461bcd02815260206004820152603660248201527f4572726f723a42617369632e7472616e73666572202d2027746f272063616e6e60448201527f6f7420626520746865207a65726f2d6164647265737300000000000000000000606482015290519081900360840190fd5b3360009081526020819052604090205482111561088d576040805160e560020a62461bcd02815260206004820152603e60248201527f4572726f723a42617369632e7472616e73666572202d2056616c75652065786360448201527f65656473207468652062616c616e6365206f66206d73672e73656e6465720000606482015290519081900360840190fd5b336000908152602081905260409020546108ad908363ffffffff6109ff16565b3360009081526020819052604080822092909255600160a060020a038516815220546108df908363ffffffff610a1116565b600160a060020a038416600081815260208181526040918290209390935580518581529051919233927fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef9281900390910190a350600192915050565b336000908152600260209081526040808320600160a060020a038616845290915281205461096f908363ffffffff610a1116565b336000818152600260209081526040808320600160a060020a0389168085529083529281902085905580519485525191937f8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925929081900390910190a350600192915050565b600160a060020a03918216600090815260026020908152604080832093909416825291909152205490565b600082821115610a0b57fe5b50900390565b81810182811015610a1e57fe5b92915050565b600160a060020a038216600090815260208190526040902054811115610aba576040805160e560020a62461bcd02815260206004820152603760248201527f4572726f723a4275726e61626c652e646f4275726e202d2056616c756520657860448201527f636565647320617661696c61626c652062616c616e6365000000000000000000606482015290519081900360840190fd5b600160a060020a038216600090815260208190526040902054610ae3908263ffffffff6109ff16565b600160a060020a038316600090815260208190526040902055600154610b0f908263ffffffff6109ff16565b600155604080518281529051600160a060020a038416917fcc16f5dbb4873280815c1ee09dbd06736cffcc184412cf7a71a0fdb75d397ca5919081900360200190a2604080518281529051600091600160a060020a038516917fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef9181900360200190a350505600a165627a7a7230582095c1df7eb884e6f519fc2e84fcf385f70904b66121f3b859d6c392857efe2ba70029`
 
 // DeployConstructableBurnable deploys a new Ethereum contract, binding an instance of ConstructableBurnable to it.
 func DeployConstructableBurnable(auth *bind.TransactOpts, backend bind.ContractBackend, initialAccount common.Address, initialBalance *big.Int) (common.Address, *types.Transaction, *ConstructableBurnable, error) {
@@ -1357,54 +1357,54 @@ func (_ConstructableBurnable *ConstructableBurnableTransactorRaw) Transact(opts 
 
 // Allowance is a free data retrieval call binding the contract method 0xdd62ed3e.
 //
-// Solidity: function allowance(owner address, spender address) constant returns(uint256)
-func (_ConstructableBurnable *ConstructableBurnableCaller) Allowance(opts *bind.CallOpts, owner common.Address, spender common.Address) (*big.Int, error) {
+// Solidity: function allowance(holder address, spender address) constant returns(uint256)
+func (_ConstructableBurnable *ConstructableBurnableCaller) Allowance(opts *bind.CallOpts, holder common.Address, spender common.Address) (*big.Int, error) {
 	var (
 		ret0 = new(*big.Int)
 	)
 	out := ret0
-	err := _ConstructableBurnable.contract.Call(opts, out, "allowance", owner, spender)
+	err := _ConstructableBurnable.contract.Call(opts, out, "allowance", holder, spender)
 	return *ret0, err
 }
 
 // Allowance is a free data retrieval call binding the contract method 0xdd62ed3e.
 //
-// Solidity: function allowance(owner address, spender address) constant returns(uint256)
-func (_ConstructableBurnable *ConstructableBurnableSession) Allowance(owner common.Address, spender common.Address) (*big.Int, error) {
-	return _ConstructableBurnable.Contract.Allowance(&_ConstructableBurnable.CallOpts, owner, spender)
+// Solidity: function allowance(holder address, spender address) constant returns(uint256)
+func (_ConstructableBurnable *ConstructableBurnableSession) Allowance(holder common.Address, spender common.Address) (*big.Int, error) {
+	return _ConstructableBurnable.Contract.Allowance(&_ConstructableBurnable.CallOpts, holder, spender)
 }
 
 // Allowance is a free data retrieval call binding the contract method 0xdd62ed3e.
 //
-// Solidity: function allowance(owner address, spender address) constant returns(uint256)
-func (_ConstructableBurnable *ConstructableBurnableCallerSession) Allowance(owner common.Address, spender common.Address) (*big.Int, error) {
-	return _ConstructableBurnable.Contract.Allowance(&_ConstructableBurnable.CallOpts, owner, spender)
+// Solidity: function allowance(holder address, spender address) constant returns(uint256)
+func (_ConstructableBurnable *ConstructableBurnableCallerSession) Allowance(holder common.Address, spender common.Address) (*big.Int, error) {
+	return _ConstructableBurnable.Contract.Allowance(&_ConstructableBurnable.CallOpts, holder, spender)
 }
 
 // BalanceOf is a free data retrieval call binding the contract method 0x70a08231.
 //
-// Solidity: function balanceOf(owner address) constant returns(uint256)
-func (_ConstructableBurnable *ConstructableBurnableCaller) BalanceOf(opts *bind.CallOpts, owner common.Address) (*big.Int, error) {
+// Solidity: function balanceOf(holder address) constant returns(uint256)
+func (_ConstructableBurnable *ConstructableBurnableCaller) BalanceOf(opts *bind.CallOpts, holder common.Address) (*big.Int, error) {
 	var (
 		ret0 = new(*big.Int)
 	)
 	out := ret0
-	err := _ConstructableBurnable.contract.Call(opts, out, "balanceOf", owner)
+	err := _ConstructableBurnable.contract.Call(opts, out, "balanceOf", holder)
 	return *ret0, err
 }
 
 // BalanceOf is a free data retrieval call binding the contract method 0x70a08231.
 //
-// Solidity: function balanceOf(owner address) constant returns(uint256)
-func (_ConstructableBurnable *ConstructableBurnableSession) BalanceOf(owner common.Address) (*big.Int, error) {
-	return _ConstructableBurnable.Contract.BalanceOf(&_ConstructableBurnable.CallOpts, owner)
+// Solidity: function balanceOf(holder address) constant returns(uint256)
+func (_ConstructableBurnable *ConstructableBurnableSession) BalanceOf(holder common.Address) (*big.Int, error) {
+	return _ConstructableBurnable.Contract.BalanceOf(&_ConstructableBurnable.CallOpts, holder)
 }
 
 // BalanceOf is a free data retrieval call binding the contract method 0x70a08231.
 //
-// Solidity: function balanceOf(owner address) constant returns(uint256)
-func (_ConstructableBurnable *ConstructableBurnableCallerSession) BalanceOf(owner common.Address) (*big.Int, error) {
-	return _ConstructableBurnable.Contract.BalanceOf(&_ConstructableBurnable.CallOpts, owner)
+// Solidity: function balanceOf(holder address) constant returns(uint256)
+func (_ConstructableBurnable *ConstructableBurnableCallerSession) BalanceOf(holder common.Address) (*big.Int, error) {
+	return _ConstructableBurnable.Contract.BalanceOf(&_ConstructableBurnable.CallOpts, holder)
 }
 
 // TotalSupply is a free data retrieval call binding the contract method 0x18160ddd.
@@ -1649,7 +1649,7 @@ func (it *ConstructableBurnableApprovalIterator) Close() error {
 
 // ConstructableBurnableApproval represents a Approval event raised by the ConstructableBurnable contract.
 type ConstructableBurnableApproval struct {
-	Owner   common.Address
+	Holder  common.Address
 	Spender common.Address
 	Value   *big.Int
 	Raw     types.Log // Blockchain specific contextual infos
@@ -1657,19 +1657,19 @@ type ConstructableBurnableApproval struct {
 
 // FilterApproval is a free log retrieval operation binding the contract event 0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925.
 //
-// Solidity: e Approval(owner indexed address, spender indexed address, value uint256)
-func (_ConstructableBurnable *ConstructableBurnableFilterer) FilterApproval(opts *bind.FilterOpts, owner []common.Address, spender []common.Address) (*ConstructableBurnableApprovalIterator, error) {
+// Solidity: e Approval(holder indexed address, spender indexed address, value uint256)
+func (_ConstructableBurnable *ConstructableBurnableFilterer) FilterApproval(opts *bind.FilterOpts, holder []common.Address, spender []common.Address) (*ConstructableBurnableApprovalIterator, error) {
 
-	var ownerRule []interface{}
-	for _, ownerItem := range owner {
-		ownerRule = append(ownerRule, ownerItem)
+	var holderRule []interface{}
+	for _, holderItem := range holder {
+		holderRule = append(holderRule, holderItem)
 	}
 	var spenderRule []interface{}
 	for _, spenderItem := range spender {
 		spenderRule = append(spenderRule, spenderItem)
 	}
 
-	logs, sub, err := _ConstructableBurnable.contract.FilterLogs(opts, "Approval", ownerRule, spenderRule)
+	logs, sub, err := _ConstructableBurnable.contract.FilterLogs(opts, "Approval", holderRule, spenderRule)
 	if err != nil {
 		return nil, err
 	}
@@ -1678,19 +1678,19 @@ func (_ConstructableBurnable *ConstructableBurnableFilterer) FilterApproval(opts
 
 // WatchApproval is a free log subscription operation binding the contract event 0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925.
 //
-// Solidity: e Approval(owner indexed address, spender indexed address, value uint256)
-func (_ConstructableBurnable *ConstructableBurnableFilterer) WatchApproval(opts *bind.WatchOpts, sink chan<- *ConstructableBurnableApproval, owner []common.Address, spender []common.Address) (event.Subscription, error) {
+// Solidity: e Approval(holder indexed address, spender indexed address, value uint256)
+func (_ConstructableBurnable *ConstructableBurnableFilterer) WatchApproval(opts *bind.WatchOpts, sink chan<- *ConstructableBurnableApproval, holder []common.Address, spender []common.Address) (event.Subscription, error) {
 
-	var ownerRule []interface{}
-	for _, ownerItem := range owner {
-		ownerRule = append(ownerRule, ownerItem)
+	var holderRule []interface{}
+	for _, holderItem := range holder {
+		holderRule = append(holderRule, holderItem)
 	}
 	var spenderRule []interface{}
 	for _, spenderItem := range spender {
 		spenderRule = append(spenderRule, spenderItem)
 	}
 
-	logs, sub, err := _ConstructableBurnable.contract.WatchLogs(opts, "Approval", ownerRule, spenderRule)
+	logs, sub, err := _ConstructableBurnable.contract.WatchLogs(opts, "Approval", holderRule, spenderRule)
 	if err != nil {
 		return nil, err
 	}
@@ -1998,7 +1998,7 @@ func (_ConstructableBurnable *ConstructableBurnableFilterer) WatchTransfer(opts 
 }
 
 // ERC20ABI is the input ABI used to generate the binding from.
-const ERC20ABI = "[{\"constant\":false,\"inputs\":[{\"name\":\"spender\",\"type\":\"address\"},{\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"approve\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"totalSupply\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"from\",\"type\":\"address\"},{\"name\":\"to\",\"type\":\"address\"},{\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"transferFrom\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"who\",\"type\":\"address\"}],\"name\":\"balanceOf\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"to\",\"type\":\"address\"},{\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"transfer\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"owner\",\"type\":\"address\"},{\"name\":\"spender\",\"type\":\"address\"}],\"name\":\"allowance\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"owner\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"spender\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"Approval\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"from\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"to\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"Transfer\",\"type\":\"event\"}]"
+const ERC20ABI = "[{\"constant\":false,\"inputs\":[{\"name\":\"spender\",\"type\":\"address\"},{\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"approve\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"totalSupply\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"from\",\"type\":\"address\"},{\"name\":\"to\",\"type\":\"address\"},{\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"transferFrom\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"who\",\"type\":\"address\"}],\"name\":\"balanceOf\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"to\",\"type\":\"address\"},{\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"transfer\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"holder\",\"type\":\"address\"},{\"name\":\"spender\",\"type\":\"address\"}],\"name\":\"allowance\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"holder\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"spender\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"Approval\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"from\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"to\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"Transfer\",\"type\":\"event\"}]"
 
 // ERC20Bin is the compiled bytecode used for deploying new contracts.
 const ERC20Bin = `0x`
@@ -2160,28 +2160,28 @@ func (_ERC20 *ERC20TransactorRaw) Transact(opts *bind.TransactOpts, method strin
 
 // Allowance is a free data retrieval call binding the contract method 0xdd62ed3e.
 //
-// Solidity: function allowance(owner address, spender address) constant returns(uint256)
-func (_ERC20 *ERC20Caller) Allowance(opts *bind.CallOpts, owner common.Address, spender common.Address) (*big.Int, error) {
+// Solidity: function allowance(holder address, spender address) constant returns(uint256)
+func (_ERC20 *ERC20Caller) Allowance(opts *bind.CallOpts, holder common.Address, spender common.Address) (*big.Int, error) {
 	var (
 		ret0 = new(*big.Int)
 	)
 	out := ret0
-	err := _ERC20.contract.Call(opts, out, "allowance", owner, spender)
+	err := _ERC20.contract.Call(opts, out, "allowance", holder, spender)
 	return *ret0, err
 }
 
 // Allowance is a free data retrieval call binding the contract method 0xdd62ed3e.
 //
-// Solidity: function allowance(owner address, spender address) constant returns(uint256)
-func (_ERC20 *ERC20Session) Allowance(owner common.Address, spender common.Address) (*big.Int, error) {
-	return _ERC20.Contract.Allowance(&_ERC20.CallOpts, owner, spender)
+// Solidity: function allowance(holder address, spender address) constant returns(uint256)
+func (_ERC20 *ERC20Session) Allowance(holder common.Address, spender common.Address) (*big.Int, error) {
+	return _ERC20.Contract.Allowance(&_ERC20.CallOpts, holder, spender)
 }
 
 // Allowance is a free data retrieval call binding the contract method 0xdd62ed3e.
 //
-// Solidity: function allowance(owner address, spender address) constant returns(uint256)
-func (_ERC20 *ERC20CallerSession) Allowance(owner common.Address, spender common.Address) (*big.Int, error) {
-	return _ERC20.Contract.Allowance(&_ERC20.CallOpts, owner, spender)
+// Solidity: function allowance(holder address, spender address) constant returns(uint256)
+func (_ERC20 *ERC20CallerSession) Allowance(holder common.Address, spender common.Address) (*big.Int, error) {
+	return _ERC20.Contract.Allowance(&_ERC20.CallOpts, holder, spender)
 }
 
 // BalanceOf is a free data retrieval call binding the contract method 0x70a08231.
@@ -2368,7 +2368,7 @@ func (it *ERC20ApprovalIterator) Close() error {
 
 // ERC20Approval represents a Approval event raised by the ERC20 contract.
 type ERC20Approval struct {
-	Owner   common.Address
+	Holder  common.Address
 	Spender common.Address
 	Value   *big.Int
 	Raw     types.Log // Blockchain specific contextual infos
@@ -2376,19 +2376,19 @@ type ERC20Approval struct {
 
 // FilterApproval is a free log retrieval operation binding the contract event 0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925.
 //
-// Solidity: e Approval(owner indexed address, spender indexed address, value uint256)
-func (_ERC20 *ERC20Filterer) FilterApproval(opts *bind.FilterOpts, owner []common.Address, spender []common.Address) (*ERC20ApprovalIterator, error) {
+// Solidity: e Approval(holder indexed address, spender indexed address, value uint256)
+func (_ERC20 *ERC20Filterer) FilterApproval(opts *bind.FilterOpts, holder []common.Address, spender []common.Address) (*ERC20ApprovalIterator, error) {
 
-	var ownerRule []interface{}
-	for _, ownerItem := range owner {
-		ownerRule = append(ownerRule, ownerItem)
+	var holderRule []interface{}
+	for _, holderItem := range holder {
+		holderRule = append(holderRule, holderItem)
 	}
 	var spenderRule []interface{}
 	for _, spenderItem := range spender {
 		spenderRule = append(spenderRule, spenderItem)
 	}
 
-	logs, sub, err := _ERC20.contract.FilterLogs(opts, "Approval", ownerRule, spenderRule)
+	logs, sub, err := _ERC20.contract.FilterLogs(opts, "Approval", holderRule, spenderRule)
 	if err != nil {
 		return nil, err
 	}
@@ -2397,19 +2397,19 @@ func (_ERC20 *ERC20Filterer) FilterApproval(opts *bind.FilterOpts, owner []commo
 
 // WatchApproval is a free log subscription operation binding the contract event 0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925.
 //
-// Solidity: e Approval(owner indexed address, spender indexed address, value uint256)
-func (_ERC20 *ERC20Filterer) WatchApproval(opts *bind.WatchOpts, sink chan<- *ERC20Approval, owner []common.Address, spender []common.Address) (event.Subscription, error) {
+// Solidity: e Approval(holder indexed address, spender indexed address, value uint256)
+func (_ERC20 *ERC20Filterer) WatchApproval(opts *bind.WatchOpts, sink chan<- *ERC20Approval, holder []common.Address, spender []common.Address) (event.Subscription, error) {
 
-	var ownerRule []interface{}
-	for _, ownerItem := range owner {
-		ownerRule = append(ownerRule, ownerItem)
+	var holderRule []interface{}
+	for _, holderItem := range holder {
+		holderRule = append(holderRule, holderItem)
 	}
 	var spenderRule []interface{}
 	for _, spenderItem := range spender {
 		spenderRule = append(spenderRule, spenderItem)
 	}
 
-	logs, sub, err := _ERC20.contract.WatchLogs(opts, "Approval", ownerRule, spenderRule)
+	logs, sub, err := _ERC20.contract.WatchLogs(opts, "Approval", holderRule, spenderRule)
 	if err != nil {
 		return nil, err
 	}
@@ -3121,10 +3121,10 @@ func (_SafeMath *SafeMathTransactorRaw) Transact(opts *bind.TransactOpts, method
 }
 
 // StandardABI is the input ABI used to generate the binding from.
-const StandardABI = "[{\"constant\":false,\"inputs\":[{\"name\":\"spender\",\"type\":\"address\"},{\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"approve\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"totalSupply\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"from\",\"type\":\"address\"},{\"name\":\"to\",\"type\":\"address\"},{\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"transferFrom\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"spender\",\"type\":\"address\"},{\"name\":\"subtractedValue\",\"type\":\"uint256\"}],\"name\":\"decreaseApproval\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"owner\",\"type\":\"address\"}],\"name\":\"balanceOf\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"to\",\"type\":\"address\"},{\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"transfer\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"spender\",\"type\":\"address\"},{\"name\":\"addedValue\",\"type\":\"uint256\"}],\"name\":\"increaseApproval\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"owner\",\"type\":\"address\"},{\"name\":\"spender\",\"type\":\"address\"}],\"name\":\"allowance\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"owner\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"spender\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"Approval\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"from\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"to\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"Transfer\",\"type\":\"event\"}]"
+const StandardABI = "[{\"constant\":false,\"inputs\":[{\"name\":\"spender\",\"type\":\"address\"},{\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"approve\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"totalSupply\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"from\",\"type\":\"address\"},{\"name\":\"to\",\"type\":\"address\"},{\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"transferFrom\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"spender\",\"type\":\"address\"},{\"name\":\"subtractedValue\",\"type\":\"uint256\"}],\"name\":\"decreaseApproval\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"holder\",\"type\":\"address\"}],\"name\":\"balanceOf\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"to\",\"type\":\"address\"},{\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"transfer\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"spender\",\"type\":\"address\"},{\"name\":\"addedValue\",\"type\":\"uint256\"}],\"name\":\"increaseApproval\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"holder\",\"type\":\"address\"},{\"name\":\"spender\",\"type\":\"address\"}],\"name\":\"allowance\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"holder\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"spender\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"Approval\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"from\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"to\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"Transfer\",\"type\":\"event\"}]"
 
 // StandardBin is the compiled bytecode used for deploying new contracts.
-const StandardBin = `0x608060405234801561001057600080fd5b506108e8806100206000396000f30060806040526004361061008d5763ffffffff7c0100000000000000000000000000000000000000000000000000000000600035041663095ea7b3811461009257806318160ddd146100ca57806323b872dd146100f1578063661884631461011b57806370a082311461013f578063a9059cbb14610160578063d73dd62314610184578063dd62ed3e146101a8575b600080fd5b34801561009e57600080fd5b506100b6600160a060020a03600435166024356101cf565b604080519115158252519081900360200190f35b3480156100d657600080fd5b506100df610235565b60408051918252519081900360200190f35b3480156100fd57600080fd5b506100b6600160a060020a036004358116906024351660443561023b565b34801561012757600080fd5b506100b6600160a060020a0360043516602435610505565b34801561014b57600080fd5b506100df600160a060020a03600435166105f5565b34801561016c57600080fd5b506100b6600160a060020a0360043516602435610610565b34801561019057600080fd5b506100b6600160a060020a03600435166024356107d3565b3480156101b457600080fd5b506100df600160a060020a036004358116906024351661086c565b336000818152600260209081526040808320600160a060020a038716808552908352818420869055815186815291519394909390927f8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925928290030190a350600192915050565b60015490565b6000600160a060020a03831615156102c3576040805160e560020a62461bcd02815260206004820152603b60248201527f4572726f723a5374616e646172642e7472616e7366657246726f6d202d20277460448201527f6f272061646472657373206d6179206e6f74206265206f776e65720000000000606482015290519081900360840190fd5b600160a060020a038416600090815260208190526040902054821115610359576040805160e560020a62461bcd02815260206004820152603d60248201527f4572726f723a5374616e646172642e7472616e7366657246726f6d202d20566160448201527f6c7565206578636565647320617661696c61626c652062616c616e6365000000606482015290519081900360840190fd5b600160a060020a03841660009081526002602090815260408083203384529091529020548211156103fa576040805160e560020a62461bcd02815260206004820152603a60248201527f4572726f722e5374616e646172642e7472616e7366657246726f6d202d20566160448201527f6c7565206578636565647320616c6c6f77656420616d6f756e74000000000000606482015290519081900360840190fd5b600160a060020a038416600090815260208190526040902054610423908363ffffffff61089716565b600160a060020a038086166000908152602081905260408082209390935590851681522054610458908363ffffffff6108a916565b600160a060020a0380851660009081526020818152604080832094909455918716815260028252828120338252909152205461049a908363ffffffff61089716565b600160a060020a03808616600081815260026020908152604080832033845282529182902094909455805186815290519287169391927fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef929181900390910190a35060019392505050565b336000908152600260209081526040808320600160a060020a03861684529091528120548083111561055a57336000908152600260209081526040808320600160a060020a038816845290915281205561058f565b61056a818463ffffffff61089716565b336000908152600260209081526040808320600160a060020a03891684529091529020555b336000818152600260209081526040808320600160a060020a0389168085529083529281902054815190815290519293927f8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925929181900390910190a35060019392505050565b600160a060020a031660009081526020819052604090205490565b6000600160a060020a0383161515610698576040805160e560020a62461bcd02815260206004820152603360248201527f4572726f723a42617369632e7472616e73666572202d2027746f27206164647260448201527f6573732063616e6e6f74206265206f776e657200000000000000000000000000606482015290519081900360840190fd5b33600090815260208190526040902054821115610725576040805160e560020a62461bcd02815260206004820152603e60248201527f4572726f723a42617369632e7472616e73666572202d2056616c75652065786360448201527f65656473207468652062616c616e6365206f66206d73672e73656e6465720000606482015290519081900360840190fd5b33600090815260208190526040902054610745908363ffffffff61089716565b3360009081526020819052604080822092909255600160a060020a03851681522054610777908363ffffffff6108a916565b600160a060020a038416600081815260208181526040918290209390935580518581529051919233927fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef9281900390910190a350600192915050565b336000908152600260209081526040808320600160a060020a0386168452909152812054610807908363ffffffff6108a916565b336000818152600260209081526040808320600160a060020a0389168085529083529281902085905580519485525191937f8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925929081900390910190a350600192915050565b600160a060020a03918216600090815260026020908152604080832093909416825291909152205490565b6000828211156108a357fe5b50900390565b818101828110156108b657fe5b929150505600a165627a7a723058202266ce16dac4411b2e118fd264e32cb367d5dc01111e3087393367a3a452f6420029`
+const StandardBin = `0x608060405234801561001057600080fd5b506108e8806100206000396000f30060806040526004361061008d5763ffffffff7c0100000000000000000000000000000000000000000000000000000000600035041663095ea7b3811461009257806318160ddd146100ca57806323b872dd146100f1578063661884631461011b57806370a082311461013f578063a9059cbb14610160578063d73dd62314610184578063dd62ed3e146101a8575b600080fd5b34801561009e57600080fd5b506100b6600160a060020a03600435166024356101cf565b604080519115158252519081900360200190f35b3480156100d657600080fd5b506100df610235565b60408051918252519081900360200190f35b3480156100fd57600080fd5b506100b6600160a060020a036004358116906024351660443561023b565b34801561012757600080fd5b506100b6600160a060020a0360043516602435610505565b34801561014b57600080fd5b506100df600160a060020a03600435166105f5565b34801561016c57600080fd5b506100b6600160a060020a0360043516602435610610565b34801561019057600080fd5b506100b6600160a060020a03600435166024356107d3565b3480156101b457600080fd5b506100df600160a060020a036004358116906024351661086c565b336000818152600260209081526040808320600160a060020a038716808552908352818420869055815186815291519394909390927f8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925928290030190a350600192915050565b60015490565b6000600160a060020a03831615156102c3576040805160e560020a62461bcd02815260206004820152603e60248201527f4572726f723a5374616e646172642e7472616e7366657246726f6d202d20277460448201527f6f27206d6179206e6f7420626520746865207a65726f2d616464726573730000606482015290519081900360840190fd5b600160a060020a038416600090815260208190526040902054821115610359576040805160e560020a62461bcd02815260206004820152603d60248201527f4572726f723a5374616e646172642e7472616e7366657246726f6d202d20566160448201527f6c7565206578636565647320617661696c61626c652062616c616e6365000000606482015290519081900360840190fd5b600160a060020a03841660009081526002602090815260408083203384529091529020548211156103fa576040805160e560020a62461bcd02815260206004820152603a60248201527f4572726f722e5374616e646172642e7472616e7366657246726f6d202d20566160448201527f6c7565206578636565647320616c6c6f77656420616d6f756e74000000000000606482015290519081900360840190fd5b600160a060020a038416600090815260208190526040902054610423908363ffffffff61089716565b600160a060020a038086166000908152602081905260408082209390935590851681522054610458908363ffffffff6108a916565b600160a060020a0380851660009081526020818152604080832094909455918716815260028252828120338252909152205461049a908363ffffffff61089716565b600160a060020a03808616600081815260026020908152604080832033845282529182902094909455805186815290519287169391927fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef929181900390910190a35060019392505050565b336000908152600260209081526040808320600160a060020a03861684529091528120548083111561055a57336000908152600260209081526040808320600160a060020a038816845290915281205561058f565b61056a818463ffffffff61089716565b336000908152600260209081526040808320600160a060020a03891684529091529020555b336000818152600260209081526040808320600160a060020a0389168085529083529281902054815190815290519293927f8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925929181900390910190a35060019392505050565b600160a060020a031660009081526020819052604090205490565b6000600160a060020a0383161515610698576040805160e560020a62461bcd02815260206004820152603660248201527f4572726f723a42617369632e7472616e73666572202d2027746f272063616e6e60448201527f6f7420626520746865207a65726f2d6164647265737300000000000000000000606482015290519081900360840190fd5b33600090815260208190526040902054821115610725576040805160e560020a62461bcd02815260206004820152603e60248201527f4572726f723a42617369632e7472616e73666572202d2056616c75652065786360448201527f65656473207468652062616c616e6365206f66206d73672e73656e6465720000606482015290519081900360840190fd5b33600090815260208190526040902054610745908363ffffffff61089716565b3360009081526020819052604080822092909255600160a060020a03851681522054610777908363ffffffff6108a916565b600160a060020a038416600081815260208181526040918290209390935580518581529051919233927fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef9281900390910190a350600192915050565b336000908152600260209081526040808320600160a060020a0386168452909152812054610807908363ffffffff6108a916565b336000818152600260209081526040808320600160a060020a0389168085529083529281902085905580519485525191937f8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925929081900390910190a350600192915050565b600160a060020a03918216600090815260026020908152604080832093909416825291909152205490565b6000828211156108a357fe5b50900390565b818101828110156108b657fe5b929150505600a165627a7a72305820cef69d4948e073bae1850cb7e980141cc955fc6ccd1c9234f3958e15734860930029`
 
 // DeployStandard deploys a new Ethereum contract, binding an instance of Standard to it.
 func DeployStandard(auth *bind.TransactOpts, backend bind.ContractBackend) (common.Address, *types.Transaction, *Standard, error) {
@@ -3283,54 +3283,54 @@ func (_Standard *StandardTransactorRaw) Transact(opts *bind.TransactOpts, method
 
 // Allowance is a free data retrieval call binding the contract method 0xdd62ed3e.
 //
-// Solidity: function allowance(owner address, spender address) constant returns(uint256)
-func (_Standard *StandardCaller) Allowance(opts *bind.CallOpts, owner common.Address, spender common.Address) (*big.Int, error) {
+// Solidity: function allowance(holder address, spender address) constant returns(uint256)
+func (_Standard *StandardCaller) Allowance(opts *bind.CallOpts, holder common.Address, spender common.Address) (*big.Int, error) {
 	var (
 		ret0 = new(*big.Int)
 	)
 	out := ret0
-	err := _Standard.contract.Call(opts, out, "allowance", owner, spender)
+	err := _Standard.contract.Call(opts, out, "allowance", holder, spender)
 	return *ret0, err
 }
 
 // Allowance is a free data retrieval call binding the contract method 0xdd62ed3e.
 //
-// Solidity: function allowance(owner address, spender address) constant returns(uint256)
-func (_Standard *StandardSession) Allowance(owner common.Address, spender common.Address) (*big.Int, error) {
-	return _Standard.Contract.Allowance(&_Standard.CallOpts, owner, spender)
+// Solidity: function allowance(holder address, spender address) constant returns(uint256)
+func (_Standard *StandardSession) Allowance(holder common.Address, spender common.Address) (*big.Int, error) {
+	return _Standard.Contract.Allowance(&_Standard.CallOpts, holder, spender)
 }
 
 // Allowance is a free data retrieval call binding the contract method 0xdd62ed3e.
 //
-// Solidity: function allowance(owner address, spender address) constant returns(uint256)
-func (_Standard *StandardCallerSession) Allowance(owner common.Address, spender common.Address) (*big.Int, error) {
-	return _Standard.Contract.Allowance(&_Standard.CallOpts, owner, spender)
+// Solidity: function allowance(holder address, spender address) constant returns(uint256)
+func (_Standard *StandardCallerSession) Allowance(holder common.Address, spender common.Address) (*big.Int, error) {
+	return _Standard.Contract.Allowance(&_Standard.CallOpts, holder, spender)
 }
 
 // BalanceOf is a free data retrieval call binding the contract method 0x70a08231.
 //
-// Solidity: function balanceOf(owner address) constant returns(uint256)
-func (_Standard *StandardCaller) BalanceOf(opts *bind.CallOpts, owner common.Address) (*big.Int, error) {
+// Solidity: function balanceOf(holder address) constant returns(uint256)
+func (_Standard *StandardCaller) BalanceOf(opts *bind.CallOpts, holder common.Address) (*big.Int, error) {
 	var (
 		ret0 = new(*big.Int)
 	)
 	out := ret0
-	err := _Standard.contract.Call(opts, out, "balanceOf", owner)
+	err := _Standard.contract.Call(opts, out, "balanceOf", holder)
 	return *ret0, err
 }
 
 // BalanceOf is a free data retrieval call binding the contract method 0x70a08231.
 //
-// Solidity: function balanceOf(owner address) constant returns(uint256)
-func (_Standard *StandardSession) BalanceOf(owner common.Address) (*big.Int, error) {
-	return _Standard.Contract.BalanceOf(&_Standard.CallOpts, owner)
+// Solidity: function balanceOf(holder address) constant returns(uint256)
+func (_Standard *StandardSession) BalanceOf(holder common.Address) (*big.Int, error) {
+	return _Standard.Contract.BalanceOf(&_Standard.CallOpts, holder)
 }
 
 // BalanceOf is a free data retrieval call binding the contract method 0x70a08231.
 //
-// Solidity: function balanceOf(owner address) constant returns(uint256)
-func (_Standard *StandardCallerSession) BalanceOf(owner common.Address) (*big.Int, error) {
-	return _Standard.Contract.BalanceOf(&_Standard.CallOpts, owner)
+// Solidity: function balanceOf(holder address) constant returns(uint256)
+func (_Standard *StandardCallerSession) BalanceOf(holder common.Address) (*big.Int, error) {
+	return _Standard.Contract.BalanceOf(&_Standard.CallOpts, holder)
 }
 
 // TotalSupply is a free data retrieval call binding the contract method 0x18160ddd.
@@ -3533,7 +3533,7 @@ func (it *StandardApprovalIterator) Close() error {
 
 // StandardApproval represents a Approval event raised by the Standard contract.
 type StandardApproval struct {
-	Owner   common.Address
+	Holder  common.Address
 	Spender common.Address
 	Value   *big.Int
 	Raw     types.Log // Blockchain specific contextual infos
@@ -3541,19 +3541,19 @@ type StandardApproval struct {
 
 // FilterApproval is a free log retrieval operation binding the contract event 0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925.
 //
-// Solidity: e Approval(owner indexed address, spender indexed address, value uint256)
-func (_Standard *StandardFilterer) FilterApproval(opts *bind.FilterOpts, owner []common.Address, spender []common.Address) (*StandardApprovalIterator, error) {
+// Solidity: e Approval(holder indexed address, spender indexed address, value uint256)
+func (_Standard *StandardFilterer) FilterApproval(opts *bind.FilterOpts, holder []common.Address, spender []common.Address) (*StandardApprovalIterator, error) {
 
-	var ownerRule []interface{}
-	for _, ownerItem := range owner {
-		ownerRule = append(ownerRule, ownerItem)
+	var holderRule []interface{}
+	for _, holderItem := range holder {
+		holderRule = append(holderRule, holderItem)
 	}
 	var spenderRule []interface{}
 	for _, spenderItem := range spender {
 		spenderRule = append(spenderRule, spenderItem)
 	}
 
-	logs, sub, err := _Standard.contract.FilterLogs(opts, "Approval", ownerRule, spenderRule)
+	logs, sub, err := _Standard.contract.FilterLogs(opts, "Approval", holderRule, spenderRule)
 	if err != nil {
 		return nil, err
 	}
@@ -3562,19 +3562,19 @@ func (_Standard *StandardFilterer) FilterApproval(opts *bind.FilterOpts, owner [
 
 // WatchApproval is a free log subscription operation binding the contract event 0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925.
 //
-// Solidity: e Approval(owner indexed address, spender indexed address, value uint256)
-func (_Standard *StandardFilterer) WatchApproval(opts *bind.WatchOpts, sink chan<- *StandardApproval, owner []common.Address, spender []common.Address) (event.Subscription, error) {
+// Solidity: e Approval(holder indexed address, spender indexed address, value uint256)
+func (_Standard *StandardFilterer) WatchApproval(opts *bind.WatchOpts, sink chan<- *StandardApproval, holder []common.Address, spender []common.Address) (event.Subscription, error) {
 
-	var ownerRule []interface{}
-	for _, ownerItem := range owner {
-		ownerRule = append(ownerRule, ownerItem)
+	var holderRule []interface{}
+	for _, holderItem := range holder {
+		holderRule = append(holderRule, holderItem)
 	}
 	var spenderRule []interface{}
 	for _, spenderItem := range spender {
 		spenderRule = append(spenderRule, spenderItem)
 	}
 
-	logs, sub, err := _Standard.contract.WatchLogs(opts, "Approval", ownerRule, spenderRule)
+	logs, sub, err := _Standard.contract.WatchLogs(opts, "Approval", holderRule, spenderRule)
 	if err != nil {
 		return nil, err
 	}

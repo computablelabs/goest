@@ -30,7 +30,7 @@ contract Standard is ERC20, Basic {
     public
     returns (bool)
   {
-    require(to != address(0), "Error:Standard.transferFrom - 'to' address may not be owner");
+    require(to != address(0), "Error:Standard.transferFrom - 'to' may not be the zero-address");
     require(value <= balances[from], "Error:Standard.transferFrom - Value exceeds available balance");
     require(value <= allowed[from][msg.sender], "Error.Standard.transferFrom - Value exceeds allowed amount");
 
@@ -58,19 +58,19 @@ contract Standard is ERC20, Basic {
 
   /**
    * Function to check the amount of tokens that an owner allowed to a spender.
-   * @param owner address The address which owns the funds.
+   * @param holder address The address which owns the funds.
    * @param spender address The address which will spend the funds.
    * @return A uint256 specifying the amount of tokens still available for the spender.
    */
   function allowance(
-    address owner,
+    address holder,
     address spender
    )
     public
     view
     returns (uint256)
   {
-    return allowed[owner][spender];
+    return allowed[holder][spender];
   }
 
   /**
