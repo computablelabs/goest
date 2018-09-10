@@ -115,7 +115,7 @@ contract Parameterizer {
 
     if (keccak256(abi.encodePacked(name)) == keccak256(abi.encodePacked("dispensationPct")) ||
        keccak256(abi.encodePacked(name)) == keccak256(abi.encodePacked("pDispensationPct"))) {
-      require(value <= 100);
+      require(value <= 100, "Error:Parameterizer.proposeReparameterization - `value` must be less than or equal to 100");
     }
 
     require(!propExists(propID), "Error:Parameterizer.proposeReparameterization - Duplicate proposals not allowed"); // Forbid duplicate proposals
@@ -154,7 +154,7 @@ contract Parameterizer {
   @param propID the proposal ID to challenge
   */
   function challengeReparameterization(bytes32 propID) public returns (uint challengeID) {
-    ParamProposal memory prop = proposals[_propID];
+    ParamProposal memory prop = proposals[propID];
     uint deposit = prop.deposit;
 
     require(propExists(propID) && prop.challengeID == 0, "Error:Parameterizer.challengeReparameterization - Proposal does not exist");
@@ -174,7 +174,7 @@ contract Parameterizer {
       winningTokens: 0
     });
 
-    proposals[_propID].challengeID = pollID; // update listing to store most recent challenge
+    proposals[propID].challengeID = pollID; // update listing to store most recent challenge
 
     //take tokens from challenger
     require(token.transferFrom(msg.sender, this, deposit), "Error:Parameterizer.challengeReparameterization - Could not transfer funds");
@@ -221,9 +221,7 @@ contract Parameterizer {
       delete proposals[propID];
       require(token.transfer(propOwner, propDeposit), "Error:Parameterizer.processProposal - Could not transfer funds");
     } else {
-      // There is no challenge against the proposal, and neither the appExpiry date nor the
-      // processBy date has passed.
-      revert();
+      revert("There is no challenge against the proposal, and neither the appExpiry date nor the processBy date has passed");
     }
 
     assert(get("dispensationPct") <= 100);
@@ -286,7 +284,7 @@ contract Parameterizer {
   @notice Determines whether a proposal passed its application stage without a challenge
   @param propID The proposal ID for which to determine whether its application stage passed without a challenge
   */
-  function canBeSet(bytes32 propID) view public returns (bool) {
+  function canBeSet(bytes32 propID) public view returns (bool) {
     ParamProposal memory prop = proposals[propID];
 
     return (now > prop.appExpiry && now < prop.processBy && prop.challengeID == 0);
@@ -296,7 +294,7 @@ contract Parameterizer {
   @notice Determines whether a proposal exists for the provided proposal ID
   @param propID The proposal ID whose existance is to be determined
   */
-  function propExists(bytes32 propID) view public returns (bool) {
+  function propExists(bytes32 propID) public view returns (bool) {
     return proposals[propID].processBy > 0;
   }
 
@@ -304,7 +302,7 @@ contract Parameterizer {
   @notice Determines whether the provided proposal ID has a challenge which can be resolved
   @param propID The proposal ID whose challenge to inspect
   */
-  function challengeCanBeResolved(bytes32 propID) view public returns (bool) {
+  function challengeCanBeResolved(bytes32 propID) public view returns (bool) {
     ParamProposal memory prop = proposals[propID];
     Challenge memory challenge = challenges[prop.challengeID];
 
@@ -313,7 +311,7 @@ contract Parameterizer {
 
   /**
   @notice Determines the number of tokens to awarded to the winning party in a challenge
-  @param _challengeID The challengeID to determine a reward for
+  @param challengeID The challengeID to determine a reward for
   */
   function challengeWinnerReward(uint challengeID) public view returns (uint) {
     if (voting.getTotalNumberOfTokensForWinningOption(challengeID) == 0) {
@@ -326,7 +324,7 @@ contract Parameterizer {
 
   /**
   @notice gets the parameter keyed by the provided name value from the params mapping
-  @param _name the key whose value is to be determined
+  @param name the key whose value is to be determined
   */
   function get(string name) public view returns (uint value) {
     return params[keccak256(abi.encodePacked(name))];
@@ -334,8 +332,8 @@ contract Parameterizer {
 
   /**
   @dev                Getter for Challenge tokenClaims mappings
-  @param _challengeID The challengeID to query
-  @param _voter       The voter whose claim status to query for the provided challengeID
+  @param challengeID The challengeID to query
+  @param voter       The voter whose claim status to query for the provided challengeID
   */
   function tokenClaims(uint challengeID, address voter) public view returns (bool) {
     return challenges[challengeID].tokenClaims[voter];
@@ -346,8 +344,8 @@ contract Parameterizer {
   // ----------------
 
   /**
-  @dev resolves a challenge for the provided _propID. It must be checked in advance whether the _propID has a challenge on it
-  @param _propID the proposal ID whose challenge is to be resolved.
+  @dev resolves a challenge for the provided propID. It must be checked in advance whether the propID has a challenge on it
+  @param propID the proposal ID whose challenge is to be resolved.
   */
   function resolveChallenge(bytes32 propID) private {
     ParamProposal memory prop = proposals[propID];
@@ -385,8 +383,8 @@ contract Parameterizer {
 
   /**
   @dev sets the param keted by the provided name to the provided value
-  @param _name the name of the param to be set
-  @param _value the value to set the param to be set
+  @param name the name of the param to be set
+  @param value the value to set the param to be set
   */
   function set(string name, uint value) private {
     params[keccak256(abi.encodePacked(name))] = value;
