@@ -1,4 +1,4 @@
-package burnable
+package markettoken
 
 import (
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
@@ -7,10 +7,12 @@ import (
 )
 
 func TestBurn(t *testing.T) {
-	t.Log("Burnable token contract should burn tokens on demand")
+	t.Log("Market token contract should burn tokens on demand")
 	// owner should have 1000 tokens atm
 	bal, _ := deployed.Contract.BalanceOf(&bind.CallOpts{From: context.AuthOwner.From}, context.AuthOwner.From)
-	if bal.Cmp(big.NewInt(1000)) != 0 {
+
+	// we should have a truthy balance (GT 0)
+	if bal.Cmp(big.NewInt(0)) != 1 {
 		t.Errorf("Expected owner balance of 1000, got %v", bal)
 	}
 
@@ -27,21 +29,22 @@ func TestBurn(t *testing.T) {
 
 	context.Blockchain.Commit()
 
+	expectedBal := bal.Sub(bal, big.NewInt(100)) // we burned 100
 	newBal, _ := deployed.Contract.BalanceOf(&bind.CallOpts{From: context.AuthOwner.From}, context.AuthOwner.From)
-	if newBal.Cmp(big.NewInt(900)) != 0 {
-		t.Errorf("Expected owner balance of 900, got %v", newBal)
+	if newBal.Cmp(expectedBal) != 0 {
+		t.Errorf("Expected owner balance of %v, got %v", expectedBal, newBal)
 	}
 }
 
 // BurnFrom is used to adjust an allowance and funds balance
 func TestBurnFrom(t *testing.T) {
-	t.Log("Burnable token contract can use burnFrom to adjust both funds and allowance")
+	t.Log("Market token contract can use burnFrom to adjust both funds and allowance")
 	// first, transfer some tokens to the user
 	_, err := deployed.Contract.Transfer(&bind.TransactOpts{
 		From:   context.AuthOwner.From,
 		Signer: context.AuthOwner.Signer,
 		Value:  nil,
-	}, context.AuthUser.From, big.NewInt(100)) // 10 tokens
+	}, context.AuthUser.From, big.NewInt(100))
 
 	if err != nil {
 		t.Fatalf("Error transferring funds from owner to user: %v", err)

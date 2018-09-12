@@ -1,4 +1,4 @@
-package standard
+package networktoken
 
 import (
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
@@ -7,7 +7,9 @@ import (
 )
 
 func TestTransferFrom(t *testing.T) {
-	t.Log("Standard token should be able to transfer from one address to another")
+	t.Log("Network token should be able to transfer from one address to another")
+
+	ownerBal, _ := deployed.Contract.BalanceOf(&bind.CallOpts{From: context.AuthOwner.From}, context.AuthOwner.From)
 
 	// if we wanted to check the owner's account bal
 	// t.Logf("owner balance: %v", context.Alloc[context.AuthOwner.From].Balance)
@@ -41,10 +43,11 @@ func TestTransferFrom(t *testing.T) {
 
 	context.Blockchain.Commit()
 
-	// owner should have 10 subtracted from his 100
-	ownerBal, _ := deployed.Contract.BalanceOf(&bind.CallOpts{From: context.AuthOwner.From}, context.AuthOwner.From)
-	if ownerBal.Cmp(big.NewInt(90)) != 0 {
-		t.Errorf("Expected owner balance of 90, got %v", ownerBal)
+	// owner should have 10 subtracted
+	expectedBal := ownerBal.Sub(ownerBal, big.NewInt(10))
+	newOwnerBal, _ := deployed.Contract.BalanceOf(&bind.CallOpts{From: context.AuthOwner.From}, context.AuthOwner.From)
+	if newOwnerBal.Cmp(expectedBal) != 0 {
+		t.Errorf("Expected owner balance of %v, got %v", expectedBal, newOwnerBal)
 	}
 
 	// user should have had 5 subtracted from his 10
@@ -54,8 +57,9 @@ func TestTransferFrom(t *testing.T) {
 	}
 
 	otherBal, _ := deployed.Contract.BalanceOf(&bind.CallOpts{From: context.OtherUser}, context.OtherUser)
-	if otherBal.Cmp(big.NewInt(5)) != 0 {
-		t.Errorf("Expected other user balance of 5, got %v", otherBal)
+	expectedOtherBal := otherBal.Add(otherBal, big.NewInt(5))
+	if otherBal.Cmp(expectedOtherBal) != 0 {
+		t.Errorf("Expected other user balance of %v, got %v", expectedOtherBal, otherBal)
 	}
 }
 
