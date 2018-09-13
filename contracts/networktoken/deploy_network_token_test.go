@@ -1,4 +1,4 @@
-package standard
+package networktoken
 
 import (
 	"math/big"
@@ -11,11 +11,11 @@ var context *ctx
 var deployed *dep
 var deployedError error
 
-func TestDeployConstructableStandard(t *testing.T) {
-	t.Log("Standard token contract should deploy correctly")
+func TestDeployNetworkToken(t *testing.T) {
+	t.Log("Network token contract should deploy correctly")
 
 	if deployedError != nil {
-		t.Fatalf("Failed to deploy the basic token contract: %v", deployedError)
+		t.Fatalf("Failed to deploy the network token contract: %v", deployedError)
 	}
 
 	if len(deployed.Address.Bytes()) == 0 {
@@ -31,7 +31,7 @@ func TestMain(m *testing.M) {
 	// see ./helpers#context
 	context = SetupBlockchain(big.NewInt(1000000)) // 1M
 	// see ./helpers#deployed
-	deployed, deployedError = Deploy(big.NewInt(100), context) // 100 token balance
+	deployed, deployedError = Deploy(big.NewInt(1000), context) // 1000 token balance
 	code := m.Run()
 	os.Exit(code)
 }

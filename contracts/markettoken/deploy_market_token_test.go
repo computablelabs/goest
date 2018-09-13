@@ -1,4 +1,4 @@
-package basic
+package markettoken
 
 import (
 	"math/big"
@@ -11,18 +11,17 @@ var context *ctx
 var deployed *dep
 var deployedError error
 
-func TestDeployConstructableBasic(t *testing.T) {
-	t.Log("Basic token contract should deploy correctly")
+func TestDeployMarketToken(t *testing.T) {
+	t.Log("Market token contract should deploy correctly")
 
 	if deployedError != nil {
-		t.Fatalf("Failed to deploy the basic token contract: %v", deployedError)
+		t.Fatalf("Failed to deploy the market token contract: %v", deployedError)
 	}
 
 	if len(deployed.Address.Bytes()) == 0 {
 		t.Error("Expected a valid deployment address to be returned from deploy, got empty byte array instead")
 	}
 
-	// t.Logf("Deployed contract address: %v", deployed.Address.Bytes())
 }
 
 // we'll locate our testmain in these deploy_foo_test files as a pattern.
@@ -30,9 +29,9 @@ func TestDeployConstructableBasic(t *testing.T) {
 // the ctx and dep vars will be avail to the other tests in the package
 func TestMain(m *testing.M) {
 	// see ./helpers#context
-	context = SetupBlockchain(big.NewInt(1000000))
+	context = SetupBlockchain(big.NewInt(4000000))
 	// see ./helpers#deployed
-	deployed, deployedError = Deploy(big.NewInt(10), context)
+	deployed, deployedError = Deploy(big.NewInt(1000), context)
 	code := m.Run()
 	os.Exit(code)
 }
