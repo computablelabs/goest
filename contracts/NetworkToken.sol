@@ -1,4 +1,4 @@
-pragma solidity 0.4.24;
+pragma solidity 0.4.25;
 
 import "./SafeMath.sol";
 
@@ -24,7 +24,7 @@ contract NetworkToken {
    * @param spender address The address which will spend the funds.
    * @return A uint256 specifying the amount of tokens still available for the spender.
    */
-  function allowance(address holder, address spender) public view returns (uint256) {
+  function allowance(address holder, address spender) external view returns (uint256) {
     return selfAllowed[holder][spender];
   }
 
@@ -37,7 +37,7 @@ contract NetworkToken {
    * @param spender The address which will spend the funds.
    * @param value The amount of tokens to be spent.
    */
-  function approve(address spender, uint256 value) public returns (bool) {
+  function approve(address spender, uint256 value) external returns (bool) {
     selfAllowed[msg.sender][spender] = value;
     emit ApprovalEvent(msg.sender, spender, value);
     return true;
@@ -48,7 +48,7 @@ contract NetworkToken {
   * @param holder The address to query the the balance of.
   * @return An uint256 representing the amount owned by the passed address.
   */
-  function balanceOf(address holder) public view returns (uint256) {
+  function balanceOf(address holder) external view returns (uint256) {
     return selfBalances[holder];
   }
 
@@ -61,13 +61,7 @@ contract NetworkToken {
    * @param spender The address which will spend the funds.
    * @param subtractedValue The amount of tokens to decrease the allowance by.
    */
-  function decreaseApproval(
-    address spender,
-    uint256 subtractedValue
-  )
-    public
-    returns (bool)
-  {
+  function decreaseApproval(address spender, uint256 subtractedValue) external returns (bool) {
     uint256 oldValue = selfAllowed[msg.sender][spender];
     if (subtractedValue > oldValue) {
       selfAllowed[msg.sender][spender] = 0;
@@ -87,13 +81,7 @@ contract NetworkToken {
    * @param spender The address which will spend the funds.
    * @param addedValue The amount of tokens to increase the allowance by.
    */
-  function increaseApproval(
-    address spender,
-    uint256 addedValue
-  )
-    public
-    returns (bool)
-  {
+  function increaseApproval(address spender, uint256 addedValue) external returns (bool) {
     selfAllowed[msg.sender][spender] = (
       selfAllowed[msg.sender][spender].add(addedValue));
     emit ApprovalEvent(msg.sender, spender, selfAllowed[msg.sender][spender]);
@@ -103,7 +91,7 @@ contract NetworkToken {
   /**
   * @dev Total number of tokens in existence
   */
-  function totalSupply() public view returns (uint256) {
+  function totalSupply() external view returns (uint256) {
     return selfSupply;
   }
 
@@ -112,7 +100,7 @@ contract NetworkToken {
   * @param to The address to transfer to.
   * @param value The amount to be transferred.
   */
-  function transfer(address to, uint256 value) public returns (bool) {
+  function transfer(address to, uint256 value) external returns (bool) {
     require(to != address(0), "Error:Basic.transfer - 'to' cannot be the zero-address");
     require(value <= selfBalances[msg.sender], "Error:Basic.transfer - Value exceeds the balance of msg.sender");
 
@@ -128,14 +116,7 @@ contract NetworkToken {
    * @param to address The address which you want to transfer to
    * @param value uint256 the amount of tokens to be transferred
    */
-  function transferFrom(
-    address from,
-    address to,
-    uint256 value
-  )
-    public
-    returns (bool)
-  {
+  function transferFrom(address from, address to, uint256 value) external returns (bool) {
     require(to != address(0), "Error:Standard.transferFrom - 'to' may not be the zero-address");
     require(value <= selfBalances[from], "Error:Standard.transferFrom - Value exceeds available balance");
     require(value <= selfAllowed[from][msg.sender], "Error.Standard.transferFrom - Value exceeds allowed amount");
