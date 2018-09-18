@@ -289,7 +289,7 @@ contract PLCRVoting {
   @param salt Arbitrarily chosen integer used to generate secretHash
   @return correctVotes Number of tokens voted for winning option
   */
-  function getNumPassingTokens(address voter, uint id, uint salt) public view returns (uint correctVotes) {
+  function getNumPassingTokens(address voter, uint id, uint salt) external view returns (uint correctVotes) {
     require(pollEnded(id), "Error:Voting.getNumPassingTokens - Poll must have ended");
     require(selfPollMap[id].didReveal[voter], "Error:Voting.getNumPassingTokens - Voter must have revealed their vote");
 
@@ -312,7 +312,7 @@ contract PLCRVoting {
   @param commitDuration Length of desired commit period in seconds
   @param revealDuration Length of desired reveal period in seconds
   */
-  function startPoll(uint voteQuorum, uint commitDuration, uint revealDuration) public returns (uint id) {
+  function startPoll(uint voteQuorum, uint commitDuration, uint revealDuration) external returns (uint id) {
     selfPollNonce = selfPollNonce.add(1);
 
     uint commitEndDate = block.timestamp.add(commitDuration);
@@ -358,7 +358,7 @@ contract PLCRVoting {
   @param id Integer identifier associated with target poll
   @return Total number of votes committed to the winning option for specified poll
   */
-  function getTotalNumberOfTokensForWinningOption(uint id) public view returns (uint numTokens) {
+  function getTotalNumberOfTokensForWinningOption(uint id) external view returns (uint numTokens) {
     require(pollEnded(id), "Error:Voting.getTotalNumberOfTokensForWinningOption - Poll must have ended");
 
     if (isPassed(id)) {
@@ -409,7 +409,7 @@ contract PLCRVoting {
   @param id Integer identifier associated with target poll
   @return Boolean indication of whether user has committed
   */
-  function didCommit(address voter, uint id) public view returns (bool committed) {
+  function didCommit(address voter, uint id) external view returns (bool committed) {
     require(pollExists(id), "Error:Parameterizer.didCommit - Poll must exist");
 
     return selfPollMap[id].didCommit[voter];
@@ -421,7 +421,7 @@ contract PLCRVoting {
   @param id Integer identifier associated with target poll
   @return Boolean indication of whether user has revealed
   */
-  function didReveal(address voter, uint id) public view returns (bool revealed) {
+  function didReveal(address voter, uint id) external view returns (bool revealed) {
     require(pollExists(id), "Error:Voting.didReveal - Poll must exist");
 
     return selfPollMap[id].didReveal[voter];
@@ -490,7 +490,7 @@ contract PLCRVoting {
   @return the node which the propoded node should be inserted after
   */
   function getInsertPointForNumTokens(address voter, uint numTokens, uint id)
-  public view returns (uint prevNode)
+  external view returns (uint prevNode)
   {
     // Get the last node in the list and the number of tokens in that node
     uint nodeId = getLastNode(voter);
