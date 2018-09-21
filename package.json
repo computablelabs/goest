@@ -8,6 +8,7 @@
     "compile:token:network": "~/go/bin/abigen -sol contracts/NetworkToken.sol -pkg networktoken -out contracts/networktoken/networktoken.go",
     "compile:token:market": "~/go/bin/abigen -sol contracts/MarketToken.sol -pkg markettoken -out contracts/markettoken/markettoken.go",
     "compile:voting:plcr": "~/go/bin/abigen -sol contracts/PLCRVoting.sol -pkg plcrvoting -out contracts/plcrvoting/plcrvoting.go",
+    "compile:parameterizer": "~/go/bin/abigen -sol contracts/Parameterizer.sol -pkg parameterizer -out contracts/parameterizer/parameterizer.go",
     "test": "go test -v ./..."
   },
   "repository": {

@@ -428,6 +428,28 @@ contract PLCRVoting {
   }
 
   /**
+  @dev Return the commit expiry for a given poll
+  @param id Integer identifier associated with target poll
+  @return the expiry as uint
+  */
+  function getPollCommitExpiry(uint id) external view returns (uint expiry) {
+    require(pollExists(id), "Error:Voting.getPollCommitExpiry - Poll must exist");
+
+    return selfPollMap[id].commitExpiry;
+  }
+
+  /**
+  @dev Return the reveal expiry for a given poll
+  @param id Integer identifier associated with target poll
+  @return the expiry as uint
+  */
+  function getPollRevealExpiry(uint id) external view returns (uint expiry) {
+    require(pollExists(id), "Error:Voting.getPollrevealExpiry - Poll must exist");
+
+    return selfPollMap[id].revealExpiry;
+  }
+
+  /**
   @dev Checks if a poll exists
   @param id The poll ID whose existance is to be evaluated.
   @return Boolean Indicates whether a poll exists for the provided poll ID
