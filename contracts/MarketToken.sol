@@ -13,7 +13,8 @@ contract MarketToken {
 
   uint256 private selfSupply;
   bool private selfMintingStopped = false;
-  address private selfOwner;
+  address private selfOwner; // will be the market factory
+  address private selfMarket; // immutable once set by the owner (market factory)
   mapping(address => uint256) private selfBalances;
   mapping (address => mapping (address => uint256)) private selfAllowed;
 
@@ -117,14 +118,21 @@ contract MarketToken {
     selfBalances[who] = selfBalances[who].sub(value);
     selfSupply = selfSupply.sub(value);
     emit BurnEvent(who, value);
-    emit TransferEvent(who, address(0), value);
+    emit TransferEvent(who, address(0), value); // 'to' address will be empty in this case
   }
 
   /**
-   * Only the contract owner has mint permission
+   * @dev Return the address of the contract owner, should be the MarketFactory TODO
+   */
+  function getOwner() external view returns(address) {
+    return selfOwner;
+  }
+
+  /**
+   * Only the market contract has mint permission
    */
   modifier hasMintPermission() {
-    require(msg.sender == selfOwner, "Error:MarketToken.hasMintPermission - Caller must be owner");
+    require(msg.sender == selfMarket, "Error:MarketToken.hasMintPermission - Caller must be market contract");
     _;
   }
 
@@ -142,6 +150,11 @@ contract MarketToken {
       selfAllowed[msg.sender][spender].add(addedValue));
     emit ApprovalEvent(msg.sender, spender, selfAllowed[msg.sender][spender]);
     return true;
+  }
+
+  modifier isOwner() {
+    require(msg.sender == selfOwner, "Error:MarketToken.isOwner - Caller must be owner");
+    _;
   }
 
   /**
@@ -165,11 +178,11 @@ contract MarketToken {
     return selfMintingStopped;
   }
 
-  /**
-   * @dev Return the address of the contract owner
-   */
-  function owner() external view returns(address) {
-    return selfOwner;
+  function setMarket(address market) external isOwner returns (bool) {
+    // we only allow this once, so the current val of market must be 0 initialized still
+    require(selfMarket == address(0), "Error:MarketToken.setMarket - Market address is immutable once set");
+    selfMarket = market;
+    return true;
   }
 
   /**
@@ -194,7 +207,7 @@ contract MarketToken {
   * @param value The amount to be transferred.
   */
   function transfer(address to, uint256 value) external returns (bool) {
-    require(to != address(0), "Error:Basic.transfer - 'to' cannot be the zero-address");
+    require(to != address(0), "Error:Basic.transfer - An address must be specified");
     require(value <= selfBalances[msg.sender], "Error:Basic.transfer - Value exceeds the balance of msg.sender");
 
     selfBalances[msg.sender] = selfBalances[msg.sender].sub(value);
@@ -210,7 +223,7 @@ contract MarketToken {
    * @param value uint256 the amount of tokens to be transferred
    */
   function transferFrom(address from, address to, uint256 value) external returns (bool) {
-    require(to != address(0), "Error:Standard.transferFrom - 'to' may not be the zero-address");
+    require(to != address(0), "Error:Standard.transferFrom - 'to' address must be specified");
     require(value <= selfBalances[from], "Error:Standard.transferFrom - Value exceeds available balance");
     require(value <= selfAllowed[from][msg.sender], "Error.Standard.transferFrom - Value exceeds allowed amount");
 
