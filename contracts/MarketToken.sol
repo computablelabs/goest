@@ -114,12 +114,7 @@ contract MarketToken {
     return selfOwner;
   }
 
-  /**
-  * @dev Total number of tokens in existence
-  */
-  function getSupply() external view returns (uint256) {
-    return selfSupply;
-  }
+  
 
   /**
    * Increase the amount of tokens that an owner allowed to a spender.
@@ -182,6 +177,15 @@ contract MarketToken {
     selfMintingStopped = true;
     emit MintStoppedEvent();
     return true;
+  }
+
+  /**
+  * @dev Total number of tokens in existence
+  * I'd prefer this to be `getSupply` to go along with our style for getters,
+  * but we'll stick to the ERC20 interface for this one.
+  */
+  function totalSupply() external view returns (uint256) {
+    return selfSupply;
   }
 
   /**

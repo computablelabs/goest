@@ -7,10 +7,10 @@ import (
 	"testing"
 )
 
-func TestGetSupply(t *testing.T) {
+func TestTotalSupply(t *testing.T) {
 	t.Log("Market token should fetch supply on demand")
 	// the supply should be truthy (return of 1 if > 0)
-	if supply, _ := deployed.Contract.GetSupply(nil); supply.Cmp(big.NewInt(0)) != 1 {
+	if supply, _ := deployed.Contract.TotalSupply(nil); supply.Cmp(big.NewInt(0)) != 1 {
 		t.Errorf("Expected total supply to be greater than 0, got %v", supply)
 	}
 }
@@ -41,7 +41,7 @@ func TestMint(t *testing.T) {
 	t.Log("Market token should mint on demand")
 
 	// the starting supply at this point
-	supply, _ := deployed.Contract.GetSupply(nil)
+	supply, _ := deployed.Contract.TotalSupply(nil)
 	// owner's current token holdings TODO this check may change?
 	ownerBal, _ := deployed.Contract.BalanceOf(&bind.CallOpts{From: context.AuthOwner.From}, context.AuthOwner.From)
 	marketBal, _ := deployed.Contract.BalanceOf(&bind.CallOpts{From: context.AuthMarket.From}, context.AuthMarket.From)
@@ -69,7 +69,7 @@ func TestMint(t *testing.T) {
 	// will have increased the total supply by the minted amount
 	expectedSupply := supply.Add(supply, big.NewInt(200))
 
-	if newSupply, _ := deployed.Contract.GetSupply(nil); newSupply.Cmp(expectedSupply) != 0 {
+	if newSupply, _ := deployed.Contract.TotalSupply(nil); newSupply.Cmp(expectedSupply) != 0 {
 		t.Errorf("Expected total supply to equal %v, got %v", expectedSupply, newSupply)
 	}
 
@@ -84,7 +84,7 @@ func TestStopMinting(t *testing.T) {
 	t.Log("Market token can stop minting on demand (by market)")
 
 	// the starting supply at this point
-	supply, _ := deployed.Contract.GetSupply(nil)
+	supply, _ := deployed.Contract.TotalSupply(nil)
 
 	// minting stopped is false by default
 	if stopped, _ := deployed.Contract.MintingStopped(&bind.CallOpts{From: context.AuthMarket.From}); stopped != false {
@@ -119,7 +119,7 @@ func TestStopMinting(t *testing.T) {
 	}
 
 	// did not actually mint anything
-	if newSupply, _ := deployed.Contract.GetSupply(nil); newSupply.Cmp(supply) != 0 {
+	if newSupply, _ := deployed.Contract.TotalSupply(nil); newSupply.Cmp(supply) != 0 {
 		t.Errorf("Expected total supply to remain %v, got %v", supply, newSupply)
 	}
 }

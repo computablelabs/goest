@@ -73,13 +73,6 @@ contract NetworkToken {
   }
 
   /**
-  * @dev Total number of tokens in existence
-  */
-  function getSupply() external view returns (uint256) {
-    return selfSupply;
-  }
-
-  /**
    * Increase the amount of tokens that an owner allowed to a spender.
    * approve should be called when allowed[spender] == 0. To increment
    * allowed value is better to use this function to avoid 2 calls (and wait until
@@ -93,6 +86,13 @@ contract NetworkToken {
       selfAllowed[msg.sender][spender].add(addedValue));
     emit ApprovalEvent(msg.sender, spender, selfAllowed[msg.sender][spender]);
     return true;
+  }
+
+  /**
+  * @dev Total number of tokens in existence
+  */
+  function totalSupply() external view returns (uint256) {
+    return selfSupply;
   }
 
   /**
