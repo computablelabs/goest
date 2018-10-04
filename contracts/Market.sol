@@ -340,7 +340,7 @@ contract Market {
       listing.listed = true;
       // NOTE the market acts as a bank for the minted tokens as well (same as deposits)
       uint amount = selfParameterizer.get("listReward");
-      selfMarketToken.mint(this, amount);
+      selfMarketToken.mint(amount); // there is no `to` adress as all mint balances are banked by the market
       listing.minted = amount;
       emit ListedEvent(listingHash, listing.supply, amount); // TODO send tokensMinted with event vs a separate minted event
     }
