@@ -44,20 +44,17 @@ contract Market {
 
   /**
   @dev Contructor
-  @param networkTokenAddr
-  @param marketTokenAddr
-  @param votingAddr
-  @param parameterizerAddr
+  @param marketTokenAddr Address of the deployed market token contract
+  @param votingAddr Address of the deployed voting contract
+  @param parameterizerAddr Address of the deployed parameterizer contract
   */
   constructor(
-    // address networkTokenAddr, TODO
     address marketTokenAddr,
     address votingAddr,
     address parameterizerAddr,
     string name
   ) public
   {
-    // selfNetworkToken = IERC20(networkTokenAddr);
     selfMarketToken = MarketToken(marketTokenAddr);
     selfVoting = PLCRVoting(votingAddr);
     selfParameterizer = Parameterizer(parameterizerAddr);
