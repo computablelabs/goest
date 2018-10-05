@@ -65,26 +65,6 @@ contract PLCRVoting {
     return isSingleNode || !isNullNode;
   }
 
-  function dllIsEmpty(address sender) private view returns (bool) {
-    return getDllStart(sender) == NULL_NODE_ID;
-  }
-
-  function getDllEnd(address sender) private view returns (uint) {
-    return getDllPrev(sender, NULL_NODE_ID);
-  }
-
-  function getDllNext(address sender, uint curr) private view returns (uint) {
-    return selfDllMap[sender][curr].next;
-  }
-
-  function getDllPrev(address sender, uint curr) private view returns (uint) {
-    return selfDllMap[sender][curr].prev;
-  }
-
-  function getDllStart(address sender) private view returns (uint) {
-    return getDllNext(sender, NULL_NODE_ID);
-  }
-
   /**
    * @dev Inserts a new node between prev and next. When inserting a node already existing in
    * the list it will be automatically removed from the old position.
@@ -116,6 +96,10 @@ contract PLCRVoting {
     selfDllMap[sender][next].prev = curr;
   }
 
+  function dllIsEmpty(address sender) private view returns (bool) {
+    return getDllStart(sender) == NULL_NODE_ID;
+  }
+
   function dllRemove(address sender, uint curr) private {
     if (!dllContains(sender, curr)) {
       return;
@@ -130,6 +114,31 @@ contract PLCRVoting {
     delete selfDllMap[sender][curr];
   }
 
+  function getDllEnd(address sender) private view returns (uint) {
+    return getDllPrev(sender, NULL_NODE_ID);
+  }
+
+  function getDllNext(address sender, uint curr) private view returns (uint) {
+    return selfDllMap[sender][curr].next;
+  }
+
+  function getDllPrev(address sender, uint curr) private view returns (uint) {
+    return selfDllMap[sender][curr].prev;
+  }
+
+  function getDllStart(address sender) private view returns (uint) {
+    return getDllNext(sender, NULL_NODE_ID);
+  }
+
+  /**
+  @dev Gets top element of sorted poll-linked-list
+  @param voter Address of user to check against
+  @return Integer identifier to poll with maximum number of tokens committed to it
+  */
+  function getLastNode(address voter) private view returns (uint id) {
+    return getDllPrev(voter, 0);
+  }
+
   // ------------------------
   // PLCRVoting functionality
   // ------------------------
@@ -142,49 +151,27 @@ contract PLCRVoting {
     selfPollNonce = INITIAL_POLL_NONCE;
   }
 
-  // ================
-  // TOKEN INTERFACE:
-  // ================
-
   /**
-  @notice Loads numTokens ERC20 tokens into the voting contract for one-to-one voting rights
-  @dev Assumes that msg.sender has approved voting contract to spend on their behalf
-  @param numTokens The number of votingTokens desired in exchange for ERC20 tokens
+  @dev Generates an identifier which associates a user and a poll together
+  @param user Address to associate with a poll
+  @param id Integer identifier associated with target poll
+  @return UUID Hash which is deterministic from user and poll ID
   */
-  function requestVotingRights(uint numTokens) external {
-    require(selfToken.balanceOf(msg.sender) >= numTokens, "Error:Voting.requestVotingRights - Sender does not have sufficient funds");
-    selfVoteTokenBalance[msg.sender] = selfVoteTokenBalance[msg.sender].add(numTokens);
-    require(selfToken.transferFrom(msg.sender, this, numTokens), "Error:Voting.requestVotingRights - Token.transferFrom failure");
-    emit VotingRightsGrantedEvent(numTokens, msg.sender);
+  function attrUuid(address user, uint id) private pure returns (bytes32 uuid) {
+    return keccak256(abi.encodePacked(user, id));
   }
 
   /**
-  @notice Withdraw numTokens ERC20 tokens from the voting contract, revoking these voting rights
-  @param numTokens The number of ERC20 tokens desired in exchange for voting rights
+  @notice Checks if the commit period is still active for the specified poll
+  @dev Checks isExpired for the specified poll's commitEndDate
+  @param id Integer identifier associated with target poll
+  @return Boolean indication of isCommitPeriodActive for target poll
   */
-  function withdrawVotingRights(uint numTokens) external {
-    uint availableTokens = selfVoteTokenBalance[msg.sender].sub(getLockedTokens(msg.sender));
-    require(availableTokens >= numTokens, "Error:Voting.withdrawVotingRights - Insufficient available tokens");
-    selfVoteTokenBalance[msg.sender] = selfVoteTokenBalance[msg.sender].sub(numTokens);
-    require(selfToken.transfer(msg.sender, numTokens), "Error:Voting.withdrawVotingRights - Token.transfer failure");
-    emit VotingRightsWithdrawnEvent(numTokens, msg.sender);
+  function commitPeriodActive(uint id) public view returns (bool active) {
+    require(pollExists(id), "Error:Voting.commitPeriodActive - Poll must exist");
+
+    return !isExpired(selfPollMap[id].commitExpiry);
   }
-
-  /**
-  @dev Unlocks tokens locked in unrevealed vote where poll has ended
-  @param id Integer identifier associated with the target poll
-  */
-  function rescueTokens(uint id) external {
-    require(isExpired(selfPollMap[id].revealExpiry), "Error:Voting.rescueTokens - Poll must have ended");
-    require(dllContains(msg.sender, id), "Error:Voting.rescueTokens - Poll not found");
-
-    dllRemove(msg.sender, id);
-    emit TokensRescuedEvent(id, msg.sender);
-  }
-
-  // =================
-  // VOTING INTERFACE:
-  // =================
 
   /**
   @notice Commits vote using hash of choice and secret salt to conceal vote until reveal
@@ -228,182 +215,6 @@ contract PLCRVoting {
   }
 
   /**
-  @dev Compares previous and next poll's committed tokens for sorting purposes
-  @param prevId Integer identifier associated with previous poll in sorted order
-  @param nextId Integer identifier associated with next poll in sorted order
-  @param voter Address of user to check DLL position for
-  @param numTokens The number of tokens to be committed towards the poll (used for sorting)
-  @return valid Boolean indication of if the specified position maintains the sort
-  */
-  function validPosition(
-    uint prevId,
-    uint nextId,
-    address voter,
-    uint numTokens
-  ) public view returns (bool valid)
-  {
-    bool prevValid = (numTokens >= getNumTokens(voter, prevId));
-    // if next is zero node, numTokens does not need to be greater
-    bool nextValid = (numTokens <= getNumTokens(voter, nextId) || nextId == 0);
-    return prevValid && nextValid;
-  }
-
-  /**
-  @notice Reveals vote with choice and secret salt used in generating commitHash to attribute committed tokens
-  @param id Integer identifier associated with target poll
-  @param voteOption Vote choice used to generate commitHash for associated poll
-  @param salt Secret number used to generate commitHash for associated poll
-  */
-  function revealVote(uint id, uint voteOption, uint salt) external {
-    // Make sure the reveal period is active
-    require(revealPeriodActive(id), "Error:Voting.revealVote - Reveal period must be active");
-    require(selfPollMap[id].didCommit[msg.sender], "Error:Voting.revealVote - Sender must have committed their vote"); // make sure user has committed a vote for this poll
-    require(!selfPollMap[id].didReveal[msg.sender], "Error:Voting.revealVote - Sender cannot reveal their vote multiple times"); // prevent user from revealing multiple times
-    require(keccak256(abi.encodePacked(voteOption, salt)) == getCommitHash(msg.sender, id), "Error:Voting.revealVote - Hash mismatch"); // compare resultant hash from inputs to original commitHash
-
-    uint numTokens = getNumTokens(msg.sender, id);
-
-    if (voteOption == 1) {// apply numTokens to appropriate poll choice
-      selfPollMap[id].votesFor = selfPollMap[id].votesFor.add(numTokens);
-    } else {
-      selfPollMap[id].votesAgainst = selfPollMap[id].votesAgainst.add(numTokens);
-    }
-
-    // remove the node referring to this vote upon reveal
-    dllRemove(msg.sender, id);
-
-    selfPollMap[id].didReveal[msg.sender] = true;
-
-    emit VoteRevealedEvent(
-      id,
-      numTokens,
-      selfPollMap[id].votesFor,
-      selfPollMap[id].votesAgainst,
-      voteOption,
-      msg.sender
-    );
-  }
-
-  /**
-  @param id Integer identifier associated with target poll
-  @param salt Arbitrarily chosen integer used to generate secretHash
-  @return correctVotes Number of tokens voted for winning option
-  */
-  function getNumPassingTokens(address voter, uint id, uint salt) external view returns (uint correctVotes) {
-    require(pollEnded(id), "Error:Voting.getNumPassingTokens - Poll must have ended");
-    require(selfPollMap[id].didReveal[voter], "Error:Voting.getNumPassingTokens - Voter must have revealed their vote");
-
-    uint winningChoice = isPassed(id) ? 1 : 0;
-    bytes32 winnerHash = keccak256(abi.encodePacked(winningChoice, salt));
-    bytes32 commitHash = getCommitHash(voter, id);
-
-    require(winnerHash == commitHash, "Error:Voting.getNumPassingTokens - Hash mismatch");
-
-    return getNumTokens(voter, id);
-  }
-
-  // ==================
-  // POLLING INTERFACE:
-  // ==================
-
-  /**
-  @dev Initiates a poll with canonical configured parameters at poll ID emitted by PollCreated event
-  @param voteQuorum Type of majority (out of 100) that is necessary for poll to be successful
-  @param commitDuration Length of desired commit period in seconds
-  @param revealDuration Length of desired reveal period in seconds
-  */
-  function startPoll(uint voteQuorum, uint commitDuration, uint revealDuration) external returns (uint id) {
-    selfPollNonce = selfPollNonce.add(1);
-
-    uint commitEndDate = block.timestamp.add(commitDuration);
-    uint revealEndDate = commitEndDate.add(revealDuration);
-
-    selfPollMap[selfPollNonce] = Poll({
-      voteQuorum: voteQuorum,
-      commitExpiry: commitEndDate,
-      revealExpiry: revealEndDate,
-      votesFor: 0,
-      votesAgainst: 0
-    });
-
-    emit PollCreatedEvent(
-      voteQuorum,
-      commitEndDate,
-      revealEndDate,
-      selfPollNonce,
-      msg.sender
-    );
-
-    return selfPollNonce;
-  }
-
-  /**
-  @notice Determines if proposal has passed
-  @dev Check if votesFor out of totalVotes exceeds votesQuorum (requires pollEnded)
-  @param id Integer identifier associated with target poll
-  */
-  function isPassed(uint id) public view returns (bool passed) {
-    require(pollEnded(id), "Error:Voting.isPassed - Poll must have ended");
-
-    Poll memory poll = selfPollMap[id];
-    return (poll.votesFor.mul(100)) > (poll.voteQuorum.mul(poll.votesFor.add(poll.votesAgainst)));
-  }
-
-  // ----------------
-  // POLLING HELPERS:
-  // ----------------
-
-  /**
-  @dev Gets the total winning votes for reward distribution purposes
-  @param id Integer identifier associated with target poll
-  @return Total number of votes committed to the winning option for specified poll
-  */
-  function getTotalNumberOfTokensForWinningOption(uint id) external view returns (uint numTokens) {
-    require(pollEnded(id), "Error:Voting.getTotalNumberOfTokensForWinningOption - Poll must have ended");
-
-    if (isPassed(id)) {
-      return selfPollMap[id].votesFor;
-    } else {
-      return selfPollMap[id].votesAgainst;
-    }
-  }
-
-  /**
-  @notice Determines if poll is over
-  @dev Checks isExpired for specified poll's revealEndDate
-  @param id Integer identifier associated with target poll
-  @return Boolean indication of whether polling period is over
-  */
-  function pollEnded(uint id) public view returns (bool ended) {
-    require(pollExists(id), "Error:Voting.pollEnded - Poll must exist");
-
-    return isExpired(selfPollMap[id].revealExpiry);
-  }
-
-  /**
-  @notice Checks if the commit period is still active for the specified poll
-  @dev Checks isExpired for the specified poll's commitEndDate
-  @param id Integer identifier associated with target poll
-  @return Boolean indication of isCommitPeriodActive for target poll
-  */
-  function commitPeriodActive(uint id) public view returns (bool active) {
-    require(pollExists(id), "Error:Voting.commitPeriodActive - Poll must exist");
-
-    return !isExpired(selfPollMap[id].commitExpiry);
-  }
-
-  /**
-  @notice Checks if the reveal period is still active for the specified poll
-  @dev Checks isExpired for the specified poll's revealEndDate
-  @param id Integer identifier associated with target poll
-  */
-  function revealPeriodActive(uint id) public view returns (bool active) {
-    require(pollExists(id), "Error:Voting.revealPeriodActive - Poll must exist");
-
-    return !isExpired(selfPollMap[id].revealExpiry) && !commitPeriodActive(id);
-  }
-
-  /**
   @dev Checks if user has committed for specified poll
   @param voter Address of user to check against
   @param id Integer identifier associated with target poll
@@ -428,41 +239,6 @@ contract PLCRVoting {
   }
 
   /**
-  @dev Return the commit expiry for a given poll
-  @param id Integer identifier associated with target poll
-  @return the expiry as uint
-  */
-  function getPollCommitExpiry(uint id) external view returns (uint expiry) {
-    require(pollExists(id), "Error:Voting.getPollCommitExpiry - Poll must exist");
-
-    return selfPollMap[id].commitExpiry;
-  }
-
-  /**
-  @dev Return the reveal expiry for a given poll
-  @param id Integer identifier associated with target poll
-  @return the expiry as uint
-  */
-  function getPollRevealExpiry(uint id) external view returns (uint expiry) {
-    require(pollExists(id), "Error:Voting.getPollrevealExpiry - Poll must exist");
-
-    return selfPollMap[id].revealExpiry;
-  }
-
-  /**
-  @dev Checks if a poll exists
-  @param id The poll ID whose existance is to be evaluated.
-  @return Boolean Indicates whether a poll exists for the provided poll ID
-  */
-  function pollExists(uint id) public view returns (bool exists) {
-    return (id != 0 && id <= selfPollNonce);
-  }
-
-  // ---------------------------
-  // DOUBLE-LINKED-LIST HELPERS:
-  // ---------------------------
-
-  /**
   @dev Gets the bytes32 commitHash property of target poll
   @param voter Address of user to check against
   @param id Integer identifier associated with target poll
@@ -470,34 +246,6 @@ contract PLCRVoting {
   */
   function getCommitHash(address voter, uint id) public view returns (bytes32 commitHash) {
     return bytes32(getStoreAttribute(attrUuid(voter, id), "commitHash"));
-  }
-
-  /**
-  @dev Wrapper for getAttribute with attrName="numTokens"
-  @param voter Address of user to check against
-  @param id Integer identifier associated with target poll
-  @return Number of tokens committed to poll in sorted poll-linked-list
-  */
-  function getNumTokens(address voter, uint id) public view returns (uint numTokens) {
-    return getStoreAttribute(attrUuid(voter, id), "numTokens");
-  }
-
-  /**
-  @dev Gets top element of sorted poll-linked-list
-  @param voter Address of user to check against
-  @return Integer identifier to poll with maximum number of tokens committed to it
-  */
-  function getLastNode(address voter) public view returns (uint id) {
-    return getDllPrev(voter, 0);
-  }
-
-  /**
-  @dev Gets the numTokens property of getLastNode
-  @param voter Address of user to check against
-  @return Maximum number of tokens committed in poll specified
-  */
-  function getLockedTokens(address voter) public view returns (uint numTokens) {
-    return getNumTokens(voter, getLastNode(voter));
   }
 
   /*
@@ -538,9 +286,79 @@ contract PLCRVoting {
     return nodeId;
   }
 
-  // ----------------
-  // GENERAL HELPERS:
-  // ----------------
+  /**
+  @dev Gets the numTokens property of getLastNode
+  @param voter Address of user to check against
+  @return Maximum number of tokens committed in poll specified
+  */
+  function getLockedTokens(address voter) public view returns (uint numTokens) {
+    return getNumTokens(voter, getLastNode(voter));
+  }
+
+  /**
+  @param id Integer identifier associated with target poll
+  @param salt Arbitrarily chosen integer used to generate secretHash
+  @return correctVotes Number of tokens voted for winning option
+  */
+  function getNumPassingTokens(address voter, uint id, uint salt) external view returns (uint correctVotes) {
+    require(pollEnded(id), "Error:Voting.getNumPassingTokens - Poll must have ended");
+    require(selfPollMap[id].didReveal[voter], "Error:Voting.getNumPassingTokens - Voter must have revealed their vote");
+
+    uint winningChoice = isPassed(id) ? 1 : 0;
+    bytes32 winnerHash = keccak256(abi.encodePacked(winningChoice, salt));
+    bytes32 commitHash = getCommitHash(voter, id);
+
+    require(winnerHash == commitHash, "Error:Voting.getNumPassingTokens - Hash mismatch");
+
+    return getNumTokens(voter, id);
+  }
+
+  /**
+  @dev Wrapper for getAttribute with attrName="numTokens"
+  @param voter Address of user to check against
+  @param id Integer identifier associated with target poll
+  @return Number of tokens committed to poll in sorted poll-linked-list
+  */
+  function getNumTokens(address voter, uint id) public view returns (uint numTokens) {
+    return getStoreAttribute(attrUuid(voter, id), "numTokens");
+  }
+
+  /**
+  @dev Return the commit expiry for a given poll
+  @param id Integer identifier associated with target poll
+  @return the expiry as uint
+  */
+  function getPollCommitExpiry(uint id) external view returns (uint expiry) {
+    require(pollExists(id), "Error:Voting.getPollCommitExpiry - Poll must exist");
+
+    return selfPollMap[id].commitExpiry;
+  }
+
+  /**
+  @dev Return the reveal expiry for a given poll
+  @param id Integer identifier associated with target poll
+  @return the expiry as uint
+  */
+  function getPollRevealExpiry(uint id) external view returns (uint expiry) {
+    require(pollExists(id), "Error:Voting.getPollrevealExpiry - Poll must exist");
+
+    return selfPollMap[id].revealExpiry;
+  }
+
+  /**
+  @dev Gets the total winning votes for reward distribution purposes
+  @param id Integer identifier associated with target poll
+  @return Total number of votes committed to the winning option for specified poll
+  */
+  function getTotalNumberOfTokensForWinningOption(uint id) external view returns (uint numTokens) {
+    require(pollEnded(id), "Error:Voting.getTotalNumberOfTokensForWinningOption - Poll must have ended");
+
+    if (isPassed(id)) {
+      return selfPollMap[id].votesFor;
+    } else {
+      return selfPollMap[id].votesAgainst;
+    }
+  }
 
   /**
   @dev Checks if an expiration date has been reached
@@ -552,13 +370,171 @@ contract PLCRVoting {
   }
 
   /**
-  @dev Generates an identifier which associates a user and a poll together
-  @param user Address to associate with a poll
+  @notice Determines if proposal has passed
+  @dev Check if votesFor out of totalVotes exceeds votesQuorum (requires pollEnded)
   @param id Integer identifier associated with target poll
-  @return UUID Hash which is deterministic from user and poll ID
   */
-  function attrUuid(address user, uint id) private pure returns (bytes32 uuid) {
-    return keccak256(abi.encodePacked(user, id));
+  function isPassed(uint id) public view returns (bool passed) {
+    require(pollEnded(id), "Error:Voting.isPassed - Poll must have ended");
+
+    Poll memory poll = selfPollMap[id];
+    return (poll.votesFor.mul(100)) > (poll.voteQuorum.mul(poll.votesFor.add(poll.votesAgainst)));
+  }
+
+  /**
+  @notice Determines if poll is over
+  @dev Checks isExpired for specified poll's revealEndDate
+  @param id Integer identifier associated with target poll
+  @return Boolean indication of whether polling period is over
+  */
+  function pollEnded(uint id) public view returns (bool ended) {
+    require(pollExists(id), "Error:Voting.pollEnded - Poll must exist");
+
+    return isExpired(selfPollMap[id].revealExpiry);
+  }
+
+  /**
+  @dev Checks if a poll exists
+  @param id The poll ID whose existance is to be evaluated.
+  @return Boolean Indicates whether a poll exists for the provided poll ID
+  */
+  function pollExists(uint id) public view returns (bool exists) {
+    return (id != 0 && id <= selfPollNonce);
+  }
+
+  /**
+  @notice Loads numTokens ERC20 tokens into the voting contract for one-to-one voting rights
+  @dev Assumes that msg.sender has approved voting contract to spend on their behalf
+  @param numTokens The number of votingTokens desired in exchange for ERC20 tokens
+  */
+  function requestVotingRights(uint numTokens) external {
+    require(selfToken.balanceOf(msg.sender) >= numTokens, "Error:Voting.requestVotingRights - Sender does not have sufficient funds");
+    selfVoteTokenBalance[msg.sender] = selfVoteTokenBalance[msg.sender].add(numTokens);
+    require(selfToken.transferFrom(msg.sender, this, numTokens), "Error:Voting.requestVotingRights - Token.transferFrom failure");
+    emit VotingRightsGrantedEvent(numTokens, msg.sender);
+  }
+
+  /**
+  @dev Unlocks tokens locked in unrevealed vote where poll has ended
+  @param id Integer identifier associated with the target poll
+  */
+  function rescueTokens(uint id) external {
+    require(isExpired(selfPollMap[id].revealExpiry), "Error:Voting.rescueTokens - Poll must have ended");
+    require(dllContains(msg.sender, id), "Error:Voting.rescueTokens - Poll not found");
+
+    dllRemove(msg.sender, id);
+    emit TokensRescuedEvent(id, msg.sender);
+  }
+
+  /**
+  @notice Checks if the reveal period is still active for the specified poll
+  @dev Checks isExpired for the specified poll's revealEndDate
+  @param id Integer identifier associated with target poll
+  */
+  function revealPeriodActive(uint id) public view returns (bool active) {
+    require(pollExists(id), "Error:Voting.revealPeriodActive - Poll must exist");
+
+    return !isExpired(selfPollMap[id].revealExpiry) && !commitPeriodActive(id);
+  }
+
+  /**
+  @notice Reveals vote with choice and secret salt used in generating commitHash to attribute committed tokens
+  @param id Integer identifier associated with target poll
+  @param voteOption Vote choice used to generate commitHash for associated poll
+  @param salt Secret number used to generate commitHash for associated poll
+  */
+  function revealVote(uint id, uint voteOption, uint salt) external {
+    // Make sure the reveal period is active
+    require(revealPeriodActive(id), "Error:Voting.revealVote - Reveal period must be active");
+    require(selfPollMap[id].didCommit[msg.sender], "Error:Voting.revealVote - Sender must have committed their vote"); // make sure user has committed a vote for this poll
+    require(!selfPollMap[id].didReveal[msg.sender], "Error:Voting.revealVote - Sender cannot reveal their vote multiple times"); // prevent user from revealing multiple times
+    require(keccak256(abi.encodePacked(voteOption, salt)) == getCommitHash(msg.sender, id), "Error:Voting.revealVote - Hash mismatch"); // compare resultant hash from inputs to original commitHash
+
+    uint numTokens = getNumTokens(msg.sender, id);
+
+    if (voteOption == 1) {// apply numTokens to appropriate poll choice
+      selfPollMap[id].votesFor = selfPollMap[id].votesFor.add(numTokens);
+    } else {
+      selfPollMap[id].votesAgainst = selfPollMap[id].votesAgainst.add(numTokens);
+    }
+
+    // remove the node referring to this vote upon reveal
+    dllRemove(msg.sender, id);
+
+    selfPollMap[id].didReveal[msg.sender] = true;
+
+    emit VoteRevealedEvent(
+      id,
+      numTokens,
+      selfPollMap[id].votesFor,
+      selfPollMap[id].votesAgainst,
+      voteOption,
+      msg.sender
+    );
+  }
+
+  /**
+  @dev Initiates a poll with canonical configured parameters at poll ID emitted by PollCreated event
+  @param voteQuorum Type of majority (out of 100) that is necessary for poll to be successful
+  @param commitDuration Length of desired commit period in seconds
+  @param revealDuration Length of desired reveal period in seconds
+  */
+  function startPoll(uint voteQuorum, uint commitDuration, uint revealDuration) external returns (uint id) {
+    selfPollNonce = selfPollNonce.add(1);
+
+    uint commitEndDate = block.timestamp.add(commitDuration);
+    uint revealEndDate = commitEndDate.add(revealDuration);
+
+    selfPollMap[selfPollNonce] = Poll({
+      voteQuorum: voteQuorum,
+      commitExpiry: commitEndDate,
+      revealExpiry: revealEndDate,
+      votesFor: 0,
+      votesAgainst: 0
+    });
+
+    emit PollCreatedEvent(
+      voteQuorum,
+      commitEndDate,
+      revealEndDate,
+      selfPollNonce,
+      msg.sender
+    );
+
+    return selfPollNonce;
+  }
+
+  /**
+  @dev Compares previous and next poll's committed tokens for sorting purposes
+  @param prevId Integer identifier associated with previous poll in sorted order
+  @param nextId Integer identifier associated with next poll in sorted order
+  @param voter Address of user to check DLL position for
+  @param numTokens The number of tokens to be committed towards the poll (used for sorting)
+  @return valid Boolean indication of if the specified position maintains the sort
+  */
+  function validPosition(
+    uint prevId,
+    uint nextId,
+    address voter,
+    uint numTokens
+  ) public view returns (bool valid)
+  {
+    bool prevValid = (numTokens >= getNumTokens(voter, prevId));
+    // if next is zero node, numTokens does not need to be greater
+    bool nextValid = (numTokens <= getNumTokens(voter, nextId) || nextId == 0);
+    return prevValid && nextValid;
+  }
+
+  /**
+  @notice Withdraw numTokens ERC20 tokens from the voting contract, revoking these voting rights
+  @param numTokens The number of ERC20 tokens desired in exchange for voting rights
+  */
+  function withdrawVotingRights(uint numTokens) external {
+    uint availableTokens = selfVoteTokenBalance[msg.sender].sub(getLockedTokens(msg.sender));
+    require(availableTokens >= numTokens, "Error:Voting.withdrawVotingRights - Insufficient available tokens");
+    selfVoteTokenBalance[msg.sender] = selfVoteTokenBalance[msg.sender].sub(numTokens);
+    require(selfToken.transfer(msg.sender, numTokens), "Error:Voting.withdrawVotingRights - Token.transfer failure");
+    emit VotingRightsWithdrawnEvent(numTokens, msg.sender);
   }
 
   event VoteCommittedEvent(uint indexed id, uint numTokens, address indexed voter);

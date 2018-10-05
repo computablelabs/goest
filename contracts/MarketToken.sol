@@ -13,14 +13,15 @@ contract MarketToken {
 
   uint256 private selfSupply;
   bool private selfMintingStopped = false;
-  address private selfOwner;
+  address private selfOwner; // will be the market factory
+  address private selfMarket; // address of the market contract
   mapping(address => uint256) private selfBalances;
   mapping (address => mapping (address => uint256)) private selfAllowed;
 
   constructor(address initialAccount, uint256 initialBalance) public {
-    selfOwner = msg.sender;
-    selfBalances[initialAccount] = initialBalance;
-    selfSupply = initialBalance;
+    selfOwner = msg.sender; // TODO this may not be the case
+    selfBalances[initialAccount] = initialBalance; // likely to change as well TODO
+    selfSupply = initialBalance; // all-the-changes ...
   }
 
   /**
@@ -61,21 +62,17 @@ contract MarketToken {
    * Burns a specific amount of tokens.
    * @param value The amount of token to be burned.
    */
-  function burn(uint256 value) external {
-    doBurn(msg.sender, value);
-  }
+  function burn(uint256 value) external isMarket {
+    // doBurn(msg.sender, value);
 
-  /**
-   * Burns a specific amount of tokens from the target address and decrements allowance
-   * @param from address The address which you want to send tokens from
-   * @param value uint256 The amount of token to be burned
-   */
-  function burnFrom(address from, uint256 value) external {
-    require(value <= selfAllowed[from][msg.sender], "Error:MarketToken.burnFrom - Value exceeds allowed amount");
-    // Should https://github.com/OpenZeppelin/zeppelin-solidity/issues/707 be accepted,
-    // this function needs to emit an event with the updated approval.
-    selfAllowed[from][msg.sender] = selfAllowed[from][msg.sender].sub(value);
-    doBurn(from, value);
+    require(value <= selfBalances[msg.sender], "Error:NetworkToken.burn - Value exceeds available balance");
+    // no need to require value <= supply, since that would imply the
+    // sender's balance is greater than the supply, which *should* be an assertion failure
+
+    selfBalances[msg.sender] = selfBalances[msg.sender].sub(value);
+    selfSupply = selfSupply.sub(value);
+    emit BurnEvent(msg.sender, value);
+    emit TransferEvent(msg.sender, address(0), value); // from: market, to: nobody
   }
 
   /**
@@ -106,27 +103,18 @@ contract MarketToken {
     return true;
   }
 
-  /**
-   * Abstracted logic for burning used by both `burn` and `burnFrom`
-   */
-  function doBurn(address who, uint256 value) private {
-    require(value <= selfBalances[who], "Error:NetworkToken.doBurn - Value exceeds available balance");
-    // no need to require value <= supply, since that would imply the
-    // sender's balance is greater than the supply, which *should* be an assertion failure
-
-    selfBalances[who] = selfBalances[who].sub(value);
-    selfSupply = selfSupply.sub(value);
-    emit BurnEvent(who, value);
-    emit TransferEvent(who, address(0), value);
+  function getMarket() external view returns(address) {
+    return selfMarket;
   }
 
   /**
-   * Only the contract owner has mint permission
+   * @dev Return the address of the contract owner, should be the MarketFactory TODO
    */
-  modifier hasMintPermission() {
-    require(msg.sender == selfOwner, "Error:MarketToken.hasMintPermission - Caller must be owner");
-    _;
+  function getOwner() external view returns(address) {
+    return selfOwner;
   }
+
+  
 
   /**
    * Increase the amount of tokens that an owner allowed to a spender.
@@ -145,16 +133,26 @@ contract MarketToken {
   }
 
   /**
-   * @dev Create new tokens for the given amount, and give them to the given address
-   * @param to The recipient of the new tokens
+   * Only the market contract has mint and burn permissions
+   */
+  modifier isMarket() {
+    require(msg.sender == selfMarket, "Error:MarketToken.isMarket - Caller must be market contract");
+    _;
+  }
+
+  modifier isOwner() {
+    require(msg.sender == selfOwner, "Error:MarketToken.isOwner - Caller must be owner");
+    _;
+  }
+
+  /**
+   * @dev Create new tokens for the given amount, and bank them with the market until they are either burned or transferred
    * @param amount How many tokens to mint
    */
-  function mint(address to, uint256 amount) external hasMintPermission canMint returns (bool) {
-    require(to != 0, "Error:MarketToken.mint - 'to' account may not be 0");
-
+  function mint(uint256 amount) external isMarket canMint returns (bool) {
     selfSupply = selfSupply.add(amount);
-    selfBalances[to] = selfBalances[to].add(amount);
-    emit TransferEvent(address(0), to, amount);
+    selfBalances[msg.sender] = selfBalances[msg.sender].add(amount);
+    emit TransferEvent(address(0), msg.sender, amount); // from: nobody, to: market
     return true;
   }
 
@@ -165,17 +163,17 @@ contract MarketToken {
     return selfMintingStopped;
   }
 
-  /**
-   * @dev Return the address of the contract owner
-   */
-  function owner() external view returns(address) {
-    return selfOwner;
+  function setMarket(address market) external isOwner returns (bool) {
+    // we only allow this once, so the current val of market must be 0 initialized still
+    require(selfMarket == address(0), "Error:MarketToken.setMarket - Market address already set");
+    selfMarket = market;
+    return true;
   }
 
   /**
    * @dev explicity state that no more tokens may be minted
    */
-  function stopMinting() external hasMintPermission canMint returns (bool) {
+  function stopMinting() external isMarket canMint returns (bool) {
     selfMintingStopped = true;
     emit MintStoppedEvent();
     return true;
@@ -183,6 +181,8 @@ contract MarketToken {
 
   /**
   * @dev Total number of tokens in existence
+  * I'd prefer this to be `getSupply` to go along with our style for getters,
+  * but we'll stick to the ERC20 interface for this one.
   */
   function totalSupply() external view returns (uint256) {
     return selfSupply;
@@ -194,7 +194,7 @@ contract MarketToken {
   * @param value The amount to be transferred.
   */
   function transfer(address to, uint256 value) external returns (bool) {
-    require(to != address(0), "Error:Basic.transfer - 'to' cannot be the zero-address");
+    require(to != address(0), "Error:Basic.transfer - An address must be specified");
     require(value <= selfBalances[msg.sender], "Error:Basic.transfer - Value exceeds the balance of msg.sender");
 
     selfBalances[msg.sender] = selfBalances[msg.sender].sub(value);
@@ -210,7 +210,7 @@ contract MarketToken {
    * @param value uint256 the amount of tokens to be transferred
    */
   function transferFrom(address from, address to, uint256 value) external returns (bool) {
-    require(to != address(0), "Error:Standard.transferFrom - 'to' may not be the zero-address");
+    require(to != address(0), "Error:Standard.transferFrom - 'to' address must be specified");
     require(value <= selfBalances[from], "Error:Standard.transferFrom - Value exceeds available balance");
     require(value <= selfAllowed[from][msg.sender], "Error.Standard.transferFrom - Value exceeds allowed amount");
 

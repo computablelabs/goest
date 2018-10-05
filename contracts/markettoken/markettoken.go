@@ -16,10 +16,10 @@ import (
 )
 
 // MarketTokenABI is the input ABI used to generate the binding from.
-const MarketTokenABI = "[{\"constant\":false,\"inputs\":[{\"name\":\"spender\",\"type\":\"address\"},{\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"approve\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"totalSupply\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"from\",\"type\":\"address\"},{\"name\":\"to\",\"type\":\"address\"},{\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"transferFrom\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[],\"name\":\"stopMinting\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"to\",\"type\":\"address\"},{\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"mint\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"burn\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"spender\",\"type\":\"address\"},{\"name\":\"subtractedValue\",\"type\":\"uint256\"}],\"name\":\"decreaseApproval\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"holder\",\"type\":\"address\"}],\"name\":\"balanceOf\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"from\",\"type\":\"address\"},{\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"burnFrom\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"to\",\"type\":\"address\"},{\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"transfer\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"spender\",\"type\":\"address\"},{\"name\":\"addedValue\",\"type\":\"uint256\"}],\"name\":\"increaseApproval\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"holder\",\"type\":\"address\"},{\"name\":\"spender\",\"type\":\"address\"}],\"name\":\"allowance\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"mintingStopped\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"name\":\"initialAccount\",\"type\":\"address\"},{\"name\":\"initialBalance\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"holder\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"spender\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"ApprovalEvent\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"from\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"to\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"TransferEvent\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"burner\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"BurnEvent\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[],\"name\":\"MintStoppedEvent\",\"type\":\"event\"}]"
+const MarketTokenABI = "[{\"constant\":false,\"inputs\":[{\"name\":\"spender\",\"type\":\"address\"},{\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"approve\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"totalSupply\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"from\",\"type\":\"address\"},{\"name\":\"to\",\"type\":\"address\"},{\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"transferFrom\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[],\"name\":\"stopMinting\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"burn\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"spender\",\"type\":\"address\"},{\"name\":\"subtractedValue\",\"type\":\"uint256\"}],\"name\":\"decreaseApproval\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"market\",\"type\":\"address\"}],\"name\":\"setMarket\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"holder\",\"type\":\"address\"}],\"name\":\"balanceOf\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"getOwner\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"mint\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"to\",\"type\":\"address\"},{\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"transfer\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"spender\",\"type\":\"address\"},{\"name\":\"addedValue\",\"type\":\"uint256\"}],\"name\":\"increaseApproval\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"holder\",\"type\":\"address\"},{\"name\":\"spender\",\"type\":\"address\"}],\"name\":\"allowance\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"getMarket\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"mintingStopped\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"name\":\"initialAccount\",\"type\":\"address\"},{\"name\":\"initialBalance\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"holder\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"spender\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"ApprovalEvent\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"from\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"to\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"TransferEvent\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"burner\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"BurnEvent\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[],\"name\":\"MintStoppedEvent\",\"type\":\"event\"}]"
 
 // MarketTokenBin is the compiled bytecode used for deploying new contracts.
-const MarketTokenBin = `0x60806040526001805460ff1916905534801561001a57600080fd5b5060405160408061105f833981016040908152815160209283015160018054610100330261010060a860020a0319909116179055600160a060020a03909116600090815260029093529082208190559055610fe58061007a6000396000f3006080604052600436106100cf5763ffffffff7c0100000000000000000000000000000000000000000000000000000000600035041663095ea7b381146100d457806318160ddd1461010c57806323b872dd146101335780633e3e0b121461015d57806340c10f191461017257806342966c681461019657806366188463146101b057806370a08231146101d457806379cc6790146101f55780638da5cb5b14610219578063a9059cbb1461024a578063d73dd6231461026e578063dd62ed3e14610292578063f339292f146102b9575b600080fd5b3480156100e057600080fd5b506100f8600160a060020a03600435166024356102ce565b604080519115158252519081900360200190f35b34801561011857600080fd5b50610121610334565b60408051918252519081900360200190f35b34801561013f57600080fd5b506100f8600160a060020a036004358116906024351660443561033a565b34801561016957600080fd5b506100f86105f4565b34801561017e57600080fd5b506100f8600160a060020a0360043516602435610740565b3480156101a257600080fd5b506101ae600435610960565b005b3480156101bc57600080fd5b506100f8600160a060020a036004351660243561096d565b3480156101e057600080fd5b50610121600160a060020a0360043516610a5d565b34801561020157600080fd5b506101ae600160a060020a0360043516602435610a78565b34801561022557600080fd5b5061022e610b7f565b60408051600160a060020a039092168252519081900360200190f35b34801561025657600080fd5b506100f8600160a060020a0360043516602435610b93565b34801561027a57600080fd5b506100f8600160a060020a0360043516602435610d46565b34801561029e57600080fd5b50610121600160a060020a0360043581169060243516610ddf565b3480156102c557600080fd5b506100f8610e0a565b336000818152600360209081526040808320600160a060020a038716808552908352818420869055815186815291519394909390927f08245b82180b1f5e514e503c113ab0197093b2cb542145037c0a31b54b1d998e928290030190a350600192915050565b60005490565b6000600160a060020a03831615156103c2576040805160e560020a62461bcd02815260206004820152603e60248201527f4572726f723a5374616e646172642e7472616e7366657246726f6d202d20277460448201527f6f27206d6179206e6f7420626520746865207a65726f2d616464726573730000606482015290519081900360840190fd5b600160a060020a038416600090815260026020526040902054821115610458576040805160e560020a62461bcd02815260206004820152603d60248201527f4572726f723a5374616e646172642e7472616e7366657246726f6d202d20566160448201527f6c7565206578636565647320617661696c61626c652062616c616e6365000000606482015290519081900360840190fd5b600160a060020a03841660009081526003602090815260408083203384529091529020548211156104f9576040805160e560020a62461bcd02815260206004820152603a60248201527f4572726f722e5374616e646172642e7472616e7366657246726f6d202d20566160448201527f6c7565206578636565647320616c6c6f77656420616d6f756e74000000000000606482015290519081900360840190fd5b600160a060020a038416600090815260026020526040902054610522908363ffffffff610e1316565b600160a060020a038086166000908152600260205260408082209390935590851681522054610557908363ffffffff610e2516565b600160a060020a03808516600090815260026020908152604080832094909455918716815260038252828120338252909152205461059b908363ffffffff610e1316565b600160a060020a0380861660008181526003602090815260408083203384528252918290209490945580518681529051928716939192600080516020610f9a833981519152929181900390910190a35060019392505050565b6001546000906101009004600160a060020a03163314610684576040805160e560020a62461bcd02815260206004820152603a60248201527f4572726f723a4d61726b6574546f6b656e2e6861734d696e745065726d69737360448201527f696f6e202d2043616c6c6572206d757374206265206f776e6572000000000000606482015290519081900360840190fd5b60015460ff1615610705576040805160e560020a62461bcd02815260206004820152603460248201527f4572726f723a4d61726b6574546f6b656e2e63616e4d696e74202d204d696e7460448201527f696e6720686173206265656e2073746f70706564000000000000000000000000606482015290519081900360840190fd5b6001805460ff1916811790556040517f6ae65cb1ae147362b8906c28687a17e1712ca926bea50710ba279849cec3347190600090a150600190565b6001546000906101009004600160a060020a031633146107d0576040805160e560020a62461bcd02815260206004820152603a60248201527f4572726f723a4d61726b6574546f6b656e2e6861734d696e745065726d69737360448201527f696f6e202d2043616c6c6572206d757374206265206f776e6572000000000000606482015290519081900360840190fd5b60015460ff1615610851576040805160e560020a62461bcd02815260206004820152603460248201527f4572726f723a4d61726b6574546f6b656e2e63616e4d696e74202d204d696e7460448201527f696e6720686173206265656e2073746f70706564000000000000000000000000606482015290519081900360840190fd5b600160a060020a03831615156108d7576040805160e560020a62461bcd02815260206004820152603260248201527f4572726f723a4d61726b6574546f6b656e2e6d696e74202d2027746f2720616360448201527f636f756e74206d6179206e6f7420626520300000000000000000000000000000606482015290519081900360840190fd5b6000546108ea908363ffffffff610e2516565b6000908155600160a060020a038416815260026020526040902054610915908363ffffffff610e2516565b600160a060020a0384166000818152600260209081526040808320949094558351868152935192939192600080516020610f9a8339815191529281900390910190a350600192915050565b61096a3382610e38565b50565b336000908152600360209081526040808320600160a060020a0386168452909152812054808311156109c257336000908152600360209081526040808320600160a060020a03881684529091528120556109f7565b6109d2818463ffffffff610e1316565b336000908152600360209081526040808320600160a060020a03891684529091529020555b336000818152600360209081526040808320600160a060020a0389168085529083529281902054815190815290519293927f08245b82180b1f5e514e503c113ab0197093b2cb542145037c0a31b54b1d998e929181900390910190a35060019392505050565b600160a060020a031660009081526002602052604090205490565b600160a060020a0382166000908152600360209081526040808320338452909152902054811115610b19576040805160e560020a62461bcd02815260206004820152603960248201527f4572726f723a4d61726b6574546f6b656e2e6275726e46726f6d202d2056616c60448201527f7565206578636565647320616c6c6f77656420616d6f756e7400000000000000606482015290519081900360840190fd5b600160a060020a0382166000908152600360209081526040808320338452909152902054610b4d908263ffffffff610e1316565b600160a060020a0383166000908152600360209081526040808320338452909152902055610b7b8282610e38565b5050565b6001546101009004600160a060020a031690565b6000600160a060020a0383161515610c1b576040805160e560020a62461bcd02815260206004820152603660248201527f4572726f723a42617369632e7472616e73666572202d2027746f272063616e6e60448201527f6f7420626520746865207a65726f2d6164647265737300000000000000000000606482015290519081900360840190fd5b33600090815260026020526040902054821115610ca8576040805160e560020a62461bcd02815260206004820152603e60248201527f4572726f723a42617369632e7472616e73666572202d2056616c75652065786360448201527f65656473207468652062616c616e6365206f66206d73672e73656e6465720000606482015290519081900360840190fd5b33600090815260026020526040902054610cc8908363ffffffff610e1316565b3360009081526002602052604080822092909255600160a060020a03851681522054610cfa908363ffffffff610e2516565b600160a060020a038416600081815260026020908152604091829020939093558051858152905191923392600080516020610f9a8339815191529281900390910190a350600192915050565b336000908152600360209081526040808320600160a060020a0386168452909152812054610d7a908363ffffffff610e2516565b336000818152600360209081526040808320600160a060020a0389168085529083529281902085905580519485525191937f08245b82180b1f5e514e503c113ab0197093b2cb542145037c0a31b54b1d998e929081900390910190a350600192915050565b600160a060020a03918216600090815260036020908152604080832093909416825291909152205490565b60015460ff1690565b600082821115610e1f57fe5b50900390565b81810182811015610e3257fe5b92915050565b600160a060020a038216600090815260026020526040902054811115610ece576040805160e560020a62461bcd02815260206004820152603b60248201527f4572726f723a4e6574776f726b546f6b656e2e646f4275726e202d2056616c7560448201527f65206578636565647320617661696c61626c652062616c616e63650000000000606482015290519081900360840190fd5b600160a060020a038216600090815260026020526040902054610ef7908263ffffffff610e1316565b600160a060020a03831660009081526002602052604081209190915554610f24908263ffffffff610e1316565b600055604080518281529051600160a060020a038416917f512586160ebd4dc6945ba9ec5d21a1f723f26f3c7aa36cdffb6818d4e7b88030919081900360200190a2604080518281529051600091600160a060020a03851691600080516020610f9a8339815191529181900360200190a350505600eaf1c4b3ce0f4f62a2bae7eb3e68225c75f7e6ff4422073b7437b9a78d25f170a165627a7a7230582060b1cb14e662e4a8481d585d417388dbf37350b60cbc461895cd3885922e07340029`
+const MarketTokenBin = `0x60806040526001805460ff1916905534801561001a57600080fd5b5060405160408061106b833981016040908152815160209283015160018054610100330261010060a860020a0319909116179055600160a060020a03909116600090815260039093529082208190559055610ff18061007a6000396000f3006080604052600436106100da5763ffffffff7c0100000000000000000000000000000000000000000000000000000000600035041663095ea7b381146100df57806318160ddd1461011757806323b872dd1461013e5780633e3e0b121461016857806342966c681461017d57806366188463146101975780636dcea85f146101bb57806370a08231146101dc578063893d20e8146101fd578063a0712d681461022e578063a9059cbb14610246578063d73dd6231461026a578063dd62ed3e1461028e578063f1be1679146102b5578063f339292f146102ca575b600080fd5b3480156100eb57600080fd5b50610103600160a060020a03600435166024356102df565b604080519115158252519081900360200190f35b34801561012357600080fd5b5061012c610345565b60408051918252519081900360200190f35b34801561014a57600080fd5b50610103600160a060020a036004358116906024351660443561034b565b34801561017457600080fd5b50610103610605565b34801561018957600080fd5b5061019560043561074c565b005b3480156101a357600080fd5b50610103600160a060020a0360043516602435610907565b3480156101c757600080fd5b50610103600160a060020a03600435166109f7565b3480156101e857600080fd5b5061012c600160a060020a0360043516610b40565b34801561020957600080fd5b50610212610b5b565b60408051600160a060020a039092168252519081900360200190f35b34801561023a57600080fd5b50610103600435610b6f565b34801561025257600080fd5b50610103600160a060020a0360043516602435610cf1565b34801561027657600080fd5b50610103600160a060020a0360043516602435610ea4565b34801561029a57600080fd5b5061012c600160a060020a0360043581169060243516610f3d565b3480156102c157600080fd5b50610212610f68565b3480156102d657600080fd5b50610103610f77565b336000818152600460209081526040808320600160a060020a038716808552908352818420869055815186815291519394909390927f08245b82180b1f5e514e503c113ab0197093b2cb542145037c0a31b54b1d998e928290030190a350600192915050565b60005490565b6000600160a060020a03831615156103d3576040805160e560020a62461bcd02815260206004820152603c60248201527f4572726f723a5374616e646172642e7472616e7366657246726f6d202d20277460448201527f6f272061646472657373206d7573742062652073706563696669656400000000606482015290519081900360840190fd5b600160a060020a038416600090815260036020526040902054821115610469576040805160e560020a62461bcd02815260206004820152603d60248201527f4572726f723a5374616e646172642e7472616e7366657246726f6d202d20566160448201527f6c7565206578636565647320617661696c61626c652062616c616e6365000000606482015290519081900360840190fd5b600160a060020a038416600090815260046020908152604080832033845290915290205482111561050a576040805160e560020a62461bcd02815260206004820152603a60248201527f4572726f722e5374616e646172642e7472616e7366657246726f6d202d20566160448201527f6c7565206578636565647320616c6c6f77656420616d6f756e74000000000000606482015290519081900360840190fd5b600160a060020a038416600090815260036020526040902054610533908363ffffffff610f8016565b600160a060020a038086166000908152600360205260408082209390935590851681522054610568908363ffffffff610f9216565b600160a060020a0380851660009081526003602090815260408083209490945591871681526004825282812033825290915220546105ac908363ffffffff610f8016565b600160a060020a0380861660008181526004602090815260408083203384528252918290209490945580518681529051928716939192600080516020610fa6833981519152929181900390910190a35060019392505050565b600254600090600160a060020a03163314610690576040805160e560020a62461bcd02815260206004820152603b60248201527f4572726f723a4d61726b6574546f6b656e2e69734d61726b6574202d2043616c60448201527f6c6572206d757374206265206d61726b657420636f6e74726163740000000000606482015290519081900360840190fd5b60015460ff1615610711576040805160e560020a62461bcd02815260206004820152603460248201527f4572726f723a4d61726b6574546f6b656e2e63616e4d696e74202d204d696e7460448201527f696e6720686173206265656e2073746f70706564000000000000000000000000606482015290519081900360840190fd5b6001805460ff1916811790556040517f6ae65cb1ae147362b8906c28687a17e1712ca926bea50710ba279849cec3347190600090a150600190565b600254600160a060020a031633146107d4576040805160e560020a62461bcd02815260206004820152603b60248201527f4572726f723a4d61726b6574546f6b656e2e69734d61726b6574202d2043616c60448201527f6c6572206d757374206265206d61726b657420636f6e74726163740000000000606482015290519081900360840190fd5b33600090815260036020526040902054811115610861576040805160e560020a62461bcd02815260206004820152603960248201527f4572726f723a4e6574776f726b546f6b656e2e6275726e202d2056616c75652060448201527f6578636565647320617661696c61626c652062616c616e636500000000000000606482015290519081900360840190fd5b33600090815260036020526040902054610881908263ffffffff610f8016565b33600090815260036020526040812091909155546108a5908263ffffffff610f8016565b60005560408051828152905133917f512586160ebd4dc6945ba9ec5d21a1f723f26f3c7aa36cdffb6818d4e7b88030919081900360200190a26040805182815290516000913391600080516020610fa68339815191529181900360200190a350565b336000908152600460209081526040808320600160a060020a03861684529091528120548083111561095c57336000908152600460209081526040808320600160a060020a0388168452909152812055610991565b61096c818463ffffffff610f8016565b336000908152600460209081526040808320600160a060020a03891684529091529020555b336000818152600460209081526040808320600160a060020a0389168085529083529281902054815190815290519293927f08245b82180b1f5e514e503c113ab0197093b2cb542145037c0a31b54b1d998e929181900390910190a35060019392505050565b6001546000906101009004600160a060020a03163314610a87576040805160e560020a62461bcd02815260206004820152603060248201527f4572726f723a4d61726b6574546f6b656e2e69734f776e6572202d2043616c6c60448201527f6572206d757374206265206f776e657200000000000000000000000000000000606482015290519081900360840190fd5b600254600160a060020a031615610b0e576040805160e560020a62461bcd02815260206004820152603860248201527f4572726f723a4d61726b6574546f6b656e2e7365744d61726b6574202d204d6160448201527f726b6574206164647265737320616c7265616479207365740000000000000000606482015290519081900360840190fd5b5060028054600160a060020a03831673ffffffffffffffffffffffffffffffffffffffff199091161790556001919050565b600160a060020a031660009081526003602052604090205490565b6001546101009004600160a060020a031690565b600254600090600160a060020a03163314610bfa576040805160e560020a62461bcd02815260206004820152603b60248201527f4572726f723a4d61726b6574546f6b656e2e69734d61726b6574202d2043616c60448201527f6c6572206d757374206265206d61726b657420636f6e74726163740000000000606482015290519081900360840190fd5b60015460ff1615610c7b576040805160e560020a62461bcd02815260206004820152603460248201527f4572726f723a4d61726b6574546f6b656e2e63616e4d696e74202d204d696e7460448201527f696e6720686173206265656e2073746f70706564000000000000000000000000606482015290519081900360840190fd5b600054610c8e908363ffffffff610f9216565b600090815533815260036020526040902054610cb0908363ffffffff610f9216565b336000818152600360209081526040808320949094558351868152935192939192600080516020610fa68339815191529281900390910190a3506001919050565b6000600160a060020a0383161515610d79576040805160e560020a62461bcd02815260206004820152603360248201527f4572726f723a42617369632e7472616e73666572202d20416e2061646472657360448201527f73206d7573742062652073706563696669656400000000000000000000000000606482015290519081900360840190fd5b33600090815260036020526040902054821115610e06576040805160e560020a62461bcd02815260206004820152603e60248201527f4572726f723a42617369632e7472616e73666572202d2056616c75652065786360448201527f65656473207468652062616c616e6365206f66206d73672e73656e6465720000606482015290519081900360840190fd5b33600090815260036020526040902054610e26908363ffffffff610f8016565b3360009081526003602052604080822092909255600160a060020a03851681522054610e58908363ffffffff610f9216565b600160a060020a038416600081815260036020908152604091829020939093558051858152905191923392600080516020610fa68339815191529281900390910190a350600192915050565b336000908152600460209081526040808320600160a060020a0386168452909152812054610ed8908363ffffffff610f9216565b336000818152600460209081526040808320600160a060020a0389168085529083529281902085905580519485525191937f08245b82180b1f5e514e503c113ab0197093b2cb542145037c0a31b54b1d998e929081900390910190a350600192915050565b600160a060020a03918216600090815260046020908152604080832093909416825291909152205490565b600254600160a060020a031690565b60015460ff1690565b600082821115610f8c57fe5b50900390565b81810182811015610f9f57fe5b929150505600eaf1c4b3ce0f4f62a2bae7eb3e68225c75f7e6ff4422073b7437b9a78d25f170a165627a7a723058202d71f5b4f999ec53438069b0d62648d12473609c0d3cab6c6415a374e3375e780029`
 
 // DeployMarketToken deploys a new Ethereum contract, binding an instance of MarketToken to it.
 func DeployMarketToken(auth *bind.TransactOpts, backend bind.ContractBackend, initialAccount common.Address, initialBalance *big.Int) (common.Address, *types.Transaction, *MarketToken, error) {
@@ -228,6 +228,58 @@ func (_MarketToken *MarketTokenCallerSession) BalanceOf(holder common.Address) (
 	return _MarketToken.Contract.BalanceOf(&_MarketToken.CallOpts, holder)
 }
 
+// GetMarket is a free data retrieval call binding the contract method 0xf1be1679.
+//
+// Solidity: function getMarket() constant returns(address)
+func (_MarketToken *MarketTokenCaller) GetMarket(opts *bind.CallOpts) (common.Address, error) {
+	var (
+		ret0 = new(common.Address)
+	)
+	out := ret0
+	err := _MarketToken.contract.Call(opts, out, "getMarket")
+	return *ret0, err
+}
+
+// GetMarket is a free data retrieval call binding the contract method 0xf1be1679.
+//
+// Solidity: function getMarket() constant returns(address)
+func (_MarketToken *MarketTokenSession) GetMarket() (common.Address, error) {
+	return _MarketToken.Contract.GetMarket(&_MarketToken.CallOpts)
+}
+
+// GetMarket is a free data retrieval call binding the contract method 0xf1be1679.
+//
+// Solidity: function getMarket() constant returns(address)
+func (_MarketToken *MarketTokenCallerSession) GetMarket() (common.Address, error) {
+	return _MarketToken.Contract.GetMarket(&_MarketToken.CallOpts)
+}
+
+// GetOwner is a free data retrieval call binding the contract method 0x893d20e8.
+//
+// Solidity: function getOwner() constant returns(address)
+func (_MarketToken *MarketTokenCaller) GetOwner(opts *bind.CallOpts) (common.Address, error) {
+	var (
+		ret0 = new(common.Address)
+	)
+	out := ret0
+	err := _MarketToken.contract.Call(opts, out, "getOwner")
+	return *ret0, err
+}
+
+// GetOwner is a free data retrieval call binding the contract method 0x893d20e8.
+//
+// Solidity: function getOwner() constant returns(address)
+func (_MarketToken *MarketTokenSession) GetOwner() (common.Address, error) {
+	return _MarketToken.Contract.GetOwner(&_MarketToken.CallOpts)
+}
+
+// GetOwner is a free data retrieval call binding the contract method 0x893d20e8.
+//
+// Solidity: function getOwner() constant returns(address)
+func (_MarketToken *MarketTokenCallerSession) GetOwner() (common.Address, error) {
+	return _MarketToken.Contract.GetOwner(&_MarketToken.CallOpts)
+}
+
 // MintingStopped is a free data retrieval call binding the contract method 0xf339292f.
 //
 // Solidity: function mintingStopped() constant returns(bool)
@@ -252,32 +304,6 @@ func (_MarketToken *MarketTokenSession) MintingStopped() (bool, error) {
 // Solidity: function mintingStopped() constant returns(bool)
 func (_MarketToken *MarketTokenCallerSession) MintingStopped() (bool, error) {
 	return _MarketToken.Contract.MintingStopped(&_MarketToken.CallOpts)
-}
-
-// Owner is a free data retrieval call binding the contract method 0x8da5cb5b.
-//
-// Solidity: function owner() constant returns(address)
-func (_MarketToken *MarketTokenCaller) Owner(opts *bind.CallOpts) (common.Address, error) {
-	var (
-		ret0 = new(common.Address)
-	)
-	out := ret0
-	err := _MarketToken.contract.Call(opts, out, "owner")
-	return *ret0, err
-}
-
-// Owner is a free data retrieval call binding the contract method 0x8da5cb5b.
-//
-// Solidity: function owner() constant returns(address)
-func (_MarketToken *MarketTokenSession) Owner() (common.Address, error) {
-	return _MarketToken.Contract.Owner(&_MarketToken.CallOpts)
-}
-
-// Owner is a free data retrieval call binding the contract method 0x8da5cb5b.
-//
-// Solidity: function owner() constant returns(address)
-func (_MarketToken *MarketTokenCallerSession) Owner() (common.Address, error) {
-	return _MarketToken.Contract.Owner(&_MarketToken.CallOpts)
 }
 
 // TotalSupply is a free data retrieval call binding the contract method 0x18160ddd.
@@ -348,27 +374,6 @@ func (_MarketToken *MarketTokenTransactorSession) Burn(value *big.Int) (*types.T
 	return _MarketToken.Contract.Burn(&_MarketToken.TransactOpts, value)
 }
 
-// BurnFrom is a paid mutator transaction binding the contract method 0x79cc6790.
-//
-// Solidity: function burnFrom(from address, value uint256) returns()
-func (_MarketToken *MarketTokenTransactor) BurnFrom(opts *bind.TransactOpts, from common.Address, value *big.Int) (*types.Transaction, error) {
-	return _MarketToken.contract.Transact(opts, "burnFrom", from, value)
-}
-
-// BurnFrom is a paid mutator transaction binding the contract method 0x79cc6790.
-//
-// Solidity: function burnFrom(from address, value uint256) returns()
-func (_MarketToken *MarketTokenSession) BurnFrom(from common.Address, value *big.Int) (*types.Transaction, error) {
-	return _MarketToken.Contract.BurnFrom(&_MarketToken.TransactOpts, from, value)
-}
-
-// BurnFrom is a paid mutator transaction binding the contract method 0x79cc6790.
-//
-// Solidity: function burnFrom(from address, value uint256) returns()
-func (_MarketToken *MarketTokenTransactorSession) BurnFrom(from common.Address, value *big.Int) (*types.Transaction, error) {
-	return _MarketToken.Contract.BurnFrom(&_MarketToken.TransactOpts, from, value)
-}
-
 // DecreaseApproval is a paid mutator transaction binding the contract method 0x66188463.
 //
 // Solidity: function decreaseApproval(spender address, subtractedValue uint256) returns(bool)
@@ -411,25 +416,46 @@ func (_MarketToken *MarketTokenTransactorSession) IncreaseApproval(spender commo
 	return _MarketToken.Contract.IncreaseApproval(&_MarketToken.TransactOpts, spender, addedValue)
 }
 
-// Mint is a paid mutator transaction binding the contract method 0x40c10f19.
+// Mint is a paid mutator transaction binding the contract method 0xa0712d68.
 //
-// Solidity: function mint(to address, amount uint256) returns(bool)
-func (_MarketToken *MarketTokenTransactor) Mint(opts *bind.TransactOpts, to common.Address, amount *big.Int) (*types.Transaction, error) {
-	return _MarketToken.contract.Transact(opts, "mint", to, amount)
+// Solidity: function mint(amount uint256) returns(bool)
+func (_MarketToken *MarketTokenTransactor) Mint(opts *bind.TransactOpts, amount *big.Int) (*types.Transaction, error) {
+	return _MarketToken.contract.Transact(opts, "mint", amount)
 }
 
-// Mint is a paid mutator transaction binding the contract method 0x40c10f19.
+// Mint is a paid mutator transaction binding the contract method 0xa0712d68.
 //
-// Solidity: function mint(to address, amount uint256) returns(bool)
-func (_MarketToken *MarketTokenSession) Mint(to common.Address, amount *big.Int) (*types.Transaction, error) {
-	return _MarketToken.Contract.Mint(&_MarketToken.TransactOpts, to, amount)
+// Solidity: function mint(amount uint256) returns(bool)
+func (_MarketToken *MarketTokenSession) Mint(amount *big.Int) (*types.Transaction, error) {
+	return _MarketToken.Contract.Mint(&_MarketToken.TransactOpts, amount)
 }
 
-// Mint is a paid mutator transaction binding the contract method 0x40c10f19.
+// Mint is a paid mutator transaction binding the contract method 0xa0712d68.
 //
-// Solidity: function mint(to address, amount uint256) returns(bool)
-func (_MarketToken *MarketTokenTransactorSession) Mint(to common.Address, amount *big.Int) (*types.Transaction, error) {
-	return _MarketToken.Contract.Mint(&_MarketToken.TransactOpts, to, amount)
+// Solidity: function mint(amount uint256) returns(bool)
+func (_MarketToken *MarketTokenTransactorSession) Mint(amount *big.Int) (*types.Transaction, error) {
+	return _MarketToken.Contract.Mint(&_MarketToken.TransactOpts, amount)
+}
+
+// SetMarket is a paid mutator transaction binding the contract method 0x6dcea85f.
+//
+// Solidity: function setMarket(market address) returns(bool)
+func (_MarketToken *MarketTokenTransactor) SetMarket(opts *bind.TransactOpts, market common.Address) (*types.Transaction, error) {
+	return _MarketToken.contract.Transact(opts, "setMarket", market)
+}
+
+// SetMarket is a paid mutator transaction binding the contract method 0x6dcea85f.
+//
+// Solidity: function setMarket(market address) returns(bool)
+func (_MarketToken *MarketTokenSession) SetMarket(market common.Address) (*types.Transaction, error) {
+	return _MarketToken.Contract.SetMarket(&_MarketToken.TransactOpts, market)
+}
+
+// SetMarket is a paid mutator transaction binding the contract method 0x6dcea85f.
+//
+// Solidity: function setMarket(market address) returns(bool)
+func (_MarketToken *MarketTokenTransactorSession) SetMarket(market common.Address) (*types.Transaction, error) {
+	return _MarketToken.Contract.SetMarket(&_MarketToken.TransactOpts, market)
 }
 
 // StopMinting is a paid mutator transaction binding the contract method 0x3e3e0b12.

@@ -21,7 +21,17 @@ func TestDeployMarketToken(t *testing.T) {
 	if len(deployed.Address.Bytes()) == 0 {
 		t.Error("Expected a valid deployment address to be returned from deploy, got empty byte array instead")
 	}
+}
 
+func TestSetMarket(t *testing.T) {
+	t.Log("Market token can have market contract address set")
+
+	// should have been set in deploy step...
+	market, _ := deployed.Contract.GetMarket(nil)
+
+	if market != context.AuthMarket.From {
+		t.Errorf("Expected market address to be %v, got %v", context.AuthMarket.From, market)
+	}
 }
 
 // we'll locate our testmain in these deploy_foo_test files as a pattern.

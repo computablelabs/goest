@@ -1,7 +1,8 @@
-package parameterizer
+package market
 
 import (
 	"github.com/computablelabs/goest/contracts/markettoken"
+	"github.com/computablelabs/goest/contracts/parameterizer"
 	"github.com/computablelabs/goest/contracts/plcrvoting"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind/backends"
@@ -23,12 +24,15 @@ type dep struct {
 	TokenAddress             common.Address
 	VotingAddress            common.Address
 	ParameterizerAddress     common.Address
+	MarketAddress            common.Address
 	TokenContract            *markettoken.MarketToken
 	VotingContract           *plcrvoting.PLCRVoting
-	ParameterizerContract    *Parameterizer
+	ParameterizerContract    *parameterizer.Parameterizer
+	MarketContract           *Market
 	TokenTransaction         *types.Transaction // TODO we may not ever ref these TXs: possibly remove
 	VotingTransaction        *types.Transaction
 	ParameterizerTransaction *types.Transaction
+	MarketTransaction        *types.Transaction
 }
 
 func Deploy(initialBalance *big.Int, c *ctx) (*dep, error) {
@@ -58,7 +62,7 @@ func Deploy(initialBalance *big.Int, c *ctx) (*dep, error) {
 
 	c.Blockchain.Commit()
 
-	paramAddr, paramTrans, paramCont, paramErr := DeployParameterizer(
+	paramAddr, paramTrans, paramCont, paramErr := parameterizer.DeployParameterizer(
 		c.AuthOwner,
 		c.Blockchain,
 		tokenAddr,
@@ -78,6 +82,22 @@ func Deploy(initialBalance *big.Int, c *ctx) (*dep, error) {
 
 	c.Blockchain.Commit()
 
+	// finally the market...
+	marketAddr, marketTrans, marketCont, marketErr := DeployMarket(
+		c.AuthOwner,
+		c.Blockchain,
+		tokenAddr, // TODO will need to become market token specific once network token is in
+		votingAddr,
+		paramAddr,
+		"FooMarket",
+	)
+
+	if marketErr != nil {
+		return nil, marketErr
+	}
+
+	c.Blockchain.Commit()
+
 	return &dep{
 		TokenAddress:             tokenAddr,
 		TokenContract:            tokenCont,
@@ -88,6 +108,9 @@ func Deploy(initialBalance *big.Int, c *ctx) (*dep, error) {
 		ParameterizerAddress:     paramAddr,
 		ParameterizerContract:    paramCont,
 		ParameterizerTransaction: paramTrans,
+		MarketAddress:            marketAddr,
+		MarketContract:           marketCont,
+		MarketTransaction:        marketTrans,
 	}, nil
 }
 
@@ -103,8 +126,8 @@ func SetupBlockchain(accountBalance *big.Int) *ctx {
 	alloc[authOwner.From] = core.GenesisAccount{Balance: accountBalance}
 	alloc[authChallenger.From] = core.GenesisAccount{Balance: accountBalance}
 	alloc[authVoter.From] = core.GenesisAccount{Balance: accountBalance}
-	// 2nd arg is a gas limit, a uint64. we'll use 4 million
-	bc := backends.NewSimulatedBackend(alloc, 4000000)
+	// 2nd arg is a gas limit, a uint64. we'll use 7 million
+	bc := backends.NewSimulatedBackend(alloc, 7000000)
 
 	return &ctx{
 		AuthOwner:      authOwner,
