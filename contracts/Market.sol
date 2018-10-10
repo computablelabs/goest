@@ -1,10 +1,10 @@
 pragma solidity 0.4.25;
 
+import "./SafeMath.sol";
+import "./IERC20.sol";
+import "./MarketToken.sol";
 import "./Parameterizer.sol";
 import "./PLCRVoting.sol";
-import "./MarketToken.sol";
-import "./IERC20.sol";
-import "./SafeMath.sol";
 
 
 contract Market {
@@ -35,8 +35,10 @@ contract Market {
   // Maps listingHashes to associated listingHash data
   mapping(bytes32 => Listing) private selfListings;
 
-  // Global Variables
-  // IERC20 private selfNetworkToken;
+  // Holds addresses of market investors
+  address[] private investors;
+
+  IERC20 private selfNetworkToken;
   MarketToken private selfMarketToken;
   PLCRVoting private selfVoting;
   Parameterizer private selfParameterizer;
@@ -49,16 +51,18 @@ contract Market {
   @param parameterizerAddr Address of the deployed parameterizer contract
   */
   constructor(
+    string name,
+    address networkTokenAddr,
     address marketTokenAddr,
-    address votingAddr,
     address parameterizerAddr,
-    string name
+    address votingAddr
   ) public
   {
-    selfMarketToken = MarketToken(marketTokenAddr);
-    selfVoting = PLCRVoting(votingAddr);
-    selfParameterizer = Parameterizer(parameterizerAddr);
     selfName = name;
+    selfNetworkToken = IERC20(networkTokenAddr);
+    selfMarketToken = MarketToken(marketTokenAddr);
+    selfParameterizer = Parameterizer(parameterizerAddr);
+    selfVoting = PLCRVoting(votingAddr);
   }
 
   /**
@@ -313,8 +317,47 @@ contract Market {
     deleteListing(listingHash);
   }
 
+  /**
+  @dev Return the current minimum amount of network tokens required to invest in this market (rate + slope * reserve)
+  @return uint Said number of network tokens
+  */
+ function getInvestmentPrice() public view returns (uint) {
+  uint rate = selfParameterizer.get("conversionRate");
+  uint slope = selfParameterizer.get("conversionSlope");
+  uint reserve = selfNetworkToken.balanceOf(this);
+  // TODO if we are dealing with operations here that would be fractional, we'll likely need to
+  // perform `(N * numerator) / denominator`. We may not, however, as financial numbers should not be fractional anyway...
+  return rate.add(slope.mul(reserve));
+ }
+
   function getName() external view returns (string) {
     return selfName;
+  }
+
+  /**
+  @dev Given network tokens as entry, mint and return market tokens to the
+  caller as dictated by the pricing curve.
+  @param amount Number of network tokens given
+  @return uint number of tokens minted and given to investor
+  */
+  function invest(uint amount) external returns (uint) {
+    // amount must be >= the investment price
+    uint price = getInvestmentPrice();
+    require(amount >= price, "Error:Market.invest - Amount must be greater than or equal to current investment price");
+    // sender could have invest more than the price, but we will only use evenly divisable numbers as we cannot mint fractional tokens
+    uint remainder = amount % price;
+    // regardless of price multiples, any remainder will be unused
+    uint amountUsed = remainder != 0 ? amount.sub(remainder) : remainder;
+    // move those used tokens from investor to the reserve. NOTE this also subtracts from network token allowance[sender][market]
+    selfNetworkToken.transferFrom(msg.sender, this, amountUsed);
+    // we mint amount taken / investment price.
+    uint minted = amount.div(price);
+    // NOTE this is, at origin, owned by the market
+    require(selfMarketToken.mint(minted), "Error:Market.invest - Could not mint tokens");
+    // now we can transfer those minted market tokens to the investor
+    require(selfMarketToken.transfer(msg.sender, minted), "Error:Market.invest - Could not transfer tokens");
+
+    return minted;
   }
 
   /**

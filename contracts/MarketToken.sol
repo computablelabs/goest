@@ -41,11 +41,11 @@ contract MarketToken {
    * race condition is to first reduce the spender's allowance to 0 and set the desired value afterwards:
    * https://github.com/ethereum/EIPs/issues/20#issuecomment-263524729
    * @param spender The address which will spend the funds.
-   * @param value The amount of tokens to be spent.
+   * @param amount The amount of tokens to be spent.
    */
-  function approve(address spender, uint256 value) external returns (bool) {
-    selfAllowed[msg.sender][spender] = value;
-    emit ApprovalEvent(msg.sender, spender, value);
+  function approve(address spender, uint256 amount) external returns (bool) {
+    selfAllowed[msg.sender][spender] = amount;
+    emit ApprovalEvent(msg.sender, spender, amount);
     return true;
   }
 
@@ -60,19 +60,17 @@ contract MarketToken {
 
   /**
    * Burns a specific amount of tokens.
-   * @param value The amount of token to be burned.
+   * @param amount The amount of token to be burned.
    */
-  function burn(uint256 value) external isMarket {
-    // doBurn(msg.sender, value);
-
-    require(value <= selfBalances[msg.sender], "Error:NetworkToken.burn - Value exceeds available balance");
-    // no need to require value <= supply, since that would imply the
+  function burn(uint256 amount) external isMarket {
+    require(amount <= selfBalances[msg.sender], "Error:NetworkToken.burn - Amount exceeds available balance");
+    // no need to require amout <= supply, since that would imply the
     // sender's balance is greater than the supply, which *should* be an assertion failure
 
-    selfBalances[msg.sender] = selfBalances[msg.sender].sub(value);
-    selfSupply = selfSupply.sub(value);
-    emit BurnEvent(msg.sender, value);
-    emit TransferEvent(msg.sender, address(0), value); // from: market, to: nobody
+    selfBalances[msg.sender] = selfBalances[msg.sender].sub(amount);
+    selfSupply = selfSupply.sub(amount);
+    emit BurnEvent(msg.sender, amount);
+    emit TransferEvent(msg.sender, address(0), amount); // from: market, to: nobody
   }
 
   /**
@@ -90,14 +88,14 @@ contract MarketToken {
    * the first transaction is mined)
    * From MonolithDAO Token.sol
    * @param spender The address which will spend the funds.
-   * @param subtractedValue The amount of tokens to decrease the allowance by.
+   * @param subtractedAmount The amount of tokens to decrease the allowance by.
    */
-  function decreaseApproval(address spender, uint256 subtractedValue) external returns (bool) {
-    uint256 oldValue = selfAllowed[msg.sender][spender];
-    if (subtractedValue > oldValue) {
+  function decreaseApproval(address spender, uint256 subtractedAmount) external returns (bool) {
+    uint256 oldAmount= selfAllowed[msg.sender][spender];
+    if (subtractedAmount > oldAmount) {
       selfAllowed[msg.sender][spender] = 0;
     } else {
-      selfAllowed[msg.sender][spender] = oldValue.sub(subtractedValue);
+      selfAllowed[msg.sender][spender] = oldAmount.sub(subtractedAmount);
     }
     emit ApprovalEvent(msg.sender, spender, selfAllowed[msg.sender][spender]);
     return true;
@@ -114,8 +112,6 @@ contract MarketToken {
     return selfOwner;
   }
 
-  
-
   /**
    * Increase the amount of tokens that an owner allowed to a spender.
    * approve should be called when allowed[spender] == 0. To increment
@@ -123,11 +119,11 @@ contract MarketToken {
    * the first transaction is mined)
    * From MonolithDAO Token.sol
    * @param spender The address which will spend the funds.
-   * @param addedValue The amount of tokens to increase the allowance by.
+   * @param addedAmount The amount of tokens to increase the allowance by.
    */
-  function increaseApproval(address spender, uint256 addedValue) external returns (bool) {
+  function increaseApproval(address spender, uint256 addedAmount) external returns (bool) {
     selfAllowed[msg.sender][spender] = (
-      selfAllowed[msg.sender][spender].add(addedValue));
+      selfAllowed[msg.sender][spender].add(addedAmount));
     emit ApprovalEvent(msg.sender, spender, selfAllowed[msg.sender][spender]);
     return true;
   }
@@ -191,15 +187,15 @@ contract MarketToken {
   /**
   * Transfer token for a specified address
   * @param to The address to transfer to.
-  * @param value The amount to be transferred.
+  * @param amount The amount to be transferred.
   */
-  function transfer(address to, uint256 value) external returns (bool) {
+  function transfer(address to, uint256 amount) external returns (bool) {
     require(to != address(0), "Error:Basic.transfer - An address must be specified");
-    require(value <= selfBalances[msg.sender], "Error:Basic.transfer - Value exceeds the balance of msg.sender");
+    require(amount <= selfBalances[msg.sender], "Error:Basic.transfer - Amount exceeds the balance of msg.sender");
 
-    selfBalances[msg.sender] = selfBalances[msg.sender].sub(value);
-    selfBalances[to] = selfBalances[to].add(value);
-    emit TransferEvent(msg.sender, to, value);
+    selfBalances[msg.sender] = selfBalances[msg.sender].sub(amount);
+    selfBalances[to] = selfBalances[to].add(amount);
+    emit TransferEvent(msg.sender, to, amount);
     return true;
   }
 
@@ -207,22 +203,22 @@ contract MarketToken {
    * Transfer tokens from one address to another
    * @param from address The address which you want to send tokens from
    * @param to address The address which you want to transfer to
-   * @param value uint256 the amount of tokens to be transferred
+   * @param amount uint256 the amount of tokens to be transferred
    */
-  function transferFrom(address from, address to, uint256 value) external returns (bool) {
+  function transferFrom(address from, address to, uint256 amount) external returns (bool) {
     require(to != address(0), "Error:Standard.transferFrom - 'to' address must be specified");
-    require(value <= selfBalances[from], "Error:Standard.transferFrom - Value exceeds available balance");
-    require(value <= selfAllowed[from][msg.sender], "Error.Standard.transferFrom - Value exceeds allowed amount");
+    require(amount <= selfBalances[from], "Error:Standard.transferFrom - Amount exceeds available balance");
+    require(amount <= selfAllowed[from][msg.sender], "Error.Standard.transferFrom - Amount exceeds allowed amount");
 
-    selfBalances[from] = selfBalances[from].sub(value);
-    selfBalances[to] = selfBalances[to].add(value);
-    selfAllowed[from][msg.sender] = selfAllowed[from][msg.sender].sub(value);
-    emit TransferEvent(from, to, value);
+    selfBalances[from] = selfBalances[from].sub(amount);
+    selfBalances[to] = selfBalances[to].add(amount);
+    selfAllowed[from][msg.sender] = selfAllowed[from][msg.sender].sub(amount);
+    emit TransferEvent(from, to, amount);
     return true;
   }
 
-  event ApprovalEvent(address indexed holder, address indexed spender, uint256 value);
-  event TransferEvent(address indexed from, address indexed to, uint256 value);
-  event BurnEvent(address indexed burner, uint256 value);
+  event ApprovalEvent(address indexed holder, address indexed spender, uint256 amount);
+  event TransferEvent(address indexed from, address indexed to, uint256 amount);
+  event BurnEvent(address indexed burner, uint256 amount);
   event MintStoppedEvent();
 }
