@@ -36,7 +36,7 @@ contract Market {
   mapping(bytes32 => Listing) private selfListings;
 
   // Holds addresses of market investors
-  address[] private investors;
+  address[] private selfInvestors;
 
   IERC20 private selfNetworkToken;
   MarketToken private selfMarketToken;
@@ -341,6 +341,8 @@ contract Market {
   @return uint number of tokens minted and given to investor
   */
   function invest(uint amount) external returns (uint) {
+    // TODO add a check that msg.sender is NOT a listing holder?
+    // require(!isListingOwner(msg.sender), "..."); // this can be a modifier if we do this elswhere too
     // amount must be >= the investment price
     uint price = getInvestmentPrice();
     require(amount >= price, "Error:Market.invest - Amount must be greater than or equal to current investment price");
@@ -356,7 +358,8 @@ contract Market {
     require(selfMarketToken.mint(minted), "Error:Market.invest - Could not mint tokens");
     // now we can transfer those minted market tokens to the investor
     require(selfMarketToken.transfer(msg.sender, minted), "Error:Market.invest - Could not transfer tokens");
-
+    // sender is an investor now
+    selfInvestors.push(msg.sender);
     return minted;
   }
 
