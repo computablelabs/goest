@@ -17,7 +17,8 @@ func TestBurn(t *testing.T) {
 	_, mintErr := deployed.Contract.Mint(&bind.TransactOpts{
 		From:     context.AuthMarket.From,
 		Signer:   context.AuthMarket.Signer,
-		GasLimit: 1000000,
+		GasPrice: big.NewInt(2000000000), // 2 Gwei
+		GasLimit: 100000,
 	}, big.NewInt(10))
 
 	if mintErr != nil {
@@ -32,7 +33,8 @@ func TestBurn(t *testing.T) {
 	_, burnErr := deployed.Contract.Burn(&bind.TransactOpts{
 		From:     context.AuthMarket.From,
 		Signer:   context.AuthMarket.Signer,
-		GasLimit: 1000000,
+		GasPrice: big.NewInt(2000000000), // 2 Gwei
+		GasLimit: 100000,
 	}, big.NewInt(5))
 
 	if burnErr != nil {

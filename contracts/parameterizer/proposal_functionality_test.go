@@ -37,7 +37,8 @@ func TestProposeReparameterization(t *testing.T) {
 	_, err := deployed.ParameterizerContract.ProposeReparameterization(&bind.TransactOpts{
 		From:     context.AuthOwner.From,
 		Signer:   context.AuthOwner.Signer,
-		GasLimit: 1000000,
+		GasPrice: big.NewInt(2000000000), // 2 Gwei
+		GasLimit: 100000,
 	}, "voteQuorum", big.NewInt(51))
 
 	if err != nil {

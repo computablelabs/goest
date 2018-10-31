@@ -16,7 +16,7 @@ contract Market {
     address owner; // owns the listing
     uint supply; // Number of tokens in the listing (both deposited and minted).
     uint challenge; // corresponts to a poll id in Voting if present
-    string data; // A pointer to the actual data this listing represents (or possibly some small data primitive)
+    bytes data; // A pointer to the actual data this listing represents (or possibly some small data primitive). NOTE converted from string
     uint minted; // Number of Market tokens that have been minted for this listing.
   }
 
@@ -35,14 +35,18 @@ contract Market {
   // Maps listingHashes to associated listingHash data
   mapping(bytes32 => Listing) private selfListings;
 
-  // Holds addresses of market investors
-  address[] private selfInvestors;
+  // Maps listing owner's address to how many listings they own
+  mapping(address => uint) private selfListingOwners;
+
+  // Maps investor's address to the amount invested. NOTE we store the actual amount(s) used,
+  // not necessarily the amount offered (see invest())
+  mapping(address => uint) private selfInvestors;
 
   IERC20 private selfNetworkToken;
   MarketToken private selfMarketToken;
   PLCRVoting private selfVoting;
   Parameterizer private selfParameterizer;
-  string private selfName;
+  bytes private selfName;
 
   /**
   @dev Contructor
@@ -58,7 +62,7 @@ contract Market {
     address votingAddr
   ) public
   {
-    selfName = name;
+    selfName = bytes(name);
     selfNetworkToken = IERC20(networkTokenAddr);
     selfMarketToken = MarketToken(marketTokenAddr);
     selfParameterizer = Parameterizer(parameterizerAddr);
@@ -95,7 +99,7 @@ contract Market {
     listing.applicationExpiry = block.timestamp.add(selfParameterizer.get("applyStageLen"));
     listing.supply = amount; // we will add a listReward if actually listed
     listing.minted = 0; // same as the line above, not added yet
-    listing.data = data; // points to an off-chain resource (or is a string data primitive)
+    listing.data = bytes(data); // points to an off-chain resource (or is a string data primitive)
 
     // Transfers tokens from user to Market contract (market acts as banker for all listing market tokens)
     require(selfMarketToken.transferFrom(listing.owner, this, amount), "Error:Market.apply - Could not transfer Market Tokens");
@@ -110,7 +114,7 @@ contract Market {
   }
 
   /**
-  @dev Determines whether the given listingHash be whitelisted.
+  @dev Determines whether the given listingHash be listed.
   @param listingHash The listingHash whose status is to be examined
   */
   function canBeListed(bytes32 listingHash) view public returns (bool) {
@@ -180,7 +184,7 @@ contract Market {
     uint commitExpiry = selfVoting.getPollCommitExpiry(id);
     uint revealExpiry = selfVoting.getPollRevealExpiry(id);
 
-    emit ChallengeEvent(
+    emit ChallengedEvent(
       listingHash,
       id,
       commitExpiry,
@@ -331,35 +335,43 @@ contract Market {
  }
 
   function getName() external view returns (string) {
-    return selfName;
+    return string(selfName);
   }
 
   /**
   @dev Given network tokens as entry, mint and return market tokens to the
   caller as dictated by the pricing curve.
-  @param amount Number of network tokens given
+  @param offered Number of network tokens offered for investment
   @return uint number of tokens minted and given to investor
   */
-  function invest(uint amount) external returns (uint) {
+  function invest(uint offered) external returns (uint) {
     // TODO add a check that msg.sender is NOT a listing holder?
-    // require(!isListingOwner(msg.sender), "..."); // this can be a modifier if we do this elswhere too
+    require(!isListingOwner(msg.sender), "Error:Market.invest - Cannot invest while owning an active listing"); // this can be a modifier if we do this elswhere too
     // amount must be >= the investment price
     uint price = getInvestmentPrice();
-    require(amount >= price, "Error:Market.invest - Amount must be greater than or equal to current investment price");
+    require(offered >= price, "Error:Market.invest - Amount offered must be greater than or equal to current investment price");
     // sender could have invest more than the price, but we will only use evenly divisable numbers as we cannot mint fractional tokens
-    uint remainder = amount % price;
+    uint remainder = offered % price;
     // regardless of price multiples, any remainder will be unused
-    uint amountUsed = remainder != 0 ? amount.sub(remainder) : remainder;
+    uint taken = remainder != 0 ? offered.sub(remainder) : remainder;
     // move those used tokens from investor to the reserve. NOTE this also subtracts from network token allowance[sender][market]
-    selfNetworkToken.transferFrom(msg.sender, this, amountUsed);
+    selfNetworkToken.transferFrom(msg.sender, this, taken);
     // we mint amount taken / investment price.
-    uint minted = amount.div(price);
+    uint minted = taken.div(price);
     // NOTE this is, at origin, owned by the market
     require(selfMarketToken.mint(minted), "Error:Market.invest - Could not mint tokens");
     // now we can transfer those minted market tokens to the investor
     require(selfMarketToken.transfer(msg.sender, minted), "Error:Market.invest - Could not transfer tokens");
-    // sender is an investor now
-    selfInvestors.push(msg.sender);
+    // sender is an investor now, we keep a tally of the amount(s) actually taken from said address
+    selfInvestors[msg.sender] += taken;
+
+    emit InvestedEvent(
+      msg.sender,
+      offered,
+      taken,
+      minted
+    );
+
     return minted;
   }
 
@@ -367,8 +379,16 @@ contract Market {
   @dev Returns true if the provided listingHash is a listing
   @param listingHash The listingHash whose status is to be examined
   */
-  function isListed(bytes32 listingHash) view public returns (bool listed) {
+  function isListed(bytes32 listingHash) view public returns (bool) {
     return selfListings[listingHash].listed;
+  }
+
+  /**
+  @dev Returns true if the provided address is a listing owner
+  @param candidate The address to check if 'owns' one or more listings
+  */
+  function isListingOwner(address candidate) view public returns (bool) {
+    return selfListingOwners[candidate] != 0;
   }
 
   /**
@@ -493,9 +513,10 @@ contract Market {
 
   event ApplicationDeletedEvent(bytes32 indexed listingHash);
   event AppliedEvent(bytes32 indexed listingHash, uint deposit, uint applicationExpiry, string data, address indexed applicant);
-  event ChallengeEvent(bytes32 indexed listingHash, uint id, uint commitExpiry, uint revealExpiry, address indexed challenger);
+  event ChallengedEvent(bytes32 indexed listingHash, uint id, uint commitExpiry, uint revealExpiry, address indexed challenger);
   event ChallengeFailedEvent(bytes32 indexed listingHash, uint indexed id, uint rewardPool, uint totalTokens);
   event ChallengeSucceededEvent(bytes32 indexed listingHash, uint indexed id, uint rewardPool, uint totalTokens);
+  event InvestedEvent(address indexed investor, uint offered, uint taken, uint minted);
   event ListedEvent(bytes32 indexed listingHash, uint supply, uint minted);
   event ListingDepositEvent(bytes32 indexed listingHash, uint added, uint supply, uint minted, address indexed owner);
   event ListingDeletedEvent(bytes32 indexed listingHash);

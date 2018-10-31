@@ -23,9 +23,11 @@ func TestTransfer(t *testing.T) {
 
 	// NOTE: if we want to view the transaction itself, it would be the first return arg
 	_, err := deployed.Contract.Transfer(&bind.TransactOpts{
-		From:   context.AuthOwner.From,
-		Signer: context.AuthOwner.Signer,
-		Value:  nil,
+		From:     context.AuthOwner.From,
+		Signer:   context.AuthOwner.Signer,
+		Value:    nil,
+		GasPrice: big.NewInt(2000000000), //2 gwei
+		GasLimit: 100000,
 	}, user, big.NewInt(100))
 
 	if err != nil {

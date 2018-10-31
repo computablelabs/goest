@@ -2,6 +2,7 @@ package market
 
 import (
 	"github.com/computablelabs/goest/contracts/markettoken"
+	"github.com/computablelabs/goest/contracts/networktoken"
 	"github.com/computablelabs/goest/contracts/parameterizer"
 	"github.com/computablelabs/goest/contracts/plcrvoting"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
@@ -21,30 +22,44 @@ type ctx struct {
 }
 
 type dep struct {
-	TokenAddress             common.Address
+	NetworkTokenAddress      common.Address
+	MarketTokenAddress       common.Address
 	VotingAddress            common.Address
 	ParameterizerAddress     common.Address
 	MarketAddress            common.Address
-	TokenContract            *markettoken.MarketToken
+	NetworkTokenContract     *networktoken.NetworkToken
+	MarketTokenContract      *markettoken.MarketToken
 	VotingContract           *plcrvoting.PLCRVoting
 	ParameterizerContract    *parameterizer.Parameterizer
 	MarketContract           *Market
-	TokenTransaction         *types.Transaction // TODO we may not ever ref these TXs: possibly remove
+	NetworkTokenTransaction  *types.Transaction
+	MarketTokenTransaction   *types.Transaction
 	VotingTransaction        *types.Transaction
 	ParameterizerTransaction *types.Transaction
 	MarketTransaction        *types.Transaction
 }
 
 func Deploy(initialBalance *big.Int, c *ctx) (*dep, error) {
-	tokenAddr, tokenTrans, tokenCont, tokenErr := markettoken.DeployMarketToken(
+	networkTokenAddr, networkTokenTrans, networkTokenCont, networkTokenErr := networktoken.DeployNetworkToken(
 		c.AuthOwner,
 		c.Blockchain,
 		c.AuthOwner.From,
 		initialBalance,
 	)
 
-	if tokenErr != nil {
-		return nil, tokenErr
+	if networkTokenErr != nil {
+		return nil, networkTokenErr
+	}
+
+	marketTokenAddr, marketTokenTrans, marketTokenCont, marketTokenErr := markettoken.DeployMarketToken(
+		c.AuthOwner,
+		c.Blockchain,
+		c.AuthOwner.From,
+		initialBalance,
+	)
+
+	if marketTokenErr != nil {
+		return nil, marketTokenErr
 	}
 
 	// commit the deploy before deploying voting
@@ -53,7 +68,7 @@ func Deploy(initialBalance *big.Int, c *ctx) (*dep, error) {
 	votingAddr, votingTrans, votingCont, votingErr := plcrvoting.DeployPLCRVoting(
 		c.AuthOwner,
 		c.Blockchain,
-		tokenAddr,
+		marketTokenAddr,
 	)
 
 	if votingErr != nil {
@@ -65,7 +80,7 @@ func Deploy(initialBalance *big.Int, c *ctx) (*dep, error) {
 	paramAddr, paramTrans, paramCont, paramErr := parameterizer.DeployParameterizer(
 		c.AuthOwner,
 		c.Blockchain,
-		tokenAddr,
+		marketTokenAddr,
 		votingAddr,
 		big.NewInt(10), // minDeposit
 		big.NewInt(60), // applyStageLen in sec
@@ -74,6 +89,8 @@ func Deploy(initialBalance *big.Int, c *ctx) (*dep, error) {
 		big.NewInt(50), // dispensation pct
 		big.NewInt(50), // voteQuorum
 		big.NewInt(1),  // listReward
+		big.NewInt(1),  // conversionRate
+		big.NewInt(2),  // conversionSlope
 	)
 
 	if paramErr != nil {
@@ -86,10 +103,11 @@ func Deploy(initialBalance *big.Int, c *ctx) (*dep, error) {
 	marketAddr, marketTrans, marketCont, marketErr := DeployMarket(
 		c.AuthOwner,
 		c.Blockchain,
-		tokenAddr, // TODO will need to become market token specific once network token is in
+		"FooMarket",
+		networkTokenAddr,
+		marketTokenAddr,
 		votingAddr,
 		paramAddr,
-		"FooMarket",
 	)
 
 	if marketErr != nil {
@@ -99,9 +117,12 @@ func Deploy(initialBalance *big.Int, c *ctx) (*dep, error) {
 	c.Blockchain.Commit()
 
 	return &dep{
-		TokenAddress:             tokenAddr,
-		TokenContract:            tokenCont,
-		TokenTransaction:         tokenTrans,
+		NetworkTokenAddress:      networkTokenAddr,
+		NetworkTokenTransaction:  networkTokenTrans,
+		NetworkTokenContract:     networkTokenCont,
+		MarketTokenAddress:       marketTokenAddr,
+		MarketTokenContract:      marketTokenCont,
+		MarketTokenTransaction:   marketTokenTrans,
 		VotingAddress:            votingAddr,
 		VotingContract:           votingCont,
 		VotingTransaction:        votingTrans,
@@ -119,15 +140,19 @@ func SetupBlockchain(accountBalance *big.Int) *ctx {
 	keyOwner, _ := crypto.GenerateKey()
 	keyChallenger, _ := crypto.GenerateKey()
 	keyVoter, _ := crypto.GenerateKey()
+
 	authOwner := bind.NewKeyedTransactor(keyOwner)
+	authOwner.GasPrice = big.NewInt(2000000000) // 2 Gwei
+	authOwner.GasLimit = 900000                 // any lower and the deploy fails
+
 	authChallenger := bind.NewKeyedTransactor(keyChallenger)
 	authVoter := bind.NewKeyedTransactor(keyVoter)
 	alloc := make(core.GenesisAlloc)
 	alloc[authOwner.From] = core.GenesisAccount{Balance: accountBalance}
 	alloc[authChallenger.From] = core.GenesisAccount{Balance: accountBalance}
 	alloc[authVoter.From] = core.GenesisAccount{Balance: accountBalance}
-	// 2nd arg is a gas limit, a uint64. we'll use 7 million
-	bc := backends.NewSimulatedBackend(alloc, 7000000)
+	// 2nd arg is a gas limit, a uint64. we'll use 4.7M
+	bc := backends.NewSimulatedBackend(alloc, 4700000)
 
 	return &ctx{
 		AuthOwner:      authOwner,

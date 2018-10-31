@@ -70,6 +70,8 @@ func Deploy(initialBalance *big.Int, c *ctx) (*dep, error) {
 		big.NewInt(50), // dispensation pct
 		big.NewInt(50), // voteQuorum
 		big.NewInt(1),  // listReward
+		big.NewInt(1),  // conversionRate
+		big.NewInt(2),  // conversionSlope
 	)
 
 	if paramErr != nil {
@@ -103,8 +105,8 @@ func SetupBlockchain(accountBalance *big.Int) *ctx {
 	alloc[authOwner.From] = core.GenesisAccount{Balance: accountBalance}
 	alloc[authChallenger.From] = core.GenesisAccount{Balance: accountBalance}
 	alloc[authVoter.From] = core.GenesisAccount{Balance: accountBalance}
-	// 2nd arg is a gas limit, a uint64. we'll use 4 million
-	bc := backends.NewSimulatedBackend(alloc, 4000000)
+	// 2nd arg is a gas limit, a uint64. we'll use 4.7 million
+	bc := backends.NewSimulatedBackend(alloc, 4700000)
 
 	return &ctx{
 		AuthOwner:      authOwner,

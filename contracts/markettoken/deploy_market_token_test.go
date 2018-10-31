@@ -39,7 +39,7 @@ func TestSetMarket(t *testing.T) {
 // the ctx and dep vars will be avail to the other tests in the package
 func TestMain(m *testing.M) {
 	// see ./helpers#context
-	context = SetupBlockchain(big.NewInt(4000000))
+	context = SetupBlockchain(big.NewInt(1000000000000000000)) // 1 ETH in wei
 	// see ./helpers#deployed
 	deployed, deployedError = Deploy(big.NewInt(1000), context)
 	code := m.Run()

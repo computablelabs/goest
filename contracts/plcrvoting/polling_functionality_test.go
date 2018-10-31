@@ -10,8 +10,10 @@ func TestCreatePoll(t *testing.T) {
 	t.Log("Voting contract should create a poll on demand")
 	// voteQuorum, commitDuration, revealDuration are args to startPoll
 	_, err := deployed.VotingContract.StartPoll(&bind.TransactOpts{
-		From:   context.AuthOwner.From,
-		Signer: context.AuthOwner.Signer,
+		From:     context.AuthOwner.From,
+		Signer:   context.AuthOwner.Signer,
+		GasPrice: big.NewInt(2000000000), // 2 Gwei
+		GasLimit: 150000,
 	}, big.NewInt(51), big.NewInt(60), big.NewInt(60))
 
 	if err != nil {

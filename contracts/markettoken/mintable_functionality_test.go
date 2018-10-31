@@ -50,7 +50,8 @@ func TestMint(t *testing.T) {
 	_, err := deployed.Contract.Mint(&bind.TransactOpts{
 		From:     context.AuthMarket.From, // only the market can call for mint
 		Signer:   context.AuthMarket.Signer,
-		GasLimit: 1000000,
+		GasPrice: big.NewInt(2000000000), // 2 Gwei
+		GasLimit: 100000,
 	}, big.NewInt(200))
 
 	if err != nil {
@@ -94,7 +95,8 @@ func TestStopMinting(t *testing.T) {
 	_, err := deployed.Contract.StopMinting(&bind.TransactOpts{
 		From:     context.AuthMarket.From,
 		Signer:   context.AuthMarket.Signer,
-		GasLimit: 200000,
+		GasPrice: big.NewInt(2000000000), // 2 Gwei
+		GasLimit: 100000,
 	})
 
 	if err != nil {
@@ -111,7 +113,8 @@ func TestStopMinting(t *testing.T) {
 	_, noMint := deployed.Contract.Mint(&bind.TransactOpts{
 		From:     context.AuthMarket.From,
 		Signer:   context.AuthMarket.Signer,
-		GasLimit: 200000,
+		GasPrice: big.NewInt(2000000000), // 2 Gwei
+		GasLimit: 100000,
 	}, big.NewInt(100))
 
 	if noMint != nil {

@@ -12,7 +12,7 @@ contract Parameterizer {
     uint appExpiry;
     uint challenge;
     uint deposit;
-    string name;
+    bytes name; // storing the byte array and not a string
     address owner;
     uint processBy;
     uint value;
@@ -51,6 +51,8 @@ contract Parameterizer {
   @param revealStageLen Length of reveal period for voting
   @param voteQuorum Type of majority out of 100 necessary for vote success
   @param listReward The amount of market tokens minted for a listing if accepted
+  @param conversionRate TODO
+  @param conversionSlope TODO
   */
   constructor(
     address tokenAddr,
@@ -61,7 +63,9 @@ contract Parameterizer {
     uint revealStageLen,
     uint dispensationPct,
     uint voteQuorum,
-    uint listReward
+    uint listReward,
+    uint conversionRate,
+    uint conversionSlope
     ) public
   {
     selfToken = IERC20(tokenAddr);
@@ -74,6 +78,8 @@ contract Parameterizer {
     set("dispensationPct", dispensationPct);
     set("voteQuorum", voteQuorum);
     set("listReward", listReward);
+    set("conversionRate", conversionRate);
+    set("conversionSlope", conversionSlope);
   }
 
   /**
@@ -201,8 +207,8 @@ contract Parameterizer {
     if (canBeSet(propHash)) {
       // There is no challenge against the proposal. The processBy date for the proposal has not
       // passed, but the proposal's appExpirty date has passed.
-      set(prop.name, prop.value);
-      emit ProposalAcceptedEvent(propHash, prop.name, prop.value);
+      set(string(prop.name), prop.value);
+      emit ProposalAcceptedEvent(propHash, string(prop.name), prop.value);
       delete selfProposals[propHash];
       require(selfToken.transfer(propOwner, propDeposit), "Error:Parameterizer.processProposal - Could not transfer funds");
     } else if (challengeCanBeResolved(propHash)) {
@@ -258,7 +264,7 @@ contract Parameterizer {
       appExpiry: now.add(get("applyStageLen")),
       challenge: 0,
       deposit: deposit,
-      name: name,
+      name: bytes(name), // let's not store a bunch of strings
       owner: msg.sender,
       processBy: now.add(get("applyStageLen"))
         .add(get("commitStageLen"))
@@ -297,7 +303,7 @@ contract Parameterizer {
 
     if (selfVoting.isPassed(prop.challenge)) { // The challenge failed
       if (prop.processBy > now) {
-        set(prop.name, prop.value);
+        set(string(prop.name), prop.value);
       }
       emit ChallengeFailedEvent(
         propHash,
