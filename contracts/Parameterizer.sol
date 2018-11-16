@@ -1,9 +1,7 @@
 pragma solidity 0.4.25;
 
 import "./Voting.sol";
-import "./IERC20.sol";
 import "./SafeMath.sol";
-
 
 contract Parameterizer {
   using SafeMath for uint;
@@ -17,7 +15,6 @@ contract Parameterizer {
   mapping(bytes32 => Reparam) private selfReparams;
 
   // Global Variables
-  IERC20 private selfToken;
   Voting private selfVoting;
   uint private selfChallengeStake;
   uint private selfConversionRate;
@@ -30,7 +27,6 @@ contract Parameterizer {
 
   /**
   @dev constructor
-  @param tokenAddr Address of the token which parameterizes this system
   @param votingAddr Address of a voting contract for the provided token
   @param challengeStake the amount, in tokenWei, that will be wagered in a challenge
   @param conversionRate TODO
@@ -40,7 +36,6 @@ contract Parameterizer {
   @param voteBy Amount of time, in seconds, that any voting poll will "run"
   */
   constructor(
-    address tokenAddr,
     address votingAddr,
     uint challengeStake,
     uint conversionRate,
@@ -50,7 +45,6 @@ contract Parameterizer {
     uint voteBy
     ) public
   {
-    selfToken = IERC20(tokenAddr);
     selfVoting = Voting(votingAddr);
     selfChallengeStake = challengeStake;
     selfConversionRate = conversionRate;
@@ -88,8 +82,33 @@ contract Parameterizer {
   @dev Determine if a reparam proposal collected the necessary votes, setting it if so
   @param paramHash the proposal to make a determination and possible state transition for
   */
-  function resolveReparam(bytes32 paramHash) public {
-    // TODO
+  function resolveReparam(bytes32 paramHash) public returns (bool) {
+    require(selfVoting.inCouncil(msg.sender), "Error:Parameterizer.resolveReparam - Sender must be council member");
+    require(selfVoting.candidateIs(paramHash, "reparam"), "Error:Parameterizer.resolveReparam - Must be a Reparam");
+    require(selfVoting.pollClosed(paramHash), "Error:Parameterizer.resolveReparam - Polls for this candidate must be closed");
+
+    // Case: reparam accepted
+    if(selfVoting.didPass(paramHash, getQuorum())) {
+      bytes32 cmp = keccak256(string(selfReparams[paramHash].name));
+      // a switch would have been nice... TODO better way to compare?
+      if (cmp == keccak256("challengeStake")) {
+        selfChallengeStake = selfReparams[paramHash].value;
+      } else if (cmp == keccak256("conversionRate")) {
+        selfConversionRate = selfReparams[paramHash].value;
+      } else if (cmp == keccak256("conversionSlope")) {
+        selfConversionSlope = selfReparams[paramHash].value;
+      } else if (cmp == keccak256("listReward")) {
+        selfListReward = selfReparams[paramHash].value;
+      } else if (cmp == keccak256("quorum")) {
+        selfQuorum = selfReparams[paramHash].value;
+      } else if (cmp == keccak256("voteBy")) {
+        selfVoteBy = selfReparams[paramHash].value;
+      }
+    }
+
+    // clean up the reparam and candidate
+    delete selfReparams[paramHash];
+    return true;
   }
 
   /**

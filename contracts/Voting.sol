@@ -37,7 +37,7 @@ contract Voting {
   @param kind string 'application' | 'challenge' | 'reparam'
   @param hash bytes32 hash which key's this candidate's kind
   @param voteBy some amount of time, in seconds, from "now" that the poll for this candidate will close
-  @returns true if a success
+  @return true if a success
   */
   function addCandidate(string kind, bytes32 hash, uint voteBy) external hasPrivilege returns(bool) {
     // can't be dupe candidates
@@ -67,7 +67,6 @@ contract Voting {
   @notice Determines if a candidate has enough yes votes to pass
   @dev Check if votes for exceeds quorum threshold (requires polling to be closed)
   @param hash  identifier associated with target listing or reparam
-  @param members the current number of council members
   @param quorum the current % of 100 majority that this candidate needs to pass
   */
   function didPass(bytes32 hash, uint quorum) public view returns (bool) {
@@ -98,8 +97,7 @@ contract Voting {
   }
 
   modifier hasPrivilege() {
-    require(msg.sender == selfMarketAddress || msg.sender == selfParameterizerAddress,
-      "Error:Voting.hasPrivilege - Sender must be a privileged contract");
+    require(msg.sender == selfMarketAddress || msg.sender == selfParameterizerAddress, "Error:Voting.hasPrivilege - Sender must be a privileged contract");
     _;
   }
 
@@ -124,9 +122,9 @@ contract Voting {
 
   /**
     @dev Determines if a given candidate is of the given kind
-    @param bytes32 hash The key of this candidate
-    @param bytes kind The type of candidate we expect it to be
-    @returns boolean
+    @param hash The key of this candidate
+    @param kind The type of candidate we expect it to be
+    @return boolean
   */
   function candidateIs(bytes32 hash, string kind) external view returns (bool) {
     require(isCandidate(hash), "Error:Voting.pollClosed - Candidate does not exist");
@@ -192,12 +190,11 @@ contract Voting {
   /**
   @notice Commits vote using hash of choice and secret salt to conceal vote until reveal
   @param hash bytes32 identifier associated with target listing or reparam
-  @param option the actual yeah or nay vote (1 or 0)
   */
   function vote(bytes32 hash) external {
     require(inCouncil(msg.sender), "Error:Voting.vote - Sender must be council member");
     require(isCandidate(hash), "Error:Voting.vote - Candidate does not exist");
-    require(selfCandidates[hash].voteBy > now, "Error:Voting.vote - Polling is closed for this candidate");
+    require(selfCandidates[hash].voteBy > block.timestamp, "Error:Voting.vote - Polling is closed for this candidate");
     require(selfCandidates[hash].voted[msg.sender] != true, "Error:Voting.vote - Sender has already voted");
 
     selfCandidates[hash].voted[msg.sender] = true; // we will keep track of who voted

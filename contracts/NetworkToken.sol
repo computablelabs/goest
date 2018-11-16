@@ -98,7 +98,7 @@ contract NetworkToken {
   /**
   * Transfer token for a specified address
   * @param to The address to transfer to.
-  * @param Amount The amount to be transferred.
+  * @param amount The amount to be transferred.
   */
   function transfer(address to, uint256 amount) external returns (bool) {
     require(to != address(0), "Error:Basic.transfer - 'to' address must be specified");

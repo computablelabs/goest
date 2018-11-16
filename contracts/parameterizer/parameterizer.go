@@ -15,2184 +15,19 @@ import (
 	"github.com/ethereum/go-ethereum/event"
 )
 
-// IERC20ABI is the input ABI used to generate the binding from.
-const IERC20ABI = "[{\"constant\":false,\"inputs\":[{\"name\":\"spender\",\"type\":\"address\"},{\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"approve\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"totalSupply\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"from\",\"type\":\"address\"},{\"name\":\"to\",\"type\":\"address\"},{\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"transferFrom\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"holder\",\"type\":\"address\"}],\"name\":\"balanceOf\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"to\",\"type\":\"address\"},{\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"transfer\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"holder\",\"type\":\"address\"},{\"name\":\"spender\",\"type\":\"address\"}],\"name\":\"allowance\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"from\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"to\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"TransferEvent\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"holder\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"spender\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"ApprovalEvent\",\"type\":\"event\"}]"
-
-// IERC20Bin is the compiled bytecode used for deploying new contracts.
-const IERC20Bin = `0x`
-
-// DeployIERC20 deploys a new Ethereum contract, binding an instance of IERC20 to it.
-func DeployIERC20(auth *bind.TransactOpts, backend bind.ContractBackend) (common.Address, *types.Transaction, *IERC20, error) {
-	parsed, err := abi.JSON(strings.NewReader(IERC20ABI))
-	if err != nil {
-		return common.Address{}, nil, nil, err
-	}
-	address, tx, contract, err := bind.DeployContract(auth, parsed, common.FromHex(IERC20Bin), backend)
-	if err != nil {
-		return common.Address{}, nil, nil, err
-	}
-	return address, tx, &IERC20{IERC20Caller: IERC20Caller{contract: contract}, IERC20Transactor: IERC20Transactor{contract: contract}, IERC20Filterer: IERC20Filterer{contract: contract}}, nil
-}
-
-// IERC20 is an auto generated Go binding around an Ethereum contract.
-type IERC20 struct {
-	IERC20Caller     // Read-only binding to the contract
-	IERC20Transactor // Write-only binding to the contract
-	IERC20Filterer   // Log filterer for contract events
-}
-
-// IERC20Caller is an auto generated read-only Go binding around an Ethereum contract.
-type IERC20Caller struct {
-	contract *bind.BoundContract // Generic contract wrapper for the low level calls
-}
-
-// IERC20Transactor is an auto generated write-only Go binding around an Ethereum contract.
-type IERC20Transactor struct {
-	contract *bind.BoundContract // Generic contract wrapper for the low level calls
-}
-
-// IERC20Filterer is an auto generated log filtering Go binding around an Ethereum contract events.
-type IERC20Filterer struct {
-	contract *bind.BoundContract // Generic contract wrapper for the low level calls
-}
-
-// IERC20Session is an auto generated Go binding around an Ethereum contract,
-// with pre-set call and transact options.
-type IERC20Session struct {
-	Contract     *IERC20           // Generic contract binding to set the session for
-	CallOpts     bind.CallOpts     // Call options to use throughout this session
-	TransactOpts bind.TransactOpts // Transaction auth options to use throughout this session
-}
-
-// IERC20CallerSession is an auto generated read-only Go binding around an Ethereum contract,
-// with pre-set call options.
-type IERC20CallerSession struct {
-	Contract *IERC20Caller // Generic contract caller binding to set the session for
-	CallOpts bind.CallOpts // Call options to use throughout this session
-}
-
-// IERC20TransactorSession is an auto generated write-only Go binding around an Ethereum contract,
-// with pre-set transact options.
-type IERC20TransactorSession struct {
-	Contract     *IERC20Transactor // Generic contract transactor binding to set the session for
-	TransactOpts bind.TransactOpts // Transaction auth options to use throughout this session
-}
-
-// IERC20Raw is an auto generated low-level Go binding around an Ethereum contract.
-type IERC20Raw struct {
-	Contract *IERC20 // Generic contract binding to access the raw methods on
-}
-
-// IERC20CallerRaw is an auto generated low-level read-only Go binding around an Ethereum contract.
-type IERC20CallerRaw struct {
-	Contract *IERC20Caller // Generic read-only contract binding to access the raw methods on
-}
-
-// IERC20TransactorRaw is an auto generated low-level write-only Go binding around an Ethereum contract.
-type IERC20TransactorRaw struct {
-	Contract *IERC20Transactor // Generic write-only contract binding to access the raw methods on
-}
-
-// NewIERC20 creates a new instance of IERC20, bound to a specific deployed contract.
-func NewIERC20(address common.Address, backend bind.ContractBackend) (*IERC20, error) {
-	contract, err := bindIERC20(address, backend, backend, backend)
-	if err != nil {
-		return nil, err
-	}
-	return &IERC20{IERC20Caller: IERC20Caller{contract: contract}, IERC20Transactor: IERC20Transactor{contract: contract}, IERC20Filterer: IERC20Filterer{contract: contract}}, nil
-}
-
-// NewIERC20Caller creates a new read-only instance of IERC20, bound to a specific deployed contract.
-func NewIERC20Caller(address common.Address, caller bind.ContractCaller) (*IERC20Caller, error) {
-	contract, err := bindIERC20(address, caller, nil, nil)
-	if err != nil {
-		return nil, err
-	}
-	return &IERC20Caller{contract: contract}, nil
-}
-
-// NewIERC20Transactor creates a new write-only instance of IERC20, bound to a specific deployed contract.
-func NewIERC20Transactor(address common.Address, transactor bind.ContractTransactor) (*IERC20Transactor, error) {
-	contract, err := bindIERC20(address, nil, transactor, nil)
-	if err != nil {
-		return nil, err
-	}
-	return &IERC20Transactor{contract: contract}, nil
-}
-
-// NewIERC20Filterer creates a new log filterer instance of IERC20, bound to a specific deployed contract.
-func NewIERC20Filterer(address common.Address, filterer bind.ContractFilterer) (*IERC20Filterer, error) {
-	contract, err := bindIERC20(address, nil, nil, filterer)
-	if err != nil {
-		return nil, err
-	}
-	return &IERC20Filterer{contract: contract}, nil
-}
-
-// bindIERC20 binds a generic wrapper to an already deployed contract.
-func bindIERC20(address common.Address, caller bind.ContractCaller, transactor bind.ContractTransactor, filterer bind.ContractFilterer) (*bind.BoundContract, error) {
-	parsed, err := abi.JSON(strings.NewReader(IERC20ABI))
-	if err != nil {
-		return nil, err
-	}
-	return bind.NewBoundContract(address, parsed, caller, transactor, filterer), nil
-}
-
-// Call invokes the (constant) contract method with params as input values and
-// sets the output to result. The result type might be a single field for simple
-// returns, a slice of interfaces for anonymous returns and a struct for named
-// returns.
-func (_IERC20 *IERC20Raw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
-	return _IERC20.Contract.IERC20Caller.contract.Call(opts, result, method, params...)
-}
-
-// Transfer initiates a plain transaction to move funds to the contract, calling
-// its default method if one is available.
-func (_IERC20 *IERC20Raw) Transfer(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _IERC20.Contract.IERC20Transactor.contract.Transfer(opts)
-}
-
-// Transact invokes the (paid) contract method with params as input values.
-func (_IERC20 *IERC20Raw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*types.Transaction, error) {
-	return _IERC20.Contract.IERC20Transactor.contract.Transact(opts, method, params...)
-}
-
-// Call invokes the (constant) contract method with params as input values and
-// sets the output to result. The result type might be a single field for simple
-// returns, a slice of interfaces for anonymous returns and a struct for named
-// returns.
-func (_IERC20 *IERC20CallerRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
-	return _IERC20.Contract.contract.Call(opts, result, method, params...)
-}
-
-// Transfer initiates a plain transaction to move funds to the contract, calling
-// its default method if one is available.
-func (_IERC20 *IERC20TransactorRaw) Transfer(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _IERC20.Contract.contract.Transfer(opts)
-}
-
-// Transact invokes the (paid) contract method with params as input values.
-func (_IERC20 *IERC20TransactorRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*types.Transaction, error) {
-	return _IERC20.Contract.contract.Transact(opts, method, params...)
-}
-
-// Allowance is a free data retrieval call binding the contract method 0xdd62ed3e.
-//
-// Solidity: function allowance(holder address, spender address) constant returns(uint256)
-func (_IERC20 *IERC20Caller) Allowance(opts *bind.CallOpts, holder common.Address, spender common.Address) (*big.Int, error) {
-	var (
-		ret0 = new(*big.Int)
-	)
-	out := ret0
-	err := _IERC20.contract.Call(opts, out, "allowance", holder, spender)
-	return *ret0, err
-}
-
-// Allowance is a free data retrieval call binding the contract method 0xdd62ed3e.
-//
-// Solidity: function allowance(holder address, spender address) constant returns(uint256)
-func (_IERC20 *IERC20Session) Allowance(holder common.Address, spender common.Address) (*big.Int, error) {
-	return _IERC20.Contract.Allowance(&_IERC20.CallOpts, holder, spender)
-}
-
-// Allowance is a free data retrieval call binding the contract method 0xdd62ed3e.
-//
-// Solidity: function allowance(holder address, spender address) constant returns(uint256)
-func (_IERC20 *IERC20CallerSession) Allowance(holder common.Address, spender common.Address) (*big.Int, error) {
-	return _IERC20.Contract.Allowance(&_IERC20.CallOpts, holder, spender)
-}
-
-// BalanceOf is a free data retrieval call binding the contract method 0x70a08231.
-//
-// Solidity: function balanceOf(holder address) constant returns(uint256)
-func (_IERC20 *IERC20Caller) BalanceOf(opts *bind.CallOpts, holder common.Address) (*big.Int, error) {
-	var (
-		ret0 = new(*big.Int)
-	)
-	out := ret0
-	err := _IERC20.contract.Call(opts, out, "balanceOf", holder)
-	return *ret0, err
-}
-
-// BalanceOf is a free data retrieval call binding the contract method 0x70a08231.
-//
-// Solidity: function balanceOf(holder address) constant returns(uint256)
-func (_IERC20 *IERC20Session) BalanceOf(holder common.Address) (*big.Int, error) {
-	return _IERC20.Contract.BalanceOf(&_IERC20.CallOpts, holder)
-}
-
-// BalanceOf is a free data retrieval call binding the contract method 0x70a08231.
-//
-// Solidity: function balanceOf(holder address) constant returns(uint256)
-func (_IERC20 *IERC20CallerSession) BalanceOf(holder common.Address) (*big.Int, error) {
-	return _IERC20.Contract.BalanceOf(&_IERC20.CallOpts, holder)
-}
-
-// TotalSupply is a free data retrieval call binding the contract method 0x18160ddd.
-//
-// Solidity: function totalSupply() constant returns(uint256)
-func (_IERC20 *IERC20Caller) TotalSupply(opts *bind.CallOpts) (*big.Int, error) {
-	var (
-		ret0 = new(*big.Int)
-	)
-	out := ret0
-	err := _IERC20.contract.Call(opts, out, "totalSupply")
-	return *ret0, err
-}
-
-// TotalSupply is a free data retrieval call binding the contract method 0x18160ddd.
-//
-// Solidity: function totalSupply() constant returns(uint256)
-func (_IERC20 *IERC20Session) TotalSupply() (*big.Int, error) {
-	return _IERC20.Contract.TotalSupply(&_IERC20.CallOpts)
-}
-
-// TotalSupply is a free data retrieval call binding the contract method 0x18160ddd.
-//
-// Solidity: function totalSupply() constant returns(uint256)
-func (_IERC20 *IERC20CallerSession) TotalSupply() (*big.Int, error) {
-	return _IERC20.Contract.TotalSupply(&_IERC20.CallOpts)
-}
-
-// Approve is a paid mutator transaction binding the contract method 0x095ea7b3.
-//
-// Solidity: function approve(spender address, value uint256) returns(bool)
-func (_IERC20 *IERC20Transactor) Approve(opts *bind.TransactOpts, spender common.Address, value *big.Int) (*types.Transaction, error) {
-	return _IERC20.contract.Transact(opts, "approve", spender, value)
-}
-
-// Approve is a paid mutator transaction binding the contract method 0x095ea7b3.
-//
-// Solidity: function approve(spender address, value uint256) returns(bool)
-func (_IERC20 *IERC20Session) Approve(spender common.Address, value *big.Int) (*types.Transaction, error) {
-	return _IERC20.Contract.Approve(&_IERC20.TransactOpts, spender, value)
-}
-
-// Approve is a paid mutator transaction binding the contract method 0x095ea7b3.
-//
-// Solidity: function approve(spender address, value uint256) returns(bool)
-func (_IERC20 *IERC20TransactorSession) Approve(spender common.Address, value *big.Int) (*types.Transaction, error) {
-	return _IERC20.Contract.Approve(&_IERC20.TransactOpts, spender, value)
-}
-
-// Transfer is a paid mutator transaction binding the contract method 0xa9059cbb.
-//
-// Solidity: function transfer(to address, value uint256) returns(bool)
-func (_IERC20 *IERC20Transactor) Transfer(opts *bind.TransactOpts, to common.Address, value *big.Int) (*types.Transaction, error) {
-	return _IERC20.contract.Transact(opts, "transfer", to, value)
-}
-
-// Transfer is a paid mutator transaction binding the contract method 0xa9059cbb.
-//
-// Solidity: function transfer(to address, value uint256) returns(bool)
-func (_IERC20 *IERC20Session) Transfer(to common.Address, value *big.Int) (*types.Transaction, error) {
-	return _IERC20.Contract.Transfer(&_IERC20.TransactOpts, to, value)
-}
-
-// Transfer is a paid mutator transaction binding the contract method 0xa9059cbb.
-//
-// Solidity: function transfer(to address, value uint256) returns(bool)
-func (_IERC20 *IERC20TransactorSession) Transfer(to common.Address, value *big.Int) (*types.Transaction, error) {
-	return _IERC20.Contract.Transfer(&_IERC20.TransactOpts, to, value)
-}
-
-// TransferFrom is a paid mutator transaction binding the contract method 0x23b872dd.
-//
-// Solidity: function transferFrom(from address, to address, value uint256) returns(bool)
-func (_IERC20 *IERC20Transactor) TransferFrom(opts *bind.TransactOpts, from common.Address, to common.Address, value *big.Int) (*types.Transaction, error) {
-	return _IERC20.contract.Transact(opts, "transferFrom", from, to, value)
-}
-
-// TransferFrom is a paid mutator transaction binding the contract method 0x23b872dd.
-//
-// Solidity: function transferFrom(from address, to address, value uint256) returns(bool)
-func (_IERC20 *IERC20Session) TransferFrom(from common.Address, to common.Address, value *big.Int) (*types.Transaction, error) {
-	return _IERC20.Contract.TransferFrom(&_IERC20.TransactOpts, from, to, value)
-}
-
-// TransferFrom is a paid mutator transaction binding the contract method 0x23b872dd.
-//
-// Solidity: function transferFrom(from address, to address, value uint256) returns(bool)
-func (_IERC20 *IERC20TransactorSession) TransferFrom(from common.Address, to common.Address, value *big.Int) (*types.Transaction, error) {
-	return _IERC20.Contract.TransferFrom(&_IERC20.TransactOpts, from, to, value)
-}
-
-// IERC20ApprovalEventIterator is returned from FilterApprovalEvent and is used to iterate over the raw logs and unpacked data for ApprovalEvent events raised by the IERC20 contract.
-type IERC20ApprovalEventIterator struct {
-	Event *IERC20ApprovalEvent // Event containing the contract specifics and raw log
-
-	contract *bind.BoundContract // Generic contract to use for unpacking event data
-	event    string              // Event name to use for unpacking event data
-
-	logs chan types.Log        // Log channel receiving the found contract events
-	sub  ethereum.Subscription // Subscription for errors, completion and termination
-	done bool                  // Whether the subscription completed delivering logs
-	fail error                 // Occurred error to stop iteration
-}
-
-// Next advances the iterator to the subsequent event, returning whether there
-// are any more events found. In case of a retrieval or parsing error, false is
-// returned and Error() can be queried for the exact failure.
-func (it *IERC20ApprovalEventIterator) Next() bool {
-	// If the iterator failed, stop iterating
-	if it.fail != nil {
-		return false
-	}
-	// If the iterator completed, deliver directly whatever's available
-	if it.done {
-		select {
-		case log := <-it.logs:
-			it.Event = new(IERC20ApprovalEvent)
-			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
-				it.fail = err
-				return false
-			}
-			it.Event.Raw = log
-			return true
-
-		default:
-			return false
-		}
-	}
-	// Iterator still in progress, wait for either a data or an error event
-	select {
-	case log := <-it.logs:
-		it.Event = new(IERC20ApprovalEvent)
-		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
-			it.fail = err
-			return false
-		}
-		it.Event.Raw = log
-		return true
-
-	case err := <-it.sub.Err():
-		it.done = true
-		it.fail = err
-		return it.Next()
-	}
-}
-
-// Error returns any retrieval or parsing error occurred during filtering.
-func (it *IERC20ApprovalEventIterator) Error() error {
-	return it.fail
-}
-
-// Close terminates the iteration process, releasing any pending underlying
-// resources.
-func (it *IERC20ApprovalEventIterator) Close() error {
-	it.sub.Unsubscribe()
-	return nil
-}
-
-// IERC20ApprovalEvent represents a ApprovalEvent event raised by the IERC20 contract.
-type IERC20ApprovalEvent struct {
-	Holder  common.Address
-	Spender common.Address
-	Value   *big.Int
-	Raw     types.Log // Blockchain specific contextual infos
-}
-
-// FilterApprovalEvent is a free log retrieval operation binding the contract event 0x08245b82180b1f5e514e503c113ab0197093b2cb542145037c0a31b54b1d998e.
-//
-// Solidity: e ApprovalEvent(holder indexed address, spender indexed address, value uint256)
-func (_IERC20 *IERC20Filterer) FilterApprovalEvent(opts *bind.FilterOpts, holder []common.Address, spender []common.Address) (*IERC20ApprovalEventIterator, error) {
-
-	var holderRule []interface{}
-	for _, holderItem := range holder {
-		holderRule = append(holderRule, holderItem)
-	}
-	var spenderRule []interface{}
-	for _, spenderItem := range spender {
-		spenderRule = append(spenderRule, spenderItem)
-	}
-
-	logs, sub, err := _IERC20.contract.FilterLogs(opts, "ApprovalEvent", holderRule, spenderRule)
-	if err != nil {
-		return nil, err
-	}
-	return &IERC20ApprovalEventIterator{contract: _IERC20.contract, event: "ApprovalEvent", logs: logs, sub: sub}, nil
-}
-
-// WatchApprovalEvent is a free log subscription operation binding the contract event 0x08245b82180b1f5e514e503c113ab0197093b2cb542145037c0a31b54b1d998e.
-//
-// Solidity: e ApprovalEvent(holder indexed address, spender indexed address, value uint256)
-func (_IERC20 *IERC20Filterer) WatchApprovalEvent(opts *bind.WatchOpts, sink chan<- *IERC20ApprovalEvent, holder []common.Address, spender []common.Address) (event.Subscription, error) {
-
-	var holderRule []interface{}
-	for _, holderItem := range holder {
-		holderRule = append(holderRule, holderItem)
-	}
-	var spenderRule []interface{}
-	for _, spenderItem := range spender {
-		spenderRule = append(spenderRule, spenderItem)
-	}
-
-	logs, sub, err := _IERC20.contract.WatchLogs(opts, "ApprovalEvent", holderRule, spenderRule)
-	if err != nil {
-		return nil, err
-	}
-	return event.NewSubscription(func(quit <-chan struct{}) error {
-		defer sub.Unsubscribe()
-		for {
-			select {
-			case log := <-logs:
-				// New log arrived, parse the event and forward to the user
-				event := new(IERC20ApprovalEvent)
-				if err := _IERC20.contract.UnpackLog(event, "ApprovalEvent", log); err != nil {
-					return err
-				}
-				event.Raw = log
-
-				select {
-				case sink <- event:
-				case err := <-sub.Err():
-					return err
-				case <-quit:
-					return nil
-				}
-			case err := <-sub.Err():
-				return err
-			case <-quit:
-				return nil
-			}
-		}
-	}), nil
-}
-
-// IERC20TransferEventIterator is returned from FilterTransferEvent and is used to iterate over the raw logs and unpacked data for TransferEvent events raised by the IERC20 contract.
-type IERC20TransferEventIterator struct {
-	Event *IERC20TransferEvent // Event containing the contract specifics and raw log
-
-	contract *bind.BoundContract // Generic contract to use for unpacking event data
-	event    string              // Event name to use for unpacking event data
-
-	logs chan types.Log        // Log channel receiving the found contract events
-	sub  ethereum.Subscription // Subscription for errors, completion and termination
-	done bool                  // Whether the subscription completed delivering logs
-	fail error                 // Occurred error to stop iteration
-}
-
-// Next advances the iterator to the subsequent event, returning whether there
-// are any more events found. In case of a retrieval or parsing error, false is
-// returned and Error() can be queried for the exact failure.
-func (it *IERC20TransferEventIterator) Next() bool {
-	// If the iterator failed, stop iterating
-	if it.fail != nil {
-		return false
-	}
-	// If the iterator completed, deliver directly whatever's available
-	if it.done {
-		select {
-		case log := <-it.logs:
-			it.Event = new(IERC20TransferEvent)
-			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
-				it.fail = err
-				return false
-			}
-			it.Event.Raw = log
-			return true
-
-		default:
-			return false
-		}
-	}
-	// Iterator still in progress, wait for either a data or an error event
-	select {
-	case log := <-it.logs:
-		it.Event = new(IERC20TransferEvent)
-		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
-			it.fail = err
-			return false
-		}
-		it.Event.Raw = log
-		return true
-
-	case err := <-it.sub.Err():
-		it.done = true
-		it.fail = err
-		return it.Next()
-	}
-}
-
-// Error returns any retrieval or parsing error occurred during filtering.
-func (it *IERC20TransferEventIterator) Error() error {
-	return it.fail
-}
-
-// Close terminates the iteration process, releasing any pending underlying
-// resources.
-func (it *IERC20TransferEventIterator) Close() error {
-	it.sub.Unsubscribe()
-	return nil
-}
-
-// IERC20TransferEvent represents a TransferEvent event raised by the IERC20 contract.
-type IERC20TransferEvent struct {
-	From  common.Address
-	To    common.Address
-	Value *big.Int
-	Raw   types.Log // Blockchain specific contextual infos
-}
-
-// FilterTransferEvent is a free log retrieval operation binding the contract event 0xeaf1c4b3ce0f4f62a2bae7eb3e68225c75f7e6ff4422073b7437b9a78d25f170.
-//
-// Solidity: e TransferEvent(from indexed address, to indexed address, value uint256)
-func (_IERC20 *IERC20Filterer) FilterTransferEvent(opts *bind.FilterOpts, from []common.Address, to []common.Address) (*IERC20TransferEventIterator, error) {
-
-	var fromRule []interface{}
-	for _, fromItem := range from {
-		fromRule = append(fromRule, fromItem)
-	}
-	var toRule []interface{}
-	for _, toItem := range to {
-		toRule = append(toRule, toItem)
-	}
-
-	logs, sub, err := _IERC20.contract.FilterLogs(opts, "TransferEvent", fromRule, toRule)
-	if err != nil {
-		return nil, err
-	}
-	return &IERC20TransferEventIterator{contract: _IERC20.contract, event: "TransferEvent", logs: logs, sub: sub}, nil
-}
-
-// WatchTransferEvent is a free log subscription operation binding the contract event 0xeaf1c4b3ce0f4f62a2bae7eb3e68225c75f7e6ff4422073b7437b9a78d25f170.
-//
-// Solidity: e TransferEvent(from indexed address, to indexed address, value uint256)
-func (_IERC20 *IERC20Filterer) WatchTransferEvent(opts *bind.WatchOpts, sink chan<- *IERC20TransferEvent, from []common.Address, to []common.Address) (event.Subscription, error) {
-
-	var fromRule []interface{}
-	for _, fromItem := range from {
-		fromRule = append(fromRule, fromItem)
-	}
-	var toRule []interface{}
-	for _, toItem := range to {
-		toRule = append(toRule, toItem)
-	}
-
-	logs, sub, err := _IERC20.contract.WatchLogs(opts, "TransferEvent", fromRule, toRule)
-	if err != nil {
-		return nil, err
-	}
-	return event.NewSubscription(func(quit <-chan struct{}) error {
-		defer sub.Unsubscribe()
-		for {
-			select {
-			case log := <-logs:
-				// New log arrived, parse the event and forward to the user
-				event := new(IERC20TransferEvent)
-				if err := _IERC20.contract.UnpackLog(event, "TransferEvent", log); err != nil {
-					return err
-				}
-				event.Raw = log
-
-				select {
-				case sink <- event:
-				case err := <-sub.Err():
-					return err
-				case <-quit:
-					return nil
-				}
-			case err := <-sub.Err():
-				return err
-			case <-quit:
-				return nil
-			}
-		}
-	}), nil
-}
-
-// PLCRVotingABI is the input ABI used to generate the binding from.
-const PLCRVotingABI = "[{\"constant\":true,\"inputs\":[{\"name\":\"id\",\"type\":\"uint256\"}],\"name\":\"getTotalNumberOfTokensForWinningOption\",\"outputs\":[{\"name\":\"numTokens\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"id\",\"type\":\"uint256\"}],\"name\":\"getPollRevealExpiry\",\"outputs\":[{\"name\":\"expiry\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"voter\",\"type\":\"address\"},{\"name\":\"numTokens\",\"type\":\"uint256\"},{\"name\":\"id\",\"type\":\"uint256\"}],\"name\":\"getInsertPointForNumTokens\",\"outputs\":[{\"name\":\"prevNode\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"voteQuorum\",\"type\":\"uint256\"},{\"name\":\"commitDuration\",\"type\":\"uint256\"},{\"name\":\"revealDuration\",\"type\":\"uint256\"}],\"name\":\"startPoll\",\"outputs\":[{\"name\":\"id\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"id\",\"type\":\"uint256\"}],\"name\":\"revealPeriodActive\",\"outputs\":[{\"name\":\"active\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"id\",\"type\":\"uint256\"}],\"name\":\"isPassed\",\"outputs\":[{\"name\":\"passed\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"voter\",\"type\":\"address\"}],\"name\":\"getLockedTokens\",\"outputs\":[{\"name\":\"numTokens\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"id\",\"type\":\"uint256\"},{\"name\":\"secretHash\",\"type\":\"bytes32\"},{\"name\":\"numTokens\",\"type\":\"uint256\"},{\"name\":\"prevId\",\"type\":\"uint256\"}],\"name\":\"commitVote\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"voter\",\"type\":\"address\"},{\"name\":\"id\",\"type\":\"uint256\"}],\"name\":\"didCommit\",\"outputs\":[{\"name\":\"committed\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"prevId\",\"type\":\"uint256\"},{\"name\":\"nextId\",\"type\":\"uint256\"},{\"name\":\"voter\",\"type\":\"address\"},{\"name\":\"numTokens\",\"type\":\"uint256\"}],\"name\":\"validPosition\",\"outputs\":[{\"name\":\"valid\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"id\",\"type\":\"uint256\"}],\"name\":\"pollExists\",\"outputs\":[{\"name\":\"exists\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"id\",\"type\":\"uint256\"}],\"name\":\"rescueTokens\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"numTokens\",\"type\":\"uint256\"}],\"name\":\"requestVotingRights\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"id\",\"type\":\"uint256\"}],\"name\":\"commitPeriodActive\",\"outputs\":[{\"name\":\"active\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"voter\",\"type\":\"address\"},{\"name\":\"id\",\"type\":\"uint256\"}],\"name\":\"didReveal\",\"outputs\":[{\"name\":\"revealed\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"id\",\"type\":\"uint256\"},{\"name\":\"voteOption\",\"type\":\"uint256\"},{\"name\":\"salt\",\"type\":\"uint256\"}],\"name\":\"revealVote\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"voter\",\"type\":\"address\"},{\"name\":\"id\",\"type\":\"uint256\"},{\"name\":\"salt\",\"type\":\"uint256\"}],\"name\":\"getNumPassingTokens\",\"outputs\":[{\"name\":\"correctVotes\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"voter\",\"type\":\"address\"},{\"name\":\"id\",\"type\":\"uint256\"}],\"name\":\"getNumTokens\",\"outputs\":[{\"name\":\"numTokens\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"voter\",\"type\":\"address\"},{\"name\":\"id\",\"type\":\"uint256\"}],\"name\":\"getCommitHash\",\"outputs\":[{\"name\":\"commitHash\",\"type\":\"bytes32\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"terminationDate\",\"type\":\"uint256\"}],\"name\":\"isExpired\",\"outputs\":[{\"name\":\"expired\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"id\",\"type\":\"uint256\"}],\"name\":\"getPollCommitExpiry\",\"outputs\":[{\"name\":\"expiry\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"numTokens\",\"type\":\"uint256\"}],\"name\":\"withdrawVotingRights\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"id\",\"type\":\"uint256\"}],\"name\":\"pollEnded\",\"outputs\":[{\"name\":\"ended\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"name\":\"tokenAddr\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"id\",\"type\":\"uint256\"},{\"indexed\":false,\"name\":\"numTokens\",\"type\":\"uint256\"},{\"indexed\":true,\"name\":\"voter\",\"type\":\"address\"}],\"name\":\"VoteCommittedEvent\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"id\",\"type\":\"uint256\"},{\"indexed\":false,\"name\":\"numTokens\",\"type\":\"uint256\"},{\"indexed\":false,\"name\":\"votesFor\",\"type\":\"uint256\"},{\"indexed\":false,\"name\":\"votesAgainst\",\"type\":\"uint256\"},{\"indexed\":true,\"name\":\"choice\",\"type\":\"uint256\"},{\"indexed\":true,\"name\":\"voter\",\"type\":\"address\"}],\"name\":\"VoteRevealedEvent\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"voteQuorum\",\"type\":\"uint256\"},{\"indexed\":false,\"name\":\"commitExpiry\",\"type\":\"uint256\"},{\"indexed\":false,\"name\":\"revealExpiry\",\"type\":\"uint256\"},{\"indexed\":true,\"name\":\"id\",\"type\":\"uint256\"},{\"indexed\":true,\"name\":\"creator\",\"type\":\"address\"}],\"name\":\"PollCreatedEvent\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"numTokens\",\"type\":\"uint256\"},{\"indexed\":true,\"name\":\"voter\",\"type\":\"address\"}],\"name\":\"VotingRightsGrantedEvent\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"numTokens\",\"type\":\"uint256\"},{\"indexed\":true,\"name\":\"voter\",\"type\":\"address\"}],\"name\":\"VotingRightsWithdrawnEvent\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"id\",\"type\":\"uint256\"},{\"indexed\":true,\"name\":\"voter\",\"type\":\"address\"}],\"name\":\"TokensRescuedEvent\",\"type\":\"event\"}]"
-
-// PLCRVotingBin is the compiled bytecode used for deploying new contracts.
-const PLCRVotingBin = `0x608060405234801561001057600080fd5b5060405160208061255d833981016040525160058054600160a060020a03909216600160a060020a03199092169190911790556000600255612506806100576000396000f3006080604052600436106101325763ffffffff7c0100000000000000000000000000000000000000000000000000000000600035041663053e71a681146101375780631be8ea50146101615780632c0520311461017957806332ed3d60146101a0578063441c77c0146101be57806349403183146101ea5780636b2d95d4146102025780636cbf9c5e146102235780637f97e83614610246578063819b02931461026a57806388d21ff31461029457806397603560146102ac578063a25236fe146102c4578063a4439dc5146102dc578063aa7ca464146102f4578063b11d8bb814610318578063b43bd06914610336578063d13820921461035d578063d901402b14610381578063d9548e53146103a5578063dc1b946f146103bd578063e7b1d43c146103d5578063ee684830146103ed575b600080fd5b34801561014357600080fd5b5061014f600435610405565b60408051918252519081900360200190f35b34801561016d57600080fd5b5061014f6004356104f2565b34801561018557600080fd5b5061014f600160a060020a036004351660243560443561058f565b3480156101ac57600080fd5b5061014f600435602435604435610600565b3480156101ca57600080fd5b506101d66004356106f0565b604080519115158252519081900360200190f35b3480156101f657600080fd5b506101d66004356107ab565b34801561020e57600080fd5b5061014f600160a060020a03600435166108ce565b34801561022f57600080fd5b506102446004356024356044356064356108e2565b005b34801561025257600080fd5b506101d6600160a060020a0360043516602435610ca7565b34801561027657600080fd5b506101d6600435602435600160a060020a0360443516606435610d5d565b3480156102a057600080fd5b506101d6600435610d9e565b3480156102b857600080fd5b50610244600435610db3565b3480156102d057600080fd5b50610244600435610f0a565b3480156102e857600080fd5b506101d66004356111c5565b34801561030057600080fd5b506101d6600160a060020a0360043516602435611264565b34801561032457600080fd5b5061024460043560243560443561131a565b34801561034257600080fd5b5061014f600160a060020a0360043516602435604435611719565b34801561036957600080fd5b5061014f600160a060020a03600435166024356119a0565b34801561038d57600080fd5b5061014f600160a060020a03600435166024356119ef565b3480156103b157600080fd5b506101d6600435611a37565b3480156103c957600080fd5b5061014f600435611a3c565b3480156103e157600080fd5b50610244600435611ad6565b3480156103f957600080fd5b506101d6600435611d29565b600061041082611d29565b15156104b2576040805160e560020a62461bcd02815260206004820152604a60248201527f4572726f723a566f74696e672e676574546f74616c4e756d6265724f66546f6b60448201527f656e73466f7257696e6e696e674f7074696f6e202d20506f6c6c206d7573742060648201527f6861766520656e64656400000000000000000000000000000000000000000000608482015290519081900360a40190fd5b6104bb826107ab565b156104d95750600081815260036020819052604090912001546104ed565b506000818152600360205260409020600401545b919050565b60006104fd82610d9e565b1515610579576040805160e560020a62461bcd02815260206004820152603260248201527f4572726f723a566f74696e672e676574506f6c6c72657665616c45787069727960448201527f202d20506f6c6c206d7573742065786973740000000000000000000000000000606482015290519081900360840190fd5b5060009081526003602052604090206001015490565b600080600061059d86611dcb565b91506105a986836119a0565b90505b81156105f3576105bc86836119a0565b90508481116105e257838214156105da576105d78683611dd4565b91505b8192506105f7565b6105ec8683611dd4565b91506105ac565b8192505b50509392505050565b600080600061061b6001600254611dff90919063ffffffff16565b60025561062e428663ffffffff611dff16565b9150610640828563ffffffff611dff16565b6040805160a08101825284815260208082018481528284018b815260006060808601828152608087018381526002805485526003808952948a90209851895595516001890155935187860155519186019190915590516004909401939093555483518b8152918201879052818401859052925193945033937ff7e7200f3afa7bbc8aca2cfa0ab33e741504a20fed2abc59869413cba2a33400929181900390910190a35050600254949350505050565b60006106fb82610d9e565b1515610777576040805160e560020a62461bcd02815260206004820152603160248201527f4572726f723a566f74696e672e72657665616c506572696f644163746976652060448201527f2d20506f6c6c206d757374206578697374000000000000000000000000000000606482015290519081900360840190fd5b60008281526003602052604090206001015461079290611a37565b1580156107a557506107a3826111c5565b155b92915050565b60006107b561246a565b6107be83611d29565b151561083a576040805160e560020a62461bcd02815260206004820152602c60248201527f4572726f723a566f74696e672e6973506173736564202d20506f6c6c206d757360448201527f74206861766520656e6465640000000000000000000000000000000000000000606482015290519081900360840190fd5b50600082815260036020818152604092839020835160a0810185528154815260018201549281019290925260028101549382019390935290820154606082018190526004909201546080820181905290916108b09161089f919063ffffffff611dff16565b60408301519063ffffffff611e0c16565b60608201516108c690606463ffffffff611e0c16565b119392505050565b60006107a5826108dd84611dcb565b6119a0565b6000806108ee866111c5565b151561096a576040805160e560020a62461bcd02815260206004820152603460248201527f4572726f723a566f74696e672e636f6d6d6974566f7465202d2054617267657460448201527f20706f6c6c206d75737420626520616374697665000000000000000000000000606482015290519081900360840190fd5b336000908152600460205260409020548411156109f7576040805160e560020a62461bcd02815260206004820152603160248201527f4572726f723a566f74696e672e636f6d6d6974566f7465202d2053656e64657260448201527f2063616e6e6f74206f7665727370656e64000000000000000000000000000000606482015290519081900360840190fd5b851515610a74576040805160e560020a62461bcd02815260206004820152602d60248201527f4572726f723a566f74696e672e636f6d6d6974566f7465202d20506f6c6c204960448201527f442063616e6e6f74206265203000000000000000000000000000000000000000606482015290519081900360840190fd5b821580610a865750610a863384611e35565b1515610b02576040805160e560020a62461bcd02815260206004820152602960248201527f4572726f723a566f74696e672e636f6d6d6974566f7465202d20506f6c6c206d60448201527f7573742065786973740000000000000000000000000000000000000000000000606482015290519081900360840190fd5b610b0c3384611eb3565b915085821415610b2357610b203387611eb3565b91505b610b2f83833387610d5d565b1515610bab576040805160e560020a62461bcd02815260206004820152603460248201527f4572726f723a566f74696e672e636f6d6d6974566f7465202d20506f6c6c207060448201527f6f736974696f6e206973206e6f742076616c6964000000000000000000000000606482015290519081900360840190fd5b610bb733848885611edb565b610bc1338761213f565b9050610c03816040805190810160405280600981526020017f6e756d546f6b656e730000000000000000000000000000000000000000000000815250866121ec565b60408051808201909152600a81527f636f6d6d697448617368000000000000000000000000000000000000000000006020820152610c43908290876121ec565b6000868152600360209081526040808320338085526005909101835292819020805460ff191660011790558051878152905189927f673f4a020a46f562a6e9fee9c8d4a179a11924190b777bec160133dd00c9f1de928290030190a3505050505050565b6000610cb282610d9e565b1515610d2e576040805160e560020a62461bcd02815260206004820152602f60248201527f4572726f723a506172616d65746572697a65722e646964436f6d6d6974202d2060448201527f506f6c6c206d7573742065786973740000000000000000000000000000000000606482015290519081900360840190fd5b506000908152600360209081526040808320600160a060020a0394909416835260059093019052205460ff1690565b6000806000610d6c85886119a0565b8410159150610d7b85876119a0565b84111580610d87575085155b9050818015610d935750805b979650505050505050565b600081158015906107a5575050600254101590565b600081815260036020526040902060010154610dce90611a37565b1515610e4a576040805160e560020a62461bcd02815260206004820152603060248201527f4572726f723a566f74696e672e726573637565546f6b656e73202d20506f6c6c60448201527f206d757374206861766520656e64656400000000000000000000000000000000606482015290519081900360840190fd5b610e543382611e35565b1515610ed0576040805160e560020a62461bcd02815260206004820152602a60248201527f4572726f723a566f74696e672e726573637565546f6b656e73202d20506f6c6c60448201527f206e6f7420666f756e6400000000000000000000000000000000000000000000606482015290519081900360840190fd5b610eda33826122d0565b604051339082907f1e897e4fe81e0db0459f0219545995fde305b17af5ca5cba7d6b6e8738df5dd090600090a350565b600554604080517f70a0823100000000000000000000000000000000000000000000000000000000815233600482015290518392600160a060020a0316916370a082319160248083019260209291908290030181600087803b158015610f6f57600080fd5b505af1158015610f83573d6000803e3d6000fd5b505050506040513d6020811015610f9957600080fd5b5051101561103d576040805160e560020a62461bcd02815260206004820152604860248201527f4572726f723a566f74696e672e72657175657374566f74696e6752696768747360448201527f202d2053656e64657220646f6573206e6f74206861766520737566666963696560648201527f6e742066756e6473000000000000000000000000000000000000000000000000608482015290519081900360a40190fd5b3360009081526004602052604090205461105d908263ffffffff611dff16565b3360008181526004602081815260408084209590955560055485517f23b872dd00000000000000000000000000000000000000000000000000000000815292830194909452306024830152604482018690529351600160a060020a03909316936323b872dd9360648084019492939192918390030190829087803b1580156110e457600080fd5b505af11580156110f8573d6000803e3d6000fd5b505050506040513d602081101561110e57600080fd5b5051151561118c576040805160e560020a62461bcd02815260206004820152603d60248201527f4572726f723a566f74696e672e72657175657374566f74696e6752696768747360448201527f202d20546f6b656e2e7472616e7366657246726f6d206661696c757265000000606482015290519081900360840190fd5b60408051828152905133917f0fbea84792de88539ad3d7f184543a65916440f4c6f9e2ef136c97f13109c45d919081900360200190a250565b60006111d082610d9e565b151561124c576040805160e560020a62461bcd02815260206004820152603160248201527f4572726f723a566f74696e672e636f6d6d6974506572696f644163746976652060448201527f2d20506f6c6c206d757374206578697374000000000000000000000000000000606482015290519081900360840190fd5b6000828152600360205260409020546107a390611a37565b600061126f82610d9e565b15156112eb576040805160e560020a62461bcd02815260206004820152602860248201527f4572726f723a566f74696e672e64696452657665616c202d20506f6c6c206d7560448201527f7374206578697374000000000000000000000000000000000000000000000000606482015290519081900360840190fd5b506000908152600360209081526040808320600160a060020a0394909416835260069093019052205460ff1690565b6000611325846106f0565b15156113a1576040805160e560020a62461bcd02815260206004820152603660248201527f4572726f723a566f74696e672e72657665616c566f7465202d2052657665616c60448201527f20706572696f64206d7573742062652061637469766500000000000000000000606482015290519081900360840190fd5b600084815260036020908152604080832033845260050190915290205460ff16151561143d576040805160e560020a62461bcd02815260206004820152603f60248201527f4572726f723a566f74696e672e72657665616c566f7465202d2053656e64657260448201527f206d757374206861766520636f6d6d697474656420746865697220766f746500606482015290519081900360840190fd5b600084815260036020908152604080832033845260060190915290205460ff16156114fe576040805160e560020a62461bcd02815260206004820152604860248201527f4572726f723a566f74696e672e72657665616c566f7465202d2053656e64657260448201527f2063616e6e6f742072657665616c20746865697220766f7465206d756c74697060648201527f6c652074696d6573000000000000000000000000000000000000000000000000608482015290519081900360a40190fd5b61150833856119ef565b604080516020808201879052818301869052825180830384018152606090920192839052815191929182918401908083835b602083106115595780518252601f19909201916020918201910161153a565b6001836020036101000a038019825116818451168082178552505050505050905001915050604051809103902060001916141515611607576040805160e560020a62461bcd02815260206004820152602760248201527f4572726f723a566f74696e672e72657665616c566f7465202d2048617368206d60448201527f69736d6174636800000000000000000000000000000000000000000000000000606482015290519081900360840190fd5b61161133856119a0565b90508260011415611657576000848152600360208190526040909120015461163f908263ffffffff611dff16565b6000858152600360208190526040909120015561168c565b600084815260036020526040902060040154611679908263ffffffff611dff16565b6000858152600360205260409020600401555b61169633856122d0565b600084815260036020818152604080842033808652600682018452828620805460ff191660011790559489905283835292830154600490930154815186815292830193909352818101929092529051859187917f448a2036d0f6dc799c1d3fdf26c4fe80832817bdbe81133808ffa6777c5826e09181900360600190a450505050565b60008060008061172886611d29565b15156117a4576040805160e560020a62461bcd02815260206004820152603760248201527f4572726f723a566f74696e672e6765744e756d50617373696e67546f6b656e7360448201527f202d20506f6c6c206d757374206861766520656e646564000000000000000000606482015290519081900360840190fd5b6000868152600360209081526040808320600160a060020a038b16845260060190915290205460ff16151561186f576040805160e560020a62461bcd02815260206004820152604660248201527f4572726f723a566f74696e672e6765744e756d50617373696e67546f6b656e7360448201527f202d20566f746572206d75737420686176652072657665616c6564207468656960648201527f7220766f74650000000000000000000000000000000000000000000000000000608482015290519081900360a40190fd5b611878866107ab565b611883576000611886565b60015b60ff169250828560405160200180838152602001828152602001925050506040516020818303038152906040526040518082805190602001908083835b602083106118e25780518252601f1990920191602091820191016118c3565b6001836020036101000a0380198251168184511680821785525050505050509050019150506040518091039020915061191b87876119ef565b905081811461199a576040805160e560020a62461bcd02815260206004820152603060248201527f4572726f723a566f74696e672e6765744e756d50617373696e67546f6b656e7360448201527f202d2048617368206d69736d6174636800000000000000000000000000000000606482015290519081900360840190fd5b610d9387875b60006119e86119af848461213f565b60408051808201909152600981527f6e756d546f6b656e7300000000000000000000000000000000000000000000006020820152612343565b9392505050565b60006119e86119fe848461213f565b60408051808201909152600a81527f636f6d6d697448617368000000000000000000000000000000000000000000006020820152612343565b421190565b6000611a4782610d9e565b1515611ac3576040805160e560020a62461bcd02815260206004820152603260248201527f4572726f723a566f74696e672e676574506f6c6c436f6d6d697445787069727960448201527f202d20506f6c6c206d7573742065786973740000000000000000000000000000606482015290519081900360840190fd5b5060009081526003602052604090205490565b6000611b00611ae4336108ce565b336000908152600460205260409020549063ffffffff61242d16565b905081811015611ba6576040805160e560020a62461bcd02815260206004820152604160248201527f4572726f723a566f74696e672e7769746864726177566f74696e67526967687460448201527f73202d20496e73756666696369656e7420617661696c61626c6520746f6b656e60648201527f7300000000000000000000000000000000000000000000000000000000000000608482015290519081900360a40190fd5b33600090815260046020526040902054611bc6908363ffffffff61242d16565b3360008181526004602081815260408084209590955560055485517fa9059cbb00000000000000000000000000000000000000000000000000000000815292830194909452602482018790529351600160a060020a039093169363a9059cbb9360448084019492939192918390030190829087803b158015611c4757600080fd5b505af1158015611c5b573d6000803e3d6000fd5b505050506040513d6020811015611c7157600080fd5b50511515611cef576040805160e560020a62461bcd02815260206004820152603a60248201527f4572726f723a566f74696e672e7769746864726177566f74696e67526967687460448201527f73202d20546f6b656e2e7472616e73666572206661696c757265000000000000606482015290519081900360840190fd5b60408051838152905133917f029a58e9abaa250a4ec75d14b364d764e890adec2d902a297fa24a6c5dfd097b919081900360200190a25050565b6000611d3482610d9e565b1515611db0576040805160e560020a62461bcd02815260206004820152602860248201527f4572726f723a566f74696e672e706f6c6c456e646564202d20506f6c6c206d7560448201527f7374206578697374000000000000000000000000000000000000000000000000606482015290519081900360840190fd5b6000828152600360205260409020600101546107a590611a37565b60006107a58260005b600160a060020a03919091166000908152600160208181526040808420948452939052919020015490565b818101828110156107a557fe5b6000821515611e1d575060006107a5565b50818102818382811515611e2d57fe5b04146107a557fe5b6000806000611e438561243f565b80611e4c575083155b15611e5a5760009250611eab565b83611e6486612452565b148015611e78575083611e768661245e565b145b91506000611e868686611eb3565b148015611e9c57506000611e9a8686611dd4565b145b90508180611ea8575080155b92505b505092915050565b600160a060020a03919091166000908152600160209081526040808320938352929052205490565b811515611f58576040805160e560020a62461bcd02815260206004820152603a60248201527f4572726f723a504c4352566f74696e672e646c6c496e73657274202d2049442060448201527f6f662061206e6577206e6f6465206d6179206e6f742062652030000000000000606482015290519081900360840190fd5b611f6284836122d0565b821580611f745750611f748484611e35565b1515611fcc576040805160e560020a62461bcd02815260206004820152603360248201526000805160206124bb833981519152604482015260008051602061249b833981519152606482015290519081900360840190fd5b801580611fde5750611fde8482611e35565b1515612036576040805160e560020a62461bcd02815260206004820152603360248201526000805160206124bb833981519152604482015260008051602061249b833981519152606482015290519081900360840190fd5b806120418585611eb3565b14612098576040805160e560020a62461bcd02815260206004820152603360248201526000805160206124bb833981519152604482015260008051602061249b833981519152606482015290519081900360840190fd5b826120a38583611dd4565b146120fa576040805160e560020a62461bcd02815260206004820152603360248201526000805160206124bb833981519152604482015260008051602061249b833981519152606482015290519081900360840190fd5b600160a060020a039390931660009081526001602081815260408084208585529091528083208083018690558690559382528382208390559381529190912090910155565b600082826040516020018083600160a060020a0316600160a060020a03166c01000000000000000000000000028152601401828152602001925050506040516020818303038152906040526040518082805190602001908083835b602083106121b95780518252601f19909201916020918201910161219a565b5181516020939093036101000a600019018019909116921691909117905260405192018290039091209695505050505050565b604080516020808201868152855160009488948894910191908401908083835b6020831061222b5780518252601f19909201916020918201910161220c565b6001836020036101000a038019825116818451168082178552505050505050905001925050506040516020818303038152906040526040518082805190602001908083835b6020831061228f5780518252601f199092019160209182019101612270565b51815160209384036101000a600019018019909216911617905260408051929094018290039091206000908152908190529190912094909455505050505050565b6000806122dd8484611e35565b15156122e85761233d565b6122f28484611eb3565b91506122fe8484611dd4565b600160a060020a038516600090815260016020818152604080842087855290915280832082018490558383528083208690558683528220828155015590505b50505050565b600080838360405160200180836000191660001916815260200182805190602001908083835b602083106123885780518252601f199092019160209182019101612369565b6001836020036101000a038019825116818451168082178552505050505050905001925050506040516020818303038152906040526040518082805190602001908083835b602083106123ec5780518252601f1990920191602091820191016123cd565b51815160209384036101000a600019018019909216911617905260408051929094018290039091206000908152908190529190912054979650505050505050565b60008282111561243957fe5b50900390565b60008061244b83612452565b1492915050565b60006107a58282611eb3565b60006107a58282611dd4565b60a0604051908101604052806000815260200160008152602001600081526020016000815260200160008152509056006e6f7420696e7365727420696e746f20444c4c000000000000000000000000004572726f723a504c4352566f74696e672e644c4c496e73657274202d20436f6ea165627a7a72305820be196c13f7bf098e733064d4253e587de19ae43c0b5fe490863e8052663adb9d0029`
-
-// DeployPLCRVoting deploys a new Ethereum contract, binding an instance of PLCRVoting to it.
-func DeployPLCRVoting(auth *bind.TransactOpts, backend bind.ContractBackend, tokenAddr common.Address) (common.Address, *types.Transaction, *PLCRVoting, error) {
-	parsed, err := abi.JSON(strings.NewReader(PLCRVotingABI))
-	if err != nil {
-		return common.Address{}, nil, nil, err
-	}
-	address, tx, contract, err := bind.DeployContract(auth, parsed, common.FromHex(PLCRVotingBin), backend, tokenAddr)
-	if err != nil {
-		return common.Address{}, nil, nil, err
-	}
-	return address, tx, &PLCRVoting{PLCRVotingCaller: PLCRVotingCaller{contract: contract}, PLCRVotingTransactor: PLCRVotingTransactor{contract: contract}, PLCRVotingFilterer: PLCRVotingFilterer{contract: contract}}, nil
-}
-
-// PLCRVoting is an auto generated Go binding around an Ethereum contract.
-type PLCRVoting struct {
-	PLCRVotingCaller     // Read-only binding to the contract
-	PLCRVotingTransactor // Write-only binding to the contract
-	PLCRVotingFilterer   // Log filterer for contract events
-}
-
-// PLCRVotingCaller is an auto generated read-only Go binding around an Ethereum contract.
-type PLCRVotingCaller struct {
-	contract *bind.BoundContract // Generic contract wrapper for the low level calls
-}
-
-// PLCRVotingTransactor is an auto generated write-only Go binding around an Ethereum contract.
-type PLCRVotingTransactor struct {
-	contract *bind.BoundContract // Generic contract wrapper for the low level calls
-}
-
-// PLCRVotingFilterer is an auto generated log filtering Go binding around an Ethereum contract events.
-type PLCRVotingFilterer struct {
-	contract *bind.BoundContract // Generic contract wrapper for the low level calls
-}
-
-// PLCRVotingSession is an auto generated Go binding around an Ethereum contract,
-// with pre-set call and transact options.
-type PLCRVotingSession struct {
-	Contract     *PLCRVoting       // Generic contract binding to set the session for
-	CallOpts     bind.CallOpts     // Call options to use throughout this session
-	TransactOpts bind.TransactOpts // Transaction auth options to use throughout this session
-}
-
-// PLCRVotingCallerSession is an auto generated read-only Go binding around an Ethereum contract,
-// with pre-set call options.
-type PLCRVotingCallerSession struct {
-	Contract *PLCRVotingCaller // Generic contract caller binding to set the session for
-	CallOpts bind.CallOpts     // Call options to use throughout this session
-}
-
-// PLCRVotingTransactorSession is an auto generated write-only Go binding around an Ethereum contract,
-// with pre-set transact options.
-type PLCRVotingTransactorSession struct {
-	Contract     *PLCRVotingTransactor // Generic contract transactor binding to set the session for
-	TransactOpts bind.TransactOpts     // Transaction auth options to use throughout this session
-}
-
-// PLCRVotingRaw is an auto generated low-level Go binding around an Ethereum contract.
-type PLCRVotingRaw struct {
-	Contract *PLCRVoting // Generic contract binding to access the raw methods on
-}
-
-// PLCRVotingCallerRaw is an auto generated low-level read-only Go binding around an Ethereum contract.
-type PLCRVotingCallerRaw struct {
-	Contract *PLCRVotingCaller // Generic read-only contract binding to access the raw methods on
-}
-
-// PLCRVotingTransactorRaw is an auto generated low-level write-only Go binding around an Ethereum contract.
-type PLCRVotingTransactorRaw struct {
-	Contract *PLCRVotingTransactor // Generic write-only contract binding to access the raw methods on
-}
-
-// NewPLCRVoting creates a new instance of PLCRVoting, bound to a specific deployed contract.
-func NewPLCRVoting(address common.Address, backend bind.ContractBackend) (*PLCRVoting, error) {
-	contract, err := bindPLCRVoting(address, backend, backend, backend)
-	if err != nil {
-		return nil, err
-	}
-	return &PLCRVoting{PLCRVotingCaller: PLCRVotingCaller{contract: contract}, PLCRVotingTransactor: PLCRVotingTransactor{contract: contract}, PLCRVotingFilterer: PLCRVotingFilterer{contract: contract}}, nil
-}
-
-// NewPLCRVotingCaller creates a new read-only instance of PLCRVoting, bound to a specific deployed contract.
-func NewPLCRVotingCaller(address common.Address, caller bind.ContractCaller) (*PLCRVotingCaller, error) {
-	contract, err := bindPLCRVoting(address, caller, nil, nil)
-	if err != nil {
-		return nil, err
-	}
-	return &PLCRVotingCaller{contract: contract}, nil
-}
-
-// NewPLCRVotingTransactor creates a new write-only instance of PLCRVoting, bound to a specific deployed contract.
-func NewPLCRVotingTransactor(address common.Address, transactor bind.ContractTransactor) (*PLCRVotingTransactor, error) {
-	contract, err := bindPLCRVoting(address, nil, transactor, nil)
-	if err != nil {
-		return nil, err
-	}
-	return &PLCRVotingTransactor{contract: contract}, nil
-}
-
-// NewPLCRVotingFilterer creates a new log filterer instance of PLCRVoting, bound to a specific deployed contract.
-func NewPLCRVotingFilterer(address common.Address, filterer bind.ContractFilterer) (*PLCRVotingFilterer, error) {
-	contract, err := bindPLCRVoting(address, nil, nil, filterer)
-	if err != nil {
-		return nil, err
-	}
-	return &PLCRVotingFilterer{contract: contract}, nil
-}
-
-// bindPLCRVoting binds a generic wrapper to an already deployed contract.
-func bindPLCRVoting(address common.Address, caller bind.ContractCaller, transactor bind.ContractTransactor, filterer bind.ContractFilterer) (*bind.BoundContract, error) {
-	parsed, err := abi.JSON(strings.NewReader(PLCRVotingABI))
-	if err != nil {
-		return nil, err
-	}
-	return bind.NewBoundContract(address, parsed, caller, transactor, filterer), nil
-}
-
-// Call invokes the (constant) contract method with params as input values and
-// sets the output to result. The result type might be a single field for simple
-// returns, a slice of interfaces for anonymous returns and a struct for named
-// returns.
-func (_PLCRVoting *PLCRVotingRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
-	return _PLCRVoting.Contract.PLCRVotingCaller.contract.Call(opts, result, method, params...)
-}
-
-// Transfer initiates a plain transaction to move funds to the contract, calling
-// its default method if one is available.
-func (_PLCRVoting *PLCRVotingRaw) Transfer(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _PLCRVoting.Contract.PLCRVotingTransactor.contract.Transfer(opts)
-}
-
-// Transact invokes the (paid) contract method with params as input values.
-func (_PLCRVoting *PLCRVotingRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*types.Transaction, error) {
-	return _PLCRVoting.Contract.PLCRVotingTransactor.contract.Transact(opts, method, params...)
-}
-
-// Call invokes the (constant) contract method with params as input values and
-// sets the output to result. The result type might be a single field for simple
-// returns, a slice of interfaces for anonymous returns and a struct for named
-// returns.
-func (_PLCRVoting *PLCRVotingCallerRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
-	return _PLCRVoting.Contract.contract.Call(opts, result, method, params...)
-}
-
-// Transfer initiates a plain transaction to move funds to the contract, calling
-// its default method if one is available.
-func (_PLCRVoting *PLCRVotingTransactorRaw) Transfer(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _PLCRVoting.Contract.contract.Transfer(opts)
-}
-
-// Transact invokes the (paid) contract method with params as input values.
-func (_PLCRVoting *PLCRVotingTransactorRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*types.Transaction, error) {
-	return _PLCRVoting.Contract.contract.Transact(opts, method, params...)
-}
-
-// CommitPeriodActive is a free data retrieval call binding the contract method 0xa4439dc5.
-//
-// Solidity: function commitPeriodActive(id uint256) constant returns(active bool)
-func (_PLCRVoting *PLCRVotingCaller) CommitPeriodActive(opts *bind.CallOpts, id *big.Int) (bool, error) {
-	var (
-		ret0 = new(bool)
-	)
-	out := ret0
-	err := _PLCRVoting.contract.Call(opts, out, "commitPeriodActive", id)
-	return *ret0, err
-}
-
-// CommitPeriodActive is a free data retrieval call binding the contract method 0xa4439dc5.
-//
-// Solidity: function commitPeriodActive(id uint256) constant returns(active bool)
-func (_PLCRVoting *PLCRVotingSession) CommitPeriodActive(id *big.Int) (bool, error) {
-	return _PLCRVoting.Contract.CommitPeriodActive(&_PLCRVoting.CallOpts, id)
-}
-
-// CommitPeriodActive is a free data retrieval call binding the contract method 0xa4439dc5.
-//
-// Solidity: function commitPeriodActive(id uint256) constant returns(active bool)
-func (_PLCRVoting *PLCRVotingCallerSession) CommitPeriodActive(id *big.Int) (bool, error) {
-	return _PLCRVoting.Contract.CommitPeriodActive(&_PLCRVoting.CallOpts, id)
-}
-
-// DidCommit is a free data retrieval call binding the contract method 0x7f97e836.
-//
-// Solidity: function didCommit(voter address, id uint256) constant returns(committed bool)
-func (_PLCRVoting *PLCRVotingCaller) DidCommit(opts *bind.CallOpts, voter common.Address, id *big.Int) (bool, error) {
-	var (
-		ret0 = new(bool)
-	)
-	out := ret0
-	err := _PLCRVoting.contract.Call(opts, out, "didCommit", voter, id)
-	return *ret0, err
-}
-
-// DidCommit is a free data retrieval call binding the contract method 0x7f97e836.
-//
-// Solidity: function didCommit(voter address, id uint256) constant returns(committed bool)
-func (_PLCRVoting *PLCRVotingSession) DidCommit(voter common.Address, id *big.Int) (bool, error) {
-	return _PLCRVoting.Contract.DidCommit(&_PLCRVoting.CallOpts, voter, id)
-}
-
-// DidCommit is a free data retrieval call binding the contract method 0x7f97e836.
-//
-// Solidity: function didCommit(voter address, id uint256) constant returns(committed bool)
-func (_PLCRVoting *PLCRVotingCallerSession) DidCommit(voter common.Address, id *big.Int) (bool, error) {
-	return _PLCRVoting.Contract.DidCommit(&_PLCRVoting.CallOpts, voter, id)
-}
-
-// DidReveal is a free data retrieval call binding the contract method 0xaa7ca464.
-//
-// Solidity: function didReveal(voter address, id uint256) constant returns(revealed bool)
-func (_PLCRVoting *PLCRVotingCaller) DidReveal(opts *bind.CallOpts, voter common.Address, id *big.Int) (bool, error) {
-	var (
-		ret0 = new(bool)
-	)
-	out := ret0
-	err := _PLCRVoting.contract.Call(opts, out, "didReveal", voter, id)
-	return *ret0, err
-}
-
-// DidReveal is a free data retrieval call binding the contract method 0xaa7ca464.
-//
-// Solidity: function didReveal(voter address, id uint256) constant returns(revealed bool)
-func (_PLCRVoting *PLCRVotingSession) DidReveal(voter common.Address, id *big.Int) (bool, error) {
-	return _PLCRVoting.Contract.DidReveal(&_PLCRVoting.CallOpts, voter, id)
-}
-
-// DidReveal is a free data retrieval call binding the contract method 0xaa7ca464.
-//
-// Solidity: function didReveal(voter address, id uint256) constant returns(revealed bool)
-func (_PLCRVoting *PLCRVotingCallerSession) DidReveal(voter common.Address, id *big.Int) (bool, error) {
-	return _PLCRVoting.Contract.DidReveal(&_PLCRVoting.CallOpts, voter, id)
-}
-
-// GetCommitHash is a free data retrieval call binding the contract method 0xd901402b.
-//
-// Solidity: function getCommitHash(voter address, id uint256) constant returns(commitHash bytes32)
-func (_PLCRVoting *PLCRVotingCaller) GetCommitHash(opts *bind.CallOpts, voter common.Address, id *big.Int) ([32]byte, error) {
-	var (
-		ret0 = new([32]byte)
-	)
-	out := ret0
-	err := _PLCRVoting.contract.Call(opts, out, "getCommitHash", voter, id)
-	return *ret0, err
-}
-
-// GetCommitHash is a free data retrieval call binding the contract method 0xd901402b.
-//
-// Solidity: function getCommitHash(voter address, id uint256) constant returns(commitHash bytes32)
-func (_PLCRVoting *PLCRVotingSession) GetCommitHash(voter common.Address, id *big.Int) ([32]byte, error) {
-	return _PLCRVoting.Contract.GetCommitHash(&_PLCRVoting.CallOpts, voter, id)
-}
-
-// GetCommitHash is a free data retrieval call binding the contract method 0xd901402b.
-//
-// Solidity: function getCommitHash(voter address, id uint256) constant returns(commitHash bytes32)
-func (_PLCRVoting *PLCRVotingCallerSession) GetCommitHash(voter common.Address, id *big.Int) ([32]byte, error) {
-	return _PLCRVoting.Contract.GetCommitHash(&_PLCRVoting.CallOpts, voter, id)
-}
-
-// GetInsertPointForNumTokens is a free data retrieval call binding the contract method 0x2c052031.
-//
-// Solidity: function getInsertPointForNumTokens(voter address, numTokens uint256, id uint256) constant returns(prevNode uint256)
-func (_PLCRVoting *PLCRVotingCaller) GetInsertPointForNumTokens(opts *bind.CallOpts, voter common.Address, numTokens *big.Int, id *big.Int) (*big.Int, error) {
-	var (
-		ret0 = new(*big.Int)
-	)
-	out := ret0
-	err := _PLCRVoting.contract.Call(opts, out, "getInsertPointForNumTokens", voter, numTokens, id)
-	return *ret0, err
-}
-
-// GetInsertPointForNumTokens is a free data retrieval call binding the contract method 0x2c052031.
-//
-// Solidity: function getInsertPointForNumTokens(voter address, numTokens uint256, id uint256) constant returns(prevNode uint256)
-func (_PLCRVoting *PLCRVotingSession) GetInsertPointForNumTokens(voter common.Address, numTokens *big.Int, id *big.Int) (*big.Int, error) {
-	return _PLCRVoting.Contract.GetInsertPointForNumTokens(&_PLCRVoting.CallOpts, voter, numTokens, id)
-}
-
-// GetInsertPointForNumTokens is a free data retrieval call binding the contract method 0x2c052031.
-//
-// Solidity: function getInsertPointForNumTokens(voter address, numTokens uint256, id uint256) constant returns(prevNode uint256)
-func (_PLCRVoting *PLCRVotingCallerSession) GetInsertPointForNumTokens(voter common.Address, numTokens *big.Int, id *big.Int) (*big.Int, error) {
-	return _PLCRVoting.Contract.GetInsertPointForNumTokens(&_PLCRVoting.CallOpts, voter, numTokens, id)
-}
-
-// GetLockedTokens is a free data retrieval call binding the contract method 0x6b2d95d4.
-//
-// Solidity: function getLockedTokens(voter address) constant returns(numTokens uint256)
-func (_PLCRVoting *PLCRVotingCaller) GetLockedTokens(opts *bind.CallOpts, voter common.Address) (*big.Int, error) {
-	var (
-		ret0 = new(*big.Int)
-	)
-	out := ret0
-	err := _PLCRVoting.contract.Call(opts, out, "getLockedTokens", voter)
-	return *ret0, err
-}
-
-// GetLockedTokens is a free data retrieval call binding the contract method 0x6b2d95d4.
-//
-// Solidity: function getLockedTokens(voter address) constant returns(numTokens uint256)
-func (_PLCRVoting *PLCRVotingSession) GetLockedTokens(voter common.Address) (*big.Int, error) {
-	return _PLCRVoting.Contract.GetLockedTokens(&_PLCRVoting.CallOpts, voter)
-}
-
-// GetLockedTokens is a free data retrieval call binding the contract method 0x6b2d95d4.
-//
-// Solidity: function getLockedTokens(voter address) constant returns(numTokens uint256)
-func (_PLCRVoting *PLCRVotingCallerSession) GetLockedTokens(voter common.Address) (*big.Int, error) {
-	return _PLCRVoting.Contract.GetLockedTokens(&_PLCRVoting.CallOpts, voter)
-}
-
-// GetNumPassingTokens is a free data retrieval call binding the contract method 0xb43bd069.
-//
-// Solidity: function getNumPassingTokens(voter address, id uint256, salt uint256) constant returns(correctVotes uint256)
-func (_PLCRVoting *PLCRVotingCaller) GetNumPassingTokens(opts *bind.CallOpts, voter common.Address, id *big.Int, salt *big.Int) (*big.Int, error) {
-	var (
-		ret0 = new(*big.Int)
-	)
-	out := ret0
-	err := _PLCRVoting.contract.Call(opts, out, "getNumPassingTokens", voter, id, salt)
-	return *ret0, err
-}
-
-// GetNumPassingTokens is a free data retrieval call binding the contract method 0xb43bd069.
-//
-// Solidity: function getNumPassingTokens(voter address, id uint256, salt uint256) constant returns(correctVotes uint256)
-func (_PLCRVoting *PLCRVotingSession) GetNumPassingTokens(voter common.Address, id *big.Int, salt *big.Int) (*big.Int, error) {
-	return _PLCRVoting.Contract.GetNumPassingTokens(&_PLCRVoting.CallOpts, voter, id, salt)
-}
-
-// GetNumPassingTokens is a free data retrieval call binding the contract method 0xb43bd069.
-//
-// Solidity: function getNumPassingTokens(voter address, id uint256, salt uint256) constant returns(correctVotes uint256)
-func (_PLCRVoting *PLCRVotingCallerSession) GetNumPassingTokens(voter common.Address, id *big.Int, salt *big.Int) (*big.Int, error) {
-	return _PLCRVoting.Contract.GetNumPassingTokens(&_PLCRVoting.CallOpts, voter, id, salt)
-}
-
-// GetNumTokens is a free data retrieval call binding the contract method 0xd1382092.
-//
-// Solidity: function getNumTokens(voter address, id uint256) constant returns(numTokens uint256)
-func (_PLCRVoting *PLCRVotingCaller) GetNumTokens(opts *bind.CallOpts, voter common.Address, id *big.Int) (*big.Int, error) {
-	var (
-		ret0 = new(*big.Int)
-	)
-	out := ret0
-	err := _PLCRVoting.contract.Call(opts, out, "getNumTokens", voter, id)
-	return *ret0, err
-}
-
-// GetNumTokens is a free data retrieval call binding the contract method 0xd1382092.
-//
-// Solidity: function getNumTokens(voter address, id uint256) constant returns(numTokens uint256)
-func (_PLCRVoting *PLCRVotingSession) GetNumTokens(voter common.Address, id *big.Int) (*big.Int, error) {
-	return _PLCRVoting.Contract.GetNumTokens(&_PLCRVoting.CallOpts, voter, id)
-}
-
-// GetNumTokens is a free data retrieval call binding the contract method 0xd1382092.
-//
-// Solidity: function getNumTokens(voter address, id uint256) constant returns(numTokens uint256)
-func (_PLCRVoting *PLCRVotingCallerSession) GetNumTokens(voter common.Address, id *big.Int) (*big.Int, error) {
-	return _PLCRVoting.Contract.GetNumTokens(&_PLCRVoting.CallOpts, voter, id)
-}
-
-// GetPollCommitExpiry is a free data retrieval call binding the contract method 0xdc1b946f.
-//
-// Solidity: function getPollCommitExpiry(id uint256) constant returns(expiry uint256)
-func (_PLCRVoting *PLCRVotingCaller) GetPollCommitExpiry(opts *bind.CallOpts, id *big.Int) (*big.Int, error) {
-	var (
-		ret0 = new(*big.Int)
-	)
-	out := ret0
-	err := _PLCRVoting.contract.Call(opts, out, "getPollCommitExpiry", id)
-	return *ret0, err
-}
-
-// GetPollCommitExpiry is a free data retrieval call binding the contract method 0xdc1b946f.
-//
-// Solidity: function getPollCommitExpiry(id uint256) constant returns(expiry uint256)
-func (_PLCRVoting *PLCRVotingSession) GetPollCommitExpiry(id *big.Int) (*big.Int, error) {
-	return _PLCRVoting.Contract.GetPollCommitExpiry(&_PLCRVoting.CallOpts, id)
-}
-
-// GetPollCommitExpiry is a free data retrieval call binding the contract method 0xdc1b946f.
-//
-// Solidity: function getPollCommitExpiry(id uint256) constant returns(expiry uint256)
-func (_PLCRVoting *PLCRVotingCallerSession) GetPollCommitExpiry(id *big.Int) (*big.Int, error) {
-	return _PLCRVoting.Contract.GetPollCommitExpiry(&_PLCRVoting.CallOpts, id)
-}
-
-// GetPollRevealExpiry is a free data retrieval call binding the contract method 0x1be8ea50.
-//
-// Solidity: function getPollRevealExpiry(id uint256) constant returns(expiry uint256)
-func (_PLCRVoting *PLCRVotingCaller) GetPollRevealExpiry(opts *bind.CallOpts, id *big.Int) (*big.Int, error) {
-	var (
-		ret0 = new(*big.Int)
-	)
-	out := ret0
-	err := _PLCRVoting.contract.Call(opts, out, "getPollRevealExpiry", id)
-	return *ret0, err
-}
-
-// GetPollRevealExpiry is a free data retrieval call binding the contract method 0x1be8ea50.
-//
-// Solidity: function getPollRevealExpiry(id uint256) constant returns(expiry uint256)
-func (_PLCRVoting *PLCRVotingSession) GetPollRevealExpiry(id *big.Int) (*big.Int, error) {
-	return _PLCRVoting.Contract.GetPollRevealExpiry(&_PLCRVoting.CallOpts, id)
-}
-
-// GetPollRevealExpiry is a free data retrieval call binding the contract method 0x1be8ea50.
-//
-// Solidity: function getPollRevealExpiry(id uint256) constant returns(expiry uint256)
-func (_PLCRVoting *PLCRVotingCallerSession) GetPollRevealExpiry(id *big.Int) (*big.Int, error) {
-	return _PLCRVoting.Contract.GetPollRevealExpiry(&_PLCRVoting.CallOpts, id)
-}
-
-// GetTotalNumberOfTokensForWinningOption is a free data retrieval call binding the contract method 0x053e71a6.
-//
-// Solidity: function getTotalNumberOfTokensForWinningOption(id uint256) constant returns(numTokens uint256)
-func (_PLCRVoting *PLCRVotingCaller) GetTotalNumberOfTokensForWinningOption(opts *bind.CallOpts, id *big.Int) (*big.Int, error) {
-	var (
-		ret0 = new(*big.Int)
-	)
-	out := ret0
-	err := _PLCRVoting.contract.Call(opts, out, "getTotalNumberOfTokensForWinningOption", id)
-	return *ret0, err
-}
-
-// GetTotalNumberOfTokensForWinningOption is a free data retrieval call binding the contract method 0x053e71a6.
-//
-// Solidity: function getTotalNumberOfTokensForWinningOption(id uint256) constant returns(numTokens uint256)
-func (_PLCRVoting *PLCRVotingSession) GetTotalNumberOfTokensForWinningOption(id *big.Int) (*big.Int, error) {
-	return _PLCRVoting.Contract.GetTotalNumberOfTokensForWinningOption(&_PLCRVoting.CallOpts, id)
-}
-
-// GetTotalNumberOfTokensForWinningOption is a free data retrieval call binding the contract method 0x053e71a6.
-//
-// Solidity: function getTotalNumberOfTokensForWinningOption(id uint256) constant returns(numTokens uint256)
-func (_PLCRVoting *PLCRVotingCallerSession) GetTotalNumberOfTokensForWinningOption(id *big.Int) (*big.Int, error) {
-	return _PLCRVoting.Contract.GetTotalNumberOfTokensForWinningOption(&_PLCRVoting.CallOpts, id)
-}
-
-// IsExpired is a free data retrieval call binding the contract method 0xd9548e53.
-//
-// Solidity: function isExpired(terminationDate uint256) constant returns(expired bool)
-func (_PLCRVoting *PLCRVotingCaller) IsExpired(opts *bind.CallOpts, terminationDate *big.Int) (bool, error) {
-	var (
-		ret0 = new(bool)
-	)
-	out := ret0
-	err := _PLCRVoting.contract.Call(opts, out, "isExpired", terminationDate)
-	return *ret0, err
-}
-
-// IsExpired is a free data retrieval call binding the contract method 0xd9548e53.
-//
-// Solidity: function isExpired(terminationDate uint256) constant returns(expired bool)
-func (_PLCRVoting *PLCRVotingSession) IsExpired(terminationDate *big.Int) (bool, error) {
-	return _PLCRVoting.Contract.IsExpired(&_PLCRVoting.CallOpts, terminationDate)
-}
-
-// IsExpired is a free data retrieval call binding the contract method 0xd9548e53.
-//
-// Solidity: function isExpired(terminationDate uint256) constant returns(expired bool)
-func (_PLCRVoting *PLCRVotingCallerSession) IsExpired(terminationDate *big.Int) (bool, error) {
-	return _PLCRVoting.Contract.IsExpired(&_PLCRVoting.CallOpts, terminationDate)
-}
-
-// IsPassed is a free data retrieval call binding the contract method 0x49403183.
-//
-// Solidity: function isPassed(id uint256) constant returns(passed bool)
-func (_PLCRVoting *PLCRVotingCaller) IsPassed(opts *bind.CallOpts, id *big.Int) (bool, error) {
-	var (
-		ret0 = new(bool)
-	)
-	out := ret0
-	err := _PLCRVoting.contract.Call(opts, out, "isPassed", id)
-	return *ret0, err
-}
-
-// IsPassed is a free data retrieval call binding the contract method 0x49403183.
-//
-// Solidity: function isPassed(id uint256) constant returns(passed bool)
-func (_PLCRVoting *PLCRVotingSession) IsPassed(id *big.Int) (bool, error) {
-	return _PLCRVoting.Contract.IsPassed(&_PLCRVoting.CallOpts, id)
-}
-
-// IsPassed is a free data retrieval call binding the contract method 0x49403183.
-//
-// Solidity: function isPassed(id uint256) constant returns(passed bool)
-func (_PLCRVoting *PLCRVotingCallerSession) IsPassed(id *big.Int) (bool, error) {
-	return _PLCRVoting.Contract.IsPassed(&_PLCRVoting.CallOpts, id)
-}
-
-// PollEnded is a free data retrieval call binding the contract method 0xee684830.
-//
-// Solidity: function pollEnded(id uint256) constant returns(ended bool)
-func (_PLCRVoting *PLCRVotingCaller) PollEnded(opts *bind.CallOpts, id *big.Int) (bool, error) {
-	var (
-		ret0 = new(bool)
-	)
-	out := ret0
-	err := _PLCRVoting.contract.Call(opts, out, "pollEnded", id)
-	return *ret0, err
-}
-
-// PollEnded is a free data retrieval call binding the contract method 0xee684830.
-//
-// Solidity: function pollEnded(id uint256) constant returns(ended bool)
-func (_PLCRVoting *PLCRVotingSession) PollEnded(id *big.Int) (bool, error) {
-	return _PLCRVoting.Contract.PollEnded(&_PLCRVoting.CallOpts, id)
-}
-
-// PollEnded is a free data retrieval call binding the contract method 0xee684830.
-//
-// Solidity: function pollEnded(id uint256) constant returns(ended bool)
-func (_PLCRVoting *PLCRVotingCallerSession) PollEnded(id *big.Int) (bool, error) {
-	return _PLCRVoting.Contract.PollEnded(&_PLCRVoting.CallOpts, id)
-}
-
-// PollExists is a free data retrieval call binding the contract method 0x88d21ff3.
-//
-// Solidity: function pollExists(id uint256) constant returns(exists bool)
-func (_PLCRVoting *PLCRVotingCaller) PollExists(opts *bind.CallOpts, id *big.Int) (bool, error) {
-	var (
-		ret0 = new(bool)
-	)
-	out := ret0
-	err := _PLCRVoting.contract.Call(opts, out, "pollExists", id)
-	return *ret0, err
-}
-
-// PollExists is a free data retrieval call binding the contract method 0x88d21ff3.
-//
-// Solidity: function pollExists(id uint256) constant returns(exists bool)
-func (_PLCRVoting *PLCRVotingSession) PollExists(id *big.Int) (bool, error) {
-	return _PLCRVoting.Contract.PollExists(&_PLCRVoting.CallOpts, id)
-}
-
-// PollExists is a free data retrieval call binding the contract method 0x88d21ff3.
-//
-// Solidity: function pollExists(id uint256) constant returns(exists bool)
-func (_PLCRVoting *PLCRVotingCallerSession) PollExists(id *big.Int) (bool, error) {
-	return _PLCRVoting.Contract.PollExists(&_PLCRVoting.CallOpts, id)
-}
-
-// RevealPeriodActive is a free data retrieval call binding the contract method 0x441c77c0.
-//
-// Solidity: function revealPeriodActive(id uint256) constant returns(active bool)
-func (_PLCRVoting *PLCRVotingCaller) RevealPeriodActive(opts *bind.CallOpts, id *big.Int) (bool, error) {
-	var (
-		ret0 = new(bool)
-	)
-	out := ret0
-	err := _PLCRVoting.contract.Call(opts, out, "revealPeriodActive", id)
-	return *ret0, err
-}
-
-// RevealPeriodActive is a free data retrieval call binding the contract method 0x441c77c0.
-//
-// Solidity: function revealPeriodActive(id uint256) constant returns(active bool)
-func (_PLCRVoting *PLCRVotingSession) RevealPeriodActive(id *big.Int) (bool, error) {
-	return _PLCRVoting.Contract.RevealPeriodActive(&_PLCRVoting.CallOpts, id)
-}
-
-// RevealPeriodActive is a free data retrieval call binding the contract method 0x441c77c0.
-//
-// Solidity: function revealPeriodActive(id uint256) constant returns(active bool)
-func (_PLCRVoting *PLCRVotingCallerSession) RevealPeriodActive(id *big.Int) (bool, error) {
-	return _PLCRVoting.Contract.RevealPeriodActive(&_PLCRVoting.CallOpts, id)
-}
-
-// ValidPosition is a free data retrieval call binding the contract method 0x819b0293.
-//
-// Solidity: function validPosition(prevId uint256, nextId uint256, voter address, numTokens uint256) constant returns(valid bool)
-func (_PLCRVoting *PLCRVotingCaller) ValidPosition(opts *bind.CallOpts, prevId *big.Int, nextId *big.Int, voter common.Address, numTokens *big.Int) (bool, error) {
-	var (
-		ret0 = new(bool)
-	)
-	out := ret0
-	err := _PLCRVoting.contract.Call(opts, out, "validPosition", prevId, nextId, voter, numTokens)
-	return *ret0, err
-}
-
-// ValidPosition is a free data retrieval call binding the contract method 0x819b0293.
-//
-// Solidity: function validPosition(prevId uint256, nextId uint256, voter address, numTokens uint256) constant returns(valid bool)
-func (_PLCRVoting *PLCRVotingSession) ValidPosition(prevId *big.Int, nextId *big.Int, voter common.Address, numTokens *big.Int) (bool, error) {
-	return _PLCRVoting.Contract.ValidPosition(&_PLCRVoting.CallOpts, prevId, nextId, voter, numTokens)
-}
-
-// ValidPosition is a free data retrieval call binding the contract method 0x819b0293.
-//
-// Solidity: function validPosition(prevId uint256, nextId uint256, voter address, numTokens uint256) constant returns(valid bool)
-func (_PLCRVoting *PLCRVotingCallerSession) ValidPosition(prevId *big.Int, nextId *big.Int, voter common.Address, numTokens *big.Int) (bool, error) {
-	return _PLCRVoting.Contract.ValidPosition(&_PLCRVoting.CallOpts, prevId, nextId, voter, numTokens)
-}
-
-// CommitVote is a paid mutator transaction binding the contract method 0x6cbf9c5e.
-//
-// Solidity: function commitVote(id uint256, secretHash bytes32, numTokens uint256, prevId uint256) returns()
-func (_PLCRVoting *PLCRVotingTransactor) CommitVote(opts *bind.TransactOpts, id *big.Int, secretHash [32]byte, numTokens *big.Int, prevId *big.Int) (*types.Transaction, error) {
-	return _PLCRVoting.contract.Transact(opts, "commitVote", id, secretHash, numTokens, prevId)
-}
-
-// CommitVote is a paid mutator transaction binding the contract method 0x6cbf9c5e.
-//
-// Solidity: function commitVote(id uint256, secretHash bytes32, numTokens uint256, prevId uint256) returns()
-func (_PLCRVoting *PLCRVotingSession) CommitVote(id *big.Int, secretHash [32]byte, numTokens *big.Int, prevId *big.Int) (*types.Transaction, error) {
-	return _PLCRVoting.Contract.CommitVote(&_PLCRVoting.TransactOpts, id, secretHash, numTokens, prevId)
-}
-
-// CommitVote is a paid mutator transaction binding the contract method 0x6cbf9c5e.
-//
-// Solidity: function commitVote(id uint256, secretHash bytes32, numTokens uint256, prevId uint256) returns()
-func (_PLCRVoting *PLCRVotingTransactorSession) CommitVote(id *big.Int, secretHash [32]byte, numTokens *big.Int, prevId *big.Int) (*types.Transaction, error) {
-	return _PLCRVoting.Contract.CommitVote(&_PLCRVoting.TransactOpts, id, secretHash, numTokens, prevId)
-}
-
-// RequestVotingRights is a paid mutator transaction binding the contract method 0xa25236fe.
-//
-// Solidity: function requestVotingRights(numTokens uint256) returns()
-func (_PLCRVoting *PLCRVotingTransactor) RequestVotingRights(opts *bind.TransactOpts, numTokens *big.Int) (*types.Transaction, error) {
-	return _PLCRVoting.contract.Transact(opts, "requestVotingRights", numTokens)
-}
-
-// RequestVotingRights is a paid mutator transaction binding the contract method 0xa25236fe.
-//
-// Solidity: function requestVotingRights(numTokens uint256) returns()
-func (_PLCRVoting *PLCRVotingSession) RequestVotingRights(numTokens *big.Int) (*types.Transaction, error) {
-	return _PLCRVoting.Contract.RequestVotingRights(&_PLCRVoting.TransactOpts, numTokens)
-}
-
-// RequestVotingRights is a paid mutator transaction binding the contract method 0xa25236fe.
-//
-// Solidity: function requestVotingRights(numTokens uint256) returns()
-func (_PLCRVoting *PLCRVotingTransactorSession) RequestVotingRights(numTokens *big.Int) (*types.Transaction, error) {
-	return _PLCRVoting.Contract.RequestVotingRights(&_PLCRVoting.TransactOpts, numTokens)
-}
-
-// RescueTokens is a paid mutator transaction binding the contract method 0x97603560.
-//
-// Solidity: function rescueTokens(id uint256) returns()
-func (_PLCRVoting *PLCRVotingTransactor) RescueTokens(opts *bind.TransactOpts, id *big.Int) (*types.Transaction, error) {
-	return _PLCRVoting.contract.Transact(opts, "rescueTokens", id)
-}
-
-// RescueTokens is a paid mutator transaction binding the contract method 0x97603560.
-//
-// Solidity: function rescueTokens(id uint256) returns()
-func (_PLCRVoting *PLCRVotingSession) RescueTokens(id *big.Int) (*types.Transaction, error) {
-	return _PLCRVoting.Contract.RescueTokens(&_PLCRVoting.TransactOpts, id)
-}
-
-// RescueTokens is a paid mutator transaction binding the contract method 0x97603560.
-//
-// Solidity: function rescueTokens(id uint256) returns()
-func (_PLCRVoting *PLCRVotingTransactorSession) RescueTokens(id *big.Int) (*types.Transaction, error) {
-	return _PLCRVoting.Contract.RescueTokens(&_PLCRVoting.TransactOpts, id)
-}
-
-// RevealVote is a paid mutator transaction binding the contract method 0xb11d8bb8.
-//
-// Solidity: function revealVote(id uint256, voteOption uint256, salt uint256) returns()
-func (_PLCRVoting *PLCRVotingTransactor) RevealVote(opts *bind.TransactOpts, id *big.Int, voteOption *big.Int, salt *big.Int) (*types.Transaction, error) {
-	return _PLCRVoting.contract.Transact(opts, "revealVote", id, voteOption, salt)
-}
-
-// RevealVote is a paid mutator transaction binding the contract method 0xb11d8bb8.
-//
-// Solidity: function revealVote(id uint256, voteOption uint256, salt uint256) returns()
-func (_PLCRVoting *PLCRVotingSession) RevealVote(id *big.Int, voteOption *big.Int, salt *big.Int) (*types.Transaction, error) {
-	return _PLCRVoting.Contract.RevealVote(&_PLCRVoting.TransactOpts, id, voteOption, salt)
-}
-
-// RevealVote is a paid mutator transaction binding the contract method 0xb11d8bb8.
-//
-// Solidity: function revealVote(id uint256, voteOption uint256, salt uint256) returns()
-func (_PLCRVoting *PLCRVotingTransactorSession) RevealVote(id *big.Int, voteOption *big.Int, salt *big.Int) (*types.Transaction, error) {
-	return _PLCRVoting.Contract.RevealVote(&_PLCRVoting.TransactOpts, id, voteOption, salt)
-}
-
-// StartPoll is a paid mutator transaction binding the contract method 0x32ed3d60.
-//
-// Solidity: function startPoll(voteQuorum uint256, commitDuration uint256, revealDuration uint256) returns(id uint256)
-func (_PLCRVoting *PLCRVotingTransactor) StartPoll(opts *bind.TransactOpts, voteQuorum *big.Int, commitDuration *big.Int, revealDuration *big.Int) (*types.Transaction, error) {
-	return _PLCRVoting.contract.Transact(opts, "startPoll", voteQuorum, commitDuration, revealDuration)
-}
-
-// StartPoll is a paid mutator transaction binding the contract method 0x32ed3d60.
-//
-// Solidity: function startPoll(voteQuorum uint256, commitDuration uint256, revealDuration uint256) returns(id uint256)
-func (_PLCRVoting *PLCRVotingSession) StartPoll(voteQuorum *big.Int, commitDuration *big.Int, revealDuration *big.Int) (*types.Transaction, error) {
-	return _PLCRVoting.Contract.StartPoll(&_PLCRVoting.TransactOpts, voteQuorum, commitDuration, revealDuration)
-}
-
-// StartPoll is a paid mutator transaction binding the contract method 0x32ed3d60.
-//
-// Solidity: function startPoll(voteQuorum uint256, commitDuration uint256, revealDuration uint256) returns(id uint256)
-func (_PLCRVoting *PLCRVotingTransactorSession) StartPoll(voteQuorum *big.Int, commitDuration *big.Int, revealDuration *big.Int) (*types.Transaction, error) {
-	return _PLCRVoting.Contract.StartPoll(&_PLCRVoting.TransactOpts, voteQuorum, commitDuration, revealDuration)
-}
-
-// WithdrawVotingRights is a paid mutator transaction binding the contract method 0xe7b1d43c.
-//
-// Solidity: function withdrawVotingRights(numTokens uint256) returns()
-func (_PLCRVoting *PLCRVotingTransactor) WithdrawVotingRights(opts *bind.TransactOpts, numTokens *big.Int) (*types.Transaction, error) {
-	return _PLCRVoting.contract.Transact(opts, "withdrawVotingRights", numTokens)
-}
-
-// WithdrawVotingRights is a paid mutator transaction binding the contract method 0xe7b1d43c.
-//
-// Solidity: function withdrawVotingRights(numTokens uint256) returns()
-func (_PLCRVoting *PLCRVotingSession) WithdrawVotingRights(numTokens *big.Int) (*types.Transaction, error) {
-	return _PLCRVoting.Contract.WithdrawVotingRights(&_PLCRVoting.TransactOpts, numTokens)
-}
-
-// WithdrawVotingRights is a paid mutator transaction binding the contract method 0xe7b1d43c.
-//
-// Solidity: function withdrawVotingRights(numTokens uint256) returns()
-func (_PLCRVoting *PLCRVotingTransactorSession) WithdrawVotingRights(numTokens *big.Int) (*types.Transaction, error) {
-	return _PLCRVoting.Contract.WithdrawVotingRights(&_PLCRVoting.TransactOpts, numTokens)
-}
-
-// PLCRVotingPollCreatedEventIterator is returned from FilterPollCreatedEvent and is used to iterate over the raw logs and unpacked data for PollCreatedEvent events raised by the PLCRVoting contract.
-type PLCRVotingPollCreatedEventIterator struct {
-	Event *PLCRVotingPollCreatedEvent // Event containing the contract specifics and raw log
-
-	contract *bind.BoundContract // Generic contract to use for unpacking event data
-	event    string              // Event name to use for unpacking event data
-
-	logs chan types.Log        // Log channel receiving the found contract events
-	sub  ethereum.Subscription // Subscription for errors, completion and termination
-	done bool                  // Whether the subscription completed delivering logs
-	fail error                 // Occurred error to stop iteration
-}
-
-// Next advances the iterator to the subsequent event, returning whether there
-// are any more events found. In case of a retrieval or parsing error, false is
-// returned and Error() can be queried for the exact failure.
-func (it *PLCRVotingPollCreatedEventIterator) Next() bool {
-	// If the iterator failed, stop iterating
-	if it.fail != nil {
-		return false
-	}
-	// If the iterator completed, deliver directly whatever's available
-	if it.done {
-		select {
-		case log := <-it.logs:
-			it.Event = new(PLCRVotingPollCreatedEvent)
-			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
-				it.fail = err
-				return false
-			}
-			it.Event.Raw = log
-			return true
-
-		default:
-			return false
-		}
-	}
-	// Iterator still in progress, wait for either a data or an error event
-	select {
-	case log := <-it.logs:
-		it.Event = new(PLCRVotingPollCreatedEvent)
-		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
-			it.fail = err
-			return false
-		}
-		it.Event.Raw = log
-		return true
-
-	case err := <-it.sub.Err():
-		it.done = true
-		it.fail = err
-		return it.Next()
-	}
-}
-
-// Error returns any retrieval or parsing error occurred during filtering.
-func (it *PLCRVotingPollCreatedEventIterator) Error() error {
-	return it.fail
-}
-
-// Close terminates the iteration process, releasing any pending underlying
-// resources.
-func (it *PLCRVotingPollCreatedEventIterator) Close() error {
-	it.sub.Unsubscribe()
-	return nil
-}
-
-// PLCRVotingPollCreatedEvent represents a PollCreatedEvent event raised by the PLCRVoting contract.
-type PLCRVotingPollCreatedEvent struct {
-	VoteQuorum   *big.Int
-	CommitExpiry *big.Int
-	RevealExpiry *big.Int
-	Id           *big.Int
-	Creator      common.Address
-	Raw          types.Log // Blockchain specific contextual infos
-}
-
-// FilterPollCreatedEvent is a free log retrieval operation binding the contract event 0xf7e7200f3afa7bbc8aca2cfa0ab33e741504a20fed2abc59869413cba2a33400.
-//
-// Solidity: e PollCreatedEvent(voteQuorum uint256, commitExpiry uint256, revealExpiry uint256, id indexed uint256, creator indexed address)
-func (_PLCRVoting *PLCRVotingFilterer) FilterPollCreatedEvent(opts *bind.FilterOpts, id []*big.Int, creator []common.Address) (*PLCRVotingPollCreatedEventIterator, error) {
-
-	var idRule []interface{}
-	for _, idItem := range id {
-		idRule = append(idRule, idItem)
-	}
-	var creatorRule []interface{}
-	for _, creatorItem := range creator {
-		creatorRule = append(creatorRule, creatorItem)
-	}
-
-	logs, sub, err := _PLCRVoting.contract.FilterLogs(opts, "PollCreatedEvent", idRule, creatorRule)
-	if err != nil {
-		return nil, err
-	}
-	return &PLCRVotingPollCreatedEventIterator{contract: _PLCRVoting.contract, event: "PollCreatedEvent", logs: logs, sub: sub}, nil
-}
-
-// WatchPollCreatedEvent is a free log subscription operation binding the contract event 0xf7e7200f3afa7bbc8aca2cfa0ab33e741504a20fed2abc59869413cba2a33400.
-//
-// Solidity: e PollCreatedEvent(voteQuorum uint256, commitExpiry uint256, revealExpiry uint256, id indexed uint256, creator indexed address)
-func (_PLCRVoting *PLCRVotingFilterer) WatchPollCreatedEvent(opts *bind.WatchOpts, sink chan<- *PLCRVotingPollCreatedEvent, id []*big.Int, creator []common.Address) (event.Subscription, error) {
-
-	var idRule []interface{}
-	for _, idItem := range id {
-		idRule = append(idRule, idItem)
-	}
-	var creatorRule []interface{}
-	for _, creatorItem := range creator {
-		creatorRule = append(creatorRule, creatorItem)
-	}
-
-	logs, sub, err := _PLCRVoting.contract.WatchLogs(opts, "PollCreatedEvent", idRule, creatorRule)
-	if err != nil {
-		return nil, err
-	}
-	return event.NewSubscription(func(quit <-chan struct{}) error {
-		defer sub.Unsubscribe()
-		for {
-			select {
-			case log := <-logs:
-				// New log arrived, parse the event and forward to the user
-				event := new(PLCRVotingPollCreatedEvent)
-				if err := _PLCRVoting.contract.UnpackLog(event, "PollCreatedEvent", log); err != nil {
-					return err
-				}
-				event.Raw = log
-
-				select {
-				case sink <- event:
-				case err := <-sub.Err():
-					return err
-				case <-quit:
-					return nil
-				}
-			case err := <-sub.Err():
-				return err
-			case <-quit:
-				return nil
-			}
-		}
-	}), nil
-}
-
-// PLCRVotingTokensRescuedEventIterator is returned from FilterTokensRescuedEvent and is used to iterate over the raw logs and unpacked data for TokensRescuedEvent events raised by the PLCRVoting contract.
-type PLCRVotingTokensRescuedEventIterator struct {
-	Event *PLCRVotingTokensRescuedEvent // Event containing the contract specifics and raw log
-
-	contract *bind.BoundContract // Generic contract to use for unpacking event data
-	event    string              // Event name to use for unpacking event data
-
-	logs chan types.Log        // Log channel receiving the found contract events
-	sub  ethereum.Subscription // Subscription for errors, completion and termination
-	done bool                  // Whether the subscription completed delivering logs
-	fail error                 // Occurred error to stop iteration
-}
-
-// Next advances the iterator to the subsequent event, returning whether there
-// are any more events found. In case of a retrieval or parsing error, false is
-// returned and Error() can be queried for the exact failure.
-func (it *PLCRVotingTokensRescuedEventIterator) Next() bool {
-	// If the iterator failed, stop iterating
-	if it.fail != nil {
-		return false
-	}
-	// If the iterator completed, deliver directly whatever's available
-	if it.done {
-		select {
-		case log := <-it.logs:
-			it.Event = new(PLCRVotingTokensRescuedEvent)
-			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
-				it.fail = err
-				return false
-			}
-			it.Event.Raw = log
-			return true
-
-		default:
-			return false
-		}
-	}
-	// Iterator still in progress, wait for either a data or an error event
-	select {
-	case log := <-it.logs:
-		it.Event = new(PLCRVotingTokensRescuedEvent)
-		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
-			it.fail = err
-			return false
-		}
-		it.Event.Raw = log
-		return true
-
-	case err := <-it.sub.Err():
-		it.done = true
-		it.fail = err
-		return it.Next()
-	}
-}
-
-// Error returns any retrieval or parsing error occurred during filtering.
-func (it *PLCRVotingTokensRescuedEventIterator) Error() error {
-	return it.fail
-}
-
-// Close terminates the iteration process, releasing any pending underlying
-// resources.
-func (it *PLCRVotingTokensRescuedEventIterator) Close() error {
-	it.sub.Unsubscribe()
-	return nil
-}
-
-// PLCRVotingTokensRescuedEvent represents a TokensRescuedEvent event raised by the PLCRVoting contract.
-type PLCRVotingTokensRescuedEvent struct {
-	Id    *big.Int
-	Voter common.Address
-	Raw   types.Log // Blockchain specific contextual infos
-}
-
-// FilterTokensRescuedEvent is a free log retrieval operation binding the contract event 0x1e897e4fe81e0db0459f0219545995fde305b17af5ca5cba7d6b6e8738df5dd0.
-//
-// Solidity: e TokensRescuedEvent(id indexed uint256, voter indexed address)
-func (_PLCRVoting *PLCRVotingFilterer) FilterTokensRescuedEvent(opts *bind.FilterOpts, id []*big.Int, voter []common.Address) (*PLCRVotingTokensRescuedEventIterator, error) {
-
-	var idRule []interface{}
-	for _, idItem := range id {
-		idRule = append(idRule, idItem)
-	}
-	var voterRule []interface{}
-	for _, voterItem := range voter {
-		voterRule = append(voterRule, voterItem)
-	}
-
-	logs, sub, err := _PLCRVoting.contract.FilterLogs(opts, "TokensRescuedEvent", idRule, voterRule)
-	if err != nil {
-		return nil, err
-	}
-	return &PLCRVotingTokensRescuedEventIterator{contract: _PLCRVoting.contract, event: "TokensRescuedEvent", logs: logs, sub: sub}, nil
-}
-
-// WatchTokensRescuedEvent is a free log subscription operation binding the contract event 0x1e897e4fe81e0db0459f0219545995fde305b17af5ca5cba7d6b6e8738df5dd0.
-//
-// Solidity: e TokensRescuedEvent(id indexed uint256, voter indexed address)
-func (_PLCRVoting *PLCRVotingFilterer) WatchTokensRescuedEvent(opts *bind.WatchOpts, sink chan<- *PLCRVotingTokensRescuedEvent, id []*big.Int, voter []common.Address) (event.Subscription, error) {
-
-	var idRule []interface{}
-	for _, idItem := range id {
-		idRule = append(idRule, idItem)
-	}
-	var voterRule []interface{}
-	for _, voterItem := range voter {
-		voterRule = append(voterRule, voterItem)
-	}
-
-	logs, sub, err := _PLCRVoting.contract.WatchLogs(opts, "TokensRescuedEvent", idRule, voterRule)
-	if err != nil {
-		return nil, err
-	}
-	return event.NewSubscription(func(quit <-chan struct{}) error {
-		defer sub.Unsubscribe()
-		for {
-			select {
-			case log := <-logs:
-				// New log arrived, parse the event and forward to the user
-				event := new(PLCRVotingTokensRescuedEvent)
-				if err := _PLCRVoting.contract.UnpackLog(event, "TokensRescuedEvent", log); err != nil {
-					return err
-				}
-				event.Raw = log
-
-				select {
-				case sink <- event:
-				case err := <-sub.Err():
-					return err
-				case <-quit:
-					return nil
-				}
-			case err := <-sub.Err():
-				return err
-			case <-quit:
-				return nil
-			}
-		}
-	}), nil
-}
-
-// PLCRVotingVoteCommittedEventIterator is returned from FilterVoteCommittedEvent and is used to iterate over the raw logs and unpacked data for VoteCommittedEvent events raised by the PLCRVoting contract.
-type PLCRVotingVoteCommittedEventIterator struct {
-	Event *PLCRVotingVoteCommittedEvent // Event containing the contract specifics and raw log
-
-	contract *bind.BoundContract // Generic contract to use for unpacking event data
-	event    string              // Event name to use for unpacking event data
-
-	logs chan types.Log        // Log channel receiving the found contract events
-	sub  ethereum.Subscription // Subscription for errors, completion and termination
-	done bool                  // Whether the subscription completed delivering logs
-	fail error                 // Occurred error to stop iteration
-}
-
-// Next advances the iterator to the subsequent event, returning whether there
-// are any more events found. In case of a retrieval or parsing error, false is
-// returned and Error() can be queried for the exact failure.
-func (it *PLCRVotingVoteCommittedEventIterator) Next() bool {
-	// If the iterator failed, stop iterating
-	if it.fail != nil {
-		return false
-	}
-	// If the iterator completed, deliver directly whatever's available
-	if it.done {
-		select {
-		case log := <-it.logs:
-			it.Event = new(PLCRVotingVoteCommittedEvent)
-			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
-				it.fail = err
-				return false
-			}
-			it.Event.Raw = log
-			return true
-
-		default:
-			return false
-		}
-	}
-	// Iterator still in progress, wait for either a data or an error event
-	select {
-	case log := <-it.logs:
-		it.Event = new(PLCRVotingVoteCommittedEvent)
-		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
-			it.fail = err
-			return false
-		}
-		it.Event.Raw = log
-		return true
-
-	case err := <-it.sub.Err():
-		it.done = true
-		it.fail = err
-		return it.Next()
-	}
-}
-
-// Error returns any retrieval or parsing error occurred during filtering.
-func (it *PLCRVotingVoteCommittedEventIterator) Error() error {
-	return it.fail
-}
-
-// Close terminates the iteration process, releasing any pending underlying
-// resources.
-func (it *PLCRVotingVoteCommittedEventIterator) Close() error {
-	it.sub.Unsubscribe()
-	return nil
-}
-
-// PLCRVotingVoteCommittedEvent represents a VoteCommittedEvent event raised by the PLCRVoting contract.
-type PLCRVotingVoteCommittedEvent struct {
-	Id        *big.Int
-	NumTokens *big.Int
-	Voter     common.Address
-	Raw       types.Log // Blockchain specific contextual infos
-}
-
-// FilterVoteCommittedEvent is a free log retrieval operation binding the contract event 0x673f4a020a46f562a6e9fee9c8d4a179a11924190b777bec160133dd00c9f1de.
-//
-// Solidity: e VoteCommittedEvent(id indexed uint256, numTokens uint256, voter indexed address)
-func (_PLCRVoting *PLCRVotingFilterer) FilterVoteCommittedEvent(opts *bind.FilterOpts, id []*big.Int, voter []common.Address) (*PLCRVotingVoteCommittedEventIterator, error) {
-
-	var idRule []interface{}
-	for _, idItem := range id {
-		idRule = append(idRule, idItem)
-	}
-
-	var voterRule []interface{}
-	for _, voterItem := range voter {
-		voterRule = append(voterRule, voterItem)
-	}
-
-	logs, sub, err := _PLCRVoting.contract.FilterLogs(opts, "VoteCommittedEvent", idRule, voterRule)
-	if err != nil {
-		return nil, err
-	}
-	return &PLCRVotingVoteCommittedEventIterator{contract: _PLCRVoting.contract, event: "VoteCommittedEvent", logs: logs, sub: sub}, nil
-}
-
-// WatchVoteCommittedEvent is a free log subscription operation binding the contract event 0x673f4a020a46f562a6e9fee9c8d4a179a11924190b777bec160133dd00c9f1de.
-//
-// Solidity: e VoteCommittedEvent(id indexed uint256, numTokens uint256, voter indexed address)
-func (_PLCRVoting *PLCRVotingFilterer) WatchVoteCommittedEvent(opts *bind.WatchOpts, sink chan<- *PLCRVotingVoteCommittedEvent, id []*big.Int, voter []common.Address) (event.Subscription, error) {
-
-	var idRule []interface{}
-	for _, idItem := range id {
-		idRule = append(idRule, idItem)
-	}
-
-	var voterRule []interface{}
-	for _, voterItem := range voter {
-		voterRule = append(voterRule, voterItem)
-	}
-
-	logs, sub, err := _PLCRVoting.contract.WatchLogs(opts, "VoteCommittedEvent", idRule, voterRule)
-	if err != nil {
-		return nil, err
-	}
-	return event.NewSubscription(func(quit <-chan struct{}) error {
-		defer sub.Unsubscribe()
-		for {
-			select {
-			case log := <-logs:
-				// New log arrived, parse the event and forward to the user
-				event := new(PLCRVotingVoteCommittedEvent)
-				if err := _PLCRVoting.contract.UnpackLog(event, "VoteCommittedEvent", log); err != nil {
-					return err
-				}
-				event.Raw = log
-
-				select {
-				case sink <- event:
-				case err := <-sub.Err():
-					return err
-				case <-quit:
-					return nil
-				}
-			case err := <-sub.Err():
-				return err
-			case <-quit:
-				return nil
-			}
-		}
-	}), nil
-}
-
-// PLCRVotingVoteRevealedEventIterator is returned from FilterVoteRevealedEvent and is used to iterate over the raw logs and unpacked data for VoteRevealedEvent events raised by the PLCRVoting contract.
-type PLCRVotingVoteRevealedEventIterator struct {
-	Event *PLCRVotingVoteRevealedEvent // Event containing the contract specifics and raw log
-
-	contract *bind.BoundContract // Generic contract to use for unpacking event data
-	event    string              // Event name to use for unpacking event data
-
-	logs chan types.Log        // Log channel receiving the found contract events
-	sub  ethereum.Subscription // Subscription for errors, completion and termination
-	done bool                  // Whether the subscription completed delivering logs
-	fail error                 // Occurred error to stop iteration
-}
-
-// Next advances the iterator to the subsequent event, returning whether there
-// are any more events found. In case of a retrieval or parsing error, false is
-// returned and Error() can be queried for the exact failure.
-func (it *PLCRVotingVoteRevealedEventIterator) Next() bool {
-	// If the iterator failed, stop iterating
-	if it.fail != nil {
-		return false
-	}
-	// If the iterator completed, deliver directly whatever's available
-	if it.done {
-		select {
-		case log := <-it.logs:
-			it.Event = new(PLCRVotingVoteRevealedEvent)
-			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
-				it.fail = err
-				return false
-			}
-			it.Event.Raw = log
-			return true
-
-		default:
-			return false
-		}
-	}
-	// Iterator still in progress, wait for either a data or an error event
-	select {
-	case log := <-it.logs:
-		it.Event = new(PLCRVotingVoteRevealedEvent)
-		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
-			it.fail = err
-			return false
-		}
-		it.Event.Raw = log
-		return true
-
-	case err := <-it.sub.Err():
-		it.done = true
-		it.fail = err
-		return it.Next()
-	}
-}
-
-// Error returns any retrieval or parsing error occurred during filtering.
-func (it *PLCRVotingVoteRevealedEventIterator) Error() error {
-	return it.fail
-}
-
-// Close terminates the iteration process, releasing any pending underlying
-// resources.
-func (it *PLCRVotingVoteRevealedEventIterator) Close() error {
-	it.sub.Unsubscribe()
-	return nil
-}
-
-// PLCRVotingVoteRevealedEvent represents a VoteRevealedEvent event raised by the PLCRVoting contract.
-type PLCRVotingVoteRevealedEvent struct {
-	Id           *big.Int
-	NumTokens    *big.Int
-	VotesFor     *big.Int
-	VotesAgainst *big.Int
-	Choice       *big.Int
-	Voter        common.Address
-	Raw          types.Log // Blockchain specific contextual infos
-}
-
-// FilterVoteRevealedEvent is a free log retrieval operation binding the contract event 0x448a2036d0f6dc799c1d3fdf26c4fe80832817bdbe81133808ffa6777c5826e0.
-//
-// Solidity: e VoteRevealedEvent(id indexed uint256, numTokens uint256, votesFor uint256, votesAgainst uint256, choice indexed uint256, voter indexed address)
-func (_PLCRVoting *PLCRVotingFilterer) FilterVoteRevealedEvent(opts *bind.FilterOpts, id []*big.Int, choice []*big.Int, voter []common.Address) (*PLCRVotingVoteRevealedEventIterator, error) {
-
-	var idRule []interface{}
-	for _, idItem := range id {
-		idRule = append(idRule, idItem)
-	}
-
-	var choiceRule []interface{}
-	for _, choiceItem := range choice {
-		choiceRule = append(choiceRule, choiceItem)
-	}
-	var voterRule []interface{}
-	for _, voterItem := range voter {
-		voterRule = append(voterRule, voterItem)
-	}
-
-	logs, sub, err := _PLCRVoting.contract.FilterLogs(opts, "VoteRevealedEvent", idRule, choiceRule, voterRule)
-	if err != nil {
-		return nil, err
-	}
-	return &PLCRVotingVoteRevealedEventIterator{contract: _PLCRVoting.contract, event: "VoteRevealedEvent", logs: logs, sub: sub}, nil
-}
-
-// WatchVoteRevealedEvent is a free log subscription operation binding the contract event 0x448a2036d0f6dc799c1d3fdf26c4fe80832817bdbe81133808ffa6777c5826e0.
-//
-// Solidity: e VoteRevealedEvent(id indexed uint256, numTokens uint256, votesFor uint256, votesAgainst uint256, choice indexed uint256, voter indexed address)
-func (_PLCRVoting *PLCRVotingFilterer) WatchVoteRevealedEvent(opts *bind.WatchOpts, sink chan<- *PLCRVotingVoteRevealedEvent, id []*big.Int, choice []*big.Int, voter []common.Address) (event.Subscription, error) {
-
-	var idRule []interface{}
-	for _, idItem := range id {
-		idRule = append(idRule, idItem)
-	}
-
-	var choiceRule []interface{}
-	for _, choiceItem := range choice {
-		choiceRule = append(choiceRule, choiceItem)
-	}
-	var voterRule []interface{}
-	for _, voterItem := range voter {
-		voterRule = append(voterRule, voterItem)
-	}
-
-	logs, sub, err := _PLCRVoting.contract.WatchLogs(opts, "VoteRevealedEvent", idRule, choiceRule, voterRule)
-	if err != nil {
-		return nil, err
-	}
-	return event.NewSubscription(func(quit <-chan struct{}) error {
-		defer sub.Unsubscribe()
-		for {
-			select {
-			case log := <-logs:
-				// New log arrived, parse the event and forward to the user
-				event := new(PLCRVotingVoteRevealedEvent)
-				if err := _PLCRVoting.contract.UnpackLog(event, "VoteRevealedEvent", log); err != nil {
-					return err
-				}
-				event.Raw = log
-
-				select {
-				case sink <- event:
-				case err := <-sub.Err():
-					return err
-				case <-quit:
-					return nil
-				}
-			case err := <-sub.Err():
-				return err
-			case <-quit:
-				return nil
-			}
-		}
-	}), nil
-}
-
-// PLCRVotingVotingRightsGrantedEventIterator is returned from FilterVotingRightsGrantedEvent and is used to iterate over the raw logs and unpacked data for VotingRightsGrantedEvent events raised by the PLCRVoting contract.
-type PLCRVotingVotingRightsGrantedEventIterator struct {
-	Event *PLCRVotingVotingRightsGrantedEvent // Event containing the contract specifics and raw log
-
-	contract *bind.BoundContract // Generic contract to use for unpacking event data
-	event    string              // Event name to use for unpacking event data
-
-	logs chan types.Log        // Log channel receiving the found contract events
-	sub  ethereum.Subscription // Subscription for errors, completion and termination
-	done bool                  // Whether the subscription completed delivering logs
-	fail error                 // Occurred error to stop iteration
-}
-
-// Next advances the iterator to the subsequent event, returning whether there
-// are any more events found. In case of a retrieval or parsing error, false is
-// returned and Error() can be queried for the exact failure.
-func (it *PLCRVotingVotingRightsGrantedEventIterator) Next() bool {
-	// If the iterator failed, stop iterating
-	if it.fail != nil {
-		return false
-	}
-	// If the iterator completed, deliver directly whatever's available
-	if it.done {
-		select {
-		case log := <-it.logs:
-			it.Event = new(PLCRVotingVotingRightsGrantedEvent)
-			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
-				it.fail = err
-				return false
-			}
-			it.Event.Raw = log
-			return true
-
-		default:
-			return false
-		}
-	}
-	// Iterator still in progress, wait for either a data or an error event
-	select {
-	case log := <-it.logs:
-		it.Event = new(PLCRVotingVotingRightsGrantedEvent)
-		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
-			it.fail = err
-			return false
-		}
-		it.Event.Raw = log
-		return true
-
-	case err := <-it.sub.Err():
-		it.done = true
-		it.fail = err
-		return it.Next()
-	}
-}
-
-// Error returns any retrieval or parsing error occurred during filtering.
-func (it *PLCRVotingVotingRightsGrantedEventIterator) Error() error {
-	return it.fail
-}
-
-// Close terminates the iteration process, releasing any pending underlying
-// resources.
-func (it *PLCRVotingVotingRightsGrantedEventIterator) Close() error {
-	it.sub.Unsubscribe()
-	return nil
-}
-
-// PLCRVotingVotingRightsGrantedEvent represents a VotingRightsGrantedEvent event raised by the PLCRVoting contract.
-type PLCRVotingVotingRightsGrantedEvent struct {
-	NumTokens *big.Int
-	Voter     common.Address
-	Raw       types.Log // Blockchain specific contextual infos
-}
-
-// FilterVotingRightsGrantedEvent is a free log retrieval operation binding the contract event 0x0fbea84792de88539ad3d7f184543a65916440f4c6f9e2ef136c97f13109c45d.
-//
-// Solidity: e VotingRightsGrantedEvent(numTokens uint256, voter indexed address)
-func (_PLCRVoting *PLCRVotingFilterer) FilterVotingRightsGrantedEvent(opts *bind.FilterOpts, voter []common.Address) (*PLCRVotingVotingRightsGrantedEventIterator, error) {
-
-	var voterRule []interface{}
-	for _, voterItem := range voter {
-		voterRule = append(voterRule, voterItem)
-	}
-
-	logs, sub, err := _PLCRVoting.contract.FilterLogs(opts, "VotingRightsGrantedEvent", voterRule)
-	if err != nil {
-		return nil, err
-	}
-	return &PLCRVotingVotingRightsGrantedEventIterator{contract: _PLCRVoting.contract, event: "VotingRightsGrantedEvent", logs: logs, sub: sub}, nil
-}
-
-// WatchVotingRightsGrantedEvent is a free log subscription operation binding the contract event 0x0fbea84792de88539ad3d7f184543a65916440f4c6f9e2ef136c97f13109c45d.
-//
-// Solidity: e VotingRightsGrantedEvent(numTokens uint256, voter indexed address)
-func (_PLCRVoting *PLCRVotingFilterer) WatchVotingRightsGrantedEvent(opts *bind.WatchOpts, sink chan<- *PLCRVotingVotingRightsGrantedEvent, voter []common.Address) (event.Subscription, error) {
-
-	var voterRule []interface{}
-	for _, voterItem := range voter {
-		voterRule = append(voterRule, voterItem)
-	}
-
-	logs, sub, err := _PLCRVoting.contract.WatchLogs(opts, "VotingRightsGrantedEvent", voterRule)
-	if err != nil {
-		return nil, err
-	}
-	return event.NewSubscription(func(quit <-chan struct{}) error {
-		defer sub.Unsubscribe()
-		for {
-			select {
-			case log := <-logs:
-				// New log arrived, parse the event and forward to the user
-				event := new(PLCRVotingVotingRightsGrantedEvent)
-				if err := _PLCRVoting.contract.UnpackLog(event, "VotingRightsGrantedEvent", log); err != nil {
-					return err
-				}
-				event.Raw = log
-
-				select {
-				case sink <- event:
-				case err := <-sub.Err():
-					return err
-				case <-quit:
-					return nil
-				}
-			case err := <-sub.Err():
-				return err
-			case <-quit:
-				return nil
-			}
-		}
-	}), nil
-}
-
-// PLCRVotingVotingRightsWithdrawnEventIterator is returned from FilterVotingRightsWithdrawnEvent and is used to iterate over the raw logs and unpacked data for VotingRightsWithdrawnEvent events raised by the PLCRVoting contract.
-type PLCRVotingVotingRightsWithdrawnEventIterator struct {
-	Event *PLCRVotingVotingRightsWithdrawnEvent // Event containing the contract specifics and raw log
-
-	contract *bind.BoundContract // Generic contract to use for unpacking event data
-	event    string              // Event name to use for unpacking event data
-
-	logs chan types.Log        // Log channel receiving the found contract events
-	sub  ethereum.Subscription // Subscription for errors, completion and termination
-	done bool                  // Whether the subscription completed delivering logs
-	fail error                 // Occurred error to stop iteration
-}
-
-// Next advances the iterator to the subsequent event, returning whether there
-// are any more events found. In case of a retrieval or parsing error, false is
-// returned and Error() can be queried for the exact failure.
-func (it *PLCRVotingVotingRightsWithdrawnEventIterator) Next() bool {
-	// If the iterator failed, stop iterating
-	if it.fail != nil {
-		return false
-	}
-	// If the iterator completed, deliver directly whatever's available
-	if it.done {
-		select {
-		case log := <-it.logs:
-			it.Event = new(PLCRVotingVotingRightsWithdrawnEvent)
-			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
-				it.fail = err
-				return false
-			}
-			it.Event.Raw = log
-			return true
-
-		default:
-			return false
-		}
-	}
-	// Iterator still in progress, wait for either a data or an error event
-	select {
-	case log := <-it.logs:
-		it.Event = new(PLCRVotingVotingRightsWithdrawnEvent)
-		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
-			it.fail = err
-			return false
-		}
-		it.Event.Raw = log
-		return true
-
-	case err := <-it.sub.Err():
-		it.done = true
-		it.fail = err
-		return it.Next()
-	}
-}
-
-// Error returns any retrieval or parsing error occurred during filtering.
-func (it *PLCRVotingVotingRightsWithdrawnEventIterator) Error() error {
-	return it.fail
-}
-
-// Close terminates the iteration process, releasing any pending underlying
-// resources.
-func (it *PLCRVotingVotingRightsWithdrawnEventIterator) Close() error {
-	it.sub.Unsubscribe()
-	return nil
-}
-
-// PLCRVotingVotingRightsWithdrawnEvent represents a VotingRightsWithdrawnEvent event raised by the PLCRVoting contract.
-type PLCRVotingVotingRightsWithdrawnEvent struct {
-	NumTokens *big.Int
-	Voter     common.Address
-	Raw       types.Log // Blockchain specific contextual infos
-}
-
-// FilterVotingRightsWithdrawnEvent is a free log retrieval operation binding the contract event 0x029a58e9abaa250a4ec75d14b364d764e890adec2d902a297fa24a6c5dfd097b.
-//
-// Solidity: e VotingRightsWithdrawnEvent(numTokens uint256, voter indexed address)
-func (_PLCRVoting *PLCRVotingFilterer) FilterVotingRightsWithdrawnEvent(opts *bind.FilterOpts, voter []common.Address) (*PLCRVotingVotingRightsWithdrawnEventIterator, error) {
-
-	var voterRule []interface{}
-	for _, voterItem := range voter {
-		voterRule = append(voterRule, voterItem)
-	}
-
-	logs, sub, err := _PLCRVoting.contract.FilterLogs(opts, "VotingRightsWithdrawnEvent", voterRule)
-	if err != nil {
-		return nil, err
-	}
-	return &PLCRVotingVotingRightsWithdrawnEventIterator{contract: _PLCRVoting.contract, event: "VotingRightsWithdrawnEvent", logs: logs, sub: sub}, nil
-}
-
-// WatchVotingRightsWithdrawnEvent is a free log subscription operation binding the contract event 0x029a58e9abaa250a4ec75d14b364d764e890adec2d902a297fa24a6c5dfd097b.
-//
-// Solidity: e VotingRightsWithdrawnEvent(numTokens uint256, voter indexed address)
-func (_PLCRVoting *PLCRVotingFilterer) WatchVotingRightsWithdrawnEvent(opts *bind.WatchOpts, sink chan<- *PLCRVotingVotingRightsWithdrawnEvent, voter []common.Address) (event.Subscription, error) {
-
-	var voterRule []interface{}
-	for _, voterItem := range voter {
-		voterRule = append(voterRule, voterItem)
-	}
-
-	logs, sub, err := _PLCRVoting.contract.WatchLogs(opts, "VotingRightsWithdrawnEvent", voterRule)
-	if err != nil {
-		return nil, err
-	}
-	return event.NewSubscription(func(quit <-chan struct{}) error {
-		defer sub.Unsubscribe()
-		for {
-			select {
-			case log := <-logs:
-				// New log arrived, parse the event and forward to the user
-				event := new(PLCRVotingVotingRightsWithdrawnEvent)
-				if err := _PLCRVoting.contract.UnpackLog(event, "VotingRightsWithdrawnEvent", log); err != nil {
-					return err
-				}
-				event.Raw = log
-
-				select {
-				case sink <- event:
-				case err := <-sub.Err():
-					return err
-				case <-quit:
-					return nil
-				}
-			case err := <-sub.Err():
-				return err
-			case <-quit:
-				return nil
-			}
-		}
-	}), nil
-}
-
 // ParameterizerABI is the input ABI used to generate the binding from.
-const ParameterizerABI = "[{\"constant\":false,\"inputs\":[{\"name\":\"propHash\",\"type\":\"bytes32\"}],\"name\":\"processProposal\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"propHash\",\"type\":\"bytes32\"}],\"name\":\"propExists\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"id\",\"type\":\"uint256\"}],\"name\":\"challengeWinnerReward\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"name\",\"type\":\"string\"}],\"name\":\"get\",\"outputs\":[{\"name\":\"value\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"propHash\",\"type\":\"bytes32\"}],\"name\":\"challengeCanBeResolved\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"propHash\",\"type\":\"bytes32\"}],\"name\":\"challengeReparameterization\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"id\",\"type\":\"uint256\"},{\"name\":\"salt\",\"type\":\"uint256\"}],\"name\":\"claimReward\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"id\",\"type\":\"uint256\"},{\"name\":\"voter\",\"type\":\"address\"}],\"name\":\"rewardsClaimed\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"voter\",\"type\":\"address\"},{\"name\":\"id\",\"type\":\"uint256\"},{\"name\":\"salt\",\"type\":\"uint256\"}],\"name\":\"voterReward\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"name\",\"type\":\"string\"},{\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"proposeReparameterization\",\"outputs\":[{\"name\":\"\",\"type\":\"bytes32\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"propHash\",\"type\":\"bytes32\"}],\"name\":\"canBeSet\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"name\":\"tokenAddr\",\"type\":\"address\"},{\"name\":\"votingAddr\",\"type\":\"address\"},{\"name\":\"minDeposit\",\"type\":\"uint256\"},{\"name\":\"applyStageLen\",\"type\":\"uint256\"},{\"name\":\"commitStageLen\",\"type\":\"uint256\"},{\"name\":\"revealStageLen\",\"type\":\"uint256\"},{\"name\":\"dispensationPct\",\"type\":\"uint256\"},{\"name\":\"voteQuorum\",\"type\":\"uint256\"},{\"name\":\"listReward\",\"type\":\"uint256\"},{\"name\":\"conversionRate\",\"type\":\"uint256\"},{\"name\":\"conversionSlope\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"name\",\"type\":\"string\"},{\"indexed\":false,\"name\":\"value\",\"type\":\"uint256\"},{\"indexed\":false,\"name\":\"propHash\",\"type\":\"bytes32\"},{\"indexed\":false,\"name\":\"deposit\",\"type\":\"uint256\"},{\"indexed\":false,\"name\":\"appExpiry\",\"type\":\"uint256\"},{\"indexed\":true,\"name\":\"proposer\",\"type\":\"address\"}],\"name\":\"ReparameterizationProposalEvent\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"propHash\",\"type\":\"bytes32\"},{\"indexed\":false,\"name\":\"id\",\"type\":\"uint256\"},{\"indexed\":false,\"name\":\"commitExpiry\",\"type\":\"uint256\"},{\"indexed\":false,\"name\":\"revealExpiry\",\"type\":\"uint256\"},{\"indexed\":true,\"name\":\"challenger\",\"type\":\"address\"}],\"name\":\"NewChallengeEvent\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"propHash\",\"type\":\"bytes32\"},{\"indexed\":false,\"name\":\"name\",\"type\":\"string\"},{\"indexed\":false,\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"ProposalAcceptedEvent\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"propHash\",\"type\":\"bytes32\"}],\"name\":\"ProposalExpiredEvent\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"propHash\",\"type\":\"bytes32\"},{\"indexed\":true,\"name\":\"id\",\"type\":\"uint256\"},{\"indexed\":false,\"name\":\"rewardPool\",\"type\":\"uint256\"},{\"indexed\":false,\"name\":\"totalTokens\",\"type\":\"uint256\"}],\"name\":\"ChallengeSucceededEvent\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"propHash\",\"type\":\"bytes32\"},{\"indexed\":true,\"name\":\"id\",\"type\":\"uint256\"},{\"indexed\":false,\"name\":\"rewardPool\",\"type\":\"uint256\"},{\"indexed\":false,\"name\":\"totalTokens\",\"type\":\"uint256\"}],\"name\":\"ChallengeFailedEvent\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"id\",\"type\":\"uint256\"},{\"indexed\":false,\"name\":\"reward\",\"type\":\"uint256\"},{\"indexed\":true,\"name\":\"voter\",\"type\":\"address\"}],\"name\":\"RewardsClaimedEvent\",\"type\":\"event\"}]"
+const ParameterizerABI = "[{\"constant\":true,\"inputs\":[],\"name\":\"getVoteBy\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"paramHash\",\"type\":\"bytes32\"}],\"name\":\"resolveReparam\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"getChallengeStake\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"name\",\"type\":\"string\"},{\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"reparameterize\",\"outputs\":[{\"name\":\"\",\"type\":\"bytes32\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"getQuorum\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"getListReward\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"getConversionRate\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"getConversionSlope\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"name\":\"votingAddr\",\"type\":\"address\"},{\"name\":\"challengeStake\",\"type\":\"uint256\"},{\"name\":\"conversionRate\",\"type\":\"uint256\"},{\"name\":\"conversionSlope\",\"type\":\"uint256\"},{\"name\":\"listReward\",\"type\":\"uint256\"},{\"name\":\"quorum\",\"type\":\"uint256\"},{\"name\":\"voteBy\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"proposer\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"paramHash\",\"type\":\"bytes32\"},{\"indexed\":true,\"name\":\"name\",\"type\":\"string\"},{\"indexed\":false,\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"ReparamProposedEvent\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"propHash\",\"type\":\"bytes32\"},{\"indexed\":true,\"name\":\"name\",\"type\":\"string\"},{\"indexed\":false,\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"ReparamFailedEvent\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"propHash\",\"type\":\"bytes32\"},{\"indexed\":true,\"name\":\"name\",\"type\":\"string\"},{\"indexed\":false,\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"ReparamSucceededEvent\",\"type\":\"event\"}]"
 
 // ParameterizerBin is the compiled bytecode used for deploying new contracts.
-const ParameterizerBin = `0x608060405262093a806005553480156200001857600080fd5b506040516101608062002e2b8339810160408181528251602080850151838601516060870151608088015160a089015160c08a015160e08b01516101008c01516101208d0151610140909d015160038054600160a060020a03808e16600160a060020a03199283161790925560048054928c16929091169190911790558b8d01909b52600a8c527f6d696e4465706f73697400000000000000000000000000000000000000000000988c0198909852979a95999498939792969195909492939192909190620000f1908a6401000000006200034a810204565b60408051808201909152600d81527f6170706c7953746167654c656e0000000000000000000000000000000000000060208201526200013a90896401000000006200034a810204565b60408051808201909152600e81527f636f6d6d697453746167654c656e00000000000000000000000000000000000060208201526200018390886401000000006200034a810204565b60408051808201909152600e81527f72657665616c53746167654c656e0000000000000000000000000000000000006020820152620001cc90876401000000006200034a810204565b60408051808201909152600f81527f64697370656e736174696f6e506374000000000000000000000000000000000060208201526200021590866401000000006200034a810204565b60408051808201909152600a81527f766f746551756f72756d0000000000000000000000000000000000000000000060208201526200025e90856401000000006200034a810204565b60408051808201909152600a81527f6c697374526577617264000000000000000000000000000000000000000000006020820152620002a790846401000000006200034a810204565b60408051808201909152600e81527f636f6e76657273696f6e526174650000000000000000000000000000000000006020820152620002f090836401000000006200034a810204565b60408051808201909152600f81527f636f6e76657273696f6e536c6f7065000000000000000000000000000000000060208201526200033990826401000000006200034a810204565b50505050505050505050506200042a565b80600080846040516020018082805190602001908083835b60208310620003835780518252601f19909201916020918201910162000362565b6001836020036101000a0380198251168184511680821785525050505050509050019150506040516020818303038152906040526040518082805190602001908083835b60208310620003e85780518252601f199092019160209182019101620003c7565b51815160209384036101000a60001901801990921691161790526040805192909401829003909120865285019590955292909201600020939093555050505050565b6129f1806200043a6000396000f3006080604052600436106100ae5763ffffffff7c010000000000000000000000000000000000000000000000000000000060003504166330490e9181146100b357806335300990146100cd57806350411552146100f9578063693ec85e1461012357806377609a411461017c5780638240ae4b1461019457806386bb8f37146101ac5780639a835e91146101c7578063a7aad3db146101eb578063bade1c5414610212578063c51131fb14610236575b600080fd5b3480156100bf57600080fd5b506100cb60043561024e565b005b3480156100d957600080fd5b506100e5600435610814565b604080519115158252519081900360200190f35b34801561010557600080fd5b5061011160043561082d565b60408051918252519081900360200190f35b34801561012f57600080fd5b506040805160206004803580820135601f810184900484028501840190955284845261011194369492936024939284019190819084018382808284375094975061092c9650505050505050565b34801561018857600080fd5b506100e5600435610a08565b3480156101a057600080fd5b50610111600435610c32565b3480156101b857600080fd5b506100cb600435602435611336565b3480156101d357600080fd5b506100e5600435600160a060020a036024351661172b565b3480156101f757600080fd5b50610111600160a060020a036004351660243560443561175a565b34801561021e57600080fd5b50610111602460048035828101929101359035611836565b34801561024257600080fd5b506100e5600435612073565b60008181526002602081905260409091206004810154918101549091600160a060020a03169061027d84612073565b1561054857600383018054604080516020601f6002600019610100600188161502019095169490940493840181900481028201810190925282815261032093909290918301828280156103115780601f106102e657610100808354040283529160200191610311565b820191906000526020600020905b8154815290600101906020018083116102f457829003601f168201915b50505050508460060154612196565b600683015460408051602081018390528181526003860180546002610100600183161502600019019091160492820183905287937f0fca8490116d823913d2468dc21632e9226d20e54379af9cf34712a3ff2bc30c939192909181906060820190859080156103d05780601f106103a5576101008083540402835291602001916103d0565b820191906000526020600020905b8154815290600101906020018083116103b357829003601f168201915b5050935050505060405180910390a260008481526002602081905260408220828155600181018390559081018290559061040d6003830182612841565b506004818101805473ffffffffffffffffffffffffffffffffffffffff1916905560006005830181905560069092018290556003546040805160e060020a63a9059cbb028152600160a060020a0387811694820194909452602481018690529051929091169263a9059cbb926044808401936020939083900390910190829087803b15801561049b57600080fd5b505af11580156104af573d6000803e3d6000fd5b505050506040513d60208110156104c557600080fd5b50511515610543576040805160e560020a62461bcd02815260206004820152603e60248201527f4572726f723a506172616d65746572697a65722e70726f6365737350726f706f60448201527f73616c202d20436f756c64206e6f74207472616e736665722066756e64730000606482015290519081900360840190fd5b610686565b61055184610a08565b1561055f5761054384612272565b82600501544211156105c45760405184907f456cbba32d3f5372c3ef95ba54f18060130b9da12721ebf89f1146a8f406132490600090a260008481526002602081905260408220828155600181018390559081018290559061040d6003830182612841565b6040805160e560020a62461bcd02815260206004820152606c60248201527f5468657265206973206e6f206368616c6c656e676520616761696e737420746860448201527f652070726f706f73616c2c20616e64206e65697468657220746865206170704560648201527f78706972792064617465206e6f72207468652070726f6365737342792064617460848201527f652068617320706173736564000000000000000000000000000000000000000060a482015290519081900360c40190fd5b60646106c66040805190810160405280600f81526020017f64697370656e736174696f6e506374000000000000000000000000000000000081525061092c565b11156106ce57fe5b6107b06005546107a46107156040805190810160405280600e81526020017f72657665616c53746167654c656e00000000000000000000000000000000000081525061092c565b6107a46107566040805190810160405280600e81526020017f636f6d6d697453746167654c656e00000000000000000000000000000000000081525061092c565b6107a46107976040805190810160405280600d81526020017f6170706c7953746167654c656e0000000000000000000000000000000000000081525061092c565b429063ffffffff6127e416565b9063ffffffff6127e416565b506000848152600260208190526040822082815560018101839055908101829055906107df6003830182612841565b5060048101805473ffffffffffffffffffffffffffffffffffffffff1916905560006005820181905560069091015550505050565b600081815260026020526040812060050154115b919050565b60048054604080517f053e71a600000000000000000000000000000000000000000000000000000000815292830184905251600092600160a060020a039092169163053e71a691602480830192602092919082900301818787803b15801561089457600080fd5b505af11580156108a8573d6000803e3d6000fd5b505050506040513d60208110156108be57600080fd5b505115156108f05760008281526001602052604090206002908101546108e99163ffffffff6127f116565b9050610828565b600082815260016020526040902080546002918201546109269261091a919063ffffffff6127f116565b9063ffffffff61281a16565b92915050565b6000806000836040516020018082805190602001908083835b602083106109645780518252601f199092019160209182019101610945565b6001836020036101000a0380198251168184511680821785525050505050509050019150506040516020818303038152906040526040518082805190602001908083835b602083106109c75780518252601f1990920191602091820191016109a8565b51815160209384036101000a600019018019909216911617905260408051929094018290039091208652850195909552929092016000205495945050505050565b6000610a12612888565b610a1a6128cf565b600084815260026020818152604092839020835160e0810185528154815260018083015482850152828501548287015260038301805487516000199382161561010002939093011695909504601f810185900485028201850190965285815290949193606086019391929091830182828015610ad75780601f10610aac57610100808354040283529160200191610ad7565b820191906000526020600020905b815481529060010190602001808311610aba57829003601f168201915b50505091835250506004820154600160a060020a039081166020808401919091526005840154604080850191909152600690940154606093840152848101805160009081526001808452868220875160a0810189528154815291810154958616948201949094527401000000000000000000000000000000000000000090940460ff1615159584019590955260028201549383019390935260030154608082015290519294509250108015610b8e57506040810151155b8015610c2a575060048054602080850151604080517fee6848300000000000000000000000000000000000000000000000000000000081529485019190915251600160a060020a039092169263ee68483092602480830193928290030181600087803b158015610bfd57600080fd5b505af1158015610c11573d6000803e3d6000fd5b505050506040513d6020811015610c2757600080fd5b50515b949350505050565b6000610c3c612888565b6000838152600260208181526040808420815160e0810183528154815260018083015482860152828601548285015260038301805485516000199382161561010002939093011696909604601f810186900486028201860190945283815286958695869593949360608601939291830182828015610cfb5780601f10610cd057610100808354040283529160200191610cfb565b820191906000526020600020905b815481529060010190602001808311610cde57829003601f168201915b50505091835250506004820154600160a060020a0316602082015260058201546040808301919091526006909201546060909101528101519095509350610d4187610814565b8015610d4f57506020850151155b1515610df1576040805160e560020a62461bcd02815260206004820152604960248201527f4572726f723a506172616d65746572697a65722e6368616c6c656e676552657060448201527f6172616d65746572697a6174696f6e202d2050726f706f73616c20646f65732060648201527f6e6f742065786973740000000000000000000000000000000000000000000000608482015290519081900360a40190fd5b60045460408051808201909152600a81527f766f746551756f72756d000000000000000000000000000000000000000000006020820152600160a060020a03909116906332ed3d6090610e439061092c565b610e816040805190810160405280600e81526020017f636f6d6d697453746167654c656e00000000000000000000000000000000000081525061092c565b610ebf6040805190810160405280600e81526020017f72657665616c53746167654c656e00000000000000000000000000000000000081525061092c565b6040518463ffffffff167c0100000000000000000000000000000000000000000000000000000000028152600401808481526020018381526020018281526020019350505050602060405180830381600087803b158015610f1f57600080fd5b505af1158015610f33573d6000803e3d6000fd5b505050506040513d6020811015610f4957600080fd5b50516040805160e08101909152600f60a082019081527f64697370656e736174696f6e506374000000000000000000000000000000000060c0830152919450908190610fc490606490610fb8908990610fac908490610fa79061092c565b61281a565b9063ffffffff6127f116565b9063ffffffff61282c16565b81523360208083018290526000604080850182905260608086018b905260809586018390528983526001808552828420885181558886015181830180548b87015173ffffffffffffffffffffffffffffffffffffffff19909116600160a060020a039384161774ff0000000000000000000000000000000000000000191674010000000000000000000000000000000000000000911515919091021790559289015160028083019190915598909701516003978801558e8452968452818320909601899055935484517f23b872dd0000000000000000000000000000000000000000000000000000000081526004810194909452306024850152604484018a9052935193909416936323b872dd936064808501949192918390030190829087803b1580156110f157600080fd5b505af1158015611105573d6000803e3d6000fd5b505050506040513d602081101561111b57600080fd5b505115156111bf576040805160e560020a62461bcd02815260206004820152604a60248201527f4572726f723a506172616d65746572697a65722e6368616c6c656e676552657060448201527f6172616d65746572697a6174696f6e202d20436f756c64206e6f74207472616e60648201527f736665722066756e647300000000000000000000000000000000000000000000608482015290519081900360a40190fd5b60048054604080517fdc1b946f00000000000000000000000000000000000000000000000000000000815292830186905251600160a060020a039091169163dc1b946f9160248083019260209291908290030181600087803b15801561122457600080fd5b505af1158015611238573d6000803e3d6000fd5b505050506040513d602081101561124e57600080fd5b505160048054604080517f1be8ea5000000000000000000000000000000000000000000000000000000000815292830187905251929450600160a060020a031691631be8ea50916024808201926020929091908290030181600087803b1580156112b757600080fd5b505af11580156112cb573d6000803e3d6000fd5b505050506040513d60208110156112e157600080fd5b505160408051858152602081018590528082018390529051919250339189917f4e6815e2c453c1de363fd2b483078339512560f8fd777420d06dd69291e060c2919081900360600190a3509095945050505050565b6000828152600160209081526040808320338452600401909152812054819060ff16156113f9576040805160e560020a62461bcd02815260206004820152604260248201527f4572726f723a506172616d65746572697a65722e636c61696d5265776172642060448201527f2d20546f6b656e73206861766520616c7265616479206265656e20636c61696d60648201527f6564000000000000000000000000000000000000000000000000000000000000608482015290519081900360a40190fd5b600084815260016020819052604090912081015474010000000000000000000000000000000000000000900460ff161515146114cb576040805160e560020a62461bcd02815260206004820152604f60248201527f4572726f723a506172616d65746572697a65722e636c61696d5265776172642060448201527f2d204368616c6c656e676520726573756c74732068617665206e6f742062656560648201527f6e2070726f636573736564207965740000000000000000000000000000000000608482015290519081900360a40190fd5b60048054604080517fb43bd0690000000000000000000000000000000000000000000000000000000081523393810193909352602483018790526044830186905251600160a060020a039091169163b43bd0699160648083019260209291908290030181600087803b15801561154057600080fd5b505af1158015611554573d6000803e3d6000fd5b505050506040513d602081101561156a57600080fd5b5051915061157933858561175a565b60008581526001602052604090206003015490915061159e908363ffffffff61281a16565b60008581526001602052604090206003810191909155546115c5908263ffffffff61281a16565b6000858152600160208181526040808420948555338085526004909501825292839020805460ff19169092179091558151848152915187927f17ccb5aed827c5078139dc28b7fb924b006f56b3dcf163c4acf21fa3beb1314492908290030190a36003546040805160e060020a63a9059cbb028152336004820152602481018490529051600160a060020a039092169163a9059cbb916044808201926020929091908290030181600087803b15801561167d57600080fd5b505af1158015611691573d6000803e3d6000fd5b505050506040513d60208110156116a757600080fd5b50511515611725576040805160e560020a62461bcd02815260206004820152603a60248201527f4572726f723a506172616d65746572697a65722e636c61696d5265776172642060448201527f2d20436f756c64206e6f74207472616e736665722066756e6473000000000000606482015290519081900360840190fd5b50505050565b6000828152600160209081526040808320600160a060020a038516845260040190915290205460ff1692915050565b6000828152600160209081526040808320600381015490546004805484517fb43bd069000000000000000000000000000000000000000000000000000000008152600160a060020a038b811693820193909352602481018a9052604481018990529451939592948794929091169263b43bd0699260648084019382900301818787803b1580156117e957600080fd5b505af11580156117fd573d6000803e3d6000fd5b505050506040513d602081101561181357600080fd5b5051905061182b83610fb8838563ffffffff6127f116565b979650505050505050565b60008060006118796040805190810160405280600a81526020017f6d696e4465706f7369740000000000000000000000000000000000000000000081525061092c565b915085858560405160200180848480828437820191505082815260200193505050506040516020818303038152906040526040518082805190602001908083835b602083106118d95780518252601f1990920191602091820191016118ba565b51815160209384036101000a6000190180199092169116179052604080519290940182900382207f64697370656e736174696f6e5063740000000000000000000000000000000000838301528451600f818503018152602f9093019485905282519097509195509293508392850191508083835b6020831061196c5780518252601f19909201916020918201910161194d565b51815160209384036101000a600019018019909216911617905260405191909301819003812094508a93508992019050808383808284378201915050925050506040516020818303038152906040526040518082805190602001908083835b602083106119ea5780518252601f1990920191602091820191016119cb565b6001836020036101000a0380198251168184511680821785525050505050509050019150506040518091039020600019161480611b42575060405160200180807f7044697370656e736174696f6e5063740000000000000000000000000000000081525060100190506040516020818303038152906040526040518082805190602001908083835b60208310611a915780518252601f199092019160209182019101611a72565b51815160209384036101000a600019018019909216911617905260405191909301819003812094508a93508992019050808383808284378201915050925050506040516020818303038152906040526040518082805190602001908083835b60208310611b0f5780518252601f199092019160209182019101611af0565b6001836020036101000a038019825116818451168082178552505050505050905001915050604051809103902060001916145b15611bda576064841115611bda576040805160e560020a62461bcd02815260206004820152605960248201526000805160206129a683398151915260448201527f616d65746572697a6174696f6e202d206076616c756560206d7573742062652060648201527f6c657373207468616e206f7220657175616c20746f2031303000000000000000608482015290519081900360a40190fd5b611be381610814565b15611c72576040805160e560020a62461bcd02815260206004820152604f60248201526000805160206129a683398151915260448201527f616d65746572697a6174696f6e202d204475706c69636174652070726f706f7360648201527f616c73206e6f7420616c6c6f7765640000000000000000000000000000000000608482015290519081900360a40190fd5b83611cac87878080601f0160208091040260200160405190810160405280939291908181526020018383808284375061092c945050505050565b1415611d3c576040805160e560020a62461bcd02815260206004820152604d60248201526000805160206129a683398151915260448201527f616d65746572697a6174696f6e202d20417267756d656e74732063616e6e6f7460648201527f206265206964656e746963616c00000000000000000000000000000000000000608482015290519081900360a40190fd5b604080516101208101909152600d60e082019081527f6170706c7953746167654c656e000000000000000000000000000000000000006101008301528190611d87906107979061092c565b81526020016000815260200183815260200187878080601f016020809104026020016040519081016040528093929190818152602001838380828437820191505050505050815260200133600160a060020a03168152602001611e276005546107a46107156040805190810160405280600e81526020017f72657665616c53746167654c656e00000000000000000000000000000000000081525061092c565b8152602090810186905260008381526002808352604091829020845181558484015160018201559184015190820155606083015180519192611e719260038501929091019061290a565b5060808201516004828101805473ffffffffffffffffffffffffffffffffffffffff1916600160a060020a0393841617905560a0840151600584015560c090930151600690920191909155600354604080517f23b872dd000000000000000000000000000000000000000000000000000000008152339481019490945230602485015260448401869052519116916323b872dd9160648083019260209291908290030181600087803b158015611f2657600080fd5b505af1158015611f3a573d6000803e3d6000fd5b505050506040513d6020811015611f5057600080fd5b50511515611fe2576040805160e560020a62461bcd02815260206004820152604860248201526000805160206129a683398151915260448201527f616d65746572697a6174696f6e202d20436f756c64206e6f74207472616e736660648201527f65722066756e6473000000000000000000000000000000000000000000000000608482015290519081900360a40190fd5b600081815260026020908152604091829020548251918201879052918101839052606081018490526080810182905260a0808252810187905233917ff6aafb6c8410e85ab57ef6d7df18fcb782806ee3b89634f3b52046846236f97a9189918991899187918991908060c081018888808284376040519201829003995090975050505050505050a295945050505050565b600061207d612888565b600083815260026020818152604092839020835160e0810185528154815260018083015482850152828501548287015260038301805487516000199382161561010002939093011695909504601f81018590048502820185019096528581529094919360608601939192909183018282801561213a5780601f1061210f5761010080835404028352916020019161213a565b820191906000526020600020905b81548152906001019060200180831161211d57829003601f168201915b50505091835250506004820154600160a060020a031660208201526005820154604082015260069091015460609091015280519091504211801561218157508060a0015142105b801561218f57506020810151155b9392505050565b80600080846040516020018082805190602001908083835b602083106121cd5780518252601f1990920191602091820191016121ae565b6001836020036101000a0380198251168184511680821785525050505050509050019150506040516020818303038152906040526040518082805190602001908083835b602083106122305780518252601f199092019160209182019101612211565b51815160209384036101000a60001901801990921691161790526040805192909401829003909120865285019590955292909201600020939093555050505050565b61227a612888565b6000828152600260208181526040808420815160e0810183528154815260018083015482860152828601548285015260038301805485516000199382161561010002939093011696909604601f810186900486028201860190945283815286959194929360608601939192918301828280156123375780601f1061230c57610100808354040283529160200191612337565b820191906000526020600020905b81548152906001019060200180831161231a57829003601f168201915b505050505081526020016004820160009054906101000a9004600160a060020a0316600160a060020a0316600160a060020a03168152602001600582015481526020016006820154815250509250600160008460200151815260200190815260200160002091506123ab836020015161082d565b60048054602080870151604080517f053e71a60000000000000000000000000000000000000000000000000000000081529485019190915251939450600160a060020a039091169263053e71a69260248082019392918290030181600087803b15801561241757600080fd5b505af115801561242b573d6000803e3d6000fd5b505050506040513d602081101561244157600080fd5b5051600383015560018201805474ff000000000000000000000000000000000000000019167401000000000000000000000000000000000000000017905560048054602085810151604080517f494031830000000000000000000000000000000000000000000000000000000081529485019190915251600160a060020a0390921692634940318392602480830193928290030181600087803b1580156124e757600080fd5b505af11580156124fb573d6000803e3d6000fd5b505050506040513d602081101561251157600080fd5b50511561268957428360a0015111156125365761253683606001518460c00151612196565b6020808401518354600385015460408051928352938201528251919287927f824960b36dcff66c0b43953e552b1b0d622dcb3f3cf71cf1cbe88039a781a8539281900390910190a360035460808401516040805160e060020a63a9059cbb028152600160a060020a039283166004820152602481018590529051919092169163a9059cbb9160448083019260209291908290030181600087803b1580156125dc57600080fd5b505af11580156125f0573d6000803e3d6000fd5b505050506040513d602081101561260657600080fd5b50511515612684576040805160e560020a62461bcd02815260206004820152603f60248201527f4572726f723a506172616d65746572697a65722e7265736f6c76654368616c6c60448201527f656e6765202d20436f756c64206e6f74207472616e736665722066756e647300606482015290519081900360840190fd5b611725565b6020808401518354600385015460408051928352938201528251919287927f3dddcf5cd7cb20cfa68f0643b9422cdbc130a6602933781bf9855e10fd205e429281900390910190a360035460208085015160009081526001808352604080832090910154815160e060020a63a9059cbb028152600160a060020a03918216600482015260248101879052915194169363a9059cbb9360448084019491938390030190829087803b15801561273c57600080fd5b505af1158015612750573d6000803e3d6000fd5b505050506040513d602081101561276657600080fd5b50511515611725576040805160e560020a62461bcd02815260206004820152603f60248201527f4572726f723a506172616d65746572697a65722e7265736f6c76654368616c6c60448201527f656e6765202d20436f756c64206e6f74207472616e736665722066756e647300606482015290519081900360840190fd5b8181018281101561092657fe5b600082151561280257506000610926565b5081810281838281151561281257fe5b041461092657fe5b60008282111561282657fe5b50900390565b6000818381151561283957fe5b049392505050565b50805460018160011615610100020316600290046000825580601f106128675750612885565b601f0160209004906000526020600020908101906128859190612988565b50565b60e060405190810160405280600081526020016000815260200160008152602001606081526020016000600160a060020a0316815260200160008152602001600081525090565b60a060405190810160405280600081526020016000600160a060020a0316815260200160001515815260200160008152602001600081525090565b828054600181600116156101000203166002900490600052602060002090601f016020900481019282601f1061294b57805160ff1916838001178555612978565b82800160010185558215612978579182015b8281111561297857825182559160200191906001019061295d565b50612984929150612988565b5090565b6129a291905b80821115612984576000815560010161298e565b9056004572726f723a506172616d65746572697a65722e70726f706f73655265706172a165627a7a72305820a3d57d1849b96a52065854e14d0b45126b2d8810f784cba1fbb078f306ba2c910029`
+const ParameterizerBin = `0x608060405234801561001057600080fd5b5060405160e080610f8383398101604090815281516020830151918301516060840151608085015160a086015160c09096015160018054600160a060020a031916600160a060020a0390961695909517909455600294909455600391909155600455600591909155600691909155600755610ef3806100906000396000f3006080604052600436106100745763ffffffff60e060020a6000350416632d0d2bc68114610079578063435c709a146100a05780635aebe768146100cc57806379bcf86f146100e1578063c26c12eb14610105578063dc2b28531461011a578063f36089ec1461012f578063fefb9dde14610144575b600080fd5b34801561008557600080fd5b5061008e610159565b60408051918252519081900360200190f35b3480156100ac57600080fd5b506100b8600435610160565b604080519115158252519081900360200190f35b3480156100d857600080fd5b5061008e610864565b3480156100ed57600080fd5b5061008e60246004803582810192910135903561086a565b34801561011157600080fd5b5061008e610dd0565b34801561012657600080fd5b5061008e610dd6565b34801561013b57600080fd5b5061008e610ddc565b34801561015057600080fd5b5061008e610de2565b6007545b90565b600154604080517f62f9a55d00000000000000000000000000000000000000000000000000000000815233600482015290516000928392600160a060020a03909116916362f9a55d9160248082019260209290919082900301818787803b1580156101ca57600080fd5b505af11580156101de573d6000803e3d6000fd5b505050506040513d60208110156101f457600080fd5b50511515610298576040805160e560020a62461bcd02815260206004820152604260248201527f4572726f723a506172616d65746572697a65722e7265736f6c7665526570617260448201527f616d202d2053656e646572206d75737420626520636f756e63696c206d656d6260648201527f6572000000000000000000000000000000000000000000000000000000000000608482015290519081900360a40190fd5b600154604080517f11b883820000000000000000000000000000000000000000000000000000000081526004810186905260248101829052600760448201527f7265706172616d0000000000000000000000000000000000000000000000000060648201529051600160a060020a03909216916311b88382916084808201926020929091908290030181600087803b15801561033357600080fd5b505af1158015610347573d6000803e3d6000fd5b505050506040513d602081101561035d57600080fd5b505115156103db576040805160e560020a62461bcd02815260206004820152603660248201527f4572726f723a506172616d65746572697a65722e7265736f6c7665526570617260448201527f616d202d204d7573742062652061205265706172616d00000000000000000000606482015290519081900360840190fd5b600154604080517f327322c8000000000000000000000000000000000000000000000000000000008152600481018690529051600160a060020a039092169163327322c8916024808201926020929091908290030181600087803b15801561044257600080fd5b505af1158015610456573d6000803e3d6000fd5b505050506040513d602081101561046c57600080fd5b50511515610510576040805160e560020a62461bcd02815260206004820152604c60248201527f4572726f723a506172616d65746572697a65722e7265736f6c7665526570617260448201527f616d202d20506f6c6c7320666f7220746869732063616e646964617465206d7560648201527f737420626520636c6f7365640000000000000000000000000000000000000000608482015290519081900360a40190fd5b600154600160a060020a0316638f354b798461052a610dd0565b6040518363ffffffff1660e060020a02815260040180836000191660001916815260200182815260200192505050602060405180830381600087803b15801561057257600080fd5b505af1158015610586573d6000803e3d6000fd5b505050506040513d602081101561059c57600080fd5b50511561081a576000808460001916600019168152602001908152602001600020600101604051808280546001816001161561010002031660029004801561061b5780601f106105f957610100808354040283529182019161061b565b820191906000526020600020905b815481529060010190602001808311610607575b5050604080519182900382207f6368616c6c656e67655374616b650000000000000000000000000000000000008352905191829003600e01909120909350831415915061067f9050576000838152602081905260409020600290810154905561081a565b604080517f636f6e76657273696f6e526174650000000000000000000000000000000000008152905190819003600e0190208114156106d25760008381526020819052604090206002015460035561081a565b604080517f636f6e76657273696f6e536c6f706500000000000000000000000000000000008152905190819003600f0190208114156107255760008381526020819052604090206002015460045561081a565b604080517f6c697374526577617264000000000000000000000000000000000000000000008152905190819003600a0190208114156107785760008381526020819052604090206002015460055561081a565b604080517f71756f72756d0000000000000000000000000000000000000000000000000000815290519081900360060190208114156107cb5760008381526020819052604090206002015460065561081a565b604080517f766f7465427900000000000000000000000000000000000000000000000000008152905190819003600601902081141561081a576000838152602081905260409020600201546007555b6000838152602081905260408120805473ffffffffffffffffffffffffffffffffffffffff19168155906108516001830182610de8565b5060006002919091015550600192915050565b60025490565b600154604080517f62f9a55d000000000000000000000000000000000000000000000000000000008152336004820152905160009283928392600160a060020a03909216916362f9a55d9160248082019260209290919082900301818787803b1580156108d657600080fd5b505af11580156108ea573d6000803e3d6000fd5b505050506040513d602081101561090057600080fd5b505115156109a4576040805160e560020a62461bcd02815260206004820152604260248201527f4572726f723a506172616d65746572697a65722e7265706172616d657465726960448201527f7a65202d2053656e646572206d75737420626520636f756e63696c206d656d6260648201527f6572000000000000000000000000000000000000000000000000000000000000608482015290519081900360a40190fd5b85858560405160200180848480828437820191505082815260200193505050506040516020818303038152906040526040518082805190602001908083835b60208310610a025780518252601f1990920191602091820191016109e3565b51815160209384036101000a6000190180199092169116179052604080519290940182900382206001547fb89694c6000000000000000000000000000000000000000000000000000000008452600484018290529451909850600160a060020a03909416955063b89694c6945060248083019491935090918290030181600087803b158015610a9057600080fd5b505af1158015610aa4573d6000803e3d6000fd5b505050506040513d6020811015610aba57600080fd5b505115610b5d576040805160e560020a62461bcd02815260206004820152605360248201527f4572726f723a506172616d65746572697a65722e70726f706f7365526570617260448201527f616d202d2050726f706f736564207265706172616d20697320616c726561647960648201527f206120766f74696e672063616e64696461746500000000000000000000000000608482015290519081900360a40190fd5b60606040519081016040528033600160a060020a0316815260200187878080601f01602080910402602001604051908101604052809392919081815260200183838082843750505092845250505060209081018690526000848152808252604090208251815473ffffffffffffffffffffffffffffffffffffffff1916600160a060020a039091161781558282015180519192610c0292600185019290910190610e2f565b5060409190910151600290910155600154600160a060020a031663364f46a483610c2a610159565b6040805160e060020a63ffffffff86160281526024810193909352604483019190915260606004830152600760648301527f7265706172616d0000000000000000000000000000000000000000000000000060848301525160a48083019260209291908290030181600087803b158015610ca357600080fd5b505af1158015610cb7573d6000803e3d6000fd5b505050506040513d6020811015610ccd57600080fd5b50519050801515610d74576040805160e560020a62461bcd02815260206004820152605460248201527f4572726f723a506172616d65746572697a65722e7265706172616d657465726960448201527f7a65202d20436f756c64206e6f7420616464207265706172616d20746f20766f60648201527f74696e672063616e64696461746573206c697374000000000000000000000000608482015290519081900360a40190fd5b858560405180838380828437604080519190930181900381208a825292519295508794503393507f6e6b1d8a6fe9513dd2b9ed502e413958e63440558f0e1f17b15a1e688cc8612192908190036020019150a450949350505050565b60065490565b60055490565b60035490565b60045490565b50805460018160011615610100020316600290046000825580601f10610e0e5750610e2c565b601f016020900490600052602060002090810190610e2c9190610ead565b50565b828054600181600116156101000203166002900490600052602060002090601f016020900481019282601f10610e7057805160ff1916838001178555610e9d565b82800160010185558215610e9d579182015b82811115610e9d578251825591602001919060010190610e82565b50610ea9929150610ead565b5090565b61015d91905b80821115610ea95760008155600101610eb35600a165627a7a72305820a656a50006f08aa49a660f835c0c60060414f613004684cec123881d4e1218a90029`
 
 // DeployParameterizer deploys a new Ethereum contract, binding an instance of Parameterizer to it.
-func DeployParameterizer(auth *bind.TransactOpts, backend bind.ContractBackend, tokenAddr common.Address, votingAddr common.Address, minDeposit *big.Int, applyStageLen *big.Int, commitStageLen *big.Int, revealStageLen *big.Int, dispensationPct *big.Int, voteQuorum *big.Int, listReward *big.Int, conversionRate *big.Int, conversionSlope *big.Int) (common.Address, *types.Transaction, *Parameterizer, error) {
+func DeployParameterizer(auth *bind.TransactOpts, backend bind.ContractBackend, votingAddr common.Address, challengeStake *big.Int, conversionRate *big.Int, conversionSlope *big.Int, listReward *big.Int, quorum *big.Int, voteBy *big.Int) (common.Address, *types.Transaction, *Parameterizer, error) {
 	parsed, err := abi.JSON(strings.NewReader(ParameterizerABI))
 	if err != nil {
 		return common.Address{}, nil, nil, err
 	}
-	address, tx, contract, err := bind.DeployContract(auth, parsed, common.FromHex(ParameterizerBin), backend, tokenAddr, votingAddr, minDeposit, applyStageLen, commitStageLen, revealStageLen, dispensationPct, voteQuorum, listReward, conversionRate, conversionSlope)
+	address, tx, contract, err := bind.DeployContract(auth, parsed, common.FromHex(ParameterizerBin), backend, votingAddr, challengeStake, conversionRate, conversionSlope, listReward, quorum, voteBy)
 	if err != nil {
 		return common.Address{}, nil, nil, err
 	}
@@ -2341,275 +176,207 @@ func (_Parameterizer *ParameterizerTransactorRaw) Transact(opts *bind.TransactOp
 	return _Parameterizer.Contract.contract.Transact(opts, method, params...)
 }
 
-// CanBeSet is a free data retrieval call binding the contract method 0xc51131fb.
+// GetChallengeStake is a free data retrieval call binding the contract method 0x5aebe768.
 //
-// Solidity: function canBeSet(propHash bytes32) constant returns(bool)
-func (_Parameterizer *ParameterizerCaller) CanBeSet(opts *bind.CallOpts, propHash [32]byte) (bool, error) {
-	var (
-		ret0 = new(bool)
-	)
-	out := ret0
-	err := _Parameterizer.contract.Call(opts, out, "canBeSet", propHash)
-	return *ret0, err
-}
-
-// CanBeSet is a free data retrieval call binding the contract method 0xc51131fb.
-//
-// Solidity: function canBeSet(propHash bytes32) constant returns(bool)
-func (_Parameterizer *ParameterizerSession) CanBeSet(propHash [32]byte) (bool, error) {
-	return _Parameterizer.Contract.CanBeSet(&_Parameterizer.CallOpts, propHash)
-}
-
-// CanBeSet is a free data retrieval call binding the contract method 0xc51131fb.
-//
-// Solidity: function canBeSet(propHash bytes32) constant returns(bool)
-func (_Parameterizer *ParameterizerCallerSession) CanBeSet(propHash [32]byte) (bool, error) {
-	return _Parameterizer.Contract.CanBeSet(&_Parameterizer.CallOpts, propHash)
-}
-
-// ChallengeCanBeResolved is a free data retrieval call binding the contract method 0x77609a41.
-//
-// Solidity: function challengeCanBeResolved(propHash bytes32) constant returns(bool)
-func (_Parameterizer *ParameterizerCaller) ChallengeCanBeResolved(opts *bind.CallOpts, propHash [32]byte) (bool, error) {
-	var (
-		ret0 = new(bool)
-	)
-	out := ret0
-	err := _Parameterizer.contract.Call(opts, out, "challengeCanBeResolved", propHash)
-	return *ret0, err
-}
-
-// ChallengeCanBeResolved is a free data retrieval call binding the contract method 0x77609a41.
-//
-// Solidity: function challengeCanBeResolved(propHash bytes32) constant returns(bool)
-func (_Parameterizer *ParameterizerSession) ChallengeCanBeResolved(propHash [32]byte) (bool, error) {
-	return _Parameterizer.Contract.ChallengeCanBeResolved(&_Parameterizer.CallOpts, propHash)
-}
-
-// ChallengeCanBeResolved is a free data retrieval call binding the contract method 0x77609a41.
-//
-// Solidity: function challengeCanBeResolved(propHash bytes32) constant returns(bool)
-func (_Parameterizer *ParameterizerCallerSession) ChallengeCanBeResolved(propHash [32]byte) (bool, error) {
-	return _Parameterizer.Contract.ChallengeCanBeResolved(&_Parameterizer.CallOpts, propHash)
-}
-
-// ChallengeWinnerReward is a free data retrieval call binding the contract method 0x50411552.
-//
-// Solidity: function challengeWinnerReward(id uint256) constant returns(uint256)
-func (_Parameterizer *ParameterizerCaller) ChallengeWinnerReward(opts *bind.CallOpts, id *big.Int) (*big.Int, error) {
+// Solidity: function getChallengeStake() constant returns(uint256)
+func (_Parameterizer *ParameterizerCaller) GetChallengeStake(opts *bind.CallOpts) (*big.Int, error) {
 	var (
 		ret0 = new(*big.Int)
 	)
 	out := ret0
-	err := _Parameterizer.contract.Call(opts, out, "challengeWinnerReward", id)
+	err := _Parameterizer.contract.Call(opts, out, "getChallengeStake")
 	return *ret0, err
 }
 
-// ChallengeWinnerReward is a free data retrieval call binding the contract method 0x50411552.
+// GetChallengeStake is a free data retrieval call binding the contract method 0x5aebe768.
 //
-// Solidity: function challengeWinnerReward(id uint256) constant returns(uint256)
-func (_Parameterizer *ParameterizerSession) ChallengeWinnerReward(id *big.Int) (*big.Int, error) {
-	return _Parameterizer.Contract.ChallengeWinnerReward(&_Parameterizer.CallOpts, id)
+// Solidity: function getChallengeStake() constant returns(uint256)
+func (_Parameterizer *ParameterizerSession) GetChallengeStake() (*big.Int, error) {
+	return _Parameterizer.Contract.GetChallengeStake(&_Parameterizer.CallOpts)
 }
 
-// ChallengeWinnerReward is a free data retrieval call binding the contract method 0x50411552.
+// GetChallengeStake is a free data retrieval call binding the contract method 0x5aebe768.
 //
-// Solidity: function challengeWinnerReward(id uint256) constant returns(uint256)
-func (_Parameterizer *ParameterizerCallerSession) ChallengeWinnerReward(id *big.Int) (*big.Int, error) {
-	return _Parameterizer.Contract.ChallengeWinnerReward(&_Parameterizer.CallOpts, id)
+// Solidity: function getChallengeStake() constant returns(uint256)
+func (_Parameterizer *ParameterizerCallerSession) GetChallengeStake() (*big.Int, error) {
+	return _Parameterizer.Contract.GetChallengeStake(&_Parameterizer.CallOpts)
 }
 
-// Get is a free data retrieval call binding the contract method 0x693ec85e.
+// GetConversionRate is a free data retrieval call binding the contract method 0xf36089ec.
 //
-// Solidity: function get(name string) constant returns(value uint256)
-func (_Parameterizer *ParameterizerCaller) Get(opts *bind.CallOpts, name string) (*big.Int, error) {
+// Solidity: function getConversionRate() constant returns(uint256)
+func (_Parameterizer *ParameterizerCaller) GetConversionRate(opts *bind.CallOpts) (*big.Int, error) {
 	var (
 		ret0 = new(*big.Int)
 	)
 	out := ret0
-	err := _Parameterizer.contract.Call(opts, out, "get", name)
+	err := _Parameterizer.contract.Call(opts, out, "getConversionRate")
 	return *ret0, err
 }
 
-// Get is a free data retrieval call binding the contract method 0x693ec85e.
+// GetConversionRate is a free data retrieval call binding the contract method 0xf36089ec.
 //
-// Solidity: function get(name string) constant returns(value uint256)
-func (_Parameterizer *ParameterizerSession) Get(name string) (*big.Int, error) {
-	return _Parameterizer.Contract.Get(&_Parameterizer.CallOpts, name)
+// Solidity: function getConversionRate() constant returns(uint256)
+func (_Parameterizer *ParameterizerSession) GetConversionRate() (*big.Int, error) {
+	return _Parameterizer.Contract.GetConversionRate(&_Parameterizer.CallOpts)
 }
 
-// Get is a free data retrieval call binding the contract method 0x693ec85e.
+// GetConversionRate is a free data retrieval call binding the contract method 0xf36089ec.
 //
-// Solidity: function get(name string) constant returns(value uint256)
-func (_Parameterizer *ParameterizerCallerSession) Get(name string) (*big.Int, error) {
-	return _Parameterizer.Contract.Get(&_Parameterizer.CallOpts, name)
+// Solidity: function getConversionRate() constant returns(uint256)
+func (_Parameterizer *ParameterizerCallerSession) GetConversionRate() (*big.Int, error) {
+	return _Parameterizer.Contract.GetConversionRate(&_Parameterizer.CallOpts)
 }
 
-// PropExists is a free data retrieval call binding the contract method 0x35300990.
+// GetConversionSlope is a free data retrieval call binding the contract method 0xfefb9dde.
 //
-// Solidity: function propExists(propHash bytes32) constant returns(bool)
-func (_Parameterizer *ParameterizerCaller) PropExists(opts *bind.CallOpts, propHash [32]byte) (bool, error) {
-	var (
-		ret0 = new(bool)
-	)
-	out := ret0
-	err := _Parameterizer.contract.Call(opts, out, "propExists", propHash)
-	return *ret0, err
-}
-
-// PropExists is a free data retrieval call binding the contract method 0x35300990.
-//
-// Solidity: function propExists(propHash bytes32) constant returns(bool)
-func (_Parameterizer *ParameterizerSession) PropExists(propHash [32]byte) (bool, error) {
-	return _Parameterizer.Contract.PropExists(&_Parameterizer.CallOpts, propHash)
-}
-
-// PropExists is a free data retrieval call binding the contract method 0x35300990.
-//
-// Solidity: function propExists(propHash bytes32) constant returns(bool)
-func (_Parameterizer *ParameterizerCallerSession) PropExists(propHash [32]byte) (bool, error) {
-	return _Parameterizer.Contract.PropExists(&_Parameterizer.CallOpts, propHash)
-}
-
-// RewardsClaimed is a free data retrieval call binding the contract method 0x9a835e91.
-//
-// Solidity: function rewardsClaimed(id uint256, voter address) constant returns(bool)
-func (_Parameterizer *ParameterizerCaller) RewardsClaimed(opts *bind.CallOpts, id *big.Int, voter common.Address) (bool, error) {
-	var (
-		ret0 = new(bool)
-	)
-	out := ret0
-	err := _Parameterizer.contract.Call(opts, out, "rewardsClaimed", id, voter)
-	return *ret0, err
-}
-
-// RewardsClaimed is a free data retrieval call binding the contract method 0x9a835e91.
-//
-// Solidity: function rewardsClaimed(id uint256, voter address) constant returns(bool)
-func (_Parameterizer *ParameterizerSession) RewardsClaimed(id *big.Int, voter common.Address) (bool, error) {
-	return _Parameterizer.Contract.RewardsClaimed(&_Parameterizer.CallOpts, id, voter)
-}
-
-// RewardsClaimed is a free data retrieval call binding the contract method 0x9a835e91.
-//
-// Solidity: function rewardsClaimed(id uint256, voter address) constant returns(bool)
-func (_Parameterizer *ParameterizerCallerSession) RewardsClaimed(id *big.Int, voter common.Address) (bool, error) {
-	return _Parameterizer.Contract.RewardsClaimed(&_Parameterizer.CallOpts, id, voter)
-}
-
-// VoterReward is a free data retrieval call binding the contract method 0xa7aad3db.
-//
-// Solidity: function voterReward(voter address, id uint256, salt uint256) constant returns(uint256)
-func (_Parameterizer *ParameterizerCaller) VoterReward(opts *bind.CallOpts, voter common.Address, id *big.Int, salt *big.Int) (*big.Int, error) {
+// Solidity: function getConversionSlope() constant returns(uint256)
+func (_Parameterizer *ParameterizerCaller) GetConversionSlope(opts *bind.CallOpts) (*big.Int, error) {
 	var (
 		ret0 = new(*big.Int)
 	)
 	out := ret0
-	err := _Parameterizer.contract.Call(opts, out, "voterReward", voter, id, salt)
+	err := _Parameterizer.contract.Call(opts, out, "getConversionSlope")
 	return *ret0, err
 }
 
-// VoterReward is a free data retrieval call binding the contract method 0xa7aad3db.
+// GetConversionSlope is a free data retrieval call binding the contract method 0xfefb9dde.
 //
-// Solidity: function voterReward(voter address, id uint256, salt uint256) constant returns(uint256)
-func (_Parameterizer *ParameterizerSession) VoterReward(voter common.Address, id *big.Int, salt *big.Int) (*big.Int, error) {
-	return _Parameterizer.Contract.VoterReward(&_Parameterizer.CallOpts, voter, id, salt)
+// Solidity: function getConversionSlope() constant returns(uint256)
+func (_Parameterizer *ParameterizerSession) GetConversionSlope() (*big.Int, error) {
+	return _Parameterizer.Contract.GetConversionSlope(&_Parameterizer.CallOpts)
 }
 
-// VoterReward is a free data retrieval call binding the contract method 0xa7aad3db.
+// GetConversionSlope is a free data retrieval call binding the contract method 0xfefb9dde.
 //
-// Solidity: function voterReward(voter address, id uint256, salt uint256) constant returns(uint256)
-func (_Parameterizer *ParameterizerCallerSession) VoterReward(voter common.Address, id *big.Int, salt *big.Int) (*big.Int, error) {
-	return _Parameterizer.Contract.VoterReward(&_Parameterizer.CallOpts, voter, id, salt)
+// Solidity: function getConversionSlope() constant returns(uint256)
+func (_Parameterizer *ParameterizerCallerSession) GetConversionSlope() (*big.Int, error) {
+	return _Parameterizer.Contract.GetConversionSlope(&_Parameterizer.CallOpts)
 }
 
-// ChallengeReparameterization is a paid mutator transaction binding the contract method 0x8240ae4b.
+// GetListReward is a free data retrieval call binding the contract method 0xdc2b2853.
 //
-// Solidity: function challengeReparameterization(propHash bytes32) returns(uint256)
-func (_Parameterizer *ParameterizerTransactor) ChallengeReparameterization(opts *bind.TransactOpts, propHash [32]byte) (*types.Transaction, error) {
-	return _Parameterizer.contract.Transact(opts, "challengeReparameterization", propHash)
+// Solidity: function getListReward() constant returns(uint256)
+func (_Parameterizer *ParameterizerCaller) GetListReward(opts *bind.CallOpts) (*big.Int, error) {
+	var (
+		ret0 = new(*big.Int)
+	)
+	out := ret0
+	err := _Parameterizer.contract.Call(opts, out, "getListReward")
+	return *ret0, err
 }
 
-// ChallengeReparameterization is a paid mutator transaction binding the contract method 0x8240ae4b.
+// GetListReward is a free data retrieval call binding the contract method 0xdc2b2853.
 //
-// Solidity: function challengeReparameterization(propHash bytes32) returns(uint256)
-func (_Parameterizer *ParameterizerSession) ChallengeReparameterization(propHash [32]byte) (*types.Transaction, error) {
-	return _Parameterizer.Contract.ChallengeReparameterization(&_Parameterizer.TransactOpts, propHash)
+// Solidity: function getListReward() constant returns(uint256)
+func (_Parameterizer *ParameterizerSession) GetListReward() (*big.Int, error) {
+	return _Parameterizer.Contract.GetListReward(&_Parameterizer.CallOpts)
 }
 
-// ChallengeReparameterization is a paid mutator transaction binding the contract method 0x8240ae4b.
+// GetListReward is a free data retrieval call binding the contract method 0xdc2b2853.
 //
-// Solidity: function challengeReparameterization(propHash bytes32) returns(uint256)
-func (_Parameterizer *ParameterizerTransactorSession) ChallengeReparameterization(propHash [32]byte) (*types.Transaction, error) {
-	return _Parameterizer.Contract.ChallengeReparameterization(&_Parameterizer.TransactOpts, propHash)
+// Solidity: function getListReward() constant returns(uint256)
+func (_Parameterizer *ParameterizerCallerSession) GetListReward() (*big.Int, error) {
+	return _Parameterizer.Contract.GetListReward(&_Parameterizer.CallOpts)
 }
 
-// ClaimReward is a paid mutator transaction binding the contract method 0x86bb8f37.
+// GetQuorum is a free data retrieval call binding the contract method 0xc26c12eb.
 //
-// Solidity: function claimReward(id uint256, salt uint256) returns()
-func (_Parameterizer *ParameterizerTransactor) ClaimReward(opts *bind.TransactOpts, id *big.Int, salt *big.Int) (*types.Transaction, error) {
-	return _Parameterizer.contract.Transact(opts, "claimReward", id, salt)
+// Solidity: function getQuorum() constant returns(uint256)
+func (_Parameterizer *ParameterizerCaller) GetQuorum(opts *bind.CallOpts) (*big.Int, error) {
+	var (
+		ret0 = new(*big.Int)
+	)
+	out := ret0
+	err := _Parameterizer.contract.Call(opts, out, "getQuorum")
+	return *ret0, err
 }
 
-// ClaimReward is a paid mutator transaction binding the contract method 0x86bb8f37.
+// GetQuorum is a free data retrieval call binding the contract method 0xc26c12eb.
 //
-// Solidity: function claimReward(id uint256, salt uint256) returns()
-func (_Parameterizer *ParameterizerSession) ClaimReward(id *big.Int, salt *big.Int) (*types.Transaction, error) {
-	return _Parameterizer.Contract.ClaimReward(&_Parameterizer.TransactOpts, id, salt)
+// Solidity: function getQuorum() constant returns(uint256)
+func (_Parameterizer *ParameterizerSession) GetQuorum() (*big.Int, error) {
+	return _Parameterizer.Contract.GetQuorum(&_Parameterizer.CallOpts)
 }
 
-// ClaimReward is a paid mutator transaction binding the contract method 0x86bb8f37.
+// GetQuorum is a free data retrieval call binding the contract method 0xc26c12eb.
 //
-// Solidity: function claimReward(id uint256, salt uint256) returns()
-func (_Parameterizer *ParameterizerTransactorSession) ClaimReward(id *big.Int, salt *big.Int) (*types.Transaction, error) {
-	return _Parameterizer.Contract.ClaimReward(&_Parameterizer.TransactOpts, id, salt)
+// Solidity: function getQuorum() constant returns(uint256)
+func (_Parameterizer *ParameterizerCallerSession) GetQuorum() (*big.Int, error) {
+	return _Parameterizer.Contract.GetQuorum(&_Parameterizer.CallOpts)
 }
 
-// ProcessProposal is a paid mutator transaction binding the contract method 0x30490e91.
+// GetVoteBy is a free data retrieval call binding the contract method 0x2d0d2bc6.
 //
-// Solidity: function processProposal(propHash bytes32) returns()
-func (_Parameterizer *ParameterizerTransactor) ProcessProposal(opts *bind.TransactOpts, propHash [32]byte) (*types.Transaction, error) {
-	return _Parameterizer.contract.Transact(opts, "processProposal", propHash)
+// Solidity: function getVoteBy() constant returns(uint256)
+func (_Parameterizer *ParameterizerCaller) GetVoteBy(opts *bind.CallOpts) (*big.Int, error) {
+	var (
+		ret0 = new(*big.Int)
+	)
+	out := ret0
+	err := _Parameterizer.contract.Call(opts, out, "getVoteBy")
+	return *ret0, err
 }
 
-// ProcessProposal is a paid mutator transaction binding the contract method 0x30490e91.
+// GetVoteBy is a free data retrieval call binding the contract method 0x2d0d2bc6.
 //
-// Solidity: function processProposal(propHash bytes32) returns()
-func (_Parameterizer *ParameterizerSession) ProcessProposal(propHash [32]byte) (*types.Transaction, error) {
-	return _Parameterizer.Contract.ProcessProposal(&_Parameterizer.TransactOpts, propHash)
+// Solidity: function getVoteBy() constant returns(uint256)
+func (_Parameterizer *ParameterizerSession) GetVoteBy() (*big.Int, error) {
+	return _Parameterizer.Contract.GetVoteBy(&_Parameterizer.CallOpts)
 }
 
-// ProcessProposal is a paid mutator transaction binding the contract method 0x30490e91.
+// GetVoteBy is a free data retrieval call binding the contract method 0x2d0d2bc6.
 //
-// Solidity: function processProposal(propHash bytes32) returns()
-func (_Parameterizer *ParameterizerTransactorSession) ProcessProposal(propHash [32]byte) (*types.Transaction, error) {
-	return _Parameterizer.Contract.ProcessProposal(&_Parameterizer.TransactOpts, propHash)
+// Solidity: function getVoteBy() constant returns(uint256)
+func (_Parameterizer *ParameterizerCallerSession) GetVoteBy() (*big.Int, error) {
+	return _Parameterizer.Contract.GetVoteBy(&_Parameterizer.CallOpts)
 }
 
-// ProposeReparameterization is a paid mutator transaction binding the contract method 0xbade1c54.
+// Reparameterize is a paid mutator transaction binding the contract method 0x79bcf86f.
 //
-// Solidity: function proposeReparameterization(name string, value uint256) returns(bytes32)
-func (_Parameterizer *ParameterizerTransactor) ProposeReparameterization(opts *bind.TransactOpts, name string, value *big.Int) (*types.Transaction, error) {
-	return _Parameterizer.contract.Transact(opts, "proposeReparameterization", name, value)
+// Solidity: function reparameterize(name string, value uint256) returns(bytes32)
+func (_Parameterizer *ParameterizerTransactor) Reparameterize(opts *bind.TransactOpts, name string, value *big.Int) (*types.Transaction, error) {
+	return _Parameterizer.contract.Transact(opts, "reparameterize", name, value)
 }
 
-// ProposeReparameterization is a paid mutator transaction binding the contract method 0xbade1c54.
+// Reparameterize is a paid mutator transaction binding the contract method 0x79bcf86f.
 //
-// Solidity: function proposeReparameterization(name string, value uint256) returns(bytes32)
-func (_Parameterizer *ParameterizerSession) ProposeReparameterization(name string, value *big.Int) (*types.Transaction, error) {
-	return _Parameterizer.Contract.ProposeReparameterization(&_Parameterizer.TransactOpts, name, value)
+// Solidity: function reparameterize(name string, value uint256) returns(bytes32)
+func (_Parameterizer *ParameterizerSession) Reparameterize(name string, value *big.Int) (*types.Transaction, error) {
+	return _Parameterizer.Contract.Reparameterize(&_Parameterizer.TransactOpts, name, value)
 }
 
-// ProposeReparameterization is a paid mutator transaction binding the contract method 0xbade1c54.
+// Reparameterize is a paid mutator transaction binding the contract method 0x79bcf86f.
 //
-// Solidity: function proposeReparameterization(name string, value uint256) returns(bytes32)
-func (_Parameterizer *ParameterizerTransactorSession) ProposeReparameterization(name string, value *big.Int) (*types.Transaction, error) {
-	return _Parameterizer.Contract.ProposeReparameterization(&_Parameterizer.TransactOpts, name, value)
+// Solidity: function reparameterize(name string, value uint256) returns(bytes32)
+func (_Parameterizer *ParameterizerTransactorSession) Reparameterize(name string, value *big.Int) (*types.Transaction, error) {
+	return _Parameterizer.Contract.Reparameterize(&_Parameterizer.TransactOpts, name, value)
 }
 
-// ParameterizerChallengeFailedEventIterator is returned from FilterChallengeFailedEvent and is used to iterate over the raw logs and unpacked data for ChallengeFailedEvent events raised by the Parameterizer contract.
-type ParameterizerChallengeFailedEventIterator struct {
-	Event *ParameterizerChallengeFailedEvent // Event containing the contract specifics and raw log
+// ResolveReparam is a paid mutator transaction binding the contract method 0x435c709a.
+//
+// Solidity: function resolveReparam(paramHash bytes32) returns(bool)
+func (_Parameterizer *ParameterizerTransactor) ResolveReparam(opts *bind.TransactOpts, paramHash [32]byte) (*types.Transaction, error) {
+	return _Parameterizer.contract.Transact(opts, "resolveReparam", paramHash)
+}
+
+// ResolveReparam is a paid mutator transaction binding the contract method 0x435c709a.
+//
+// Solidity: function resolveReparam(paramHash bytes32) returns(bool)
+func (_Parameterizer *ParameterizerSession) ResolveReparam(paramHash [32]byte) (*types.Transaction, error) {
+	return _Parameterizer.Contract.ResolveReparam(&_Parameterizer.TransactOpts, paramHash)
+}
+
+// ResolveReparam is a paid mutator transaction binding the contract method 0x435c709a.
+//
+// Solidity: function resolveReparam(paramHash bytes32) returns(bool)
+func (_Parameterizer *ParameterizerTransactorSession) ResolveReparam(paramHash [32]byte) (*types.Transaction, error) {
+	return _Parameterizer.Contract.ResolveReparam(&_Parameterizer.TransactOpts, paramHash)
+}
+
+// ParameterizerReparamFailedEventIterator is returned from FilterReparamFailedEvent and is used to iterate over the raw logs and unpacked data for ReparamFailedEvent events raised by the Parameterizer contract.
+type ParameterizerReparamFailedEventIterator struct {
+	Event *ParameterizerReparamFailedEvent // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -2623,7 +390,7 @@ type ParameterizerChallengeFailedEventIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *ParameterizerChallengeFailedEventIterator) Next() bool {
+func (it *ParameterizerReparamFailedEventIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -2632,7 +399,7 @@ func (it *ParameterizerChallengeFailedEventIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(ParameterizerChallengeFailedEvent)
+			it.Event = new(ParameterizerReparamFailedEvent)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -2647,7 +414,7 @@ func (it *ParameterizerChallengeFailedEventIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(ParameterizerChallengeFailedEvent)
+		it.Event = new(ParameterizerReparamFailedEvent)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -2663,485 +430,61 @@ func (it *ParameterizerChallengeFailedEventIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *ParameterizerChallengeFailedEventIterator) Error() error {
+func (it *ParameterizerReparamFailedEventIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *ParameterizerChallengeFailedEventIterator) Close() error {
+func (it *ParameterizerReparamFailedEventIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// ParameterizerChallengeFailedEvent represents a ChallengeFailedEvent event raised by the Parameterizer contract.
-type ParameterizerChallengeFailedEvent struct {
-	PropHash    [32]byte
-	Id          *big.Int
-	RewardPool  *big.Int
-	TotalTokens *big.Int
-	Raw         types.Log // Blockchain specific contextual infos
-}
-
-// FilterChallengeFailedEvent is a free log retrieval operation binding the contract event 0x824960b36dcff66c0b43953e552b1b0d622dcb3f3cf71cf1cbe88039a781a853.
-//
-// Solidity: e ChallengeFailedEvent(propHash indexed bytes32, id indexed uint256, rewardPool uint256, totalTokens uint256)
-func (_Parameterizer *ParameterizerFilterer) FilterChallengeFailedEvent(opts *bind.FilterOpts, propHash [][32]byte, id []*big.Int) (*ParameterizerChallengeFailedEventIterator, error) {
-
-	var propHashRule []interface{}
-	for _, propHashItem := range propHash {
-		propHashRule = append(propHashRule, propHashItem)
-	}
-	var idRule []interface{}
-	for _, idItem := range id {
-		idRule = append(idRule, idItem)
-	}
-
-	logs, sub, err := _Parameterizer.contract.FilterLogs(opts, "ChallengeFailedEvent", propHashRule, idRule)
-	if err != nil {
-		return nil, err
-	}
-	return &ParameterizerChallengeFailedEventIterator{contract: _Parameterizer.contract, event: "ChallengeFailedEvent", logs: logs, sub: sub}, nil
-}
-
-// WatchChallengeFailedEvent is a free log subscription operation binding the contract event 0x824960b36dcff66c0b43953e552b1b0d622dcb3f3cf71cf1cbe88039a781a853.
-//
-// Solidity: e ChallengeFailedEvent(propHash indexed bytes32, id indexed uint256, rewardPool uint256, totalTokens uint256)
-func (_Parameterizer *ParameterizerFilterer) WatchChallengeFailedEvent(opts *bind.WatchOpts, sink chan<- *ParameterizerChallengeFailedEvent, propHash [][32]byte, id []*big.Int) (event.Subscription, error) {
-
-	var propHashRule []interface{}
-	for _, propHashItem := range propHash {
-		propHashRule = append(propHashRule, propHashItem)
-	}
-	var idRule []interface{}
-	for _, idItem := range id {
-		idRule = append(idRule, idItem)
-	}
-
-	logs, sub, err := _Parameterizer.contract.WatchLogs(opts, "ChallengeFailedEvent", propHashRule, idRule)
-	if err != nil {
-		return nil, err
-	}
-	return event.NewSubscription(func(quit <-chan struct{}) error {
-		defer sub.Unsubscribe()
-		for {
-			select {
-			case log := <-logs:
-				// New log arrived, parse the event and forward to the user
-				event := new(ParameterizerChallengeFailedEvent)
-				if err := _Parameterizer.contract.UnpackLog(event, "ChallengeFailedEvent", log); err != nil {
-					return err
-				}
-				event.Raw = log
-
-				select {
-				case sink <- event:
-				case err := <-sub.Err():
-					return err
-				case <-quit:
-					return nil
-				}
-			case err := <-sub.Err():
-				return err
-			case <-quit:
-				return nil
-			}
-		}
-	}), nil
-}
-
-// ParameterizerChallengeSucceededEventIterator is returned from FilterChallengeSucceededEvent and is used to iterate over the raw logs and unpacked data for ChallengeSucceededEvent events raised by the Parameterizer contract.
-type ParameterizerChallengeSucceededEventIterator struct {
-	Event *ParameterizerChallengeSucceededEvent // Event containing the contract specifics and raw log
-
-	contract *bind.BoundContract // Generic contract to use for unpacking event data
-	event    string              // Event name to use for unpacking event data
-
-	logs chan types.Log        // Log channel receiving the found contract events
-	sub  ethereum.Subscription // Subscription for errors, completion and termination
-	done bool                  // Whether the subscription completed delivering logs
-	fail error                 // Occurred error to stop iteration
-}
-
-// Next advances the iterator to the subsequent event, returning whether there
-// are any more events found. In case of a retrieval or parsing error, false is
-// returned and Error() can be queried for the exact failure.
-func (it *ParameterizerChallengeSucceededEventIterator) Next() bool {
-	// If the iterator failed, stop iterating
-	if it.fail != nil {
-		return false
-	}
-	// If the iterator completed, deliver directly whatever's available
-	if it.done {
-		select {
-		case log := <-it.logs:
-			it.Event = new(ParameterizerChallengeSucceededEvent)
-			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
-				it.fail = err
-				return false
-			}
-			it.Event.Raw = log
-			return true
-
-		default:
-			return false
-		}
-	}
-	// Iterator still in progress, wait for either a data or an error event
-	select {
-	case log := <-it.logs:
-		it.Event = new(ParameterizerChallengeSucceededEvent)
-		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
-			it.fail = err
-			return false
-		}
-		it.Event.Raw = log
-		return true
-
-	case err := <-it.sub.Err():
-		it.done = true
-		it.fail = err
-		return it.Next()
-	}
-}
-
-// Error returns any retrieval or parsing error occurred during filtering.
-func (it *ParameterizerChallengeSucceededEventIterator) Error() error {
-	return it.fail
-}
-
-// Close terminates the iteration process, releasing any pending underlying
-// resources.
-func (it *ParameterizerChallengeSucceededEventIterator) Close() error {
-	it.sub.Unsubscribe()
-	return nil
-}
-
-// ParameterizerChallengeSucceededEvent represents a ChallengeSucceededEvent event raised by the Parameterizer contract.
-type ParameterizerChallengeSucceededEvent struct {
-	PropHash    [32]byte
-	Id          *big.Int
-	RewardPool  *big.Int
-	TotalTokens *big.Int
-	Raw         types.Log // Blockchain specific contextual infos
-}
-
-// FilterChallengeSucceededEvent is a free log retrieval operation binding the contract event 0x3dddcf5cd7cb20cfa68f0643b9422cdbc130a6602933781bf9855e10fd205e42.
-//
-// Solidity: e ChallengeSucceededEvent(propHash indexed bytes32, id indexed uint256, rewardPool uint256, totalTokens uint256)
-func (_Parameterizer *ParameterizerFilterer) FilterChallengeSucceededEvent(opts *bind.FilterOpts, propHash [][32]byte, id []*big.Int) (*ParameterizerChallengeSucceededEventIterator, error) {
-
-	var propHashRule []interface{}
-	for _, propHashItem := range propHash {
-		propHashRule = append(propHashRule, propHashItem)
-	}
-	var idRule []interface{}
-	for _, idItem := range id {
-		idRule = append(idRule, idItem)
-	}
-
-	logs, sub, err := _Parameterizer.contract.FilterLogs(opts, "ChallengeSucceededEvent", propHashRule, idRule)
-	if err != nil {
-		return nil, err
-	}
-	return &ParameterizerChallengeSucceededEventIterator{contract: _Parameterizer.contract, event: "ChallengeSucceededEvent", logs: logs, sub: sub}, nil
-}
-
-// WatchChallengeSucceededEvent is a free log subscription operation binding the contract event 0x3dddcf5cd7cb20cfa68f0643b9422cdbc130a6602933781bf9855e10fd205e42.
-//
-// Solidity: e ChallengeSucceededEvent(propHash indexed bytes32, id indexed uint256, rewardPool uint256, totalTokens uint256)
-func (_Parameterizer *ParameterizerFilterer) WatchChallengeSucceededEvent(opts *bind.WatchOpts, sink chan<- *ParameterizerChallengeSucceededEvent, propHash [][32]byte, id []*big.Int) (event.Subscription, error) {
-
-	var propHashRule []interface{}
-	for _, propHashItem := range propHash {
-		propHashRule = append(propHashRule, propHashItem)
-	}
-	var idRule []interface{}
-	for _, idItem := range id {
-		idRule = append(idRule, idItem)
-	}
-
-	logs, sub, err := _Parameterizer.contract.WatchLogs(opts, "ChallengeSucceededEvent", propHashRule, idRule)
-	if err != nil {
-		return nil, err
-	}
-	return event.NewSubscription(func(quit <-chan struct{}) error {
-		defer sub.Unsubscribe()
-		for {
-			select {
-			case log := <-logs:
-				// New log arrived, parse the event and forward to the user
-				event := new(ParameterizerChallengeSucceededEvent)
-				if err := _Parameterizer.contract.UnpackLog(event, "ChallengeSucceededEvent", log); err != nil {
-					return err
-				}
-				event.Raw = log
-
-				select {
-				case sink <- event:
-				case err := <-sub.Err():
-					return err
-				case <-quit:
-					return nil
-				}
-			case err := <-sub.Err():
-				return err
-			case <-quit:
-				return nil
-			}
-		}
-	}), nil
-}
-
-// ParameterizerNewChallengeEventIterator is returned from FilterNewChallengeEvent and is used to iterate over the raw logs and unpacked data for NewChallengeEvent events raised by the Parameterizer contract.
-type ParameterizerNewChallengeEventIterator struct {
-	Event *ParameterizerNewChallengeEvent // Event containing the contract specifics and raw log
-
-	contract *bind.BoundContract // Generic contract to use for unpacking event data
-	event    string              // Event name to use for unpacking event data
-
-	logs chan types.Log        // Log channel receiving the found contract events
-	sub  ethereum.Subscription // Subscription for errors, completion and termination
-	done bool                  // Whether the subscription completed delivering logs
-	fail error                 // Occurred error to stop iteration
-}
-
-// Next advances the iterator to the subsequent event, returning whether there
-// are any more events found. In case of a retrieval or parsing error, false is
-// returned and Error() can be queried for the exact failure.
-func (it *ParameterizerNewChallengeEventIterator) Next() bool {
-	// If the iterator failed, stop iterating
-	if it.fail != nil {
-		return false
-	}
-	// If the iterator completed, deliver directly whatever's available
-	if it.done {
-		select {
-		case log := <-it.logs:
-			it.Event = new(ParameterizerNewChallengeEvent)
-			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
-				it.fail = err
-				return false
-			}
-			it.Event.Raw = log
-			return true
-
-		default:
-			return false
-		}
-	}
-	// Iterator still in progress, wait for either a data or an error event
-	select {
-	case log := <-it.logs:
-		it.Event = new(ParameterizerNewChallengeEvent)
-		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
-			it.fail = err
-			return false
-		}
-		it.Event.Raw = log
-		return true
-
-	case err := <-it.sub.Err():
-		it.done = true
-		it.fail = err
-		return it.Next()
-	}
-}
-
-// Error returns any retrieval or parsing error occurred during filtering.
-func (it *ParameterizerNewChallengeEventIterator) Error() error {
-	return it.fail
-}
-
-// Close terminates the iteration process, releasing any pending underlying
-// resources.
-func (it *ParameterizerNewChallengeEventIterator) Close() error {
-	it.sub.Unsubscribe()
-	return nil
-}
-
-// ParameterizerNewChallengeEvent represents a NewChallengeEvent event raised by the Parameterizer contract.
-type ParameterizerNewChallengeEvent struct {
-	PropHash     [32]byte
-	Id           *big.Int
-	CommitExpiry *big.Int
-	RevealExpiry *big.Int
-	Challenger   common.Address
-	Raw          types.Log // Blockchain specific contextual infos
-}
-
-// FilterNewChallengeEvent is a free log retrieval operation binding the contract event 0x4e6815e2c453c1de363fd2b483078339512560f8fd777420d06dd69291e060c2.
-//
-// Solidity: e NewChallengeEvent(propHash indexed bytes32, id uint256, commitExpiry uint256, revealExpiry uint256, challenger indexed address)
-func (_Parameterizer *ParameterizerFilterer) FilterNewChallengeEvent(opts *bind.FilterOpts, propHash [][32]byte, challenger []common.Address) (*ParameterizerNewChallengeEventIterator, error) {
-
-	var propHashRule []interface{}
-	for _, propHashItem := range propHash {
-		propHashRule = append(propHashRule, propHashItem)
-	}
-
-	var challengerRule []interface{}
-	for _, challengerItem := range challenger {
-		challengerRule = append(challengerRule, challengerItem)
-	}
-
-	logs, sub, err := _Parameterizer.contract.FilterLogs(opts, "NewChallengeEvent", propHashRule, challengerRule)
-	if err != nil {
-		return nil, err
-	}
-	return &ParameterizerNewChallengeEventIterator{contract: _Parameterizer.contract, event: "NewChallengeEvent", logs: logs, sub: sub}, nil
-}
-
-// WatchNewChallengeEvent is a free log subscription operation binding the contract event 0x4e6815e2c453c1de363fd2b483078339512560f8fd777420d06dd69291e060c2.
-//
-// Solidity: e NewChallengeEvent(propHash indexed bytes32, id uint256, commitExpiry uint256, revealExpiry uint256, challenger indexed address)
-func (_Parameterizer *ParameterizerFilterer) WatchNewChallengeEvent(opts *bind.WatchOpts, sink chan<- *ParameterizerNewChallengeEvent, propHash [][32]byte, challenger []common.Address) (event.Subscription, error) {
-
-	var propHashRule []interface{}
-	for _, propHashItem := range propHash {
-		propHashRule = append(propHashRule, propHashItem)
-	}
-
-	var challengerRule []interface{}
-	for _, challengerItem := range challenger {
-		challengerRule = append(challengerRule, challengerItem)
-	}
-
-	logs, sub, err := _Parameterizer.contract.WatchLogs(opts, "NewChallengeEvent", propHashRule, challengerRule)
-	if err != nil {
-		return nil, err
-	}
-	return event.NewSubscription(func(quit <-chan struct{}) error {
-		defer sub.Unsubscribe()
-		for {
-			select {
-			case log := <-logs:
-				// New log arrived, parse the event and forward to the user
-				event := new(ParameterizerNewChallengeEvent)
-				if err := _Parameterizer.contract.UnpackLog(event, "NewChallengeEvent", log); err != nil {
-					return err
-				}
-				event.Raw = log
-
-				select {
-				case sink <- event:
-				case err := <-sub.Err():
-					return err
-				case <-quit:
-					return nil
-				}
-			case err := <-sub.Err():
-				return err
-			case <-quit:
-				return nil
-			}
-		}
-	}), nil
-}
-
-// ParameterizerProposalAcceptedEventIterator is returned from FilterProposalAcceptedEvent and is used to iterate over the raw logs and unpacked data for ProposalAcceptedEvent events raised by the Parameterizer contract.
-type ParameterizerProposalAcceptedEventIterator struct {
-	Event *ParameterizerProposalAcceptedEvent // Event containing the contract specifics and raw log
-
-	contract *bind.BoundContract // Generic contract to use for unpacking event data
-	event    string              // Event name to use for unpacking event data
-
-	logs chan types.Log        // Log channel receiving the found contract events
-	sub  ethereum.Subscription // Subscription for errors, completion and termination
-	done bool                  // Whether the subscription completed delivering logs
-	fail error                 // Occurred error to stop iteration
-}
-
-// Next advances the iterator to the subsequent event, returning whether there
-// are any more events found. In case of a retrieval or parsing error, false is
-// returned and Error() can be queried for the exact failure.
-func (it *ParameterizerProposalAcceptedEventIterator) Next() bool {
-	// If the iterator failed, stop iterating
-	if it.fail != nil {
-		return false
-	}
-	// If the iterator completed, deliver directly whatever's available
-	if it.done {
-		select {
-		case log := <-it.logs:
-			it.Event = new(ParameterizerProposalAcceptedEvent)
-			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
-				it.fail = err
-				return false
-			}
-			it.Event.Raw = log
-			return true
-
-		default:
-			return false
-		}
-	}
-	// Iterator still in progress, wait for either a data or an error event
-	select {
-	case log := <-it.logs:
-		it.Event = new(ParameterizerProposalAcceptedEvent)
-		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
-			it.fail = err
-			return false
-		}
-		it.Event.Raw = log
-		return true
-
-	case err := <-it.sub.Err():
-		it.done = true
-		it.fail = err
-		return it.Next()
-	}
-}
-
-// Error returns any retrieval or parsing error occurred during filtering.
-func (it *ParameterizerProposalAcceptedEventIterator) Error() error {
-	return it.fail
-}
-
-// Close terminates the iteration process, releasing any pending underlying
-// resources.
-func (it *ParameterizerProposalAcceptedEventIterator) Close() error {
-	it.sub.Unsubscribe()
-	return nil
-}
-
-// ParameterizerProposalAcceptedEvent represents a ProposalAcceptedEvent event raised by the Parameterizer contract.
-type ParameterizerProposalAcceptedEvent struct {
+// ParameterizerReparamFailedEvent represents a ReparamFailedEvent event raised by the Parameterizer contract.
+type ParameterizerReparamFailedEvent struct {
 	PropHash [32]byte
-	Name     string
+	Name     common.Hash
 	Value    *big.Int
 	Raw      types.Log // Blockchain specific contextual infos
 }
 
-// FilterProposalAcceptedEvent is a free log retrieval operation binding the contract event 0x0fca8490116d823913d2468dc21632e9226d20e54379af9cf34712a3ff2bc30c.
+// FilterReparamFailedEvent is a free log retrieval operation binding the contract event 0xb738f684b674f369ce7b32bc2f124bcbcfe6532c6629cb816c30bda0558ef621.
 //
-// Solidity: e ProposalAcceptedEvent(propHash indexed bytes32, name string, value uint256)
-func (_Parameterizer *ParameterizerFilterer) FilterProposalAcceptedEvent(opts *bind.FilterOpts, propHash [][32]byte) (*ParameterizerProposalAcceptedEventIterator, error) {
+// Solidity: e ReparamFailedEvent(propHash indexed bytes32, name indexed string, value uint256)
+func (_Parameterizer *ParameterizerFilterer) FilterReparamFailedEvent(opts *bind.FilterOpts, propHash [][32]byte, name []string) (*ParameterizerReparamFailedEventIterator, error) {
 
 	var propHashRule []interface{}
 	for _, propHashItem := range propHash {
 		propHashRule = append(propHashRule, propHashItem)
 	}
+	var nameRule []interface{}
+	for _, nameItem := range name {
+		nameRule = append(nameRule, nameItem)
+	}
 
-	logs, sub, err := _Parameterizer.contract.FilterLogs(opts, "ProposalAcceptedEvent", propHashRule)
+	logs, sub, err := _Parameterizer.contract.FilterLogs(opts, "ReparamFailedEvent", propHashRule, nameRule)
 	if err != nil {
 		return nil, err
 	}
-	return &ParameterizerProposalAcceptedEventIterator{contract: _Parameterizer.contract, event: "ProposalAcceptedEvent", logs: logs, sub: sub}, nil
+	return &ParameterizerReparamFailedEventIterator{contract: _Parameterizer.contract, event: "ReparamFailedEvent", logs: logs, sub: sub}, nil
 }
 
-// WatchProposalAcceptedEvent is a free log subscription operation binding the contract event 0x0fca8490116d823913d2468dc21632e9226d20e54379af9cf34712a3ff2bc30c.
+// WatchReparamFailedEvent is a free log subscription operation binding the contract event 0xb738f684b674f369ce7b32bc2f124bcbcfe6532c6629cb816c30bda0558ef621.
 //
-// Solidity: e ProposalAcceptedEvent(propHash indexed bytes32, name string, value uint256)
-func (_Parameterizer *ParameterizerFilterer) WatchProposalAcceptedEvent(opts *bind.WatchOpts, sink chan<- *ParameterizerProposalAcceptedEvent, propHash [][32]byte) (event.Subscription, error) {
+// Solidity: e ReparamFailedEvent(propHash indexed bytes32, name indexed string, value uint256)
+func (_Parameterizer *ParameterizerFilterer) WatchReparamFailedEvent(opts *bind.WatchOpts, sink chan<- *ParameterizerReparamFailedEvent, propHash [][32]byte, name []string) (event.Subscription, error) {
 
 	var propHashRule []interface{}
 	for _, propHashItem := range propHash {
 		propHashRule = append(propHashRule, propHashItem)
 	}
+	var nameRule []interface{}
+	for _, nameItem := range name {
+		nameRule = append(nameRule, nameItem)
+	}
 
-	logs, sub, err := _Parameterizer.contract.WatchLogs(opts, "ProposalAcceptedEvent", propHashRule)
+	logs, sub, err := _Parameterizer.contract.WatchLogs(opts, "ReparamFailedEvent", propHashRule, nameRule)
 	if err != nil {
 		return nil, err
 	}
@@ -3151,8 +494,8 @@ func (_Parameterizer *ParameterizerFilterer) WatchProposalAcceptedEvent(opts *bi
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(ParameterizerProposalAcceptedEvent)
-				if err := _Parameterizer.contract.UnpackLog(event, "ProposalAcceptedEvent", log); err != nil {
+				event := new(ParameterizerReparamFailedEvent)
+				if err := _Parameterizer.contract.UnpackLog(event, "ReparamFailedEvent", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -3173,9 +516,9 @@ func (_Parameterizer *ParameterizerFilterer) WatchProposalAcceptedEvent(opts *bi
 	}), nil
 }
 
-// ParameterizerProposalExpiredEventIterator is returned from FilterProposalExpiredEvent and is used to iterate over the raw logs and unpacked data for ProposalExpiredEvent events raised by the Parameterizer contract.
-type ParameterizerProposalExpiredEventIterator struct {
-	Event *ParameterizerProposalExpiredEvent // Event containing the contract specifics and raw log
+// ParameterizerReparamProposedEventIterator is returned from FilterReparamProposedEvent and is used to iterate over the raw logs and unpacked data for ReparamProposedEvent events raised by the Parameterizer contract.
+type ParameterizerReparamProposedEventIterator struct {
+	Event *ParameterizerReparamProposedEvent // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -3189,7 +532,7 @@ type ParameterizerProposalExpiredEventIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *ParameterizerProposalExpiredEventIterator) Next() bool {
+func (it *ParameterizerReparamProposedEventIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -3198,7 +541,7 @@ func (it *ParameterizerProposalExpiredEventIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(ParameterizerProposalExpiredEvent)
+			it.Event = new(ParameterizerReparamProposedEvent)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -3213,7 +556,7 @@ func (it *ParameterizerProposalExpiredEventIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(ParameterizerProposalExpiredEvent)
+		it.Event = new(ParameterizerReparamProposedEvent)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -3229,188 +572,70 @@ func (it *ParameterizerProposalExpiredEventIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *ParameterizerProposalExpiredEventIterator) Error() error {
+func (it *ParameterizerReparamProposedEventIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *ParameterizerProposalExpiredEventIterator) Close() error {
+func (it *ParameterizerReparamProposedEventIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// ParameterizerProposalExpiredEvent represents a ProposalExpiredEvent event raised by the Parameterizer contract.
-type ParameterizerProposalExpiredEvent struct {
-	PropHash [32]byte
-	Raw      types.Log // Blockchain specific contextual infos
-}
-
-// FilterProposalExpiredEvent is a free log retrieval operation binding the contract event 0x456cbba32d3f5372c3ef95ba54f18060130b9da12721ebf89f1146a8f4061324.
-//
-// Solidity: e ProposalExpiredEvent(propHash indexed bytes32)
-func (_Parameterizer *ParameterizerFilterer) FilterProposalExpiredEvent(opts *bind.FilterOpts, propHash [][32]byte) (*ParameterizerProposalExpiredEventIterator, error) {
-
-	var propHashRule []interface{}
-	for _, propHashItem := range propHash {
-		propHashRule = append(propHashRule, propHashItem)
-	}
-
-	logs, sub, err := _Parameterizer.contract.FilterLogs(opts, "ProposalExpiredEvent", propHashRule)
-	if err != nil {
-		return nil, err
-	}
-	return &ParameterizerProposalExpiredEventIterator{contract: _Parameterizer.contract, event: "ProposalExpiredEvent", logs: logs, sub: sub}, nil
-}
-
-// WatchProposalExpiredEvent is a free log subscription operation binding the contract event 0x456cbba32d3f5372c3ef95ba54f18060130b9da12721ebf89f1146a8f4061324.
-//
-// Solidity: e ProposalExpiredEvent(propHash indexed bytes32)
-func (_Parameterizer *ParameterizerFilterer) WatchProposalExpiredEvent(opts *bind.WatchOpts, sink chan<- *ParameterizerProposalExpiredEvent, propHash [][32]byte) (event.Subscription, error) {
-
-	var propHashRule []interface{}
-	for _, propHashItem := range propHash {
-		propHashRule = append(propHashRule, propHashItem)
-	}
-
-	logs, sub, err := _Parameterizer.contract.WatchLogs(opts, "ProposalExpiredEvent", propHashRule)
-	if err != nil {
-		return nil, err
-	}
-	return event.NewSubscription(func(quit <-chan struct{}) error {
-		defer sub.Unsubscribe()
-		for {
-			select {
-			case log := <-logs:
-				// New log arrived, parse the event and forward to the user
-				event := new(ParameterizerProposalExpiredEvent)
-				if err := _Parameterizer.contract.UnpackLog(event, "ProposalExpiredEvent", log); err != nil {
-					return err
-				}
-				event.Raw = log
-
-				select {
-				case sink <- event:
-				case err := <-sub.Err():
-					return err
-				case <-quit:
-					return nil
-				}
-			case err := <-sub.Err():
-				return err
-			case <-quit:
-				return nil
-			}
-		}
-	}), nil
-}
-
-// ParameterizerReparameterizationProposalEventIterator is returned from FilterReparameterizationProposalEvent and is used to iterate over the raw logs and unpacked data for ReparameterizationProposalEvent events raised by the Parameterizer contract.
-type ParameterizerReparameterizationProposalEventIterator struct {
-	Event *ParameterizerReparameterizationProposalEvent // Event containing the contract specifics and raw log
-
-	contract *bind.BoundContract // Generic contract to use for unpacking event data
-	event    string              // Event name to use for unpacking event data
-
-	logs chan types.Log        // Log channel receiving the found contract events
-	sub  ethereum.Subscription // Subscription for errors, completion and termination
-	done bool                  // Whether the subscription completed delivering logs
-	fail error                 // Occurred error to stop iteration
-}
-
-// Next advances the iterator to the subsequent event, returning whether there
-// are any more events found. In case of a retrieval or parsing error, false is
-// returned and Error() can be queried for the exact failure.
-func (it *ParameterizerReparameterizationProposalEventIterator) Next() bool {
-	// If the iterator failed, stop iterating
-	if it.fail != nil {
-		return false
-	}
-	// If the iterator completed, deliver directly whatever's available
-	if it.done {
-		select {
-		case log := <-it.logs:
-			it.Event = new(ParameterizerReparameterizationProposalEvent)
-			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
-				it.fail = err
-				return false
-			}
-			it.Event.Raw = log
-			return true
-
-		default:
-			return false
-		}
-	}
-	// Iterator still in progress, wait for either a data or an error event
-	select {
-	case log := <-it.logs:
-		it.Event = new(ParameterizerReparameterizationProposalEvent)
-		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
-			it.fail = err
-			return false
-		}
-		it.Event.Raw = log
-		return true
-
-	case err := <-it.sub.Err():
-		it.done = true
-		it.fail = err
-		return it.Next()
-	}
-}
-
-// Error returns any retrieval or parsing error occurred during filtering.
-func (it *ParameterizerReparameterizationProposalEventIterator) Error() error {
-	return it.fail
-}
-
-// Close terminates the iteration process, releasing any pending underlying
-// resources.
-func (it *ParameterizerReparameterizationProposalEventIterator) Close() error {
-	it.sub.Unsubscribe()
-	return nil
-}
-
-// ParameterizerReparameterizationProposalEvent represents a ReparameterizationProposalEvent event raised by the Parameterizer contract.
-type ParameterizerReparameterizationProposalEvent struct {
-	Name      string
-	Value     *big.Int
-	PropHash  [32]byte
-	Deposit   *big.Int
-	AppExpiry *big.Int
+// ParameterizerReparamProposedEvent represents a ReparamProposedEvent event raised by the Parameterizer contract.
+type ParameterizerReparamProposedEvent struct {
 	Proposer  common.Address
+	ParamHash [32]byte
+	Name      common.Hash
+	Value     *big.Int
 	Raw       types.Log // Blockchain specific contextual infos
 }
 
-// FilterReparameterizationProposalEvent is a free log retrieval operation binding the contract event 0xf6aafb6c8410e85ab57ef6d7df18fcb782806ee3b89634f3b52046846236f97a.
+// FilterReparamProposedEvent is a free log retrieval operation binding the contract event 0x6e6b1d8a6fe9513dd2b9ed502e413958e63440558f0e1f17b15a1e688cc86121.
 //
-// Solidity: e ReparameterizationProposalEvent(name string, value uint256, propHash bytes32, deposit uint256, appExpiry uint256, proposer indexed address)
-func (_Parameterizer *ParameterizerFilterer) FilterReparameterizationProposalEvent(opts *bind.FilterOpts, proposer []common.Address) (*ParameterizerReparameterizationProposalEventIterator, error) {
+// Solidity: e ReparamProposedEvent(proposer indexed address, paramHash indexed bytes32, name indexed string, value uint256)
+func (_Parameterizer *ParameterizerFilterer) FilterReparamProposedEvent(opts *bind.FilterOpts, proposer []common.Address, paramHash [][32]byte, name []string) (*ParameterizerReparamProposedEventIterator, error) {
 
 	var proposerRule []interface{}
 	for _, proposerItem := range proposer {
 		proposerRule = append(proposerRule, proposerItem)
 	}
+	var paramHashRule []interface{}
+	for _, paramHashItem := range paramHash {
+		paramHashRule = append(paramHashRule, paramHashItem)
+	}
+	var nameRule []interface{}
+	for _, nameItem := range name {
+		nameRule = append(nameRule, nameItem)
+	}
 
-	logs, sub, err := _Parameterizer.contract.FilterLogs(opts, "ReparameterizationProposalEvent", proposerRule)
+	logs, sub, err := _Parameterizer.contract.FilterLogs(opts, "ReparamProposedEvent", proposerRule, paramHashRule, nameRule)
 	if err != nil {
 		return nil, err
 	}
-	return &ParameterizerReparameterizationProposalEventIterator{contract: _Parameterizer.contract, event: "ReparameterizationProposalEvent", logs: logs, sub: sub}, nil
+	return &ParameterizerReparamProposedEventIterator{contract: _Parameterizer.contract, event: "ReparamProposedEvent", logs: logs, sub: sub}, nil
 }
 
-// WatchReparameterizationProposalEvent is a free log subscription operation binding the contract event 0xf6aafb6c8410e85ab57ef6d7df18fcb782806ee3b89634f3b52046846236f97a.
+// WatchReparamProposedEvent is a free log subscription operation binding the contract event 0x6e6b1d8a6fe9513dd2b9ed502e413958e63440558f0e1f17b15a1e688cc86121.
 //
-// Solidity: e ReparameterizationProposalEvent(name string, value uint256, propHash bytes32, deposit uint256, appExpiry uint256, proposer indexed address)
-func (_Parameterizer *ParameterizerFilterer) WatchReparameterizationProposalEvent(opts *bind.WatchOpts, sink chan<- *ParameterizerReparameterizationProposalEvent, proposer []common.Address) (event.Subscription, error) {
+// Solidity: e ReparamProposedEvent(proposer indexed address, paramHash indexed bytes32, name indexed string, value uint256)
+func (_Parameterizer *ParameterizerFilterer) WatchReparamProposedEvent(opts *bind.WatchOpts, sink chan<- *ParameterizerReparamProposedEvent, proposer []common.Address, paramHash [][32]byte, name []string) (event.Subscription, error) {
 
 	var proposerRule []interface{}
 	for _, proposerItem := range proposer {
 		proposerRule = append(proposerRule, proposerItem)
 	}
+	var paramHashRule []interface{}
+	for _, paramHashItem := range paramHash {
+		paramHashRule = append(paramHashRule, paramHashItem)
+	}
+	var nameRule []interface{}
+	for _, nameItem := range name {
+		nameRule = append(nameRule, nameItem)
+	}
 
-	logs, sub, err := _Parameterizer.contract.WatchLogs(opts, "ReparameterizationProposalEvent", proposerRule)
+	logs, sub, err := _Parameterizer.contract.WatchLogs(opts, "ReparamProposedEvent", proposerRule, paramHashRule, nameRule)
 	if err != nil {
 		return nil, err
 	}
@@ -3420,8 +645,8 @@ func (_Parameterizer *ParameterizerFilterer) WatchReparameterizationProposalEven
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(ParameterizerReparameterizationProposalEvent)
-				if err := _Parameterizer.contract.UnpackLog(event, "ReparameterizationProposalEvent", log); err != nil {
+				event := new(ParameterizerReparamProposedEvent)
+				if err := _Parameterizer.contract.UnpackLog(event, "ReparamProposedEvent", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -3442,9 +667,9 @@ func (_Parameterizer *ParameterizerFilterer) WatchReparameterizationProposalEven
 	}), nil
 }
 
-// ParameterizerRewardsClaimedEventIterator is returned from FilterRewardsClaimedEvent and is used to iterate over the raw logs and unpacked data for RewardsClaimedEvent events raised by the Parameterizer contract.
-type ParameterizerRewardsClaimedEventIterator struct {
-	Event *ParameterizerRewardsClaimedEvent // Event containing the contract specifics and raw log
+// ParameterizerReparamSucceededEventIterator is returned from FilterReparamSucceededEvent and is used to iterate over the raw logs and unpacked data for ReparamSucceededEvent events raised by the Parameterizer contract.
+type ParameterizerReparamSucceededEventIterator struct {
+	Event *ParameterizerReparamSucceededEvent // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -3458,7 +683,7 @@ type ParameterizerRewardsClaimedEventIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *ParameterizerRewardsClaimedEventIterator) Next() bool {
+func (it *ParameterizerReparamSucceededEventIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -3467,7 +692,7 @@ func (it *ParameterizerRewardsClaimedEventIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(ParameterizerRewardsClaimedEvent)
+			it.Event = new(ParameterizerReparamSucceededEvent)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -3482,7 +707,7 @@ func (it *ParameterizerRewardsClaimedEventIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(ParameterizerRewardsClaimedEvent)
+		it.Event = new(ParameterizerReparamSucceededEvent)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -3498,63 +723,61 @@ func (it *ParameterizerRewardsClaimedEventIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *ParameterizerRewardsClaimedEventIterator) Error() error {
+func (it *ParameterizerReparamSucceededEventIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *ParameterizerRewardsClaimedEventIterator) Close() error {
+func (it *ParameterizerReparamSucceededEventIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// ParameterizerRewardsClaimedEvent represents a RewardsClaimedEvent event raised by the Parameterizer contract.
-type ParameterizerRewardsClaimedEvent struct {
-	Id     *big.Int
-	Reward *big.Int
-	Voter  common.Address
-	Raw    types.Log // Blockchain specific contextual infos
+// ParameterizerReparamSucceededEvent represents a ReparamSucceededEvent event raised by the Parameterizer contract.
+type ParameterizerReparamSucceededEvent struct {
+	PropHash [32]byte
+	Name     common.Hash
+	Value    *big.Int
+	Raw      types.Log // Blockchain specific contextual infos
 }
 
-// FilterRewardsClaimedEvent is a free log retrieval operation binding the contract event 0x17ccb5aed827c5078139dc28b7fb924b006f56b3dcf163c4acf21fa3beb13144.
+// FilterReparamSucceededEvent is a free log retrieval operation binding the contract event 0x8a225cd09da1d9bccd14e377451a47138eb1314a007912b6d83d820f6d989fdf.
 //
-// Solidity: e RewardsClaimedEvent(id indexed uint256, reward uint256, voter indexed address)
-func (_Parameterizer *ParameterizerFilterer) FilterRewardsClaimedEvent(opts *bind.FilterOpts, id []*big.Int, voter []common.Address) (*ParameterizerRewardsClaimedEventIterator, error) {
+// Solidity: e ReparamSucceededEvent(propHash indexed bytes32, name indexed string, value uint256)
+func (_Parameterizer *ParameterizerFilterer) FilterReparamSucceededEvent(opts *bind.FilterOpts, propHash [][32]byte, name []string) (*ParameterizerReparamSucceededEventIterator, error) {
 
-	var idRule []interface{}
-	for _, idItem := range id {
-		idRule = append(idRule, idItem)
+	var propHashRule []interface{}
+	for _, propHashItem := range propHash {
+		propHashRule = append(propHashRule, propHashItem)
+	}
+	var nameRule []interface{}
+	for _, nameItem := range name {
+		nameRule = append(nameRule, nameItem)
 	}
 
-	var voterRule []interface{}
-	for _, voterItem := range voter {
-		voterRule = append(voterRule, voterItem)
-	}
-
-	logs, sub, err := _Parameterizer.contract.FilterLogs(opts, "RewardsClaimedEvent", idRule, voterRule)
+	logs, sub, err := _Parameterizer.contract.FilterLogs(opts, "ReparamSucceededEvent", propHashRule, nameRule)
 	if err != nil {
 		return nil, err
 	}
-	return &ParameterizerRewardsClaimedEventIterator{contract: _Parameterizer.contract, event: "RewardsClaimedEvent", logs: logs, sub: sub}, nil
+	return &ParameterizerReparamSucceededEventIterator{contract: _Parameterizer.contract, event: "ReparamSucceededEvent", logs: logs, sub: sub}, nil
 }
 
-// WatchRewardsClaimedEvent is a free log subscription operation binding the contract event 0x17ccb5aed827c5078139dc28b7fb924b006f56b3dcf163c4acf21fa3beb13144.
+// WatchReparamSucceededEvent is a free log subscription operation binding the contract event 0x8a225cd09da1d9bccd14e377451a47138eb1314a007912b6d83d820f6d989fdf.
 //
-// Solidity: e RewardsClaimedEvent(id indexed uint256, reward uint256, voter indexed address)
-func (_Parameterizer *ParameterizerFilterer) WatchRewardsClaimedEvent(opts *bind.WatchOpts, sink chan<- *ParameterizerRewardsClaimedEvent, id []*big.Int, voter []common.Address) (event.Subscription, error) {
+// Solidity: e ReparamSucceededEvent(propHash indexed bytes32, name indexed string, value uint256)
+func (_Parameterizer *ParameterizerFilterer) WatchReparamSucceededEvent(opts *bind.WatchOpts, sink chan<- *ParameterizerReparamSucceededEvent, propHash [][32]byte, name []string) (event.Subscription, error) {
 
-	var idRule []interface{}
-	for _, idItem := range id {
-		idRule = append(idRule, idItem)
+	var propHashRule []interface{}
+	for _, propHashItem := range propHash {
+		propHashRule = append(propHashRule, propHashItem)
+	}
+	var nameRule []interface{}
+	for _, nameItem := range name {
+		nameRule = append(nameRule, nameItem)
 	}
 
-	var voterRule []interface{}
-	for _, voterItem := range voter {
-		voterRule = append(voterRule, voterItem)
-	}
-
-	logs, sub, err := _Parameterizer.contract.WatchLogs(opts, "RewardsClaimedEvent", idRule, voterRule)
+	logs, sub, err := _Parameterizer.contract.WatchLogs(opts, "ReparamSucceededEvent", propHashRule, nameRule)
 	if err != nil {
 		return nil, err
 	}
@@ -3564,8 +787,8 @@ func (_Parameterizer *ParameterizerFilterer) WatchRewardsClaimedEvent(opts *bind
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(ParameterizerRewardsClaimedEvent)
-				if err := _Parameterizer.contract.UnpackLog(event, "RewardsClaimedEvent", log); err != nil {
+				event := new(ParameterizerReparamSucceededEvent)
+				if err := _Parameterizer.contract.UnpackLog(event, "ReparamSucceededEvent", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -3745,4 +968,1192 @@ func (_SafeMath *SafeMathTransactorRaw) Transfer(opts *bind.TransactOpts) (*type
 // Transact invokes the (paid) contract method with params as input values.
 func (_SafeMath *SafeMathTransactorRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*types.Transaction, error) {
 	return _SafeMath.Contract.contract.Transact(opts, method, params...)
+}
+
+// VotingABI is the input ABI used to generate the binding from.
+const VotingABI = "[{\"constant\":true,\"inputs\":[],\"name\":\"getCandidates\",\"outputs\":[{\"name\":\"\",\"type\":\"bytes32[]\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"hash\",\"type\":\"bytes32\"},{\"name\":\"kind\",\"type\":\"string\"}],\"name\":\"candidateIs\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"hash\",\"type\":\"bytes32\"}],\"name\":\"pollClosed\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"member\",\"type\":\"address\"}],\"name\":\"removeFromCouncil\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"kind\",\"type\":\"string\"},{\"name\":\"hash\",\"type\":\"bytes32\"},{\"name\":\"voteBy\",\"type\":\"uint256\"}],\"name\":\"addCandidate\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"member\",\"type\":\"address\"}],\"name\":\"addToCouncil\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"member\",\"type\":\"address\"}],\"name\":\"inCouncil\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"hash\",\"type\":\"bytes32\"}],\"name\":\"removeCandidate\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"hash\",\"type\":\"bytes32\"},{\"name\":\"quorum\",\"type\":\"uint256\"}],\"name\":\"didPass\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"hash\",\"type\":\"bytes32\"}],\"name\":\"vote\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"market\",\"type\":\"address\"},{\"name\":\"parameterizer\",\"type\":\"address\"}],\"name\":\"setPrivilegedContracts\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"getCouncil\",\"outputs\":[{\"name\":\"\",\"type\":\"address[]\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"hash\",\"type\":\"bytes32\"}],\"name\":\"isCandidate\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"hash\",\"type\":\"bytes32\"}],\"name\":\"getCandidate\",\"outputs\":[{\"name\":\"\",\"type\":\"string\"},{\"name\":\"\",\"type\":\"uint256\"},{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"voter\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"hash\",\"type\":\"bytes32\"}],\"name\":\"VotedEvent\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"kind\",\"type\":\"string\"},{\"indexed\":true,\"name\":\"hash\",\"type\":\"bytes32\"},{\"indexed\":true,\"name\":\"voteBy\",\"type\":\"uint256\"}],\"name\":\"CandidateAddedEvent\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"hash\",\"type\":\"bytes32\"}],\"name\":\"CandidateRemovedEvent\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"member\",\"type\":\"address\"}],\"name\":\"CouncilMemberAddedEvent\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"member\",\"type\":\"address\"}],\"name\":\"CouncilMemberRemovedEvent\",\"type\":\"event\"}]"
+
+// VotingBin is the compiled bytecode used for deploying new contracts.
+const VotingBin = `0x608060405234801561001057600080fd5b5060068054600160a060020a031916331790556116b1806100326000396000f3006080604052600436106100cf5763ffffffff7c010000000000000000000000000000000000000000000000000000000060003504166306a49fce81146100d457806311b8838214610139578063327322c814610171578063335d808014610189578063364f46a4146101aa578063471bb309146101d157806362f9a55d146101f257806389bb617c146102135780638f354b791461022b578063a69beaba14610246578063a7e4479014610260578063b181369514610287578063b89694c61461029c578063dfb6419f146102b4575b600080fd5b3480156100e057600080fd5b506100e9610352565b60408051602080825283518183015283519192839290830191858101910280838360005b8381101561012557818101518382015260200161010d565b505050509050019250505060405180910390f35b34801561014557600080fd5b5061015d6004803590602480359081019101356103ac565b604080519115158252519081900360200190f35b34801561017d57600080fd5b5061015d600435610464565b34801561019557600080fd5b5061015d600160a060020a0360043516610506565b3480156101b657600080fd5b5061015d602460048035828101929101359035604435610708565b3480156101dd57600080fd5b5061015d600160a060020a03600435166108d8565b3480156101fe57600080fd5b5061015d600160a060020a0360043516610a48565b34801561021f57600080fd5b5061015d600435610aa0565b34801561023757600080fd5b5061015d600435602435610c75565b34801561025257600080fd5b5061025e600435610e4f565b005b34801561026c57600080fd5b5061015d600160a060020a036004358116906024351661110b565b34801561029357600080fd5b506100e9611309565b3480156102a857600080fd5b5061015d60043561136a565b3480156102c057600080fd5b506102cc6004356113af565b6040518080602001848152602001838152602001828103825285818151815260200191508051906020019080838360005b838110156103155781810151838201526020016102fd565b50505050905090810190601f1680156103425780820380516001836020036101000a031916815260200191505b5094505050505060405180910390f35b606060018054806020026020016040519081016040528092919081815260200182805480156103a157602002820191906000526020600020905b8154815260019091019060200180831161038c575b505050505090505b90565b60006103b78461136a565b1515610433576040805160e560020a62461bcd02815260206004820152603260248201527f4572726f723a566f74696e672e706f6c6c436c6f736564202d2043616e64696460448201527f61746520646f6573206e6f742065786973740000000000000000000000000000606482015290519081900360840190fd5b5060008381526020819052604090206001908101546002610100928216159290920260001901160481149392505050565b600061046f8261136a565b15156104eb576040805160e560020a62461bcd02815260206004820152603260248201527f4572726f723a566f74696e672e706f6c6c436c6f736564202d2043616e64696460448201527f61746520646f6573206e6f742065786973740000000000000000000000000000606482015290519081900360840190fd5b5060008181526020819052604090206002015442115b919050565b60045460009081908190600160a060020a03163314806105305750600554600160a060020a031633145b1515610588576040805160e560020a62461bcd02815260206004820152602481018290526000805160206116468339815191526044820152600080516020611666833981519152606482015290519081900360840190fd5b61059184610a48565b151561060d576040805160e560020a62461bcd02815260206004820152602d60248201527f4572726f723a566f74696e672e72656d6f766546726f6d436f756e63696c202d60448201527f204e6f742061206d656d62657200000000000000000000000000000000000000606482015290519081900360840190fd5b600160a060020a0384166000908152600260205260409020546003805491935090600019810190811061063c57fe5b60009182526020909120015460038054600160a060020a03909216925082918490811061066557fe5b6000918252602090912001805473ffffffffffffffffffffffffffffffffffffffff1916600160a060020a039290921691909117905560038054906106ae90600019830161153d565b50600160a060020a0380821660009081526002602052604080822085905591861680825282822082905591517f564e70d59b50a6b32776c3d4a1e4e378a77dc9e24c3e2fbfa04a79166a67489b9190a25060019392505050565b60045460009081908190600160a060020a03163314806107325750600554600160a060020a031633145b151561078a576040805160e560020a62461bcd02815260206004820152602481018290526000805160206116468339815191526044820152600080516020611666833981519152606482015290519081900360840190fd5b6107938561136a565b1561080e576040805160e560020a62461bcd02815260206004820152603460248201527f4572726f723a566f74696e672e61646443616e646964617465202d2043616e6460448201527f696461746520616c726561647920657869737473000000000000000000000000606482015290519081900360840190fd5b61081e428563ffffffff6114f216565b6000868152602081905260408120600180548082018255928190527fb10e2d527612073b26eecdfd717e6a320cf44b4afac2b0732d9fcbe2b7fa0cf683018990559181559193509091506108759082018888611566565b5060028101829055600060038201556040518490869089908990808383808284376040519201829003822094507fb8c6b8ac5e262d053e2f12f7a1fb6c2a024843810aaa1e8ef854ff04fb27dd9393506000925050a45060019695505050505050565b600454600090600160a060020a03163314806108fe5750600554600160a060020a031633145b1515610956576040805160e560020a62461bcd02815260206004820152602481018290526000805160206116468339815191526044820152600080516020611666833981519152606482015290519081900360840190fd5b61095f82610a48565b156109da576040805160e560020a62461bcd02815260206004820152603460248201527f4572726f723a566f74696e672e616464546f436f756e63696c202d20416c726560448201527f616479206120636f756e63696c206d656d626572000000000000000000000000606482015290519081900360840190fd5b60038054600181019091557fc2575a0e9e593c00f959f8c92f12db2869c3395a3b0502d05e2516446f71f85b81018054600160a060020a0390941673ffffffffffffffffffffffffffffffffffffffff19909416841790556000928352600260205260409092209190915590565b6003546000901515610a5c57506000610501565b600160a060020a038216600081815260026020526040902054600380549091908110610a8457fe5b600091825260209091200154600160a060020a03161492915050565b60045460009081908190600160a060020a0316331480610aca5750600554600160a060020a031633145b1515610b22576040805160e560020a62461bcd02815260206004820152602481018290526000805160206116468339815191526044820152600080516020611666833981519152606482015290519081900360840190fd5b610b2b8461136a565b1515610ba7576040805160e560020a62461bcd02815260206004820152603760248201527f4572726f723a566f74696e672e72656d6f766543616e646964617465202d204360448201527f616e64696461746520646f6573206e6f74206578697374000000000000000000606482015290519081900360840190fd5b60008481526020819052604090205460018054919350906000198101908110610bcc57fe5b9060005260206000200154905080600183815481101515610be957fe5b6000918252602090912001556001805490610c0890600019830161153d565b50600081815260208190526040808220849055858252812081815590610c3160018301826115e4565b50600060028201819055600390910181905560405185917f53ce6706735b5cd3034bf68c2a532801c1efb4ba72410b5af2167a8462f15b7d91a25060019392505050565b6000610c808361136a565b1515610cfc576040805160e560020a62461bcd02815260206004820152602c60248201527f4572726f723a566f74696e672e70617373202d2043616e64696461746520646f60448201527f6573206e6f742065786973740000000000000000000000000000000000000000606482015290519081900360840190fd5b6000838152602081905260409020600201544211610d8a576040805160e560020a62461bcd02815260206004820152603d60248201527f4572726f723a566f74696e672e70617373202d20506f6c6c696e67206d75737460448201527f20626520636c6f73656420666f7220746869732063616e646964617465000000606482015290519081900360840190fd5b600354600010610e0a576040805160e560020a62461bcd02815260206004820152602960248201527f4572726f723a566f74696e672e64696450617373202d204e6f20636f756e636960448201527f6c206d656d626572730000000000000000000000000000000000000000000000606482015290519081900360840190fd5b600380546000858152602081905260409020909101548391610e4591606491610e39919063ffffffff6114ff16565b9063ffffffff61151416565b1190505b92915050565b610e5833610a48565b1515610ed4576040805160e560020a62461bcd02815260206004820152603160248201527f4572726f723a566f74696e672e766f7465202d2053656e646572206d7573742060448201527f626520636f756e63696c206d656d626572000000000000000000000000000000606482015290519081900360840190fd5b610edd8161136a565b1515610f59576040805160e560020a62461bcd02815260206004820152602c60248201527f4572726f723a566f74696e672e766f7465202d2043616e64696461746520646f60448201527f6573206e6f742065786973740000000000000000000000000000000000000000606482015290519081900360840190fd5b6000818152602081905260409020600201544210610fe7576040805160e560020a62461bcd02815260206004820152603860248201527f4572726f723a566f74696e672e766f7465202d20506f6c6c696e67206973206360448201527f6c6f73656420666f7220746869732063616e6469646174650000000000000000606482015290519081900360840190fd5b60008181526020818152604080832033845260040190915290205460ff16151560011415611085576040805160e560020a62461bcd02815260206004820152602c60248201527f4572726f723a566f74696e672e766f7465202d2053656e64657220686173206160448201527f6c726561647920766f7465640000000000000000000000000000000000000000606482015290519081900360840190fd5b600081815260208181526040808320338452600481018352908320805460ff1916600190811790915584845292909152600301546110c89163ffffffff6114f216565b600082815260208190526040808220600301929092559051829133917f81681507a95428bb04c5f5ac127e404caf6422d0dcf2ff77612b9201c3aa33bf9190a350565b600654600090600160a060020a03163314611196576040805160e560020a62461bcd02815260206004820152602b60248201527f4572726f723a566f74696e672e69734f776e6572202d2053656e646572206d7560448201527f7374206265206f776e6572000000000000000000000000000000000000000000606482015290519081900360840190fd5b600454600160a060020a03161561121d576040805160e560020a62461bcd02815260206004820152602481018290527f4572726f723a566f74696e672e73657450726976696c65676564436f6e74726160448201527f637473202d204d61726b6574206164647265737320616c726561647920736574606482015290519081900360840190fd5b600554600160a060020a0316156112ca576040805160e560020a62461bcd02815260206004820152604760248201527f4572726f723a566f74696e672e73657450726976696c65676564436f6e74726160448201527f637473202d20506172616d65746572697a6572206164647265737320616c726560648201527f6164792073657400000000000000000000000000000000000000000000000000608482015290519081900360a40190fd5b5060048054600160a060020a0393841673ffffffffffffffffffffffffffffffffffffffff199182161790915560058054929093169116179055600190565b606060038054806020026020016040519081016040528092919081815260200182805480156103a157602002820191906000526020600020905b8154600160a060020a03168152600190910190602001808311611343575050505050905090565b600154600090151561137e57506000610501565b60008281526020819052604090205460018054849290811061139c57fe5b6000918252602090912001541492915050565b60606000806113bd8461136a565b1515611439576040805160e560020a62461bcd02815260206004820152603460248201527f4572726f723a566f74696e672e67657443616e646964617465202d2043616e6460448201527f696461746520646f6573206e6f74206578697374000000000000000000000000606482015290519081900360840190fd5b600084815260208181526040918290206002808201546003830154600193840180548751601f610100978316159790970260001901909116949094049485018690048602840186019096528383529093909285918301828280156114de5780601f106114b3576101008083540402835291602001916114de565b820191906000526020600020905b8154815290600101906020018083116114c157829003601f168201915b505050505092509250925092509193909250565b81810182811015610e4957fe5b6000818381151561150c57fe5b049392505050565b600082151561152557506000610e49565b5081810281838281151561153557fe5b0414610e4957fe5b8154818355818111156115615760008381526020902061156191810190830161162b565b505050565b828054600181600116156101000203166002900490600052602060002090601f016020900481019282601f106115a75782800160ff198235161785556115d4565b828001600101855582156115d4579182015b828111156115d45782358255916020019190600101906115b9565b506115e092915061162b565b5090565b50805460018160011615610100020316600290046000825580601f1061160a5750611628565b601f016020900490600052602060002090810190611628919061162b565b50565b6103a991905b808211156115e0576000815560010161163156004572726f723a566f74696e672e68617350726976696c656765202d2053656e646572206d75737420626520612070726976696c6567656420636f6e7472616374a165627a7a723058201d48c8471d621c712f68aa15142e9aac2945a03d1600cb6a662f3bf7dc2d54310029`
+
+// DeployVoting deploys a new Ethereum contract, binding an instance of Voting to it.
+func DeployVoting(auth *bind.TransactOpts, backend bind.ContractBackend) (common.Address, *types.Transaction, *Voting, error) {
+	parsed, err := abi.JSON(strings.NewReader(VotingABI))
+	if err != nil {
+		return common.Address{}, nil, nil, err
+	}
+	address, tx, contract, err := bind.DeployContract(auth, parsed, common.FromHex(VotingBin), backend)
+	if err != nil {
+		return common.Address{}, nil, nil, err
+	}
+	return address, tx, &Voting{VotingCaller: VotingCaller{contract: contract}, VotingTransactor: VotingTransactor{contract: contract}, VotingFilterer: VotingFilterer{contract: contract}}, nil
+}
+
+// Voting is an auto generated Go binding around an Ethereum contract.
+type Voting struct {
+	VotingCaller     // Read-only binding to the contract
+	VotingTransactor // Write-only binding to the contract
+	VotingFilterer   // Log filterer for contract events
+}
+
+// VotingCaller is an auto generated read-only Go binding around an Ethereum contract.
+type VotingCaller struct {
+	contract *bind.BoundContract // Generic contract wrapper for the low level calls
+}
+
+// VotingTransactor is an auto generated write-only Go binding around an Ethereum contract.
+type VotingTransactor struct {
+	contract *bind.BoundContract // Generic contract wrapper for the low level calls
+}
+
+// VotingFilterer is an auto generated log filtering Go binding around an Ethereum contract events.
+type VotingFilterer struct {
+	contract *bind.BoundContract // Generic contract wrapper for the low level calls
+}
+
+// VotingSession is an auto generated Go binding around an Ethereum contract,
+// with pre-set call and transact options.
+type VotingSession struct {
+	Contract     *Voting           // Generic contract binding to set the session for
+	CallOpts     bind.CallOpts     // Call options to use throughout this session
+	TransactOpts bind.TransactOpts // Transaction auth options to use throughout this session
+}
+
+// VotingCallerSession is an auto generated read-only Go binding around an Ethereum contract,
+// with pre-set call options.
+type VotingCallerSession struct {
+	Contract *VotingCaller // Generic contract caller binding to set the session for
+	CallOpts bind.CallOpts // Call options to use throughout this session
+}
+
+// VotingTransactorSession is an auto generated write-only Go binding around an Ethereum contract,
+// with pre-set transact options.
+type VotingTransactorSession struct {
+	Contract     *VotingTransactor // Generic contract transactor binding to set the session for
+	TransactOpts bind.TransactOpts // Transaction auth options to use throughout this session
+}
+
+// VotingRaw is an auto generated low-level Go binding around an Ethereum contract.
+type VotingRaw struct {
+	Contract *Voting // Generic contract binding to access the raw methods on
+}
+
+// VotingCallerRaw is an auto generated low-level read-only Go binding around an Ethereum contract.
+type VotingCallerRaw struct {
+	Contract *VotingCaller // Generic read-only contract binding to access the raw methods on
+}
+
+// VotingTransactorRaw is an auto generated low-level write-only Go binding around an Ethereum contract.
+type VotingTransactorRaw struct {
+	Contract *VotingTransactor // Generic write-only contract binding to access the raw methods on
+}
+
+// NewVoting creates a new instance of Voting, bound to a specific deployed contract.
+func NewVoting(address common.Address, backend bind.ContractBackend) (*Voting, error) {
+	contract, err := bindVoting(address, backend, backend, backend)
+	if err != nil {
+		return nil, err
+	}
+	return &Voting{VotingCaller: VotingCaller{contract: contract}, VotingTransactor: VotingTransactor{contract: contract}, VotingFilterer: VotingFilterer{contract: contract}}, nil
+}
+
+// NewVotingCaller creates a new read-only instance of Voting, bound to a specific deployed contract.
+func NewVotingCaller(address common.Address, caller bind.ContractCaller) (*VotingCaller, error) {
+	contract, err := bindVoting(address, caller, nil, nil)
+	if err != nil {
+		return nil, err
+	}
+	return &VotingCaller{contract: contract}, nil
+}
+
+// NewVotingTransactor creates a new write-only instance of Voting, bound to a specific deployed contract.
+func NewVotingTransactor(address common.Address, transactor bind.ContractTransactor) (*VotingTransactor, error) {
+	contract, err := bindVoting(address, nil, transactor, nil)
+	if err != nil {
+		return nil, err
+	}
+	return &VotingTransactor{contract: contract}, nil
+}
+
+// NewVotingFilterer creates a new log filterer instance of Voting, bound to a specific deployed contract.
+func NewVotingFilterer(address common.Address, filterer bind.ContractFilterer) (*VotingFilterer, error) {
+	contract, err := bindVoting(address, nil, nil, filterer)
+	if err != nil {
+		return nil, err
+	}
+	return &VotingFilterer{contract: contract}, nil
+}
+
+// bindVoting binds a generic wrapper to an already deployed contract.
+func bindVoting(address common.Address, caller bind.ContractCaller, transactor bind.ContractTransactor, filterer bind.ContractFilterer) (*bind.BoundContract, error) {
+	parsed, err := abi.JSON(strings.NewReader(VotingABI))
+	if err != nil {
+		return nil, err
+	}
+	return bind.NewBoundContract(address, parsed, caller, transactor, filterer), nil
+}
+
+// Call invokes the (constant) contract method with params as input values and
+// sets the output to result. The result type might be a single field for simple
+// returns, a slice of interfaces for anonymous returns and a struct for named
+// returns.
+func (_Voting *VotingRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
+	return _Voting.Contract.VotingCaller.contract.Call(opts, result, method, params...)
+}
+
+// Transfer initiates a plain transaction to move funds to the contract, calling
+// its default method if one is available.
+func (_Voting *VotingRaw) Transfer(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _Voting.Contract.VotingTransactor.contract.Transfer(opts)
+}
+
+// Transact invokes the (paid) contract method with params as input values.
+func (_Voting *VotingRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*types.Transaction, error) {
+	return _Voting.Contract.VotingTransactor.contract.Transact(opts, method, params...)
+}
+
+// Call invokes the (constant) contract method with params as input values and
+// sets the output to result. The result type might be a single field for simple
+// returns, a slice of interfaces for anonymous returns and a struct for named
+// returns.
+func (_Voting *VotingCallerRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
+	return _Voting.Contract.contract.Call(opts, result, method, params...)
+}
+
+// Transfer initiates a plain transaction to move funds to the contract, calling
+// its default method if one is available.
+func (_Voting *VotingTransactorRaw) Transfer(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _Voting.Contract.contract.Transfer(opts)
+}
+
+// Transact invokes the (paid) contract method with params as input values.
+func (_Voting *VotingTransactorRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*types.Transaction, error) {
+	return _Voting.Contract.contract.Transact(opts, method, params...)
+}
+
+// CandidateIs is a free data retrieval call binding the contract method 0x11b88382.
+//
+// Solidity: function candidateIs(hash bytes32, kind string) constant returns(bool)
+func (_Voting *VotingCaller) CandidateIs(opts *bind.CallOpts, hash [32]byte, kind string) (bool, error) {
+	var (
+		ret0 = new(bool)
+	)
+	out := ret0
+	err := _Voting.contract.Call(opts, out, "candidateIs", hash, kind)
+	return *ret0, err
+}
+
+// CandidateIs is a free data retrieval call binding the contract method 0x11b88382.
+//
+// Solidity: function candidateIs(hash bytes32, kind string) constant returns(bool)
+func (_Voting *VotingSession) CandidateIs(hash [32]byte, kind string) (bool, error) {
+	return _Voting.Contract.CandidateIs(&_Voting.CallOpts, hash, kind)
+}
+
+// CandidateIs is a free data retrieval call binding the contract method 0x11b88382.
+//
+// Solidity: function candidateIs(hash bytes32, kind string) constant returns(bool)
+func (_Voting *VotingCallerSession) CandidateIs(hash [32]byte, kind string) (bool, error) {
+	return _Voting.Contract.CandidateIs(&_Voting.CallOpts, hash, kind)
+}
+
+// DidPass is a free data retrieval call binding the contract method 0x8f354b79.
+//
+// Solidity: function didPass(hash bytes32, quorum uint256) constant returns(bool)
+func (_Voting *VotingCaller) DidPass(opts *bind.CallOpts, hash [32]byte, quorum *big.Int) (bool, error) {
+	var (
+		ret0 = new(bool)
+	)
+	out := ret0
+	err := _Voting.contract.Call(opts, out, "didPass", hash, quorum)
+	return *ret0, err
+}
+
+// DidPass is a free data retrieval call binding the contract method 0x8f354b79.
+//
+// Solidity: function didPass(hash bytes32, quorum uint256) constant returns(bool)
+func (_Voting *VotingSession) DidPass(hash [32]byte, quorum *big.Int) (bool, error) {
+	return _Voting.Contract.DidPass(&_Voting.CallOpts, hash, quorum)
+}
+
+// DidPass is a free data retrieval call binding the contract method 0x8f354b79.
+//
+// Solidity: function didPass(hash bytes32, quorum uint256) constant returns(bool)
+func (_Voting *VotingCallerSession) DidPass(hash [32]byte, quorum *big.Int) (bool, error) {
+	return _Voting.Contract.DidPass(&_Voting.CallOpts, hash, quorum)
+}
+
+// GetCandidate is a free data retrieval call binding the contract method 0xdfb6419f.
+//
+// Solidity: function getCandidate(hash bytes32) constant returns(string, uint256, uint256)
+func (_Voting *VotingCaller) GetCandidate(opts *bind.CallOpts, hash [32]byte) (string, *big.Int, *big.Int, error) {
+	var (
+		ret0 = new(string)
+		ret1 = new(*big.Int)
+		ret2 = new(*big.Int)
+	)
+	out := &[]interface{}{
+		ret0,
+		ret1,
+		ret2,
+	}
+	err := _Voting.contract.Call(opts, out, "getCandidate", hash)
+	return *ret0, *ret1, *ret2, err
+}
+
+// GetCandidate is a free data retrieval call binding the contract method 0xdfb6419f.
+//
+// Solidity: function getCandidate(hash bytes32) constant returns(string, uint256, uint256)
+func (_Voting *VotingSession) GetCandidate(hash [32]byte) (string, *big.Int, *big.Int, error) {
+	return _Voting.Contract.GetCandidate(&_Voting.CallOpts, hash)
+}
+
+// GetCandidate is a free data retrieval call binding the contract method 0xdfb6419f.
+//
+// Solidity: function getCandidate(hash bytes32) constant returns(string, uint256, uint256)
+func (_Voting *VotingCallerSession) GetCandidate(hash [32]byte) (string, *big.Int, *big.Int, error) {
+	return _Voting.Contract.GetCandidate(&_Voting.CallOpts, hash)
+}
+
+// GetCandidates is a free data retrieval call binding the contract method 0x06a49fce.
+//
+// Solidity: function getCandidates() constant returns(bytes32[])
+func (_Voting *VotingCaller) GetCandidates(opts *bind.CallOpts) ([][32]byte, error) {
+	var (
+		ret0 = new([][32]byte)
+	)
+	out := ret0
+	err := _Voting.contract.Call(opts, out, "getCandidates")
+	return *ret0, err
+}
+
+// GetCandidates is a free data retrieval call binding the contract method 0x06a49fce.
+//
+// Solidity: function getCandidates() constant returns(bytes32[])
+func (_Voting *VotingSession) GetCandidates() ([][32]byte, error) {
+	return _Voting.Contract.GetCandidates(&_Voting.CallOpts)
+}
+
+// GetCandidates is a free data retrieval call binding the contract method 0x06a49fce.
+//
+// Solidity: function getCandidates() constant returns(bytes32[])
+func (_Voting *VotingCallerSession) GetCandidates() ([][32]byte, error) {
+	return _Voting.Contract.GetCandidates(&_Voting.CallOpts)
+}
+
+// GetCouncil is a free data retrieval call binding the contract method 0xb1813695.
+//
+// Solidity: function getCouncil() constant returns(address[])
+func (_Voting *VotingCaller) GetCouncil(opts *bind.CallOpts) ([]common.Address, error) {
+	var (
+		ret0 = new([]common.Address)
+	)
+	out := ret0
+	err := _Voting.contract.Call(opts, out, "getCouncil")
+	return *ret0, err
+}
+
+// GetCouncil is a free data retrieval call binding the contract method 0xb1813695.
+//
+// Solidity: function getCouncil() constant returns(address[])
+func (_Voting *VotingSession) GetCouncil() ([]common.Address, error) {
+	return _Voting.Contract.GetCouncil(&_Voting.CallOpts)
+}
+
+// GetCouncil is a free data retrieval call binding the contract method 0xb1813695.
+//
+// Solidity: function getCouncil() constant returns(address[])
+func (_Voting *VotingCallerSession) GetCouncil() ([]common.Address, error) {
+	return _Voting.Contract.GetCouncil(&_Voting.CallOpts)
+}
+
+// InCouncil is a free data retrieval call binding the contract method 0x62f9a55d.
+//
+// Solidity: function inCouncil(member address) constant returns(bool)
+func (_Voting *VotingCaller) InCouncil(opts *bind.CallOpts, member common.Address) (bool, error) {
+	var (
+		ret0 = new(bool)
+	)
+	out := ret0
+	err := _Voting.contract.Call(opts, out, "inCouncil", member)
+	return *ret0, err
+}
+
+// InCouncil is a free data retrieval call binding the contract method 0x62f9a55d.
+//
+// Solidity: function inCouncil(member address) constant returns(bool)
+func (_Voting *VotingSession) InCouncil(member common.Address) (bool, error) {
+	return _Voting.Contract.InCouncil(&_Voting.CallOpts, member)
+}
+
+// InCouncil is a free data retrieval call binding the contract method 0x62f9a55d.
+//
+// Solidity: function inCouncil(member address) constant returns(bool)
+func (_Voting *VotingCallerSession) InCouncil(member common.Address) (bool, error) {
+	return _Voting.Contract.InCouncil(&_Voting.CallOpts, member)
+}
+
+// IsCandidate is a free data retrieval call binding the contract method 0xb89694c6.
+//
+// Solidity: function isCandidate(hash bytes32) constant returns(bool)
+func (_Voting *VotingCaller) IsCandidate(opts *bind.CallOpts, hash [32]byte) (bool, error) {
+	var (
+		ret0 = new(bool)
+	)
+	out := ret0
+	err := _Voting.contract.Call(opts, out, "isCandidate", hash)
+	return *ret0, err
+}
+
+// IsCandidate is a free data retrieval call binding the contract method 0xb89694c6.
+//
+// Solidity: function isCandidate(hash bytes32) constant returns(bool)
+func (_Voting *VotingSession) IsCandidate(hash [32]byte) (bool, error) {
+	return _Voting.Contract.IsCandidate(&_Voting.CallOpts, hash)
+}
+
+// IsCandidate is a free data retrieval call binding the contract method 0xb89694c6.
+//
+// Solidity: function isCandidate(hash bytes32) constant returns(bool)
+func (_Voting *VotingCallerSession) IsCandidate(hash [32]byte) (bool, error) {
+	return _Voting.Contract.IsCandidate(&_Voting.CallOpts, hash)
+}
+
+// PollClosed is a free data retrieval call binding the contract method 0x327322c8.
+//
+// Solidity: function pollClosed(hash bytes32) constant returns(bool)
+func (_Voting *VotingCaller) PollClosed(opts *bind.CallOpts, hash [32]byte) (bool, error) {
+	var (
+		ret0 = new(bool)
+	)
+	out := ret0
+	err := _Voting.contract.Call(opts, out, "pollClosed", hash)
+	return *ret0, err
+}
+
+// PollClosed is a free data retrieval call binding the contract method 0x327322c8.
+//
+// Solidity: function pollClosed(hash bytes32) constant returns(bool)
+func (_Voting *VotingSession) PollClosed(hash [32]byte) (bool, error) {
+	return _Voting.Contract.PollClosed(&_Voting.CallOpts, hash)
+}
+
+// PollClosed is a free data retrieval call binding the contract method 0x327322c8.
+//
+// Solidity: function pollClosed(hash bytes32) constant returns(bool)
+func (_Voting *VotingCallerSession) PollClosed(hash [32]byte) (bool, error) {
+	return _Voting.Contract.PollClosed(&_Voting.CallOpts, hash)
+}
+
+// AddCandidate is a paid mutator transaction binding the contract method 0x364f46a4.
+//
+// Solidity: function addCandidate(kind string, hash bytes32, voteBy uint256) returns(bool)
+func (_Voting *VotingTransactor) AddCandidate(opts *bind.TransactOpts, kind string, hash [32]byte, voteBy *big.Int) (*types.Transaction, error) {
+	return _Voting.contract.Transact(opts, "addCandidate", kind, hash, voteBy)
+}
+
+// AddCandidate is a paid mutator transaction binding the contract method 0x364f46a4.
+//
+// Solidity: function addCandidate(kind string, hash bytes32, voteBy uint256) returns(bool)
+func (_Voting *VotingSession) AddCandidate(kind string, hash [32]byte, voteBy *big.Int) (*types.Transaction, error) {
+	return _Voting.Contract.AddCandidate(&_Voting.TransactOpts, kind, hash, voteBy)
+}
+
+// AddCandidate is a paid mutator transaction binding the contract method 0x364f46a4.
+//
+// Solidity: function addCandidate(kind string, hash bytes32, voteBy uint256) returns(bool)
+func (_Voting *VotingTransactorSession) AddCandidate(kind string, hash [32]byte, voteBy *big.Int) (*types.Transaction, error) {
+	return _Voting.Contract.AddCandidate(&_Voting.TransactOpts, kind, hash, voteBy)
+}
+
+// AddToCouncil is a paid mutator transaction binding the contract method 0x471bb309.
+//
+// Solidity: function addToCouncil(member address) returns(bool)
+func (_Voting *VotingTransactor) AddToCouncil(opts *bind.TransactOpts, member common.Address) (*types.Transaction, error) {
+	return _Voting.contract.Transact(opts, "addToCouncil", member)
+}
+
+// AddToCouncil is a paid mutator transaction binding the contract method 0x471bb309.
+//
+// Solidity: function addToCouncil(member address) returns(bool)
+func (_Voting *VotingSession) AddToCouncil(member common.Address) (*types.Transaction, error) {
+	return _Voting.Contract.AddToCouncil(&_Voting.TransactOpts, member)
+}
+
+// AddToCouncil is a paid mutator transaction binding the contract method 0x471bb309.
+//
+// Solidity: function addToCouncil(member address) returns(bool)
+func (_Voting *VotingTransactorSession) AddToCouncil(member common.Address) (*types.Transaction, error) {
+	return _Voting.Contract.AddToCouncil(&_Voting.TransactOpts, member)
+}
+
+// RemoveCandidate is a paid mutator transaction binding the contract method 0x89bb617c.
+//
+// Solidity: function removeCandidate(hash bytes32) returns(bool)
+func (_Voting *VotingTransactor) RemoveCandidate(opts *bind.TransactOpts, hash [32]byte) (*types.Transaction, error) {
+	return _Voting.contract.Transact(opts, "removeCandidate", hash)
+}
+
+// RemoveCandidate is a paid mutator transaction binding the contract method 0x89bb617c.
+//
+// Solidity: function removeCandidate(hash bytes32) returns(bool)
+func (_Voting *VotingSession) RemoveCandidate(hash [32]byte) (*types.Transaction, error) {
+	return _Voting.Contract.RemoveCandidate(&_Voting.TransactOpts, hash)
+}
+
+// RemoveCandidate is a paid mutator transaction binding the contract method 0x89bb617c.
+//
+// Solidity: function removeCandidate(hash bytes32) returns(bool)
+func (_Voting *VotingTransactorSession) RemoveCandidate(hash [32]byte) (*types.Transaction, error) {
+	return _Voting.Contract.RemoveCandidate(&_Voting.TransactOpts, hash)
+}
+
+// RemoveFromCouncil is a paid mutator transaction binding the contract method 0x335d8080.
+//
+// Solidity: function removeFromCouncil(member address) returns(bool)
+func (_Voting *VotingTransactor) RemoveFromCouncil(opts *bind.TransactOpts, member common.Address) (*types.Transaction, error) {
+	return _Voting.contract.Transact(opts, "removeFromCouncil", member)
+}
+
+// RemoveFromCouncil is a paid mutator transaction binding the contract method 0x335d8080.
+//
+// Solidity: function removeFromCouncil(member address) returns(bool)
+func (_Voting *VotingSession) RemoveFromCouncil(member common.Address) (*types.Transaction, error) {
+	return _Voting.Contract.RemoveFromCouncil(&_Voting.TransactOpts, member)
+}
+
+// RemoveFromCouncil is a paid mutator transaction binding the contract method 0x335d8080.
+//
+// Solidity: function removeFromCouncil(member address) returns(bool)
+func (_Voting *VotingTransactorSession) RemoveFromCouncil(member common.Address) (*types.Transaction, error) {
+	return _Voting.Contract.RemoveFromCouncil(&_Voting.TransactOpts, member)
+}
+
+// SetPrivilegedContracts is a paid mutator transaction binding the contract method 0xa7e44790.
+//
+// Solidity: function setPrivilegedContracts(market address, parameterizer address) returns(bool)
+func (_Voting *VotingTransactor) SetPrivilegedContracts(opts *bind.TransactOpts, market common.Address, parameterizer common.Address) (*types.Transaction, error) {
+	return _Voting.contract.Transact(opts, "setPrivilegedContracts", market, parameterizer)
+}
+
+// SetPrivilegedContracts is a paid mutator transaction binding the contract method 0xa7e44790.
+//
+// Solidity: function setPrivilegedContracts(market address, parameterizer address) returns(bool)
+func (_Voting *VotingSession) SetPrivilegedContracts(market common.Address, parameterizer common.Address) (*types.Transaction, error) {
+	return _Voting.Contract.SetPrivilegedContracts(&_Voting.TransactOpts, market, parameterizer)
+}
+
+// SetPrivilegedContracts is a paid mutator transaction binding the contract method 0xa7e44790.
+//
+// Solidity: function setPrivilegedContracts(market address, parameterizer address) returns(bool)
+func (_Voting *VotingTransactorSession) SetPrivilegedContracts(market common.Address, parameterizer common.Address) (*types.Transaction, error) {
+	return _Voting.Contract.SetPrivilegedContracts(&_Voting.TransactOpts, market, parameterizer)
+}
+
+// Vote is a paid mutator transaction binding the contract method 0xa69beaba.
+//
+// Solidity: function vote(hash bytes32) returns()
+func (_Voting *VotingTransactor) Vote(opts *bind.TransactOpts, hash [32]byte) (*types.Transaction, error) {
+	return _Voting.contract.Transact(opts, "vote", hash)
+}
+
+// Vote is a paid mutator transaction binding the contract method 0xa69beaba.
+//
+// Solidity: function vote(hash bytes32) returns()
+func (_Voting *VotingSession) Vote(hash [32]byte) (*types.Transaction, error) {
+	return _Voting.Contract.Vote(&_Voting.TransactOpts, hash)
+}
+
+// Vote is a paid mutator transaction binding the contract method 0xa69beaba.
+//
+// Solidity: function vote(hash bytes32) returns()
+func (_Voting *VotingTransactorSession) Vote(hash [32]byte) (*types.Transaction, error) {
+	return _Voting.Contract.Vote(&_Voting.TransactOpts, hash)
+}
+
+// VotingCandidateAddedEventIterator is returned from FilterCandidateAddedEvent and is used to iterate over the raw logs and unpacked data for CandidateAddedEvent events raised by the Voting contract.
+type VotingCandidateAddedEventIterator struct {
+	Event *VotingCandidateAddedEvent // Event containing the contract specifics and raw log
+
+	contract *bind.BoundContract // Generic contract to use for unpacking event data
+	event    string              // Event name to use for unpacking event data
+
+	logs chan types.Log        // Log channel receiving the found contract events
+	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	done bool                  // Whether the subscription completed delivering logs
+	fail error                 // Occurred error to stop iteration
+}
+
+// Next advances the iterator to the subsequent event, returning whether there
+// are any more events found. In case of a retrieval or parsing error, false is
+// returned and Error() can be queried for the exact failure.
+func (it *VotingCandidateAddedEventIterator) Next() bool {
+	// If the iterator failed, stop iterating
+	if it.fail != nil {
+		return false
+	}
+	// If the iterator completed, deliver directly whatever's available
+	if it.done {
+		select {
+		case log := <-it.logs:
+			it.Event = new(VotingCandidateAddedEvent)
+			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+				it.fail = err
+				return false
+			}
+			it.Event.Raw = log
+			return true
+
+		default:
+			return false
+		}
+	}
+	// Iterator still in progress, wait for either a data or an error event
+	select {
+	case log := <-it.logs:
+		it.Event = new(VotingCandidateAddedEvent)
+		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+			it.fail = err
+			return false
+		}
+		it.Event.Raw = log
+		return true
+
+	case err := <-it.sub.Err():
+		it.done = true
+		it.fail = err
+		return it.Next()
+	}
+}
+
+// Error returns any retrieval or parsing error occurred during filtering.
+func (it *VotingCandidateAddedEventIterator) Error() error {
+	return it.fail
+}
+
+// Close terminates the iteration process, releasing any pending underlying
+// resources.
+func (it *VotingCandidateAddedEventIterator) Close() error {
+	it.sub.Unsubscribe()
+	return nil
+}
+
+// VotingCandidateAddedEvent represents a CandidateAddedEvent event raised by the Voting contract.
+type VotingCandidateAddedEvent struct {
+	Kind   common.Hash
+	Hash   [32]byte
+	VoteBy *big.Int
+	Raw    types.Log // Blockchain specific contextual infos
+}
+
+// FilterCandidateAddedEvent is a free log retrieval operation binding the contract event 0xb8c6b8ac5e262d053e2f12f7a1fb6c2a024843810aaa1e8ef854ff04fb27dd93.
+//
+// Solidity: e CandidateAddedEvent(kind indexed string, hash indexed bytes32, voteBy indexed uint256)
+func (_Voting *VotingFilterer) FilterCandidateAddedEvent(opts *bind.FilterOpts, kind []string, hash [][32]byte, voteBy []*big.Int) (*VotingCandidateAddedEventIterator, error) {
+
+	var kindRule []interface{}
+	for _, kindItem := range kind {
+		kindRule = append(kindRule, kindItem)
+	}
+	var hashRule []interface{}
+	for _, hashItem := range hash {
+		hashRule = append(hashRule, hashItem)
+	}
+	var voteByRule []interface{}
+	for _, voteByItem := range voteBy {
+		voteByRule = append(voteByRule, voteByItem)
+	}
+
+	logs, sub, err := _Voting.contract.FilterLogs(opts, "CandidateAddedEvent", kindRule, hashRule, voteByRule)
+	if err != nil {
+		return nil, err
+	}
+	return &VotingCandidateAddedEventIterator{contract: _Voting.contract, event: "CandidateAddedEvent", logs: logs, sub: sub}, nil
+}
+
+// WatchCandidateAddedEvent is a free log subscription operation binding the contract event 0xb8c6b8ac5e262d053e2f12f7a1fb6c2a024843810aaa1e8ef854ff04fb27dd93.
+//
+// Solidity: e CandidateAddedEvent(kind indexed string, hash indexed bytes32, voteBy indexed uint256)
+func (_Voting *VotingFilterer) WatchCandidateAddedEvent(opts *bind.WatchOpts, sink chan<- *VotingCandidateAddedEvent, kind []string, hash [][32]byte, voteBy []*big.Int) (event.Subscription, error) {
+
+	var kindRule []interface{}
+	for _, kindItem := range kind {
+		kindRule = append(kindRule, kindItem)
+	}
+	var hashRule []interface{}
+	for _, hashItem := range hash {
+		hashRule = append(hashRule, hashItem)
+	}
+	var voteByRule []interface{}
+	for _, voteByItem := range voteBy {
+		voteByRule = append(voteByRule, voteByItem)
+	}
+
+	logs, sub, err := _Voting.contract.WatchLogs(opts, "CandidateAddedEvent", kindRule, hashRule, voteByRule)
+	if err != nil {
+		return nil, err
+	}
+	return event.NewSubscription(func(quit <-chan struct{}) error {
+		defer sub.Unsubscribe()
+		for {
+			select {
+			case log := <-logs:
+				// New log arrived, parse the event and forward to the user
+				event := new(VotingCandidateAddedEvent)
+				if err := _Voting.contract.UnpackLog(event, "CandidateAddedEvent", log); err != nil {
+					return err
+				}
+				event.Raw = log
+
+				select {
+				case sink <- event:
+				case err := <-sub.Err():
+					return err
+				case <-quit:
+					return nil
+				}
+			case err := <-sub.Err():
+				return err
+			case <-quit:
+				return nil
+			}
+		}
+	}), nil
+}
+
+// VotingCandidateRemovedEventIterator is returned from FilterCandidateRemovedEvent and is used to iterate over the raw logs and unpacked data for CandidateRemovedEvent events raised by the Voting contract.
+type VotingCandidateRemovedEventIterator struct {
+	Event *VotingCandidateRemovedEvent // Event containing the contract specifics and raw log
+
+	contract *bind.BoundContract // Generic contract to use for unpacking event data
+	event    string              // Event name to use for unpacking event data
+
+	logs chan types.Log        // Log channel receiving the found contract events
+	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	done bool                  // Whether the subscription completed delivering logs
+	fail error                 // Occurred error to stop iteration
+}
+
+// Next advances the iterator to the subsequent event, returning whether there
+// are any more events found. In case of a retrieval or parsing error, false is
+// returned and Error() can be queried for the exact failure.
+func (it *VotingCandidateRemovedEventIterator) Next() bool {
+	// If the iterator failed, stop iterating
+	if it.fail != nil {
+		return false
+	}
+	// If the iterator completed, deliver directly whatever's available
+	if it.done {
+		select {
+		case log := <-it.logs:
+			it.Event = new(VotingCandidateRemovedEvent)
+			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+				it.fail = err
+				return false
+			}
+			it.Event.Raw = log
+			return true
+
+		default:
+			return false
+		}
+	}
+	// Iterator still in progress, wait for either a data or an error event
+	select {
+	case log := <-it.logs:
+		it.Event = new(VotingCandidateRemovedEvent)
+		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+			it.fail = err
+			return false
+		}
+		it.Event.Raw = log
+		return true
+
+	case err := <-it.sub.Err():
+		it.done = true
+		it.fail = err
+		return it.Next()
+	}
+}
+
+// Error returns any retrieval or parsing error occurred during filtering.
+func (it *VotingCandidateRemovedEventIterator) Error() error {
+	return it.fail
+}
+
+// Close terminates the iteration process, releasing any pending underlying
+// resources.
+func (it *VotingCandidateRemovedEventIterator) Close() error {
+	it.sub.Unsubscribe()
+	return nil
+}
+
+// VotingCandidateRemovedEvent represents a CandidateRemovedEvent event raised by the Voting contract.
+type VotingCandidateRemovedEvent struct {
+	Hash [32]byte
+	Raw  types.Log // Blockchain specific contextual infos
+}
+
+// FilterCandidateRemovedEvent is a free log retrieval operation binding the contract event 0x53ce6706735b5cd3034bf68c2a532801c1efb4ba72410b5af2167a8462f15b7d.
+//
+// Solidity: e CandidateRemovedEvent(hash indexed bytes32)
+func (_Voting *VotingFilterer) FilterCandidateRemovedEvent(opts *bind.FilterOpts, hash [][32]byte) (*VotingCandidateRemovedEventIterator, error) {
+
+	var hashRule []interface{}
+	for _, hashItem := range hash {
+		hashRule = append(hashRule, hashItem)
+	}
+
+	logs, sub, err := _Voting.contract.FilterLogs(opts, "CandidateRemovedEvent", hashRule)
+	if err != nil {
+		return nil, err
+	}
+	return &VotingCandidateRemovedEventIterator{contract: _Voting.contract, event: "CandidateRemovedEvent", logs: logs, sub: sub}, nil
+}
+
+// WatchCandidateRemovedEvent is a free log subscription operation binding the contract event 0x53ce6706735b5cd3034bf68c2a532801c1efb4ba72410b5af2167a8462f15b7d.
+//
+// Solidity: e CandidateRemovedEvent(hash indexed bytes32)
+func (_Voting *VotingFilterer) WatchCandidateRemovedEvent(opts *bind.WatchOpts, sink chan<- *VotingCandidateRemovedEvent, hash [][32]byte) (event.Subscription, error) {
+
+	var hashRule []interface{}
+	for _, hashItem := range hash {
+		hashRule = append(hashRule, hashItem)
+	}
+
+	logs, sub, err := _Voting.contract.WatchLogs(opts, "CandidateRemovedEvent", hashRule)
+	if err != nil {
+		return nil, err
+	}
+	return event.NewSubscription(func(quit <-chan struct{}) error {
+		defer sub.Unsubscribe()
+		for {
+			select {
+			case log := <-logs:
+				// New log arrived, parse the event and forward to the user
+				event := new(VotingCandidateRemovedEvent)
+				if err := _Voting.contract.UnpackLog(event, "CandidateRemovedEvent", log); err != nil {
+					return err
+				}
+				event.Raw = log
+
+				select {
+				case sink <- event:
+				case err := <-sub.Err():
+					return err
+				case <-quit:
+					return nil
+				}
+			case err := <-sub.Err():
+				return err
+			case <-quit:
+				return nil
+			}
+		}
+	}), nil
+}
+
+// VotingCouncilMemberAddedEventIterator is returned from FilterCouncilMemberAddedEvent and is used to iterate over the raw logs and unpacked data for CouncilMemberAddedEvent events raised by the Voting contract.
+type VotingCouncilMemberAddedEventIterator struct {
+	Event *VotingCouncilMemberAddedEvent // Event containing the contract specifics and raw log
+
+	contract *bind.BoundContract // Generic contract to use for unpacking event data
+	event    string              // Event name to use for unpacking event data
+
+	logs chan types.Log        // Log channel receiving the found contract events
+	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	done bool                  // Whether the subscription completed delivering logs
+	fail error                 // Occurred error to stop iteration
+}
+
+// Next advances the iterator to the subsequent event, returning whether there
+// are any more events found. In case of a retrieval or parsing error, false is
+// returned and Error() can be queried for the exact failure.
+func (it *VotingCouncilMemberAddedEventIterator) Next() bool {
+	// If the iterator failed, stop iterating
+	if it.fail != nil {
+		return false
+	}
+	// If the iterator completed, deliver directly whatever's available
+	if it.done {
+		select {
+		case log := <-it.logs:
+			it.Event = new(VotingCouncilMemberAddedEvent)
+			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+				it.fail = err
+				return false
+			}
+			it.Event.Raw = log
+			return true
+
+		default:
+			return false
+		}
+	}
+	// Iterator still in progress, wait for either a data or an error event
+	select {
+	case log := <-it.logs:
+		it.Event = new(VotingCouncilMemberAddedEvent)
+		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+			it.fail = err
+			return false
+		}
+		it.Event.Raw = log
+		return true
+
+	case err := <-it.sub.Err():
+		it.done = true
+		it.fail = err
+		return it.Next()
+	}
+}
+
+// Error returns any retrieval or parsing error occurred during filtering.
+func (it *VotingCouncilMemberAddedEventIterator) Error() error {
+	return it.fail
+}
+
+// Close terminates the iteration process, releasing any pending underlying
+// resources.
+func (it *VotingCouncilMemberAddedEventIterator) Close() error {
+	it.sub.Unsubscribe()
+	return nil
+}
+
+// VotingCouncilMemberAddedEvent represents a CouncilMemberAddedEvent event raised by the Voting contract.
+type VotingCouncilMemberAddedEvent struct {
+	Member common.Address
+	Raw    types.Log // Blockchain specific contextual infos
+}
+
+// FilterCouncilMemberAddedEvent is a free log retrieval operation binding the contract event 0xf8897212eda7751d264aa9bac4715cbefe140b3124d688b928373f4c910cb829.
+//
+// Solidity: e CouncilMemberAddedEvent(member indexed address)
+func (_Voting *VotingFilterer) FilterCouncilMemberAddedEvent(opts *bind.FilterOpts, member []common.Address) (*VotingCouncilMemberAddedEventIterator, error) {
+
+	var memberRule []interface{}
+	for _, memberItem := range member {
+		memberRule = append(memberRule, memberItem)
+	}
+
+	logs, sub, err := _Voting.contract.FilterLogs(opts, "CouncilMemberAddedEvent", memberRule)
+	if err != nil {
+		return nil, err
+	}
+	return &VotingCouncilMemberAddedEventIterator{contract: _Voting.contract, event: "CouncilMemberAddedEvent", logs: logs, sub: sub}, nil
+}
+
+// WatchCouncilMemberAddedEvent is a free log subscription operation binding the contract event 0xf8897212eda7751d264aa9bac4715cbefe140b3124d688b928373f4c910cb829.
+//
+// Solidity: e CouncilMemberAddedEvent(member indexed address)
+func (_Voting *VotingFilterer) WatchCouncilMemberAddedEvent(opts *bind.WatchOpts, sink chan<- *VotingCouncilMemberAddedEvent, member []common.Address) (event.Subscription, error) {
+
+	var memberRule []interface{}
+	for _, memberItem := range member {
+		memberRule = append(memberRule, memberItem)
+	}
+
+	logs, sub, err := _Voting.contract.WatchLogs(opts, "CouncilMemberAddedEvent", memberRule)
+	if err != nil {
+		return nil, err
+	}
+	return event.NewSubscription(func(quit <-chan struct{}) error {
+		defer sub.Unsubscribe()
+		for {
+			select {
+			case log := <-logs:
+				// New log arrived, parse the event and forward to the user
+				event := new(VotingCouncilMemberAddedEvent)
+				if err := _Voting.contract.UnpackLog(event, "CouncilMemberAddedEvent", log); err != nil {
+					return err
+				}
+				event.Raw = log
+
+				select {
+				case sink <- event:
+				case err := <-sub.Err():
+					return err
+				case <-quit:
+					return nil
+				}
+			case err := <-sub.Err():
+				return err
+			case <-quit:
+				return nil
+			}
+		}
+	}), nil
+}
+
+// VotingCouncilMemberRemovedEventIterator is returned from FilterCouncilMemberRemovedEvent and is used to iterate over the raw logs and unpacked data for CouncilMemberRemovedEvent events raised by the Voting contract.
+type VotingCouncilMemberRemovedEventIterator struct {
+	Event *VotingCouncilMemberRemovedEvent // Event containing the contract specifics and raw log
+
+	contract *bind.BoundContract // Generic contract to use for unpacking event data
+	event    string              // Event name to use for unpacking event data
+
+	logs chan types.Log        // Log channel receiving the found contract events
+	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	done bool                  // Whether the subscription completed delivering logs
+	fail error                 // Occurred error to stop iteration
+}
+
+// Next advances the iterator to the subsequent event, returning whether there
+// are any more events found. In case of a retrieval or parsing error, false is
+// returned and Error() can be queried for the exact failure.
+func (it *VotingCouncilMemberRemovedEventIterator) Next() bool {
+	// If the iterator failed, stop iterating
+	if it.fail != nil {
+		return false
+	}
+	// If the iterator completed, deliver directly whatever's available
+	if it.done {
+		select {
+		case log := <-it.logs:
+			it.Event = new(VotingCouncilMemberRemovedEvent)
+			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+				it.fail = err
+				return false
+			}
+			it.Event.Raw = log
+			return true
+
+		default:
+			return false
+		}
+	}
+	// Iterator still in progress, wait for either a data or an error event
+	select {
+	case log := <-it.logs:
+		it.Event = new(VotingCouncilMemberRemovedEvent)
+		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+			it.fail = err
+			return false
+		}
+		it.Event.Raw = log
+		return true
+
+	case err := <-it.sub.Err():
+		it.done = true
+		it.fail = err
+		return it.Next()
+	}
+}
+
+// Error returns any retrieval or parsing error occurred during filtering.
+func (it *VotingCouncilMemberRemovedEventIterator) Error() error {
+	return it.fail
+}
+
+// Close terminates the iteration process, releasing any pending underlying
+// resources.
+func (it *VotingCouncilMemberRemovedEventIterator) Close() error {
+	it.sub.Unsubscribe()
+	return nil
+}
+
+// VotingCouncilMemberRemovedEvent represents a CouncilMemberRemovedEvent event raised by the Voting contract.
+type VotingCouncilMemberRemovedEvent struct {
+	Member common.Address
+	Raw    types.Log // Blockchain specific contextual infos
+}
+
+// FilterCouncilMemberRemovedEvent is a free log retrieval operation binding the contract event 0x564e70d59b50a6b32776c3d4a1e4e378a77dc9e24c3e2fbfa04a79166a67489b.
+//
+// Solidity: e CouncilMemberRemovedEvent(member indexed address)
+func (_Voting *VotingFilterer) FilterCouncilMemberRemovedEvent(opts *bind.FilterOpts, member []common.Address) (*VotingCouncilMemberRemovedEventIterator, error) {
+
+	var memberRule []interface{}
+	for _, memberItem := range member {
+		memberRule = append(memberRule, memberItem)
+	}
+
+	logs, sub, err := _Voting.contract.FilterLogs(opts, "CouncilMemberRemovedEvent", memberRule)
+	if err != nil {
+		return nil, err
+	}
+	return &VotingCouncilMemberRemovedEventIterator{contract: _Voting.contract, event: "CouncilMemberRemovedEvent", logs: logs, sub: sub}, nil
+}
+
+// WatchCouncilMemberRemovedEvent is a free log subscription operation binding the contract event 0x564e70d59b50a6b32776c3d4a1e4e378a77dc9e24c3e2fbfa04a79166a67489b.
+//
+// Solidity: e CouncilMemberRemovedEvent(member indexed address)
+func (_Voting *VotingFilterer) WatchCouncilMemberRemovedEvent(opts *bind.WatchOpts, sink chan<- *VotingCouncilMemberRemovedEvent, member []common.Address) (event.Subscription, error) {
+
+	var memberRule []interface{}
+	for _, memberItem := range member {
+		memberRule = append(memberRule, memberItem)
+	}
+
+	logs, sub, err := _Voting.contract.WatchLogs(opts, "CouncilMemberRemovedEvent", memberRule)
+	if err != nil {
+		return nil, err
+	}
+	return event.NewSubscription(func(quit <-chan struct{}) error {
+		defer sub.Unsubscribe()
+		for {
+			select {
+			case log := <-logs:
+				// New log arrived, parse the event and forward to the user
+				event := new(VotingCouncilMemberRemovedEvent)
+				if err := _Voting.contract.UnpackLog(event, "CouncilMemberRemovedEvent", log); err != nil {
+					return err
+				}
+				event.Raw = log
+
+				select {
+				case sink <- event:
+				case err := <-sub.Err():
+					return err
+				case <-quit:
+					return nil
+				}
+			case err := <-sub.Err():
+				return err
+			case <-quit:
+				return nil
+			}
+		}
+	}), nil
+}
+
+// VotingVotedEventIterator is returned from FilterVotedEvent and is used to iterate over the raw logs and unpacked data for VotedEvent events raised by the Voting contract.
+type VotingVotedEventIterator struct {
+	Event *VotingVotedEvent // Event containing the contract specifics and raw log
+
+	contract *bind.BoundContract // Generic contract to use for unpacking event data
+	event    string              // Event name to use for unpacking event data
+
+	logs chan types.Log        // Log channel receiving the found contract events
+	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	done bool                  // Whether the subscription completed delivering logs
+	fail error                 // Occurred error to stop iteration
+}
+
+// Next advances the iterator to the subsequent event, returning whether there
+// are any more events found. In case of a retrieval or parsing error, false is
+// returned and Error() can be queried for the exact failure.
+func (it *VotingVotedEventIterator) Next() bool {
+	// If the iterator failed, stop iterating
+	if it.fail != nil {
+		return false
+	}
+	// If the iterator completed, deliver directly whatever's available
+	if it.done {
+		select {
+		case log := <-it.logs:
+			it.Event = new(VotingVotedEvent)
+			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+				it.fail = err
+				return false
+			}
+			it.Event.Raw = log
+			return true
+
+		default:
+			return false
+		}
+	}
+	// Iterator still in progress, wait for either a data or an error event
+	select {
+	case log := <-it.logs:
+		it.Event = new(VotingVotedEvent)
+		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+			it.fail = err
+			return false
+		}
+		it.Event.Raw = log
+		return true
+
+	case err := <-it.sub.Err():
+		it.done = true
+		it.fail = err
+		return it.Next()
+	}
+}
+
+// Error returns any retrieval or parsing error occurred during filtering.
+func (it *VotingVotedEventIterator) Error() error {
+	return it.fail
+}
+
+// Close terminates the iteration process, releasing any pending underlying
+// resources.
+func (it *VotingVotedEventIterator) Close() error {
+	it.sub.Unsubscribe()
+	return nil
+}
+
+// VotingVotedEvent represents a VotedEvent event raised by the Voting contract.
+type VotingVotedEvent struct {
+	Voter common.Address
+	Hash  [32]byte
+	Raw   types.Log // Blockchain specific contextual infos
+}
+
+// FilterVotedEvent is a free log retrieval operation binding the contract event 0x81681507a95428bb04c5f5ac127e404caf6422d0dcf2ff77612b9201c3aa33bf.
+//
+// Solidity: e VotedEvent(voter indexed address, hash indexed bytes32)
+func (_Voting *VotingFilterer) FilterVotedEvent(opts *bind.FilterOpts, voter []common.Address, hash [][32]byte) (*VotingVotedEventIterator, error) {
+
+	var voterRule []interface{}
+	for _, voterItem := range voter {
+		voterRule = append(voterRule, voterItem)
+	}
+	var hashRule []interface{}
+	for _, hashItem := range hash {
+		hashRule = append(hashRule, hashItem)
+	}
+
+	logs, sub, err := _Voting.contract.FilterLogs(opts, "VotedEvent", voterRule, hashRule)
+	if err != nil {
+		return nil, err
+	}
+	return &VotingVotedEventIterator{contract: _Voting.contract, event: "VotedEvent", logs: logs, sub: sub}, nil
+}
+
+// WatchVotedEvent is a free log subscription operation binding the contract event 0x81681507a95428bb04c5f5ac127e404caf6422d0dcf2ff77612b9201c3aa33bf.
+//
+// Solidity: e VotedEvent(voter indexed address, hash indexed bytes32)
+func (_Voting *VotingFilterer) WatchVotedEvent(opts *bind.WatchOpts, sink chan<- *VotingVotedEvent, voter []common.Address, hash [][32]byte) (event.Subscription, error) {
+
+	var voterRule []interface{}
+	for _, voterItem := range voter {
+		voterRule = append(voterRule, voterItem)
+	}
+	var hashRule []interface{}
+	for _, hashItem := range hash {
+		hashRule = append(hashRule, hashItem)
+	}
+
+	logs, sub, err := _Voting.contract.WatchLogs(opts, "VotedEvent", voterRule, hashRule)
+	if err != nil {
+		return nil, err
+	}
+	return event.NewSubscription(func(quit <-chan struct{}) error {
+		defer sub.Unsubscribe()
+		for {
+			select {
+			case log := <-logs:
+				// New log arrived, parse the event and forward to the user
+				event := new(VotingVotedEvent)
+				if err := _Voting.contract.UnpackLog(event, "VotedEvent", log); err != nil {
+					return err
+				}
+				event.Raw = log
+
+				select {
+				case sink <- event:
+				case err := <-sub.Err():
+					return err
+				case <-quit:
+					return nil
+				}
+			case err := <-sub.Err():
+				return err
+			case <-quit:
+				return nil
+			}
+		}
+	}), nil
 }

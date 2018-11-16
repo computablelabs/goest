@@ -1,4 +1,4 @@
-package plcrvoting
+package voting
 
 import (
 	"math/big"
@@ -16,10 +16,6 @@ func TestDeployPLCRVoting(t *testing.T) {
 
 	if deployedError != nil {
 		t.Fatalf("Failed to deploy the Voting contract or Market token: %v", deployedError)
-	}
-
-	if len(deployed.TokenAddress.Bytes()) == 0 {
-		t.Error("Expected a valid token deployment address to be returned from deploy, got empty byte array instead")
 	}
 
 	if len(deployed.VotingAddress.Bytes()) == 0 {

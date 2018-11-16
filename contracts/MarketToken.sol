@@ -91,7 +91,7 @@ contract MarketToken {
    * @param subtractedAmount The amount of tokens to decrease the allowance by.
    */
   function decreaseApproval(address spender, uint256 subtractedAmount) external returns (bool) {
-    uint256 oldAmount= selfAllowed[msg.sender][spender];
+    uint256 oldAmount = selfAllowed[msg.sender][spender];
     if (subtractedAmount > oldAmount) {
       selfAllowed[msg.sender][spender] = 0;
     } else {

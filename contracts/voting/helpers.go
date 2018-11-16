@@ -1,7 +1,6 @@
-package plcrvoting
+package voting
 
 import (
-	"github.com/computablelabs/goest/contracts/markettoken"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind/backends"
 	"github.com/ethereum/go-ethereum/common"
@@ -19,33 +18,15 @@ type ctx struct {
 }
 
 type dep struct {
-	TokenAddress      common.Address
 	VotingAddress     common.Address
-	TokenContract     *markettoken.MarketToken
-	VotingContract    *PLCRVoting
-	TokenTransaction  *types.Transaction
+	VotingContract    *Voting
 	VotingTransaction *types.Transaction
 }
 
 func Deploy(initialBalance *big.Int, c *ctx) (*dep, error) {
-	tokenAddr, tokenTrans, tokenCont, tokenErr := markettoken.DeployMarketToken(
+	votingAddr, votingTrans, votingCont, votingErr := DeployVoting(
 		c.AuthOwner,
 		c.Blockchain,
-		c.AuthOwner.From,
-		initialBalance,
-	)
-
-	if tokenErr != nil {
-		return nil, tokenErr
-	}
-
-	// commit the deploy before deploying voting
-	c.Blockchain.Commit()
-
-	votingAddr, votingTrans, votingCont, votingErr := DeployPLCRVoting(
-		c.AuthOwner,
-		c.Blockchain,
-		tokenAddr,
 	)
 
 	if votingErr != nil {
@@ -55,9 +36,6 @@ func Deploy(initialBalance *big.Int, c *ctx) (*dep, error) {
 	c.Blockchain.Commit()
 
 	return &dep{
-		TokenAddress:      tokenAddr,
-		TokenContract:     tokenCont,
-		TokenTransaction:  tokenTrans,
 		VotingAddress:     votingAddr,
 		VotingContract:    votingCont,
 		VotingTransaction: votingTrans,

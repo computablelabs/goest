@@ -18,10 +18,6 @@ func TestDeployParameterizer(t *testing.T) {
 		t.Fatalf("Failed to deploy the Parameterizer contract or a dependency: %v", deployedError)
 	}
 
-	if len(deployed.TokenAddress.Bytes()) == 0 {
-		t.Error("Expected a valid token deployment address to be returned from deploy, got empty byte array instead")
-	}
-
 	if len(deployed.VotingAddress.Bytes()) == 0 {
 		t.Error("Expected a valid voting deployment address to be returned from deploy, got empty byte array instead")
 	}

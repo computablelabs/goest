@@ -4,7 +4,7 @@ import (
 	"github.com/computablelabs/goest/contracts/markettoken"
 	"github.com/computablelabs/goest/contracts/networktoken"
 	"github.com/computablelabs/goest/contracts/parameterizer"
-	"github.com/computablelabs/goest/contracts/plcrvoting"
+	"github.com/computablelabs/goest/contracts/voting"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind/backends"
 	"github.com/ethereum/go-ethereum/common"
@@ -29,7 +29,7 @@ type dep struct {
 	MarketAddress            common.Address
 	NetworkTokenContract     *networktoken.NetworkToken
 	MarketTokenContract      *markettoken.MarketToken
-	VotingContract           *plcrvoting.PLCRVoting
+	VotingContract           *voting.Voting
 	ParameterizerContract    *parameterizer.Parameterizer
 	MarketContract           *Market
 	NetworkTokenTransaction  *types.Transaction
@@ -65,10 +65,9 @@ func Deploy(initialBalance *big.Int, c *ctx) (*dep, error) {
 	// commit the deploy before deploying voting
 	c.Blockchain.Commit()
 
-	votingAddr, votingTrans, votingCont, votingErr := plcrvoting.DeployPLCRVoting(
+	votingAddr, votingTrans, votingCont, votingErr := voting.DeployVoting(
 		c.AuthOwner,
 		c.Blockchain,
-		marketTokenAddr,
 	)
 
 	if votingErr != nil {
@@ -80,17 +79,13 @@ func Deploy(initialBalance *big.Int, c *ctx) (*dep, error) {
 	paramAddr, paramTrans, paramCont, paramErr := parameterizer.DeployParameterizer(
 		c.AuthOwner,
 		c.Blockchain,
-		marketTokenAddr,
 		votingAddr,
-		big.NewInt(10), // minDeposit
-		big.NewInt(60), // applyStageLen in sec
-		big.NewInt(60), // commitStageLen in sec
-		big.NewInt(60), // revealStageLen in sec
-		big.NewInt(50), // dispensation pct
-		big.NewInt(50), // voteQuorum
-		big.NewInt(1),  // listReward
-		big.NewInt(1),  // conversionRate
-		big.NewInt(2),  // conversionSlope
+		big.NewInt(1000000000000000000), // challengeStake in tokenWei (10^18 == 1 token)
+		big.NewInt(1),                   // conversionRate TODO tokenWei?
+		big.NewInt(1),                   // conversionSlope TODO tokenWei?
+		big.NewInt(1000000000000000000), // listReward (one token)
+		big.NewInt(50),                  // quorum
+		big.NewInt(300),                 // voteBy (5 mins)
 	)
 
 	if paramErr != nil {
@@ -143,7 +138,7 @@ func SetupBlockchain(accountBalance *big.Int) *ctx {
 
 	authOwner := bind.NewKeyedTransactor(keyOwner)
 	authOwner.GasPrice = big.NewInt(2000000000) // 2 Gwei
-	authOwner.GasLimit = 900000                 // any lower and the deploy fails
+	authOwner.GasLimit = 1000000
 
 	authChallenger := bind.NewKeyedTransactor(keyChallenger)
 	authVoter := bind.NewKeyedTransactor(keyVoter)
