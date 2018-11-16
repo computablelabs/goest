@@ -161,7 +161,7 @@ contract Market {
       } else {
         // lock supply and rewards if necessary
         fromChallengeeSupply = listing.supply;
-        uint remainder = stake - listing.supply;
+        uint remainder = stake.sub(listing.supply);
         listing.supply = 0;
         listing.rewards = listing.rewards.sub(remainder);
         fromChallengeeRewards = remainder;
