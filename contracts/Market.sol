@@ -4,49 +4,59 @@ import "./SafeMath.sol";
 import "./IERC20.sol";
 import "./MarketToken.sol";
 import "./Parameterizer.sol";
-import "./PLCRVoting.sol";
+import "./Voting.sol";
 
 
 contract Market {
   using SafeMath for uint;
 
   struct Listing {
-    uint applicationExpiry; // Expiration date of apply stage
+    uint index; // pointer to the location of this listing's hash in the unordered keys array
     bool listed; // a 'listing' if true
     address owner; // owns the listing
-    uint supply; // Number of tokens in the listing (both deposited and minted).
-    uint challenge; // corresponts to a poll id in Voting if present
-    bytes data; // A pointer to the actual data this listing represents (or possibly some small data primitive). NOTE converted from string
-    uint minted; // Number of Market tokens that have been minted for this listing.
+    uint supply; // Number of tokens in the listing, banked by the market, put there by the owner
+    bytes32 dataHash; // A magical construct which flies across the sky, pooping unicorns which, in turn, poop rainbows.
+    uint rewards; // Number of Market tokens that have been minted + any challenge winnings
   }
 
+  // TODO in another iteration allow challenger to stake a listing's supply/reward if they own one
   struct Challenge {
-    uint rewardPool; // (remaining) Pool of tokens to be distributed to winning voters
-    address challenger; // Owner of Challenge
-    bool resolved; // Indication of if challenge is resolved
-    uint stake; // Number of tokens at stake for either party during challenge
-    uint totalTokens; // (remaining) Number of tokens used in voting by the winning side
-    mapping(address => bool) rewardsClaimed; // Indicates whether a voter has claimed a reward yet
+    address challenger; // adress making the challenge
+    uint fromChallengeeSupply; // how much of `stake` was taken from listing.supply
+    uint fromChallengeeRewards; // how much, if any, of `stake` was taken from listing.rewards
   }
 
-  // Maps ids to associated challenge data
-  mapping(uint => Challenge) private selfChallenges;
+  struct Investor {
+    uint index; // pointer to the location of this investor's address in the unordered keys array
+    uint invested; // cumulative total of investment in this market
+    uint minted; // cumulative total of minted market tokens from investing
+  }
+
+  // Maps listingHash to associated challenge data
+  mapping(bytes32 => Challenge) private selfChallenges;
 
   // Maps listingHashes to associated listingHash data
   mapping(bytes32 => Listing) private selfListings;
+  // dynamic array which houses the hashes of all current listings
+  bytes32[] private selfListingKeys;
 
   // Maps listing owner's address to how many listings they own
   mapping(address => uint) private selfListingOwners;
 
-  // Maps investor's address to the amount invested. NOTE we store the actual amount(s) used,
-  // not necessarily the amount offered (see invest())
-  mapping(address => uint) private selfInvestors;
+  // Maps investor's address to their data
+  mapping(address => Investor) private selfInvestors;
+  // house the addresses of all current investors
+  address[] private selfInvestorKeys;
+  // running total of invested network token
+  uint private selfInvested;
 
   IERC20 private selfNetworkToken;
   MarketToken private selfMarketToken;
-  PLCRVoting private selfVoting;
+  Voting private selfVoting;
   Parameterizer private selfParameterizer;
   bytes private selfName;
+  // will be the market factory
+  address private selfOwner;
 
   /**
   @dev Contructor
@@ -62,208 +72,147 @@ contract Market {
     address votingAddr
   ) public
   {
+    selfOwner = msg.sender;
+
     selfName = bytes(name);
     selfNetworkToken = IERC20(networkTokenAddr);
     selfMarketToken = MarketToken(marketTokenAddr);
     selfParameterizer = Parameterizer(parameterizerAddr);
-    selfVoting = PLCRVoting(votingAddr);
-  }
-
-  /**
-  @dev Returns true if apply was called for this listingHash
-  @param listingHash The listingHash whose status is to be examined
-  */
-  function applied(bytes32 listingHash) view public returns (bool exists) {
-    return selfListings[listingHash].applicationExpiry > 0;
+    selfVoting = Voting(votingAddr);
   }
 
   /**
   @dev Allows a user to start an application. Takes tokens from user and sets
   apply stage end time.
   @param listingHash The hash of a potential listing a user is applying to add to the registry
-  @param amount The number of (market) tokens a user is willing to potentially stake
-  @param data Either some simple, small data primitive as a string or, more likely, a pointer to a location for some
-  bespoke data that this listing represents
-  // TODO likely provide a way to update the `data` attribute of a listing
+  @param dataHash unique key for the backend to find this bespoke data
+  @param amount The number of (market) tokens a user wants to bank in the listing (optional)
   */
-  function apply(bytes32 listingHash, uint amount, string data) external {
+  function apply(bytes32 listingHash, bytes32 dataHash, uint amount) external {
+    require(!selfVoting.isCandidate(listingHash), "Error:Market.apply - Already a candidate");
     require(!isListed(listingHash), "Error:Market.apply - Already listed");
-    require(!applied(listingHash), "Error:Market.apply - Already applied");
-    require(amount >= selfParameterizer.get("minDeposit"), "Error:Market.apply - amount must be greater than, or equal to, the minimum deposit");
 
-    // Sets owner
+    // string kind = "application"; // TODO these _could_ be in an Enum
+
+    // first, create the actual listing object
     Listing storage listing = selfListings[listingHash];
     listing.owner = msg.sender;
+    listing.dataHash = dataHash; // a unique identifier known to a backend used to locate the data (or something)
 
-    // Sets apply stage end time, funding, and the data pointer
-    listing.applicationExpiry = block.timestamp.add(selfParameterizer.get("applyStageLen"));
-    listing.supply = amount; // we will add a listReward if actually listed
-    listing.minted = 0; // same as the line above, not added yet
-    listing.data = bytes(data); // points to an off-chain resource (or is a string data primitive)
+    // the amount is optional here, but if sent, we need to bank them
+    if (amount > 0) {
+      listing.supply = amount; // optional arg here, may be 0
+      // Transfers tokens from user to Market contract (market acts as banker for all listing market tokens)
+      require(selfMarketToken.transferFrom(listing.owner, this, amount), "Error:Market.apply - Could not transfer Market Tokens");
+    }
 
-    // Transfers tokens from user to Market contract (market acts as banker for all listing market tokens)
-    require(selfMarketToken.transferFrom(listing.owner, this, amount), "Error:Market.apply - Could not transfer Market Tokens");
+    // with that in place, create the candidate for this listing, NOTE: will trigger a CandidateCreatedEvent as well
+    bool added = selfVoting.addCandidate(
+      "application",
+      listingHash,
+      selfParameterizer.getVoteBy()
+    );
+
+    require(added, "Error:Market.apply - Could not add applicant to voting candidates list");
 
     emit AppliedEvent(
       listingHash,
-      amount,
-      listing.applicationExpiry,
-      data,
-      msg.sender
+      msg.sender,
+      dataHash,
+      selfParameterizer.getVoteBy(),
+      amount
     );
   }
 
   /**
-  @dev Determines whether the given listingHash be listed.
-  @param listingHash The listingHash whose status is to be examined
+  @dev Starts a challenge for a listing
+  @param listingHash The listing being challenged.
+  @param stake amount staked for the challenge
   */
-  function canBeListed(bytes32 listingHash) view public returns (bool) {
-    uint id = selfListings[listingHash].challenge;
-
-    // Ensures that the application was made,
-    // the application period has ended,
-    // the listingHash can be listed,
-    // and either: the id == 0, or the challenge has been resolved.
-    if (
-      /* solium-disable-next-line */
-      applied(listingHash) &&
-      /* solium-disable-next-line */
-      selfListings[listingHash].applicationExpiry < now &&
-      /* solium-disable-next-line */
-      !isListed(listingHash) &&
-      (id == 0 || selfChallenges[id].resolved == true)
-    ) {return true;}
-
-    return false;
-  }
-
-  /**
-  @dev Starts a poll for a listingHash which is either in the apply stage or
-  already listed. Tokens are taken from the challenger and the applicant's deposits are locked.
-  @param listingHash The listingHash being challenged, whether listed or in application
-  */
-  function challenge(bytes32 listingHash) external returns (uint id) {
+  function challenge(bytes32 listingHash) external {
+    uint stake = selfParameterizer.getChallengeStake();
     Listing storage listing = selfListings[listingHash];
-    uint minDeposit = selfParameterizer.get("minDeposit");
 
-    require(applied(listingHash) || listing.listed, "Error:Market.challenge - Must be a listing or an application");
+    require(listing.listed == true, "Error:Market.challenge - Must be a listing to be challenged");
     // Prevent multiple challenges
-    require(listing.challenge == 0 || selfChallenges[listing.challenge].resolved, "Error:Market.challenge - Already challenged");
+    require(!selfVoting.isCandidate(listingHash), "Error:Market.challenge - Already challenged");
 
-    // NOTE we do allow minted tokens to keep a listing "above water" in a challenge
-    if ((listing.supply + listing.minted) < minDeposit) {
-      // Not enough tokens, listingHash auto-deleted // TODO we could pass the deposit to differentiate auto and manual
-      deleteListing(listingHash);
-      return 0;
+    // NOTE we do allow rewards to keep a listing "above water" in a challenge
+    if (listing.supply.add(listing.rewards) < stake) {
+      // Not enough funds, listing is auto-deleted // TODO we could pass some val to signal a challenge auto-delete
+      removeListing(listingHash);
+    } else {
+      // Takes tokens from challenger, do early as we'll revert if they aint got the funds
+      // NOTE: in the next iteration make it possible for the challenger to stake a listing (by using its rewards)
+      require(selfMarketToken.transferFrom(msg.sender, this, stake), "Error:Market.challenge - Could not transfer Market tokens");
+
+      uint fromChallengeeSupply;
+      uint fromChallengeeRewards;
+
+      // we will 'lock' only tokens in the supply if possible
+      if (listing.supply >= stake) {
+        listing.supply = listing.supply.sub(stake);
+        fromChallengeeSupply = stake;
+      } else {
+        // lock supply and rewards if necessary
+        fromChallengeeSupply = listing.supply;
+        uint remainder = stake - listing.supply;
+        listing.supply = 0;
+        listing.rewards = listing.rewards.sub(remainder);
+        fromChallengeeRewards = remainder;
+      }
+
+      selfChallenges[listingHash] = Challenge({
+        challenger: msg.sender,
+        fromChallengeeSupply: fromChallengeeSupply,
+        fromChallengeeRewards: fromChallengeeRewards
+      });
+
+      // places the candidate, associated to challenge by listingHash
+      bool added = selfVoting.addCandidate(
+        "challenge",
+        listingHash,
+        selfParameterizer.getVoteBy()
+      );
+
+      require(added, "Error:Market.challenge - Could not add challenge to voting candidates list");
+
+      emit ChallengedEvent(
+        listingHash,
+        msg.sender
+      );
     }
-
-    // Starts poll, uint id declared as named return
-    id = selfVoting.startPoll(
-      selfParameterizer.get("voteQuorum"),
-      selfParameterizer.get("commitStageLen"),
-      selfParameterizer.get("revealStageLen")
-    );
-
-    selfChallenges[id] = Challenge({
-      challenger: msg.sender,
-      rewardPool: uint(100).sub(selfParameterizer.get("dispensationPct")).mul(minDeposit).div(100),
-      stake: minDeposit,
-      resolved: false,
-      totalTokens: 0
-    });
-
-    // Updates listingHash to store most recent challenge
-    listing.challenge = id;
-
-    // Locks tokens for listingHash during challenge
-    listing.supply = listing.supply.sub(minDeposit);
-
-    // Takes tokens from challenger
-    require(selfMarketToken.transferFrom(msg.sender, this, minDeposit), "Error:Market.challenge - Could not transfer Market tokens");
-
-    uint commitExpiry = selfVoting.getPollCommitExpiry(id);
-    uint revealExpiry = selfVoting.getPollRevealExpiry(id);
-
-    emit ChallengedEvent(
-      listingHash,
-      id,
-      commitExpiry,
-      revealExpiry,
-      msg.sender
-    );
-
-    return id;
   }
 
   /**
-  @dev Determines whether voting has concluded in a challenge for a given
-  listingHash. Throws if no challenge exists.
-  @param listingHash A listingHash with an unresolved challenge
-  */
-  function challengeCanBeResolved(bytes32 listingHash) view public returns (bool) {
-    uint id = selfListings[listingHash].challenge;
-    require(challengeExists(listingHash), "Error:Market.challengeCanBeResolved - Challenge does not exist");
-    return selfVoting.pollEnded(id);
-  }
-
-  /**
-  @dev Returns true if the application/listingHash has an unresolved challenge
-  @param listingHash The listingHash whose status is to be examined
-  */
-  function challengeExists(bytes32 listingHash) view public returns (bool) {
-    uint id = selfListings[listingHash].challenge;
-    return (id > 0 && !selfChallenges[id].resolved);
-  }
-
-  /**
-  @dev Called by a voter to claim their reward for each completed vote. Someone must call updateStatus() before this can be called.
-  @param id The PLCR poll ID of the challenge a reward is being claimed for
-  @param salt The salt of a voter's commit hash in the given poll
-  */
-  function claimReward(uint id, uint salt) public {
-    // Ensures the voter has not already claimed tokens and challenge results have been processed
-    require(selfChallenges[id].rewardsClaimed[msg.sender] == false);
-    require(selfChallenges[id].resolved == true);
-
-    uint voterTokens = selfVoting.getNumPassingTokens(msg.sender, id, salt);
-    uint reward = voterReward(msg.sender, id, salt);
-
-    // Subtracts the voter's information to preserve the participation ratios
-    // of other voters compared to the remaining pool of rewards
-    selfChallenges[id].totalTokens = selfChallenges[id].totalTokens.sub(voterTokens);
-    selfChallenges[id].rewardPool = selfChallenges[id].rewardPool.sub(reward);
-
-    // Ensures a voter cannot claim tokens again
-    selfChallenges[id].rewardsClaimed[msg.sender] = true;
-
-    require(selfMarketToken.transfer(msg.sender, reward));
-
-    emit RewardClaimedEvent(id, reward, msg.sender);
-  }
-
-  /**
-  @dev Deletes a listingHash from the whitelist and transfers tokens back to owner (minus minted rewards)
+  @dev Deletes a listing and transfers tokens back to owner (minus minted rewards)
   @param listingHash The listing hash to delete
   */
-  function deleteListing(bytes32 listingHash) private {
-    Listing storage listing = selfListings[listingHash];
-
-    // Emit events before deleting
-    if (listing.listed) {
-      emit ListingDeletedEvent(listingHash);
-    } else {
-      emit ApplicationDeletedEvent(listingHash);
-    }
-
-    // Deleting listing to prevent reentry
-    delete selfListings[listingHash];
+  function removeListing(bytes32 listingHash) private {
+    require(selfListings[listingHash].listed == true, "Error:Market.removeListing - Must be a listing");
 
     // Transfers any remaining balance back to the owner and burns any minted tokens
-    if (listing.supply > 0) {
-      require(selfMarketToken.transfer(listing.owner, listing.supply), "Error:Market.deleteListing - Could not refund remaining supply");
-      // burn any minted remainder, the market has this minted amount banked atm.
-      selfMarketToken.burn(listing.minted);
+    if (selfListings[listingHash].supply > 0) {
+      require(selfMarketToken.transfer(selfListings[listingHash].owner,
+        selfListings[listingHash].supply), "Error:Market.removeListing - Could not refund remaining supply");
     }
+
+    if (selfListings[listingHash].rewards > 0) {
+      // burn any rewards remainder, the market has this amount banked atm.
+      selfMarketToken.burn(selfListings[listingHash].rewards);
+    }
+
+    // remove the keys entry first
+    uint deleted = selfListings[listingHash].index; // being removed
+    bytes32 moved = selfListingKeys[selfListingKeys.length - 1]; // moving to overwrite 'deleted'
+    selfListingKeys[deleted] = moved; // delete target now overwritten
+    selfListingKeys.length--;
+    // update the index of moved
+    selfListings[moved].index = deleted;
+    // finally we can kill it
+    delete selfListings[listingHash];
+
+    emit ListingDeletedEvent(listingHash);
   }
 
   /**
@@ -275,38 +224,21 @@ contract Market {
     Listing storage listing = selfListings[listingHash];
 
     require(listing.owner == msg.sender, "Error:Market.deposit - Must be listing owner");
-
-    listing.supply = listing.supply.add(amount);
     require(selfMarketToken.transferFrom(msg.sender, this, amount), "Error:Market.deposit - Could not transfer Market Tokens");
+    listing.supply = listing.supply.add(amount);
 
     emit ListingDepositEvent(
       listingHash,
+      msg.sender,
       amount,
       listing.supply,
-      listing.minted,
-      msg.sender
+      listing.rewards
     );
   }
 
   /**
-  @dev Determines the number of tokens awarded to the winning party in a challenge.
-  @param id The challenge/pollID to determine a reward for
-  */
-  function determineReward(uint id) public view returns (uint) {
-    require(!selfChallenges[id].resolved && selfVoting.pollEnded(id), "Error:Market.determineReward - Poll must have ended");
-
-    // Edge case, nobody voted, give all tokens to the challenger.
-    if (selfVoting.getTotalNumberOfTokensForWinningOption(id) == 0) {
-      return uint(2).mul(selfChallenges[id].stake);
-    }
-
-    // TODO recheck this math for Market use case
-    return uint(2).mul(selfChallenges[id].stake).sub(selfChallenges[id].rewardPool);
-  }
-
-  /**
   @dev Allows the owner of a listingHash to remove the listing
-  Returns all tokens to the owner of the listingHash. Burns any minted tokens.
+  Returns all tokens to the owner of the listingHash. Burns any minted and/or rewards tokens.
   @param listingHash A listingHash msg.sender is the owner of.
   */
   function exit(bytes32 listingHash) external {
@@ -315,22 +247,22 @@ contract Market {
     require(listing.owner == msg.sender, "Error:Market.exit - Must be listing owner");
     require(isListed(listingHash), "Error:Market.exit - Must be listed");
     // Cannot exit during ongoing challenge
-    require(listing.challenge == 0 || selfChallenges[listing.challenge].resolved, "Error:Market.exit - Cannot exit during a challenge");
+    require(!selfVoting.isCandidate(listingHash), "Error:Market.exit - Cannot exit during a challenge");
 
     // Delete listingHash & return tokens
-    deleteListing(listingHash);
+    removeListing(listingHash);
   }
 
   /**
   @dev Return the current minimum amount of network tokens required to invest in this market (rate + slope * reserve)
   @return uint Said number of network tokens
+  TODO audit...
   */
  function getInvestmentPrice() public view returns (uint) {
-  uint rate = selfParameterizer.get("conversionRate");
-  uint slope = selfParameterizer.get("conversionSlope");
+  uint rate = selfParameterizer.getConversionRate();
+  uint slope = selfParameterizer.getConversionSlope();
   uint reserve = selfNetworkToken.balanceOf(this);
-  // TODO if we are dealing with operations here that would be fractional, we'll likely need to
-  // perform `(N * numerator) / denominator`. We may not, however, as financial numbers should not be fractional anyway...
+  // TODO audit for tokenWei
   return rate.add(slope.mul(reserve));
  }
 
@@ -356,14 +288,30 @@ contract Market {
     uint taken = remainder != 0 ? offered.sub(remainder) : remainder;
     // move those used tokens from investor to the reserve. NOTE this also subtracts from network token allowance[sender][market]
     selfNetworkToken.transferFrom(msg.sender, this, taken);
-    // we mint amount taken / investment price.
+    // we mint amount taken / investment price. TODO audit
     uint minted = taken.div(price);
     // NOTE this is, at origin, owned by the market
     require(selfMarketToken.mint(minted), "Error:Market.invest - Could not mint tokens");
     // now we can transfer those minted market tokens to the investor
     require(selfMarketToken.transfer(msg.sender, minted), "Error:Market.invest - Could not transfer tokens");
-    // sender is an investor now, we keep a tally of the amount(s) actually taken from said address
-    selfInvestors[msg.sender] += taken;
+    // sender is an investor now (if not already)
+    if(isInvestor(msg.sender)) {
+      selfInvestors[msg.sender].invested = selfInvestors[msg.sender].invested.add(taken);
+      selfInvestors[msg.sender].minted = selfInvestors[msg.sender].minted.add(minted);
+      // TODO check here for council membership when changing to threshold rules...
+    } else {
+      Investor storage i = selfInvestors[msg.sender];
+      // record what we took and gave - NOTE no need to .add here
+      i.invested = taken;
+      i.minted = minted;
+      // address onto the end of the investor keys array, index stored in the struct
+      i.index = selfInvestorKeys.push(msg.sender) - 1;
+      // currently any new investor is a council member, change when switching to threshold rules TODO
+      require(selfVoting.addToCouncil(msg.sender), "Error:Market.invest - could not add investor to council");
+    }
+
+    // the total invested in the market is bumped
+    selfInvested = selfInvested.add(taken);
 
     emit InvestedEvent(
       msg.sender,
@@ -375,11 +323,18 @@ contract Market {
     return minted;
   }
 
+  function isInvestor(address addr) public view returns (bool) {
+    // if the keys array is empty, obv not...
+    if(selfInvestorKeys.length == 0) return false;
+    // now just confirm that they match
+    return(selfInvestorKeys[selfInvestors[addr].index] == addr);
+  }
+
   /**
   @dev Returns true if the provided listingHash is a listing
   @param listingHash The listingHash whose status is to be examined
   */
-  function isListed(bytes32 listingHash) view public returns (bool) {
+  function isListed(bytes32 listingHash) public view returns (bool) {
     return selfListings[listingHash].listed;
   }
 
@@ -387,102 +342,67 @@ contract Market {
   @dev Returns true if the provided address is a listing owner
   @param candidate The address to check if 'owns' one or more listings
   */
-  function isListingOwner(address candidate) view public returns (bool) {
-    return selfListingOwners[candidate] != 0;
+  function isListingOwner(address addr) public view returns (bool) {
+    return selfListingOwners[addr] >= 1;
   }
 
   /**
-  @dev Called by updateStatus() if the applicationExpiry date passed without a
-  challenge being made. Called by resolveChallenge() if an
-  application/listing beat a challenge.
-  @param listingHash The listingHash of an application/listingHash to be whitelisted
+  @dev Called by authorized party after tallying votes for a passing listing candidate
+  @param listingHash The listingHash representing the applicant in question
   */
   function listApplication(bytes32 listingHash) private {
     if (!selfListings[listingHash].listed) {
       Listing storage listing = selfListings[listingHash];
       listing.listed = true;
       // NOTE the market acts as a bank for the minted tokens as well (same as deposits)
-      uint amount = selfParameterizer.get("listReward");
+      uint amount = selfParameterizer.getListReward();
       selfMarketToken.mint(amount); // there is no `to` adress as all mint balances are banked by the market
-      listing.minted = amount;
-      emit ListedEvent(listingHash, listing.supply, amount); // TODO send tokensMinted with event vs a separate minted event
+      listing.rewards = amount; // TODO there _should_ be no reason for an `add` here
+      emit ListedEvent(listingHash, listing.owner, amount, listing.supply); // TODO send tokensMinted with event vs a separate minted event
     }
   }
 
   /**
-  @dev Determines the winner in a challenge. Rewards the winner tokens and
-  either lists or deletes the listingHash
+  @dev Determines the winner in a challenge. Rewards the winner and possibly deletes the listingHash
   @param listingHash A listingHash with a challenge that is to be resolved
+  @returns true if succeeded
   */
-  function resolveChallenge(bytes32 listingHash) private {
-    uint id = selfListings[listingHash].challenge;
+  function resolveChallenge(bytes32 listingHash) public returns(bool) {
+    require(selfVoting.inCouncil(msg.sender), "Error:Market.resolveChallenge - Sender must be council member");
+    // dont operate on non challenges. TODO save the bytes arrays for kinds as CONST?
+    require(selfVoting.candidateIs(listingHash, "challenge"), "Error:Market.resolveChallenge - Must be a challenge");
+    require(selfVoting.pollClosed(listingHash), "Error:Market.resolveChallenge - Polls for this candidate must be closed");
+    // somebody gets a prize...
+    uint stake = selfParameterizer.getChallengeStake();
 
-    // Calculates the winner's reward,
-    // which is: (winner's full stake) + (dispensationPct * loser's stake)
-    // TODO is this the same in market?
-    uint reward = determineReward(id);
+    // remove the challenge
+    // delete selfChallenges[listingHash]
 
-    // Sets flag on challenge being processed
-    selfChallenges[id].resolved = true;
-
-    // Stores the total tokens used for voting by the winning side for reward purposes
-    selfChallenges[id].totalTokens = selfVoting.getTotalNumberOfTokensForWinningOption(id);
-
-    // Case: challenge failed
-    if (selfVoting.isPassed(id)) {
-      listApplication(listingHash);
-      // Unlock stake so that it can be retrieved by the applicant
-      selfListings[listingHash].supply = selfListings[listingHash].supply.add(reward);
-
-      emit ChallengeFailedEvent(
-        listingHash,
-        id,
-        selfChallenges[id].rewardPool,
-        selfChallenges[id].totalTokens
-      );
-
-    } else { // Case: challenge succeeded or nobody voted
-      deleteListing(listingHash);
-      // Transfer the reward to the challenger
-      require(selfMarketToken.transfer(selfChallenges[id].challenger, reward));
+    // Case: challenge won
+    if (selfVoting.didPass(listingHash, selfParameterizer.getQuorum())) {
+      removeListing(listingHash);
+      // Both refund the challenger their stake and give them the listing's
+      require(selfMarketToken.transfer(selfChallenges[listingHash].challenger, stake.mul(2)));
+      // TODO update when we allow a challenger to stake a listing...
 
       emit ChallengeSucceededEvent(
         listingHash,
-        id,
-        selfChallenges[id].rewardPool,
-        selfChallenges[id].totalTokens
+        selfChallenges[listingHash].challenger,
+        stake
+      );
+    } else { // Case: challenge lost
+      Listing storage listing = selfListings[listingHash];
+      // first refund any locked supply amounts from the listing
+      listing.supply = listing.supply.add(selfChallenges[listingHash].fromChallengeeSupply);
+      // now refund any locked rewards + the rewarded stake
+      listing.rewards = listing.rewards.add(selfChallenges[listingHash].fromChallengeeRewards).add(stake);
+
+      emit ChallengeFailedEvent(
+        listingHash,
+        selfChallenges[listingHash].challenger,
+        stake
       );
     }
-  }
-
-  /**
-  @dev Updates a listingHash's status from 'application' to 'listing' or resolves a challenge if one exists.
-  @param listingHash The listingHash whose status is being updated
-  */
-  function updateStatus(bytes32 listingHash) public {
-    if (canBeListed(listingHash)) {
-      listApplication(listingHash);
-    } else if (challengeCanBeResolved(listingHash)) {
-      resolveChallenge(listingHash);
-    } else {
-      revert(); // TODO message?
-    }
-  }
-
-  /**
-  @dev Calculates the provided voter's token reward for the given poll.
-  @param voter The address of the voter whose reward balance is to be returned
-  @param id The poll ID of the challenge a reward balance is being queried for
-  @param salt The salt of the voter's commit hash in the given poll
-  @return The uint indicating the voter's reward
-  */
-  function voterReward(address voter, uint id, uint salt)
-  public view returns (uint)
-  {
-    uint totalTokens = selfChallenges[id].totalTokens;
-    uint rewardPool = selfChallenges[id].rewardPool;
-    uint voterTokens = selfVoting.getNumPassingTokens(voter, id, salt);
-    return voterTokens.mul(rewardPool).div(totalTokens);
   }
 
   /**
@@ -496,30 +416,27 @@ contract Market {
     require(listing.owner == msg.sender, "Error:Market.withdraw - Must be listing owner");
     // can't outright withdraw more than the supply
     require(amount <= listing.supply, "Error:Market.withdraw - amount must be less than or equal to the listing supply");
-    // we do allow the minted amount to keep supply above min deposit threshold
-    require((listing.supply.add(listing.minted)).sub(amount) >= selfParameterizer.get("minDeposit"), "Error:Market.withdraw - Cannot withdraw listing supply below minimum deposit");
 
     listing.supply = listing.supply.sub(amount);
     require(selfMarketToken.transfer(msg.sender, amount), "Error:Market.withdraw - Could not transfer tokens to listing owner");
 
     emit ListingWithdrawEvent(
       listingHash,
+      msg.sender,
       amount,
       listing.supply,
-      listing.minted,
-      msg.sender
+      listing.rewards
     );
   }
 
-  event ApplicationDeletedEvent(bytes32 indexed listingHash);
-  event AppliedEvent(bytes32 indexed listingHash, uint deposit, uint applicationExpiry, string data, address indexed applicant);
-  event ChallengedEvent(bytes32 indexed listingHash, uint id, uint commitExpiry, uint revealExpiry, address indexed challenger);
-  event ChallengeFailedEvent(bytes32 indexed listingHash, uint indexed id, uint rewardPool, uint totalTokens);
-  event ChallengeSucceededEvent(bytes32 indexed listingHash, uint indexed id, uint rewardPool, uint totalTokens);
+  event ApplicationFailedEvent(bytes32 indexed listingHash);
+  event AppliedEvent(bytes32 indexed listingHash, address indexed applicant, bytes32 indexed dataHash, uint voteBy, uint amount);
+  event ChallengedEvent(bytes32 indexed listingHash, address indexed challenger);
+  event ChallengeFailedEvent(bytes32 indexed listingHash, address indexed challenger, uint reward);
+  event ChallengeSucceededEvent(bytes32 indexed listingHash, address indexed challenger, uint reward);
   event InvestedEvent(address indexed investor, uint offered, uint taken, uint minted);
-  event ListedEvent(bytes32 indexed listingHash, uint supply, uint minted);
-  event ListingDepositEvent(bytes32 indexed listingHash, uint added, uint supply, uint minted, address indexed owner);
+  event ListedEvent(bytes32 indexed listingHash, address indexed owner, uint reward, uint supply);
+  event ListingDepositEvent(bytes32 indexed listingHash, address indexed owner, uint added, uint supply, uint rewards);
   event ListingDeletedEvent(bytes32 indexed listingHash);
-  event ListingWithdrawEvent(bytes32 indexed listingHash, uint subtracted, uint supply, uint minted, address indexed owner);
-  event RewardClaimedEvent(uint indexed id, uint reward, address indexed voter);
+  event ListingWithdrawEvent(bytes32 indexed listingHash, address indexed owner, uint added, uint supply, uint rewards);
 }

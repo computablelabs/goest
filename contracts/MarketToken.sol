@@ -14,7 +14,7 @@ contract MarketToken {
   uint256 private selfSupply;
   bool private selfMintingStopped = false;
   address private selfOwner; // will be the market factory
-  address private selfMarket; // address of the market contract
+  address private selfMarketAddress; // address of the market contract which has some priviledge here
   mapping(address => uint256) private selfBalances;
   mapping (address => mapping (address => uint256)) private selfAllowed;
 
@@ -62,7 +62,7 @@ contract MarketToken {
    * Burns a specific amount of tokens.
    * @param amount The amount of token to be burned.
    */
-  function burn(uint256 amount) external isMarket {
+  function burn(uint256 amount) external hasPrivilege {
     require(amount <= selfBalances[msg.sender], "Error:NetworkToken.burn - Amount exceeds available balance");
     // no need to require amout <= supply, since that would imply the
     // sender's balance is greater than the supply, which *should* be an assertion failure
@@ -101,17 +101,6 @@ contract MarketToken {
     return true;
   }
 
-  function getMarket() external view returns(address) {
-    return selfMarket;
-  }
-
-  /**
-   * @dev Return the address of the contract owner, should be the MarketFactory TODO
-   */
-  function getOwner() external view returns(address) {
-    return selfOwner;
-  }
-
   /**
    * Increase the amount of tokens that an owner allowed to a spender.
    * approve should be called when allowed[spender] == 0. To increment
@@ -131,8 +120,8 @@ contract MarketToken {
   /**
    * Only the market contract has mint and burn permissions
    */
-  modifier isMarket() {
-    require(msg.sender == selfMarket, "Error:MarketToken.isMarket - Caller must be market contract");
+  modifier hasPrivilege() {
+    require(msg.sender == selfMarketAddress, "Error:MarketToken.hasPrivilege - Caller must be a privileged  contract");
     _;
   }
 
@@ -145,7 +134,7 @@ contract MarketToken {
    * @dev Create new tokens for the given amount, and bank them with the market until they are either burned or transferred
    * @param amount How many tokens to mint
    */
-  function mint(uint256 amount) external isMarket canMint returns (bool) {
+  function mint(uint256 amount) external hasPrivilege canMint returns (bool) {
     selfSupply = selfSupply.add(amount);
     selfBalances[msg.sender] = selfBalances[msg.sender].add(amount);
     emit TransferEvent(address(0), msg.sender, amount); // from: nobody, to: market
@@ -159,17 +148,17 @@ contract MarketToken {
     return selfMintingStopped;
   }
 
-  function setMarket(address market) external isOwner returns (bool) {
+  function setPrivilegedContracts(address market) external isOwner returns (bool) {
     // we only allow this once, so the current val of market must be 0 initialized still
-    require(selfMarket == address(0), "Error:MarketToken.setMarket - Market address already set");
-    selfMarket = market;
+    require(selfMarketAddress == address(0), "Error:MarketToken.setPrivilegedContracts - Market address already set");
+    selfMarketAddress = market;
     return true;
   }
 
   /**
    * @dev explicity state that no more tokens may be minted
    */
-  function stopMinting() external isMarket canMint returns (bool) {
+  function stopMinting() external hasPrivilege canMint returns (bool) {
     selfMintingStopped = true;
     emit MintStoppedEvent();
     return true;
