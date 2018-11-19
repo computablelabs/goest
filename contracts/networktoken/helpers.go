@@ -53,8 +53,8 @@ func SetupBlockchain(accountBalance *big.Int) *ctx {
 	alloc := make(core.GenesisAlloc)
 	alloc[authOwner.From] = core.GenesisAccount{Balance: accountBalance}
 	alloc[authUser.From] = core.GenesisAccount{Balance: accountBalance}
-	// 2nd arg is a gas limit, a uint64. we'll use 2M
-	bc := backends.NewSimulatedBackend(alloc, 2000000)
+	// 2nd arg is a gas limit, a uint64. we'll use 4.7M
+	bc := backends.NewSimulatedBackend(alloc, 4700000)
 
 	return &ctx{
 		Alloc:         alloc,

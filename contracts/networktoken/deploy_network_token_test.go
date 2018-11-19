@@ -29,7 +29,7 @@ func TestDeployNetworkToken(t *testing.T) {
 // the ctx and dep vars will be avail to the other tests in the package
 func TestMain(m *testing.M) {
 	// see ./helpers#context
-	context = SetupBlockchain(big.NewInt(1000000)) // 1M
+	context = SetupBlockchain(big.NewInt(1000000000000000000)) // 1ETH in wei
 	// see ./helpers#deployed
 	deployed, deployedError = Deploy(big.NewInt(1000), context) // 1000 token balance
 	code := m.Run()

@@ -23,23 +23,12 @@ func TestDeployMarketToken(t *testing.T) {
 	}
 }
 
-func TestSetMarket(t *testing.T) {
-	t.Log("Market token can have market contract address set")
-
-	// should have been set in deploy step...
-	market, _ := deployed.Contract.GetMarket(nil)
-
-	if market != context.AuthMarket.From {
-		t.Errorf("Expected market address to be %v, got %v", context.AuthMarket.From, market)
-	}
-}
-
 // we'll locate our testmain in these deploy_foo_test files as a pattern.
 // NOTE the test main is run once per package, therefore
 // the ctx and dep vars will be avail to the other tests in the package
 func TestMain(m *testing.M) {
 	// see ./helpers#context
-	context = SetupBlockchain(big.NewInt(4000000))
+	context = SetupBlockchain(big.NewInt(1000000000000000000)) // 1 ETH in wei
 	// see ./helpers#deployed
 	deployed, deployedError = Deploy(big.NewInt(1000), context)
 	code := m.Run()

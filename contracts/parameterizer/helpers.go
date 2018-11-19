@@ -1,8 +1,7 @@
 package parameterizer
 
 import (
-	"github.com/computablelabs/goest/contracts/markettoken"
-	"github.com/computablelabs/goest/contracts/plcrvoting"
+	"github.com/computablelabs/goest/contracts/voting"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind/backends"
 	"github.com/ethereum/go-ethereum/common"
@@ -20,36 +19,18 @@ type ctx struct {
 }
 
 type dep struct {
-	TokenAddress             common.Address
 	VotingAddress            common.Address
 	ParameterizerAddress     common.Address
-	TokenContract            *markettoken.MarketToken
-	VotingContract           *plcrvoting.PLCRVoting
+	VotingContract           *voting.Voting
 	ParameterizerContract    *Parameterizer
-	TokenTransaction         *types.Transaction // TODO we may not ever ref these TXs: possibly remove
 	VotingTransaction        *types.Transaction
 	ParameterizerTransaction *types.Transaction
 }
 
 func Deploy(initialBalance *big.Int, c *ctx) (*dep, error) {
-	tokenAddr, tokenTrans, tokenCont, tokenErr := markettoken.DeployMarketToken(
+	votingAddr, votingTrans, votingCont, votingErr := voting.DeployVoting(
 		c.AuthOwner,
 		c.Blockchain,
-		c.AuthOwner.From,
-		initialBalance,
-	)
-
-	if tokenErr != nil {
-		return nil, tokenErr
-	}
-
-	// commit the deploy before deploying voting
-	c.Blockchain.Commit()
-
-	votingAddr, votingTrans, votingCont, votingErr := plcrvoting.DeployPLCRVoting(
-		c.AuthOwner,
-		c.Blockchain,
-		tokenAddr,
 	)
 
 	if votingErr != nil {
@@ -61,15 +42,13 @@ func Deploy(initialBalance *big.Int, c *ctx) (*dep, error) {
 	paramAddr, paramTrans, paramCont, paramErr := DeployParameterizer(
 		c.AuthOwner,
 		c.Blockchain,
-		tokenAddr,
 		votingAddr,
-		big.NewInt(10), // minDeposit
-		big.NewInt(60), // applyStageLen in sec
-		big.NewInt(60), // commitStageLen in sec
-		big.NewInt(60), // revealStageLen in sec
-		big.NewInt(50), // dispensation pct
-		big.NewInt(50), // voteQuorum
-		big.NewInt(1),  // listReward
+		big.NewInt(1000000000000000000), // challengeStake in tokenWei (10^18 == 1 token)
+		big.NewInt(1),                   // conversionRate TODO tokenWei?
+		big.NewInt(1),                   // conversionSlope TODO tokenWei?
+		big.NewInt(1000000000000000000), // listReward (one token)
+		big.NewInt(50),                  // quorum
+		big.NewInt(300),                 // voteBy (5 mins)
 	)
 
 	if paramErr != nil {
@@ -79,9 +58,6 @@ func Deploy(initialBalance *big.Int, c *ctx) (*dep, error) {
 	c.Blockchain.Commit()
 
 	return &dep{
-		TokenAddress:             tokenAddr,
-		TokenContract:            tokenCont,
-		TokenTransaction:         tokenTrans,
 		VotingAddress:            votingAddr,
 		VotingContract:           votingCont,
 		VotingTransaction:        votingTrans,
@@ -103,8 +79,8 @@ func SetupBlockchain(accountBalance *big.Int) *ctx {
 	alloc[authOwner.From] = core.GenesisAccount{Balance: accountBalance}
 	alloc[authChallenger.From] = core.GenesisAccount{Balance: accountBalance}
 	alloc[authVoter.From] = core.GenesisAccount{Balance: accountBalance}
-	// 2nd arg is a gas limit, a uint64. we'll use 4 million
-	bc := backends.NewSimulatedBackend(alloc, 4000000)
+	// 2nd arg is a gas limit, a uint64. we'll use 4.7 million
+	bc := backends.NewSimulatedBackend(alloc, 4700000)
 
 	return &ctx{
 		AuthOwner:      authOwner,

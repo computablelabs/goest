@@ -41,10 +41,11 @@ func Deploy(initialBalance *big.Int, c *ctx) (*dep, error) {
 	// c.Blockchain.Commit()
 
 	// the market token must have an address for the market contract
-	_, setErr := cont.SetMarket(&bind.TransactOpts{
+	_, setErr := cont.SetPrivilegedContracts(&bind.TransactOpts{
 		From:     c.AuthOwner.From,
 		Signer:   c.AuthOwner.Signer,
-		GasLimit: 2000000,
+		GasPrice: big.NewInt(2000000000), // 2 Gwei
+		GasLimit: 100000,
 	}, c.AuthMarket.From)
 
 	if setErr != nil {
@@ -71,8 +72,8 @@ func SetupBlockchain(accountBalance *big.Int) *ctx {
 	alloc[authUser.From] = core.GenesisAccount{Balance: accountBalance}
 	alloc[authOther.From] = core.GenesisAccount{Balance: accountBalance}
 	alloc[authMarket.From] = core.GenesisAccount{Balance: accountBalance}
-	// 2nd arg is a gas limit, a uint64. we'll use 4 million
-	bc := backends.NewSimulatedBackend(alloc, 4000000)
+	// 2nd arg is a gas limit, a uint64. we'll use 4.7 million
+	bc := backends.NewSimulatedBackend(alloc, 4700000)
 
 	return &ctx{
 		AuthOwner:  authOwner,

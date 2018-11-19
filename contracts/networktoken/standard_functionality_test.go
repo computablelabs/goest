@@ -16,9 +16,11 @@ func TestTransferFrom(t *testing.T) {
 
 	// transfer from owner to user
 	_, err := deployed.Contract.Transfer(&bind.TransactOpts{
-		From:   context.AuthOwner.From,
-		Signer: context.AuthOwner.Signer,
-		Value:  nil,
+		From:     context.AuthOwner.From,
+		Signer:   context.AuthOwner.Signer,
+		Value:    nil,
+		GasPrice: big.NewInt(2000000000), // 2 Gwei
+		GasLimit: 100000,
 	}, context.AuthUser.From, big.NewInt(10)) // 10 tokens
 
 	if err != nil {
@@ -32,9 +34,11 @@ func TestTransferFrom(t *testing.T) {
 
 	// transfer from user to other user
 	_, err2 := deployed.Contract.Transfer(&bind.TransactOpts{
-		From:   context.AuthUser.From,
-		Signer: context.AuthUser.Signer,
-		Value:  nil,
+		From:     context.AuthUser.From,
+		Signer:   context.AuthUser.Signer,
+		Value:    nil,
+		GasPrice: big.NewInt(2000000000), // 2 Gwei
+		GasLimit: 100000,
 	}, context.OtherUser, big.NewInt(5))
 
 	if err2 != nil {
@@ -67,9 +71,11 @@ func TestApprove(t *testing.T) {
 	t.Log("Standard token should allow a user to approve a spender for some amount")
 
 	_, err := deployed.Contract.Approve(&bind.TransactOpts{
-		From:   context.AuthUser.From,
-		Signer: context.AuthUser.Signer,
-		Value:  nil,
+		From:     context.AuthUser.From,
+		Signer:   context.AuthUser.Signer,
+		Value:    nil,
+		GasPrice: big.NewInt(2000000000), // 2 Gwei
+		GasLimit: 100000,
 	}, context.OtherContract, big.NewInt(4))
 
 	if err != nil {
@@ -92,9 +98,11 @@ func TestDecreaseApproval(t *testing.T) {
 	t.Log("Standard token should be able to decrease the spending allowance of a given address for a given user")
 
 	_, err := deployed.Contract.DecreaseApproval(&bind.TransactOpts{
-		From:   context.AuthUser.From,
-		Signer: context.AuthUser.Signer,
-		Value:  nil,
+		From:     context.AuthUser.From,
+		Signer:   context.AuthUser.Signer,
+		Value:    nil,
+		GasPrice: big.NewInt(2000000000), // 2 Gwei
+		GasLimit: 100000,
 	}, context.OtherContract, big.NewInt(1))
 
 	if err != nil {
@@ -113,9 +121,11 @@ func TestIncreaseApproval(t *testing.T) {
 	t.Log("Standard token should be able to increase the spending allowance of a given address for a given user")
 
 	_, err := deployed.Contract.IncreaseApproval(&bind.TransactOpts{
-		From:   context.AuthUser.From,
-		Signer: context.AuthUser.Signer,
-		Value:  nil,
+		From:     context.AuthUser.From,
+		Signer:   context.AuthUser.Signer,
+		Value:    nil,
+		GasPrice: big.NewInt(2000000000), // 2 Gwei
+		GasLimit: 100000,
 	}, context.OtherContract, big.NewInt(2))
 
 	if err != nil {
