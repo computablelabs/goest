@@ -43,9 +43,10 @@ func Deploy(initialBalance *big.Int, c *ctx) (*dep, error) {
 		c.AuthOwner,
 		c.Blockchain,
 		votingAddr,
-		big.NewInt(1000000000000000000), // challengeStake in tokenWei (10^18 == 1 token)
-		big.NewInt(1),                   // conversionRate TODO tokenWei?
-		big.NewInt(1),                   // conversionSlope TODO tokenWei?
+		big.NewInt(1000000000000000000), // challengeStake in tokenWei (10**18 == 1 token)
+		big.NewInt(10000000000000000),   // conversionRate tokenWei, .1 of a token (10**16)
+		big.NewInt(101),                 // conversionSlopeDenominator, a scaling factor
+		big.NewInt(100),                 // conversionSlopeNumerator, a scaling factor
 		big.NewInt(1000000000000000000), // listReward (one token)
 		big.NewInt(50),                  // quorum
 		big.NewInt(300),                 // voteBy (5 mins)

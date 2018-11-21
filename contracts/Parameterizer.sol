@@ -18,7 +18,8 @@ contract Parameterizer {
   Voting private selfVoting;
   uint private selfChallengeStake;
   uint private selfConversionRate;
-  uint private selfConversionSlope;
+  uint private selfConversionSlopeDenominator;
+  uint private selfConversionSlopeNumerator;
   uint private selfListReward;
   uint private selfQuorum;
   uint private selfVoteBy;
@@ -28,18 +29,20 @@ contract Parameterizer {
   /**
   @dev constructor
   @param votingAddr Address of a voting contract for the provided token
-  @param challengeStake the amount, in tokenWei, that will be wagered in a challenge
-  @param conversionRate TODO
-  @param conversionSlope TODO
-  @param listReward The amount of market tokens minted for a listing if accepted
-  @param quorum Type of majority out of 100 necessary for vote success
-  @param voteBy Amount of time, in seconds, that any voting poll will "run"
+  @param challengeStake the amount, in tokenWei, that will be wagered in a challenge, ex: 10**18 (1 token)
+  @param conversionRate expressed in tokenWei, ex: 10**17 (.1)
+  @param conversionSlopeDenominator a scaling factor, ex: 101
+  @param conversionSlopeNumerator a scaling factor, ex: 100
+  @param listReward The amount of market tokens minted for a listing if accepted, ex: 10**18 (1 token)
+  @param quorum Type of majority out of 100 necessary for vote success, ex: 50
+  @param voteBy Amount of time, in seconds, that any voting poll will remain open for votes to be cast
   */
   constructor(
     address votingAddr,
     uint challengeStake,
     uint conversionRate,
-    uint conversionSlope,
+    uint conversionSlopeDenominator,
+    uint conversionSlopeNumerator,
     uint listReward,
     uint quorum,
     uint voteBy
@@ -48,7 +51,8 @@ contract Parameterizer {
     selfVoting = Voting(votingAddr);
     selfChallengeStake = challengeStake;
     selfConversionRate = conversionRate;
-    selfConversionSlope = conversionSlope;
+    selfConversionSlopeDenominator = conversionSlopeDenominator;
+    selfConversionSlopeNumerator = conversionSlopeNumerator;
     selfListReward = listReward;
     selfQuorum = quorum;
     selfVoteBy = voteBy;
@@ -62,8 +66,12 @@ contract Parameterizer {
     return selfConversionRate;
   }
 
-  function getConversionSlope() public view returns(uint) {
-    return selfConversionSlope;
+  function getConversionSlopeDenominator() public view returns(uint) {
+    return selfConversionSlopeDenominator;
+  }
+
+  function getConversionSlopeNumerator() public view returns(uint) {
+    return selfConversionSlopeNumerator;
   }
 
   function getListReward() public view returns(uint) {
@@ -95,8 +103,10 @@ contract Parameterizer {
         selfChallengeStake = selfReparams[paramHash].value;
       } else if (cmp == keccak256("conversionRate")) {
         selfConversionRate = selfReparams[paramHash].value;
-      } else if (cmp == keccak256("conversionSlope")) {
-        selfConversionSlope = selfReparams[paramHash].value;
+      } else if (cmp == keccak256("conversionSlopeDenominator")) {
+        selfConversionSlopeDenominator = selfReparams[paramHash].value;
+      } else if (cmp == keccak256("conversionSlopeNumerator")) {
+        selfConversionSlopeNumerator = selfReparams[paramHash].value;
       } else if (cmp == keccak256("listReward")) {
         selfListReward = selfReparams[paramHash].value;
       } else if (cmp == keccak256("quorum")) {

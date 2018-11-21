@@ -1,33 +1,43 @@
 package voting
 
 import (
-	// "github.com/ethereum/go-ethereum/accounts/abi/bind"
-	// "math/big"
+	"github.com/ethereum/go-ethereum/accounts/abi/bind"
+	"github.com/ethereum/go-ethereum/common"
+	"math/big"
 	"testing"
 )
 
-func TestCreatePoll(t *testing.T) {
-	// t.Log("Voting contract should create a poll on demand")
+// we'll include council functionality in here first
+func TestAddToCouncil(t *testing.T) {
+	t.Log("Voting contract should add a council member")
 
-	// _, err := deployed.VotingContract.StartPoll(&bind.TransactOpts{
-	// From:     context.AuthOwner.From,
-	// Signer:   context.AuthOwner.Signer,
-	// GasPrice: big.NewInt(2000000000), // 2 Gwei
-	// GasLimit: 150000,
-	// }, big.NewInt(51), big.NewInt(60), big.NewInt(60))
+	member := common.HexToAddress("0xfgh")
 
-	// if err != nil {
-	// t.Fatalf("Error starting poll: %v", err)
-	// }
+	_, err := deployed.VotingContract.AddToCouncil(&bind.TransactOpts{
+		From:     context.AuthMarket.From,
+		Signer:   context.AuthMarket.Signer,
+		GasPrice: big.NewInt(2000000000), // 2 Gwei
+		GasLimit: 100000,
+	}, member)
 
-	// context.Blockchain.Commit()
+	if err != nil {
+		t.Fatalf("Error adding council member: %v", err)
+	}
 
-	// // we should have at least one poll now
-	// exists, _ := deployed.VotingContract.PollExists(&bind.CallOpts{
-	// From: context.AuthOwner.From,
-	// }, big.NewInt(1))
+	context.Blockchain.Commit()
+}
 
-	// if exists != true {
-	// t.Fatalf("Expected poll exists to be true, got : %v", err)
-	// }
+func TestInCouncil(t *testing.T) {
+	t.Log("Voting contract should identify a council member")
+
+	member := common.HexToAddress("0xfgh")
+	res, _ := deployed.VotingContract.InCouncil(nil, member)
+
+	if res != true {
+		t.Fatalf("Expected inCouncil call to be true, got: %v", res)
+	}
+}
+
+func TestRemoveFromCouncil(t *testing.T) {
+
 }

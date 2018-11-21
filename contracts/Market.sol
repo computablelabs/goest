@@ -241,10 +241,10 @@ contract Market {
   */
   function getInvestmentPrice() public view returns (uint) {
     uint rate = selfParameterizer.getConversionRate();
-    uint slope = selfParameterizer.getConversionSlope();
+    uint slopeD = selfParameterizer.getConversionSlopeDenominator();
+    uint slopeN = selfParameterizer.getConversionSlopeNumerator();
     uint reserve = selfNetworkToken.balanceOf(this);
-    // TODO audit for tokenWei
-    return rate.add(slope.mul(reserve));
+    return rate.add(slopeN.mul(reserve).div(slopeD));
   }
 
   function getName() external view returns (string) {
