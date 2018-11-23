@@ -115,7 +115,6 @@ contract Voting {
     return selfCouncilKeys;
   }
 
-
   function getPrivilegedAddresses() external view returns(address, address) {
     return (selfMarketAddress, selfParameterizerAddress);
   }
@@ -203,8 +202,9 @@ contract Voting {
   /**
   @notice Commits vote using hash of choice and secret salt to conceal vote until reveal
   @param hash bytes32 identifier associated with target listing or reparam
+  @return true if a success
   */
-  function vote(bytes32 hash) external {
+  function vote(bytes32 hash) external returns (bool) {
     require(inCouncil(msg.sender), "Error:Voting.vote - Sender must be council member");
     require(isCandidate(hash), "Error:Voting.vote - Candidate does not exist");
     require(selfCandidates[hash].voteBy > block.timestamp, "Error:Voting.vote - Polling is closed for this candidate");
@@ -215,6 +215,7 @@ contract Voting {
 
     // NOTE: this creates the public record of the vote being cast (read: not concealed)
     emit VotedEvent(msg.sender, hash);
+    return true;
   }
 
   event VotedEvent(address indexed voter, bytes32 indexed hash);

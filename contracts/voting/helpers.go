@@ -77,7 +77,7 @@ func SetupBlockchain(accountBalance *big.Int) *ctx {
 		AuthOwner:         authOwner,
 		AuthParameterizer: authParameterizer,
 		AuthChallenger:    authChallenger,
-		AuthVoter:         authVoter,
+		AuthVoter:         authVoter, // a councilmember
 		Blockchain:        bc,
 	}
 }

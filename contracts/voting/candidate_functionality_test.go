@@ -16,7 +16,7 @@ func TestAddCandidate(t *testing.T) {
 		Signer:   context.AuthMarket.Signer,
 		GasPrice: big.NewInt(2000000000), // 2 Gwei
 		GasLimit: 150000,
-	}, "application", bytes, big.NewInt(300))
+	}, "application", bytes, big.NewInt(2))
 
 	if err != nil {
 		t.Fatalf("Error adding candidate: %v", err)
