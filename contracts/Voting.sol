@@ -34,7 +34,7 @@ contract Voting {
 
   /**
   @dev Place a new candidate into the candidates array with the necessary info
-  @param kind string 'application' | 'challenge' | 'reparam'
+  @param kind string 'application' | 'challenge' | 'reparam'. NOTE: this is passed by the contract itself, not input from a user
   @param hash bytes32 hash which key's this candidate's kind
   @param voteBy some amount of time, in seconds, from "now" that the poll for this candidate will close
   @return true if a success
@@ -49,7 +49,7 @@ contract Voting {
 
     // both push the hash into the array, and get the index. NOTE: push returns array length (hence - 1)
     c.index = selfCandidateKeys.push(hash) - 1; // no need to use .sub here
-    c.kind = bytes(kind);
+    c.kind = bytes(kind); // again, not checking the string as we control its passing
     c.voteBy = end;
     c.votes = 0;
 
@@ -64,6 +64,20 @@ contract Voting {
   }
 
   /**
+    @dev Determines if a given candidate is of the given kind
+    @param hash The key of this candidate
+    @param kind The type of candidate we expect it to be
+    @return boolean
+  */
+  function candidateIs(bytes32 hash, string kind) external view returns (bool) {
+    require(isCandidate(hash), "Error:Voting.pollClosed - Candidate does not exist");
+    // fast check for an obvious case
+    if (selfCandidates[hash].kind.length != bytes(kind).length) return false;
+    // more thorough if the lengths match. we can't compare strings but we can compare hashes
+    else return keccak256(string(selfCandidates[hash].kind)) == keccak256(kind);
+  }
+
+  /**
   @notice Determines if a candidate has enough yes votes to pass
   @dev Check if votes for exceeds quorum threshold (requires polling to be closed)
   @param hash  identifier associated with target listing or reparam
@@ -75,6 +89,11 @@ contract Voting {
     require(selfCouncilKeys.length > 0, "Error:Voting.didPass - No council members");
 
     return ((selfCandidates[hash].votes.div(selfCouncilKeys.length)).mul(100) > quorum);
+  }
+
+  function didVote(bytes32 hash, address member) public view returns(bool) {
+    // likely do not need to check candidate validity here TODO
+    return selfCandidates[hash].voted[member] == true;
   }
 
   function getCandidate(bytes32 hash) external view returns (string, uint, uint) {
@@ -94,6 +113,10 @@ contract Voting {
 
   function getCouncil() external view returns(address[]) {
     return selfCouncilKeys;
+  }
+
+  function getPrivilegedAddresses() external view returns(address, address) {
+    return (selfMarketAddress, selfParameterizerAddress);
   }
 
   modifier hasPrivilege() {
@@ -120,24 +143,13 @@ contract Voting {
     return(selfCandidateKeys[selfCandidates[hash].index] == hash);
   }
 
-  /**
-    @dev Determines if a given candidate is of the given kind
-    @param hash The key of this candidate
-    @param kind The type of candidate we expect it to be
-    @return boolean
-  */
-  function candidateIs(bytes32 hash, string kind) external view returns (bool) {
-    require(isCandidate(hash), "Error:Voting.pollClosed - Candidate does not exist");
-    // our 3 kinds are, and must remain, different length words
-    return selfCandidates[hash].kind.length == bytes(kind).length;
-    // if we had to insist on an exact comparision we could keccack == keccack
-  }
-
   function pollClosed(bytes32 hash) external view returns (bool) {
     require(isCandidate(hash), "Error:Voting.pollClosed - Candidate does not exist");
     return selfCandidates[hash].voteBy < block.timestamp;
   }
 
+  // not sold that we need to forbid the removing of a candidate with an 'active' voteBy,
+  // as this is triggered internally, so not implementing for now...
   function removeCandidate(bytes32 hash) external hasPrivilege returns(bool) {
     require(isCandidate(hash), "Error:Voting.removeCandidate - Candidate does not exist");
 
@@ -190,18 +202,20 @@ contract Voting {
   /**
   @notice Commits vote using hash of choice and secret salt to conceal vote until reveal
   @param hash bytes32 identifier associated with target listing or reparam
+  @return true if a success
   */
-  function vote(bytes32 hash) external {
+  function vote(bytes32 hash) external returns (bool) {
     require(inCouncil(msg.sender), "Error:Voting.vote - Sender must be council member");
     require(isCandidate(hash), "Error:Voting.vote - Candidate does not exist");
     require(selfCandidates[hash].voteBy > block.timestamp, "Error:Voting.vote - Polling is closed for this candidate");
-    require(selfCandidates[hash].voted[msg.sender] != true, "Error:Voting.vote - Sender has already voted");
+    require(!didVote(hash, msg.sender), "Error:Voting.vote - Sender has already voted");
 
     selfCandidates[hash].voted[msg.sender] = true; // we will keep track of who voted
     selfCandidates[hash].votes = selfCandidates[hash].votes.add(1);
 
     // NOTE: this creates the public record of the vote being cast (read: not concealed)
     emit VotedEvent(msg.sender, hash);
+    return true;
   }
 
   event VotedEvent(address indexed voter, bytes32 indexed hash);
