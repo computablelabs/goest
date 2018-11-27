@@ -25,7 +25,7 @@ type dep struct {
 	VotingTransaction *types.Transaction
 }
 
-func Deploy(initialBalance *big.Int, c *ctx) (*dep, error) {
+func Deploy(c *ctx) (*dep, error) {
 	votingAddr, votingTrans, votingCont, votingErr := DeployVoting(
 		c.AuthOwner,
 		c.Blockchain,

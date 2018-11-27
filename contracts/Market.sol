@@ -1,4 +1,4 @@
-pragma solidity 0.4.25;
+pragma solidity 0.5.0;
 
 import "./SafeMath.sol";
 import "./IERC20.sol";
@@ -65,7 +65,7 @@ contract Market {
   @param parameterizerAddr Address of the deployed parameterizer contract
   */
   constructor(
-    string name,
+    string memory name,
     address networkTokenAddr,
     address marketTokenAddr,
     address parameterizerAddr,
@@ -79,52 +79,6 @@ contract Market {
     selfMarketToken = MarketToken(marketTokenAddr);
     selfParameterizer = Parameterizer(parameterizerAddr);
     selfVoting = Voting(votingAddr);
-  }
-
-  /**
-  @dev Allows a user to start an application. Takes tokens from user and sets
-  apply stage end time.
-  @param listingHash The hash of a potential listing a user is applying to add to the registry
-  @param dataHash unique key for the backend to find this bespoke data
-  @param amount The number of (market) tokens a user wants to bank in the listing (optional)
-  @return true if successful
-  */
-  function apply(bytes32 listingHash, bytes32 dataHash, uint amount) external returns (bool) {
-    require(!selfVoting.isCandidate(listingHash), "Error:Market.apply - Already a candidate");
-    require(!isListed(listingHash), "Error:Market.apply - Already listed");
-
-    // string kind = "application"; // TODO these _could_ be in an Enum
-
-    // first, create the actual listing object
-    Listing storage listing = selfListings[listingHash];
-    listing.owner = msg.sender;
-    listing.dataHash = dataHash; // a unique identifier known to a backend used to locate the data (or something)
-
-    // the amount is optional here, but if sent, we need to bank them
-    if (amount > 0) {
-      listing.supply = amount; // optional arg here, may be 0
-      // Transfers tokens from user to Market contract (market acts as banker for all listing market tokens)
-      require(selfMarketToken.transferFrom(listing.owner, this, amount), "Error:Market.apply - Could not transfer Market Tokens");
-    }
-
-    // with that in place, create the candidate for this listing, NOTE: will trigger a CandidateCreatedEvent as well
-    bool added = selfVoting.addCandidate(
-      "application",
-      listingHash,
-      selfParameterizer.getVoteBy()
-    );
-
-    require(added, "Error:Market.apply - Could not add applicant to voting candidates list");
-
-    emit AppliedEvent(
-      listingHash,
-      msg.sender,
-      dataHash,
-      selfParameterizer.getVoteBy(),
-      amount
-    );
-
-    return true;
   }
 
   /**
@@ -149,7 +103,7 @@ contract Market {
     } else {
       // Takes tokens from challenger, do early as we'll revert if they aint got the funds
       // NOTE: in the next iteration make it possible for the challenger to stake a listing (by using its rewards)
-      require(selfMarketToken.transferFrom(msg.sender, this, stake), "Error:Market.challenge - Could not transfer Market tokens");
+      require(selfMarketToken.transferFrom(msg.sender, address(this), stake), "Error:Market.challenge - Could not transfer Market tokens");
 
       uint fromChallengeeSupply;
       uint fromChallengeeRewards;
@@ -201,7 +155,7 @@ contract Market {
     Listing storage listing = selfListings[listingHash];
 
     require(listing.owner == msg.sender, "Error:Market.deposit - Must be listing owner");
-    require(selfMarketToken.transferFrom(msg.sender, this, amount), "Error:Market.deposit - Could not transfer Market Tokens");
+    require(selfMarketToken.transferFrom(msg.sender, address(this), amount), "Error:Market.deposit - Could not transfer Market Tokens");
     listing.supply = listing.supply.add(amount);
 
     emit ListingDepositEvent(
@@ -243,11 +197,11 @@ contract Market {
     uint rate = selfParameterizer.getConversionRate();
     uint slopeD = selfParameterizer.getConversionSlopeDenominator();
     uint slopeN = selfParameterizer.getConversionSlopeNumerator();
-    uint reserve = selfNetworkToken.balanceOf(this);
+    uint reserve = selfNetworkToken.balanceOf(address(this));
     return rate.add(slopeN.mul(reserve).div(slopeD));
   }
 
-  function getName() external view returns (string) {
+  function getName() external view returns (string memory) {
     return string(selfName);
   }
 
@@ -268,7 +222,7 @@ contract Market {
     // regardless of price multiples, any remainder will be unused
     uint taken = remainder != 0 ? offered.sub(remainder) : remainder;
     // move those used tokens from investor to the reserve. NOTE this also subtracts from network token allowance[sender][market]
-    selfNetworkToken.transferFrom(msg.sender, this, taken);
+    selfNetworkToken.transferFrom(msg.sender, address(this), taken);
     // we mint amount taken / investment price. TODO audit
     uint minted = taken.div(price);
     // NOTE this is, at origin, owned by the market
@@ -325,6 +279,51 @@ contract Market {
   */
   function isListingOwner(address addr) public view returns (bool) {
     return selfListingOwners[addr] >= 1;
+  }
+
+  /**
+    @dev Allows a user to apply for listing status.
+    @param listingHash The hash of a potential listing a user is applying to add to the registry
+    @param dataHash unique key for the backend to find this bespoke data
+    @param amount The number of (market) tokens a user wants to bank in the listing (optional)
+    @return true if successful
+  */
+  function list(bytes32 listingHash, bytes32 dataHash, uint amount) external returns (bool) {
+    require(!selfVoting.isCandidate(listingHash), "Error:Market.apply - Already a candidate");
+    require(!isListed(listingHash), "Error:Market.apply - Already listed");
+
+    // string kind = "application"; // TODO these _could_ be in an Enum
+
+    // first, create the actual listing object
+    Listing storage listing = selfListings[listingHash];
+    listing.owner = msg.sender;
+    listing.dataHash = dataHash; // a unique identifier known to a backend used to locate the data (or something)
+
+    // the amount is optional here, but if sent, we need to bank them
+    if (amount > 0) {
+      listing.supply = amount; // optional arg here, may be 0
+      // Transfers tokens from user to Market contract (market acts as banker for all listing market tokens)
+      require(selfMarketToken.transferFrom(listing.owner, address(this), amount), "Error:Market.apply - Could not transfer Market Tokens");
+    }
+
+    // with that in place, create the candidate for this listing, NOTE: will trigger a CandidateCreatedEvent as well
+    bool added = selfVoting.addCandidate(
+      "application",
+      listingHash,
+      selfParameterizer.getVoteBy()
+    );
+
+    require(added, "Error:Market.apply - Could not add applicant to voting candidates list");
+
+    emit AppliedEvent(
+      listingHash,
+      msg.sender,
+      dataHash,
+      selfParameterizer.getVoteBy(),
+      amount
+    );
+
+    return true;
   }
 
   /**

@@ -47,7 +47,7 @@ func TestMain(m *testing.M) {
 	// see ./helpers#context
 	context = SetupBlockchain(big.NewInt(1000000000000000000)) // 1 ETH in wei
 	// see ./helpers#deployed
-	deployed, deployedError = Deploy(big.NewInt(1000), context)
+	deployed, deployedError = Deploy(context)
 
 	// the voting contract must have its privileged addresses set or shit won't work, NOTE this is done, IRL, by the factory
 	_, err := deployed.VotingContract.SetPrivilegedContracts(&bind.TransactOpts{
