@@ -92,12 +92,21 @@ contract Parameterizer {
     return selfQuorum;
   }
 
+  function getReparam(bytes32 paramHash) external view returns(address, string memory, uint) {
+    return (
+      selfReparams[paramHash].proposer,
+      string(selfReparams[paramHash].name),
+      selfReparams[paramHash].value
+    );
+  }
+
   function getVoteBy() external view returns(uint) {
     return selfVoteBy;
   }
 
   /**
-    @dev Determine if a reparam proposal collected the necessary votes, setting it if so
+    @dev Determine if a reparam proposal collected the necessary votes, setting it if so.
+    @notice This function must be called by a council member.
     @param paramHash the proposal to make a determination and possible state transition for
   */
   function resolveReparam(bytes32 paramHash) public returns (bool) {
@@ -126,7 +135,8 @@ contract Parameterizer {
       }
     }
 
-    // clean up the reparam and candidate
+    // Pass or not, clean up the reparam and candidate
+    require(selfVoting.removeCandidate(paramHash), "Error:Parameterizer.resolveReparam - Could not remove candidate from voting");
     delete selfReparams[paramHash];
     return true;
   }
