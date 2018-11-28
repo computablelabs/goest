@@ -27,8 +27,8 @@ func TestBalanceOf(t *testing.T) {
 		t.Errorf("Expected user balance of 0, got %v", userBal)
 	}
 
-	// owner has a truthy bal
-	ownerBal, _ := deployed.Contract.BalanceOf(&bind.CallOpts{From: context.AuthOwner.From}, context.AuthOwner.From)
+	// owner has a truthy bal. TODO this will change after we implement the "initial token table" later...
+	ownerBal, _ := deployed.Contract.BalanceOf(&bind.CallOpts{From: context.AuthFactory.From}, context.AuthFactory.From)
 
 	if ownerBal.Cmp(big.NewInt(0)) != 1 {
 		t.Errorf("Expected owner balance to be greater than 0, got %v", ownerBal)
@@ -43,7 +43,7 @@ func TestMint(t *testing.T) {
 	// the starting supply at this point
 	supply, _ := deployed.Contract.TotalSupply(nil)
 	// owner's current token holdings TODO this check may change?
-	ownerBal, _ := deployed.Contract.BalanceOf(&bind.CallOpts{From: context.AuthOwner.From}, context.AuthOwner.From)
+	ownerBal, _ := deployed.Contract.BalanceOf(&bind.CallOpts{From: context.AuthFactory.From}, context.AuthFactory.From)
 	marketBal, _ := deployed.Contract.BalanceOf(&bind.CallOpts{From: context.AuthMarket.From}, context.AuthMarket.From)
 
 	// minting will give market the minted amount and add to the total supply
@@ -75,7 +75,7 @@ func TestMint(t *testing.T) {
 	}
 
 	// total supply is increased but the balance of the initial holder did not - again, this may change TODO
-	ownerBalCheck, _ := deployed.Contract.BalanceOf(&bind.CallOpts{From: context.AuthOwner.From}, context.AuthOwner.From)
+	ownerBalCheck, _ := deployed.Contract.BalanceOf(&bind.CallOpts{From: context.AuthFactory.From}, context.AuthFactory.From)
 	if ownerBalCheck.Cmp(ownerBal) != 0 {
 		t.Errorf("Expected owner balance of %v, got %v", ownerBal, ownerBalCheck)
 	}
@@ -105,7 +105,7 @@ func TestStopMinting(t *testing.T) {
 
 	context.Blockchain.Commit()
 
-	if stopped, _ := deployed.Contract.MintingStopped(&bind.CallOpts{From: context.AuthOwner.From}); stopped != true {
+	if stopped, _ := deployed.Contract.MintingStopped(&bind.CallOpts{From: context.AuthFactory.From}); stopped != true {
 		t.Errorf("Expected minting stopped to be true, got %v", stopped)
 	}
 

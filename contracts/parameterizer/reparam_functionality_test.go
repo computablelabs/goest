@@ -17,7 +17,7 @@ func TestParameterize(t *testing.T) {
 		Signer:   context.AuthMarket.Signer,
 		GasPrice: big.NewInt(2000000000), // 2 Gwei
 		GasLimit: 100000,
-	}, context.AuthVoter.From)
+	}, context.AuthMember1.From)
 
 	if councilErr != nil {
 		t.Fatalf("Error adding council member: %v", councilErr)
@@ -26,8 +26,8 @@ func TestParameterize(t *testing.T) {
 	context.Blockchain.Commit()
 
 	_, err := deployed.ParameterizerContract.Reparameterize(&bind.TransactOpts{
-		From:     context.AuthVoter.From,
-		Signer:   context.AuthVoter.Signer,
+		From:     context.AuthMember1.From,
+		Signer:   context.AuthMember1.Signer,
 		GasPrice: big.NewInt(2000000000), // 2 Gwei
 		GasLimit: 200000,
 	}, "voteBy", big.NewInt(25))
@@ -50,8 +50,8 @@ func TestGetReparam(t *testing.T) {
 	paramHash, _ := deployed.ParameterizerContract.GetParamHash(nil, "voteBy", big.NewInt(25))
 	proposer, name, val, _ := deployed.ParameterizerContract.GetReparam(nil, paramHash)
 
-	if proposer != context.AuthVoter.From {
-		t.Fatalf("Expected proposer to be %v, got: %v", context.AuthVoter.From, proposer)
+	if proposer != context.AuthMember1.From {
+		t.Fatalf("Expected proposer to be %v, got: %v", context.AuthMember1.From, proposer)
 	}
 
 	if name != "voteBy" {
@@ -76,8 +76,8 @@ func TestResolveReparam(t *testing.T) {
 
 	// cast a vote, one will suffice as we only have one council member here
 	_, voteErr := deployed.VotingContract.Vote(&bind.TransactOpts{
-		From:     context.AuthVoter.From,
-		Signer:   context.AuthVoter.Signer,
+		From:     context.AuthMember1.From,
+		Signer:   context.AuthMember1.Signer,
 		GasPrice: big.NewInt(2000000000), // 2 Gwei
 		GasLimit: 100000,
 	}, paramHash)
@@ -101,8 +101,8 @@ func TestResolveReparam(t *testing.T) {
 
 	// resolve it
 	_, resolveErr := deployed.ParameterizerContract.ResolveReparam(&bind.TransactOpts{
-		From:     context.AuthVoter.From,
-		Signer:   context.AuthVoter.Signer,
+		From:     context.AuthMember1.From,
+		Signer:   context.AuthMember1.Signer,
 		GasPrice: big.NewInt(2000000000), // 2 Gwei
 		GasLimit: 150000,
 	}, paramHash)

@@ -51,8 +51,8 @@ func TestMain(m *testing.M) {
 
 	// the voting contract must have its privileged addresses set or shit won't work, NOTE this is done, IRL, by the factory
 	_, err := deployed.VotingContract.SetPrivilegedContracts(&bind.TransactOpts{
-		From:     context.AuthOwner.From,
-		Signer:   context.AuthOwner.Signer,
+		From:     context.AuthFactory.From,
+		Signer:   context.AuthFactory.Signer,
 		GasPrice: big.NewInt(2000000000),
 		GasLimit: 1000000,
 	}, context.AuthMarket.From, context.AuthParameterizer.From)

@@ -11,11 +11,11 @@ import (
 )
 
 type ctx struct {
-	AuthOwner  *bind.TransactOpts
-	AuthUser   *bind.TransactOpts
-	AuthOther  *bind.TransactOpts
-	AuthMarket *bind.TransactOpts
-	Blockchain *backends.SimulatedBackend
+	AuthFactory *bind.TransactOpts
+	AuthMember1 *bind.TransactOpts
+	AuthMember2 *bind.TransactOpts
+	AuthMarket  *bind.TransactOpts
+	Blockchain  *backends.SimulatedBackend
 }
 
 type dep struct {
@@ -27,9 +27,9 @@ type dep struct {
 func Deploy(initialBalance *big.Int, c *ctx) (*dep, error) {
 	// this method is generated in the burnable.go compiled sol class
 	addr, trans, cont, err := DeployMarketToken(
-		c.AuthOwner,
+		c.AuthFactory,
 		c.Blockchain,
-		c.AuthOwner.From,
+		c.AuthFactory.From,
 		initialBalance,
 	)
 
@@ -42,8 +42,8 @@ func Deploy(initialBalance *big.Int, c *ctx) (*dep, error) {
 
 	// the market token must have an address for the market contract
 	_, setErr := cont.SetPrivilegedContracts(&bind.TransactOpts{
-		From:     c.AuthOwner.From,
-		Signer:   c.AuthOwner.Signer,
+		From:     c.AuthFactory.From,
+		Signer:   c.AuthFactory.Signer,
 		GasPrice: big.NewInt(2000000000), // 2 Gwei
 		GasLimit: 100000,
 	}, c.AuthMarket.From)
@@ -59,27 +59,27 @@ func Deploy(initialBalance *big.Int, c *ctx) (*dep, error) {
 
 func SetupBlockchain(accountBalance *big.Int) *ctx {
 	// generate a new key, toss the error for now as it shouldnt happen
-	keyOwner, _ := crypto.GenerateKey()
-	keyUser, _ := crypto.GenerateKey()
-	keyOther, _ := crypto.GenerateKey()
-	keyMarket, _ := crypto.GenerateKey()
-	authOwner := bind.NewKeyedTransactor(keyOwner)
-	authUser := bind.NewKeyedTransactor(keyUser)
-	authOther := bind.NewKeyedTransactor(keyOther)
-	authMarket := bind.NewKeyedTransactor(keyMarket)
+	keyFac, _ := crypto.GenerateKey()
+	keyMem1, _ := crypto.GenerateKey()
+	keyMem2, _ := crypto.GenerateKey()
+	keyMark, _ := crypto.GenerateKey()
+	authFac := bind.NewKeyedTransactor(keyFac)
+	authMem1 := bind.NewKeyedTransactor(keyMem1)
+	authMem2 := bind.NewKeyedTransactor(keyMem2)
+	authMark := bind.NewKeyedTransactor(keyMark)
 	alloc := make(core.GenesisAlloc)
-	alloc[authOwner.From] = core.GenesisAccount{Balance: accountBalance}
-	alloc[authUser.From] = core.GenesisAccount{Balance: accountBalance}
-	alloc[authOther.From] = core.GenesisAccount{Balance: accountBalance}
-	alloc[authMarket.From] = core.GenesisAccount{Balance: accountBalance}
+	alloc[authFac.From] = core.GenesisAccount{Balance: accountBalance}
+	alloc[authMem1.From] = core.GenesisAccount{Balance: accountBalance}
+	alloc[authMem2.From] = core.GenesisAccount{Balance: accountBalance}
+	alloc[authMark.From] = core.GenesisAccount{Balance: accountBalance}
 	// 2nd arg is a gas limit, a uint64. we'll use 4.7 million
 	bc := backends.NewSimulatedBackend(alloc, 4700000)
 
 	return &ctx{
-		AuthOwner:  authOwner,
-		AuthUser:   authUser,
-		AuthOther:  authOther,
-		AuthMarket: authMarket,
-		Blockchain: bc,
+		AuthFactory: authFac,
+		AuthMember1: authMem1,
+		AuthMember2: authMem2,
+		AuthMarket:  authMark,
+		Blockchain:  bc,
 	}
 }

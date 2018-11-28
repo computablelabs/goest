@@ -12,8 +12,8 @@ import (
 
 type ctx struct {
 	Alloc         core.GenesisAlloc // a map of accounts as { address: account }
-	AuthOwner     *bind.TransactOpts
-	AuthUser      *bind.TransactOpts
+	AuthFactory   *bind.TransactOpts
+	AuthMember    *bind.TransactOpts
 	Blockchain    *backends.SimulatedBackend
 	OtherUser     common.Address
 	OtherContract common.Address
@@ -28,9 +28,9 @@ type dep struct {
 func Deploy(initialBalance *big.Int, c *ctx) (*dep, error) {
 	// this method is generated in the burnable.go compiled sol class
 	addr, trans, cont, err := DeployNetworkToken(
-		c.AuthOwner,
+		c.AuthFactory,
 		c.Blockchain,
-		c.AuthOwner.From,
+		c.AuthFactory.From,
 		initialBalance,
 	)
 
@@ -46,20 +46,20 @@ func Deploy(initialBalance *big.Int, c *ctx) (*dep, error) {
 
 func SetupBlockchain(accountBalance *big.Int) *ctx {
 	// generate a new key, toss the error for now as it shouldnt happen
-	keyOwner, _ := crypto.GenerateKey()
-	authOwner := bind.NewKeyedTransactor(keyOwner)
-	keyUser, _ := crypto.GenerateKey()
-	authUser := bind.NewKeyedTransactor(keyUser)
+	keyFac, _ := crypto.GenerateKey()
+	authFac := bind.NewKeyedTransactor(keyFac)
+	keyMem, _ := crypto.GenerateKey()
+	authMem := bind.NewKeyedTransactor(keyMem)
 	alloc := make(core.GenesisAlloc)
-	alloc[authOwner.From] = core.GenesisAccount{Balance: accountBalance}
-	alloc[authUser.From] = core.GenesisAccount{Balance: accountBalance}
+	alloc[authFac.From] = core.GenesisAccount{Balance: accountBalance}
+	alloc[authMem.From] = core.GenesisAccount{Balance: accountBalance}
 	// 2nd arg is a gas limit, a uint64. we'll use 4.7M
 	bc := backends.NewSimulatedBackend(alloc, 4700000)
 
 	return &ctx{
 		Alloc:         alloc,
-		AuthOwner:     authOwner,
-		AuthUser:      authUser,
+		AuthFactory:   authFac,
+		AuthMember:    authMem,
 		Blockchain:    bc,
 		OtherUser:     common.HexToAddress("0xabc"),
 		OtherContract: common.HexToAddress("0xdef"),

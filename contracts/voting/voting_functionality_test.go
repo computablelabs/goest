@@ -16,7 +16,7 @@ func TestVote(t *testing.T) {
 		Signer:   context.AuthMarket.Signer,
 		GasPrice: big.NewInt(2000000000), // 2 Gwei
 		GasLimit: 100000,
-	}, context.AuthVoter.From)
+	}, context.AuthMember1.From)
 
 	if councilErr != nil {
 		t.Fatalf("Error adding council member: %v", councilErr)
@@ -40,8 +40,8 @@ func TestVote(t *testing.T) {
 
 	// cast a vote
 	_, voteErr := deployed.VotingContract.Vote(&bind.TransactOpts{
-		From:     context.AuthVoter.From,
-		Signer:   context.AuthVoter.Signer,
+		From:     context.AuthMember1.From,
+		Signer:   context.AuthMember1.Signer,
 		GasPrice: big.NewInt(2000000000), // 2 Gwei
 		GasLimit: 100000,
 	}, bytes)
@@ -64,7 +64,7 @@ func TestDidVote(t *testing.T) {
 	t.Log("Voting contract has recorded that a member cast a vote")
 
 	bytes := genBytes32("iLoveListing.com")
-	voted, _ := deployed.VotingContract.DidVote(nil, bytes, context.AuthVoter.From)
+	voted, _ := deployed.VotingContract.DidVote(nil, bytes, context.AuthMember1.From)
 
 	if voted != true {
 		t.Fatalf("Expected member didVote to be true, got: %v", voted)
