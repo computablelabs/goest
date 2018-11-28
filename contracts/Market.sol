@@ -59,10 +59,9 @@ contract Market {
   address private selfOwner;
 
   /**
-  @dev Contructor
-  @param marketTokenAddr Address of the deployed market token contract
-  @param votingAddr Address of the deployed voting contract
-  @param parameterizerAddr Address of the deployed parameterizer contract
+    @param marketTokenAddr Address of the deployed market token contract
+    @param votingAddr Address of the deployed voting contract
+    @param parameterizerAddr Address of the deployed parameterizer contract
   */
   constructor(
     string memory name,
@@ -82,9 +81,9 @@ contract Market {
   }
 
   /**
-  @dev Starts a challenge for a listing
-  @param listingHash The listing being challenged.
-  @return true if successful
+    @dev Starts a challenge for a listing
+    @param listingHash The listing being challenged.
+    @return true if successful
   */
   function challenge(bytes32 listingHash) external returns (bool) {
     uint stake = selfParameterizer.getChallengeStake();
@@ -146,10 +145,10 @@ contract Market {
   }
 
   /**
-  @dev Allows the owner of a listingHash to increase its supply.
-  @param listingHash A listingHash msg.sender is the owner of
-  @param amount The number of Market tokens to increase the listing's supply by
-  @return true if succeeded
+    @dev Allows the owner of a listingHash to increase its supply.
+    @param listingHash A listingHash msg.sender is the owner of
+    @param amount The number of Market tokens to increase the listing's supply by
+    @return true if succeeded
   */
   function depositToListing(bytes32 listingHash, uint amount) external returns (bool) {
     Listing storage listing = selfListings[listingHash];
@@ -170,10 +169,10 @@ contract Market {
   }
 
   /**
-  @dev Allows the owner of a listingHash to remove the listing
-  Returns all tokens to the owner of the listingHash. Burns any minted and/or rewards tokens.
-  @param listingHash A listingHash msg.sender is the owner of.
-  @return true if success
+    @dev Allows the owner of a listingHash to remove the listing
+    Returns all tokens to the owner of the listingHash. Burns any minted and/or rewards tokens.
+    @param listingHash A listingHash msg.sender is the owner of.
+    @return true if success
   */
   function exit(bytes32 listingHash) external returns (bool) {
     require(selfListings[listingHash].owner == msg.sender, "Error:Market.exit - Must be listing owner");
@@ -189,9 +188,9 @@ contract Market {
   }
 
   /**
-  @dev Return the current minimum amount of network tokens required to invest in this market (rate + slope * reserve)
-  @return uint Said number of network tokens
-  TODO audit...
+    @dev Return the current minimum amount of network tokens required to invest in this market (rate + slope * reserve)
+    @return uint Said number of network tokens
+    TODO audit...
   */
   function getInvestmentPrice() public view returns (uint) {
     uint rate = selfParameterizer.getConversionRate();
@@ -206,10 +205,10 @@ contract Market {
   }
 
   /**
-  @dev Given network tokens as entry, mint and return market tokens to the
-  caller as dictated by the pricing curve.
-  @param offered Number of network tokens offered for investment
-  @return uint number of tokens minted and given to investor
+    @dev Given network tokens as entry, mint and return market tokens to the
+    caller as dictated by the pricing curve.
+    @param offered Number of network tokens offered for investment
+    @return uint number of tokens minted and given to investor
   */
   function invest(uint offered) external returns (uint) {
     // TODO add a check that msg.sender is NOT a listing holder?
@@ -266,8 +265,8 @@ contract Market {
   }
 
   /**
-  @dev Returns true if the provided listingHash is a listing
-  @param listingHash The listingHash whose status is to be examined
+    @dev Returns true if the provided listingHash is a listing
+    @param listingHash The listingHash whose status is to be examined
   */
   function isListed(bytes32 listingHash) public view returns (bool) {
     return selfListings[listingHash].listed;
@@ -283,6 +282,7 @@ contract Market {
 
   /**
     @dev Allows a user to apply for listing status.
+    @notice Changed from Market.apply as apply is now (0.5) a reserved keyword
     @param listingHash The hash of a potential listing a user is applying to add to the registry
     @param dataHash unique key for the backend to find this bespoke data
     @param amount The number of (market) tokens a user wants to bank in the listing (optional)
@@ -290,9 +290,7 @@ contract Market {
   */
   function list(bytes32 listingHash, bytes32 dataHash, uint amount) external returns (bool) {
     require(!selfVoting.isCandidate(listingHash), "Error:Market.apply - Already a candidate");
-    require(!isListed(listingHash), "Error:Market.apply - Already listed");
-
-    // string kind = "application"; // TODO these _could_ be in an Enum
+    require(!isListed(listingHash), "Error:Market.list - Already listed");
 
     // first, create the actual listing object
     Listing storage listing = selfListings[listingHash];
@@ -303,7 +301,7 @@ contract Market {
     if (amount > 0) {
       listing.supply = amount; // optional arg here, may be 0
       // Transfers tokens from user to Market contract (market acts as banker for all listing market tokens)
-      require(selfMarketToken.transferFrom(listing.owner, address(this), amount), "Error:Market.apply - Could not transfer Market Tokens");
+      require(selfMarketToken.transferFrom(listing.owner, address(this), amount), "Error:Market.list - Could not transfer Market Tokens");
     }
 
     // with that in place, create the candidate for this listing, NOTE: will trigger a CandidateCreatedEvent as well
@@ -313,7 +311,7 @@ contract Market {
       selfParameterizer.getVoteBy()
     );
 
-    require(added, "Error:Market.apply - Could not add applicant to voting candidates list");
+    require(added, "Error:Market.list - Could not add applicant to voting candidates list");
 
     emit AppliedEvent(
       listingHash,
@@ -327,8 +325,8 @@ contract Market {
   }
 
   /**
-  @dev Deletes a listing and transfers tokens back to owner (minus minted rewards)
-  @param listingHash The listing hash to delete
+    @dev Deletes a listing and transfers tokens back to owner (minus minted rewards)
+    @param listingHash The listing hash to delete
   */
   function removeListing(bytes32 listingHash) private returns (bool) {
     require(selfListings[listingHash].listed == true, "Error:Market.removeListing - Must be a listing");
@@ -357,8 +355,8 @@ contract Market {
   }
 
   /**
-  @dev Determines if an applicant becomes a listing
-  @param listingHash The listingHash representing the applicant in question
+    @dev Determines if an applicant becomes a listing
+    @param listingHash The listingHash representing the applicant in question
   */
   function resolveApplication(bytes32 listingHash) public returns(bool) {
     require(selfVoting.inCouncil(msg.sender), "Error:Market.resolveApplication - Sender must be council member");
@@ -397,9 +395,9 @@ contract Market {
   }
 
   /**
-  @dev Determines the winner in a challenge. Rewards the winner and possibly deletes the listingHash
-  @param listingHash A listingHash with a challenge that is to be resolved
-  @return true if succeeded
+    @dev Determines the winner in a challenge. Rewards the winner and possibly deletes the listingHash
+    @param listingHash A listingHash with a challenge that is to be resolved
+    @return true if succeeded
   */
   function resolveChallenge(bytes32 listingHash) public returns(bool) {
     require(selfVoting.inCouncil(msg.sender), "Error:Market.resolveChallenge - Sender must be council member");
@@ -441,9 +439,9 @@ contract Market {
   }
 
   /**
-  @dev Allows the owner of a listingHash to withdraw from its supply (minted is restricted).
-  @param listingHash A listingHash msg.sender is the owner of.
-  @param amount The number of Market tokens to withdraw from the supply (must be <= (supply - minted)).
+    @dev Allows the owner of a listingHash to withdraw from its supply (minted is restricted).
+    @param listingHash A listingHash msg.sender is the owner of.
+    @param amount The number of Market tokens to withdraw from the supply (must be <= (supply - minted)).
   */
   function withdrawFromListing(bytes32 listingHash, uint amount) external {
     Listing storage listing = selfListings[listingHash];
