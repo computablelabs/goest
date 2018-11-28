@@ -1,4 +1,4 @@
-pragma solidity 0.4.25;
+pragma solidity 0.5.0;
 
 import "./Voting.sol";
 import "./SafeMath.sol";
@@ -27,15 +27,15 @@ contract Parameterizer {
   // uint private VOTEBY = 604800; // 7 days
 
   /**
-  @dev constructor
-  @param votingAddr Address of a voting contract for the provided token
-  @param challengeStake the amount, in tokenWei, that will be wagered in a challenge, ex: 10**18 (1 token)
-  @param conversionRate expressed in tokenWei, ex: 10**17 (.1)
-  @param conversionSlopeDenominator a scaling factor, ex: 101
-  @param conversionSlopeNumerator a scaling factor, ex: 100
-  @param listReward The amount of market tokens minted for a listing if accepted, ex: 10**18 (1 token)
-  @param quorum Type of majority out of 100 necessary for vote success, ex: 50
-  @param voteBy Amount of time, in seconds, that any voting poll will remain open for votes to be cast
+    @dev constructor
+    @param votingAddr Address of a voting contract for the provided token
+    @param challengeStake the amount, in tokenWei, that will be wagered in a challenge, ex: 10**18 (1 token)
+    @param conversionRate expressed in tokenWei, ex: 10**17 (.1)
+    @param conversionSlopeDenominator a scaling factor, ex: 101
+    @param conversionSlopeNumerator a scaling factor, ex: 100
+    @param listReward The amount of market tokens minted for a listing if accepted, ex: 10**18 (1 token)
+    @param quorum Type of majority out of 100 necessary for vote success, ex: 50
+    @param voteBy Amount of time, in seconds, that any voting poll will remain open for votes to be cast
   */
   constructor(
     address votingAddr,
@@ -58,37 +58,56 @@ contract Parameterizer {
     selfVoteBy = voteBy;
   }
 
-  function getChallengeStake() public view returns(uint) {
+  function getChallengeStake() external view returns(uint) {
     return selfChallengeStake;
   }
 
-  function getConversionRate() public view returns(uint) {
+  function getConversionRate() external view returns(uint) {
     return selfConversionRate;
   }
 
-  function getConversionSlopeDenominator() public view returns(uint) {
+  function getConversionSlopeDenominator() external view returns(uint) {
     return selfConversionSlopeDenominator;
   }
 
-  function getConversionSlopeNumerator() public view returns(uint) {
+  function getConversionSlopeNumerator() external view returns(uint) {
     return selfConversionSlopeNumerator;
   }
 
-  function getListReward() public view returns(uint) {
+  function getListReward() external view returns(uint) {
     return selfListReward;
   }
 
-  function getQuorum() public view returns(uint) {
+  /**
+    @dev a purely external version of how the Parameterizer generates the candidate paramHash.
+    @param name The string name to get packed and hashed
+    @param value The proposed value change to get packed and hashed
+    @return The single hashed value of both combined args
+  */
+  function getParamHash(string calldata name, uint value) external pure returns(bytes32) {
+    return keccak256(abi.encodePacked(name, value));
+  }
+
+  function getQuorum() external view returns(uint) {
     return selfQuorum;
   }
 
-  function getVoteBy() public view returns(uint) {
+  function getReparam(bytes32 paramHash) external view returns(address, string memory, uint) {
+    return (
+      selfReparams[paramHash].proposer,
+      string(selfReparams[paramHash].name),
+      selfReparams[paramHash].value
+    );
+  }
+
+  function getVoteBy() external view returns(uint) {
     return selfVoteBy;
   }
 
   /**
-  @dev Determine if a reparam proposal collected the necessary votes, setting it if so
-  @param paramHash the proposal to make a determination and possible state transition for
+    @dev Determine if a reparam proposal collected the necessary votes, setting it if so.
+    @notice This function must be called by a council member.
+    @param paramHash the proposal to make a determination and possible state transition for
   */
   function resolveReparam(bytes32 paramHash) public returns (bool) {
     require(selfVoting.inCouncil(msg.sender), "Error:Parameterizer.resolveReparam - Sender must be council member");
@@ -96,37 +115,38 @@ contract Parameterizer {
     require(selfVoting.pollClosed(paramHash), "Error:Parameterizer.resolveReparam - Polls for this candidate must be closed");
 
     // Case: reparam accepted
-    if(selfVoting.didPass(paramHash, getQuorum())) {
-      bytes32 cmp = keccak256(string(selfReparams[paramHash].name));
+    if(selfVoting.didPass(paramHash, selfQuorum)) {
+      bytes32 cmp = keccak256(selfReparams[paramHash].name);
       // a switch would have been nice... TODO better way to compare?
-      if (cmp == keccak256("challengeStake")) {
+      if (cmp == keccak256(bytes("challengeStake"))) {
         selfChallengeStake = selfReparams[paramHash].value;
-      } else if (cmp == keccak256("conversionRate")) {
+      } else if (cmp == keccak256(bytes("conversionRate"))) {
         selfConversionRate = selfReparams[paramHash].value;
-      } else if (cmp == keccak256("conversionSlopeDenominator")) {
+      } else if (cmp == keccak256(bytes("conversionSlopeDenominator"))) {
         selfConversionSlopeDenominator = selfReparams[paramHash].value;
-      } else if (cmp == keccak256("conversionSlopeNumerator")) {
+      } else if (cmp == keccak256(bytes("conversionSlopeNumerator"))) {
         selfConversionSlopeNumerator = selfReparams[paramHash].value;
-      } else if (cmp == keccak256("listReward")) {
+      } else if (cmp == keccak256(bytes("listReward"))) {
         selfListReward = selfReparams[paramHash].value;
-      } else if (cmp == keccak256("quorum")) {
+      } else if (cmp == keccak256(bytes("quorum"))) {
         selfQuorum = selfReparams[paramHash].value;
-      } else if (cmp == keccak256("voteBy")) {
+      } else if (cmp == keccak256(bytes("voteBy"))) {
         selfVoteBy = selfReparams[paramHash].value;
       }
     }
 
-    // clean up the reparam and candidate
+    // Pass or not, clean up the reparam and candidate
+    require(selfVoting.removeCandidate(paramHash), "Error:Parameterizer.resolveReparam - Could not remove candidate from voting");
     delete selfReparams[paramHash];
     return true;
   }
 
   /**
-  @notice propose a reparamaterization of the key name's value to value.
-  @param name the name of the proposed param to be set
-  @param value the proposed value to set the param to be set
+    @dev propose a reparamaterization of name's value to value.
+    @param name the name of the proposed param to be set
+    @param value the proposed value to set the param to be set
   */
-  function reparameterize(string name, uint value) external returns (bytes32) {
+  function reparameterize(string calldata name, uint value) external returns (bytes32) {
     require(selfVoting.inCouncil(msg.sender), "Error:Parameterizer.reparameterize - Sender must be council member");
 
     bytes32 paramHash = keccak256(abi.encodePacked(name, value));
@@ -146,7 +166,7 @@ contract Parameterizer {
     bool added = selfVoting.addCandidate(
       "reparam",
       paramHash,
-      getVoteBy()
+      selfVoteBy
     );
 
     require(added, "Error:Parameterizer.reparameterize - Could not add reparam to voting candidates list");

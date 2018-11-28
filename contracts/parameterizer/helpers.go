@@ -12,12 +12,15 @@ import (
 )
 
 type ctx struct {
+	// 	Alloc          core.GenesisAlloc
+	AuthMarket     *bind.TransactOpts
 	AuthOwner      *bind.TransactOpts
 	AuthVoter      *bind.TransactOpts
 	AuthChallenger *bind.TransactOpts
 	Blockchain     *backends.SimulatedBackend
 }
 
+// NOTE: there is no marketAddress present as we don't need an actual market here
 type dep struct {
 	VotingAddress            common.Address
 	ParameterizerAddress     common.Address
@@ -27,7 +30,7 @@ type dep struct {
 	ParameterizerTransaction *types.Transaction
 }
 
-func Deploy(initialBalance *big.Int, c *ctx) (*dep, error) {
+func Deploy(c *ctx) (*dep, error) {
 	votingAddr, votingTrans, votingCont, votingErr := voting.DeployVoting(
 		c.AuthOwner,
 		c.Blockchain,
@@ -49,7 +52,7 @@ func Deploy(initialBalance *big.Int, c *ctx) (*dep, error) {
 		big.NewInt(100),                 // conversionSlopeNumerator, a scaling factor
 		big.NewInt(1000000000000000000), // listReward (one token)
 		big.NewInt(50),                  // quorum
-		big.NewInt(300),                 // voteBy (5 mins)
+		big.NewInt(20),                  // voteBy of 20 seconds
 	)
 
 	if paramErr != nil {
@@ -68,15 +71,19 @@ func Deploy(initialBalance *big.Int, c *ctx) (*dep, error) {
 	}, nil
 }
 
+// parameterizer address is passed in
 func SetupBlockchain(accountBalance *big.Int) *ctx {
 	// generate a new key, toss the error for now as it shouldnt happen
+	keyMarket, _ := crypto.GenerateKey()
 	keyOwner, _ := crypto.GenerateKey()
 	keyChallenger, _ := crypto.GenerateKey()
 	keyVoter, _ := crypto.GenerateKey()
+	authMarket := bind.NewKeyedTransactor(keyMarket)
 	authOwner := bind.NewKeyedTransactor(keyOwner)
 	authChallenger := bind.NewKeyedTransactor(keyChallenger)
 	authVoter := bind.NewKeyedTransactor(keyVoter)
 	alloc := make(core.GenesisAlloc)
+	alloc[authMarket.From] = core.GenesisAccount{Balance: accountBalance}
 	alloc[authOwner.From] = core.GenesisAccount{Balance: accountBalance}
 	alloc[authChallenger.From] = core.GenesisAccount{Balance: accountBalance}
 	alloc[authVoter.From] = core.GenesisAccount{Balance: accountBalance}
@@ -84,6 +91,8 @@ func SetupBlockchain(accountBalance *big.Int) *ctx {
 	bc := backends.NewSimulatedBackend(alloc, 4700000)
 
 	return &ctx{
+		// 	Alloc:          alloc,
+		AuthMarket:     authMarket,
 		AuthOwner:      authOwner,
 		AuthChallenger: authChallenger,
 		AuthVoter:      authVoter,

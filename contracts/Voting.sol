@@ -1,4 +1,4 @@
-pragma solidity 0.4.25;
+pragma solidity 0.5.0;
 
 import "./SafeMath.sol";
 
@@ -8,7 +8,7 @@ contract Voting {
 
   struct Candidate {
     uint index; // where is this key in CandidateKeys?
-    bytes kind; // listing | reparameterization | challenge
+    bytes kind; // application | reparam | challenge
     uint voteBy; // timestamp via `block.timestamp` (seconds since epoch)
     uint votes; // tally of votes 'for' the candidate
     mapping(address => bool) voted;  // indicates whether an address committed a vote for this poll
@@ -34,12 +34,12 @@ contract Voting {
 
   /**
   @dev Place a new candidate into the candidates array with the necessary info
-  @param kind string 'application' | 'challenge' | 'reparam'. NOTE: this is passed by the contract itself, not input from a user
-  @param hash bytes32 hash which key's this candidate's kind
+  @param kind 'application' | 'challenge' | 'reparam'. NOTE: this is passed by the contract itself, not input from a user
+  @param hash hash which key's this candidate's kind
   @param voteBy some amount of time, in seconds, from "now" that the poll for this candidate will close
   @return true if a success
   */
-  function addCandidate(string kind, bytes32 hash, uint voteBy) external hasPrivilege returns(bool) {
+  function addCandidate(string calldata kind, bytes32 hash, uint voteBy) external hasPrivilege returns(bool) {
     // can't be dupe candidates
     require(!isCandidate(hash), "Error:Voting.addCandidate - Candidate already exists");
 
@@ -69,12 +69,13 @@ contract Voting {
     @param kind The type of candidate we expect it to be
     @return boolean
   */
-  function candidateIs(bytes32 hash, string kind) external view returns (bool) {
+  function candidateIs(bytes32 hash, string calldata kind) external view returns (bool) {
     require(isCandidate(hash), "Error:Voting.pollClosed - Candidate does not exist");
+    bytes memory cast = bytes(kind);
     // fast check for an obvious case
-    if (selfCandidates[hash].kind.length != bytes(kind).length) return false;
+    if (selfCandidates[hash].kind.length != cast.length) return false;
     // more thorough if the lengths match. we can't compare strings but we can compare hashes
-    else return keccak256(string(selfCandidates[hash].kind)) == keccak256(kind);
+    else return keccak256(selfCandidates[hash].kind) == keccak256(cast);
   }
 
   /**
@@ -96,7 +97,7 @@ contract Voting {
     return selfCandidates[hash].voted[member] == true;
   }
 
-  function getCandidate(bytes32 hash) external view returns (string, uint, uint) {
+  function getCandidate(bytes32 hash) external view returns (string memory, uint, uint) {
     require(isCandidate(hash), "Error:Voting.getCandidate - Candidate does not exist");
 
     // NOTE: we don't need to return the quorum, and we cannot return the voted mapping...
@@ -107,11 +108,11 @@ contract Voting {
     );
   }
 
-  function getCandidates() external view returns(bytes32[]) {
+  function getCandidates() external view returns(bytes32[] memory) {
     return selfCandidateKeys;
   }
 
-  function getCouncil() external view returns(address[]) {
+  function getCouncil() external view returns(address[] memory) {
     return selfCouncilKeys;
   }
 
