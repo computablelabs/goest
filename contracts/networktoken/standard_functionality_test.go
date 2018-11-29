@@ -9,19 +9,19 @@ import (
 func TestTransferFrom(t *testing.T) {
 	t.Log("Network token should be able to transfer from one address to another")
 
-	ownerBal, _ := deployed.Contract.BalanceOf(&bind.CallOpts{From: context.AuthOwner.From}, context.AuthOwner.From)
+	ownerBal, _ := deployed.Contract.BalanceOf(&bind.CallOpts{From: context.AuthFactory.From}, context.AuthFactory.From)
 
 	// if we wanted to check the owner's account bal
-	// t.Logf("owner balance: %v", context.Alloc[context.AuthOwner.From].Balance)
+	// t.Logf("owner balance: %v", context.Alloc[context.AuthFactory.From].Balance)
 
 	// transfer from owner to user
 	_, err := deployed.Contract.Transfer(&bind.TransactOpts{
-		From:     context.AuthOwner.From,
-		Signer:   context.AuthOwner.Signer,
+		From:     context.AuthFactory.From,
+		Signer:   context.AuthFactory.Signer,
 		Value:    nil,
 		GasPrice: big.NewInt(2000000000), // 2 Gwei
 		GasLimit: 100000,
-	}, context.AuthUser.From, big.NewInt(10)) // 10 tokens
+	}, context.AuthMember.From, big.NewInt(10)) // 10 tokens
 
 	if err != nil {
 		t.Fatalf("Error transferring funds from owner to user: %v", err)
@@ -34,8 +34,8 @@ func TestTransferFrom(t *testing.T) {
 
 	// transfer from user to other user
 	_, err2 := deployed.Contract.Transfer(&bind.TransactOpts{
-		From:     context.AuthUser.From,
-		Signer:   context.AuthUser.Signer,
+		From:     context.AuthMember.From,
+		Signer:   context.AuthMember.Signer,
 		Value:    nil,
 		GasPrice: big.NewInt(2000000000), // 2 Gwei
 		GasLimit: 100000,
@@ -49,13 +49,13 @@ func TestTransferFrom(t *testing.T) {
 
 	// owner should have 10 subtracted
 	expectedBal := ownerBal.Sub(ownerBal, big.NewInt(10))
-	newOwnerBal, _ := deployed.Contract.BalanceOf(&bind.CallOpts{From: context.AuthOwner.From}, context.AuthOwner.From)
+	newOwnerBal, _ := deployed.Contract.BalanceOf(&bind.CallOpts{From: context.AuthFactory.From}, context.AuthFactory.From)
 	if newOwnerBal.Cmp(expectedBal) != 0 {
 		t.Errorf("Expected owner balance of %v, got %v", expectedBal, newOwnerBal)
 	}
 
 	// user should have had 5 subtracted from his 10
-	userBal, _ := deployed.Contract.BalanceOf(&bind.CallOpts{From: context.AuthUser.From}, context.AuthUser.From)
+	userBal, _ := deployed.Contract.BalanceOf(&bind.CallOpts{From: context.AuthMember.From}, context.AuthMember.From)
 	if userBal.Cmp(big.NewInt(5)) != 0 {
 		t.Errorf("Expected user balance of 5, got %v", userBal)
 	}
@@ -71,8 +71,8 @@ func TestApprove(t *testing.T) {
 	t.Log("Standard token should allow a user to approve a spender for some amount")
 
 	_, err := deployed.Contract.Approve(&bind.TransactOpts{
-		From:     context.AuthUser.From,
-		Signer:   context.AuthUser.Signer,
+		From:     context.AuthMember.From,
+		Signer:   context.AuthMember.Signer,
 		Value:    nil,
 		GasPrice: big.NewInt(2000000000), // 2 Gwei
 		GasLimit: 100000,
@@ -88,7 +88,7 @@ func TestApprove(t *testing.T) {
 func TestAllowance(t *testing.T) {
 	t.Log("Standard token should be able to check the spending allowance of a given address for a given user")
 
-	allowed, _ := deployed.Contract.Allowance(&bind.CallOpts{From: context.AuthUser.From}, context.AuthUser.From, context.OtherContract)
+	allowed, _ := deployed.Contract.Allowance(&bind.CallOpts{From: context.AuthMember.From}, context.AuthMember.From, context.OtherContract)
 	if allowed.Cmp(big.NewInt(4)) != 0 {
 		t.Errorf("Expected spender to be approved for 4, got %v", allowed)
 	}
@@ -98,8 +98,8 @@ func TestDecreaseApproval(t *testing.T) {
 	t.Log("Standard token should be able to decrease the spending allowance of a given address for a given user")
 
 	_, err := deployed.Contract.DecreaseApproval(&bind.TransactOpts{
-		From:     context.AuthUser.From,
-		Signer:   context.AuthUser.Signer,
+		From:     context.AuthMember.From,
+		Signer:   context.AuthMember.Signer,
 		Value:    nil,
 		GasPrice: big.NewInt(2000000000), // 2 Gwei
 		GasLimit: 100000,
@@ -111,7 +111,7 @@ func TestDecreaseApproval(t *testing.T) {
 
 	context.Blockchain.Commit()
 
-	allowed, _ := deployed.Contract.Allowance(&bind.CallOpts{From: context.AuthUser.From}, context.AuthUser.From, context.OtherContract)
+	allowed, _ := deployed.Contract.Allowance(&bind.CallOpts{From: context.AuthMember.From}, context.AuthMember.From, context.OtherContract)
 	if allowed.Cmp(big.NewInt(3)) != 0 {
 		t.Errorf("Expected spender to have been decreased to 3, got %v", allowed)
 	}
@@ -121,8 +121,8 @@ func TestIncreaseApproval(t *testing.T) {
 	t.Log("Standard token should be able to increase the spending allowance of a given address for a given user")
 
 	_, err := deployed.Contract.IncreaseApproval(&bind.TransactOpts{
-		From:     context.AuthUser.From,
-		Signer:   context.AuthUser.Signer,
+		From:     context.AuthMember.From,
+		Signer:   context.AuthMember.Signer,
 		Value:    nil,
 		GasPrice: big.NewInt(2000000000), // 2 Gwei
 		GasLimit: 100000,
@@ -134,7 +134,7 @@ func TestIncreaseApproval(t *testing.T) {
 
 	context.Blockchain.Commit()
 
-	allowed, _ := deployed.Contract.Allowance(&bind.CallOpts{From: context.AuthUser.From}, context.AuthUser.From, context.OtherContract)
+	allowed, _ := deployed.Contract.Allowance(&bind.CallOpts{From: context.AuthMember.From}, context.AuthMember.From, context.OtherContract)
 	if allowed.Cmp(big.NewInt(5)) != 0 {
 		t.Errorf("Expected spender to have been increased to 5, got %v", allowed)
 	}

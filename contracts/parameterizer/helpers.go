@@ -13,11 +13,11 @@ import (
 
 type ctx struct {
 	// 	Alloc          core.GenesisAlloc
-	AuthMarket     *bind.TransactOpts
-	AuthOwner      *bind.TransactOpts
-	AuthVoter      *bind.TransactOpts
-	AuthChallenger *bind.TransactOpts
-	Blockchain     *backends.SimulatedBackend
+	AuthMarket  *bind.TransactOpts
+	AuthFactory *bind.TransactOpts
+	AuthMember1 *bind.TransactOpts
+	AuthMember2 *bind.TransactOpts
+	Blockchain  *backends.SimulatedBackend
 }
 
 // NOTE: there is no marketAddress present as we don't need an actual market here
@@ -32,7 +32,7 @@ type dep struct {
 
 func Deploy(c *ctx) (*dep, error) {
 	votingAddr, votingTrans, votingCont, votingErr := voting.DeployVoting(
-		c.AuthOwner,
+		c.AuthFactory,
 		c.Blockchain,
 	)
 
@@ -43,7 +43,7 @@ func Deploy(c *ctx) (*dep, error) {
 	c.Blockchain.Commit()
 
 	paramAddr, paramTrans, paramCont, paramErr := DeployParameterizer(
-		c.AuthOwner,
+		c.AuthFactory,
 		c.Blockchain,
 		votingAddr,
 		big.NewInt(1000000000000000000), // challengeStake in tokenWei (10**18 == 1 token)
@@ -74,28 +74,28 @@ func Deploy(c *ctx) (*dep, error) {
 // parameterizer address is passed in
 func SetupBlockchain(accountBalance *big.Int) *ctx {
 	// generate a new key, toss the error for now as it shouldnt happen
-	keyMarket, _ := crypto.GenerateKey()
-	keyOwner, _ := crypto.GenerateKey()
-	keyChallenger, _ := crypto.GenerateKey()
-	keyVoter, _ := crypto.GenerateKey()
-	authMarket := bind.NewKeyedTransactor(keyMarket)
-	authOwner := bind.NewKeyedTransactor(keyOwner)
-	authChallenger := bind.NewKeyedTransactor(keyChallenger)
-	authVoter := bind.NewKeyedTransactor(keyVoter)
+	keyMark, _ := crypto.GenerateKey()
+	keyFac, _ := crypto.GenerateKey()
+	keyMem1, _ := crypto.GenerateKey()
+	keyMem2, _ := crypto.GenerateKey()
+	authMark := bind.NewKeyedTransactor(keyMark)
+	authFac := bind.NewKeyedTransactor(keyFac)
+	authMem1 := bind.NewKeyedTransactor(keyMem1)
+	authMem2 := bind.NewKeyedTransactor(keyMem2)
 	alloc := make(core.GenesisAlloc)
-	alloc[authMarket.From] = core.GenesisAccount{Balance: accountBalance}
-	alloc[authOwner.From] = core.GenesisAccount{Balance: accountBalance}
-	alloc[authChallenger.From] = core.GenesisAccount{Balance: accountBalance}
-	alloc[authVoter.From] = core.GenesisAccount{Balance: accountBalance}
+	alloc[authMark.From] = core.GenesisAccount{Balance: accountBalance}
+	alloc[authFac.From] = core.GenesisAccount{Balance: accountBalance}
+	alloc[authMem1.From] = core.GenesisAccount{Balance: accountBalance}
+	alloc[authMem2.From] = core.GenesisAccount{Balance: accountBalance}
 	// 2nd arg is a gas limit, a uint64. we'll use 4.7 million
 	bc := backends.NewSimulatedBackend(alloc, 4700000)
 
 	return &ctx{
 		// 	Alloc:          alloc,
-		AuthMarket:     authMarket,
-		AuthOwner:      authOwner,
-		AuthChallenger: authChallenger,
-		AuthVoter:      authVoter,
-		Blockchain:     bc,
+		AuthMarket:  authMark,
+		AuthFactory: authFac,
+		AuthMember1: authMem1,
+		AuthMember2: authMem2,
+		Blockchain:  bc,
 	}
 }

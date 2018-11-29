@@ -15,10 +15,10 @@ import (
 )
 
 type ctx struct {
-	AuthOwner      *bind.TransactOpts
-	AuthVoter      *bind.TransactOpts
-	AuthChallenger *bind.TransactOpts
-	Blockchain     *backends.SimulatedBackend
+	AuthFactory *bind.TransactOpts
+	AuthMember1 *bind.TransactOpts
+	AuthMember2 *bind.TransactOpts
+	Blockchain  *backends.SimulatedBackend
 }
 
 type dep struct {
@@ -41,9 +41,9 @@ type dep struct {
 
 func Deploy(initialBalance *big.Int, c *ctx) (*dep, error) {
 	networkTokenAddr, networkTokenTrans, networkTokenCont, networkTokenErr := networktoken.DeployNetworkToken(
-		c.AuthOwner,
+		c.AuthFactory,
 		c.Blockchain,
-		c.AuthOwner.From,
+		c.AuthFactory.From,
 		initialBalance,
 	)
 
@@ -52,9 +52,9 @@ func Deploy(initialBalance *big.Int, c *ctx) (*dep, error) {
 	}
 
 	marketTokenAddr, marketTokenTrans, marketTokenCont, marketTokenErr := markettoken.DeployMarketToken(
-		c.AuthOwner,
+		c.AuthFactory,
 		c.Blockchain,
-		c.AuthOwner.From,
+		c.AuthFactory.From,
 		initialBalance,
 	)
 
@@ -66,7 +66,7 @@ func Deploy(initialBalance *big.Int, c *ctx) (*dep, error) {
 	c.Blockchain.Commit()
 
 	votingAddr, votingTrans, votingCont, votingErr := voting.DeployVoting(
-		c.AuthOwner,
+		c.AuthFactory,
 		c.Blockchain,
 	)
 
@@ -77,7 +77,7 @@ func Deploy(initialBalance *big.Int, c *ctx) (*dep, error) {
 	c.Blockchain.Commit()
 
 	paramAddr, paramTrans, paramCont, paramErr := parameterizer.DeployParameterizer(
-		c.AuthOwner,
+		c.AuthFactory,
 		c.Blockchain,
 		votingAddr,
 		big.NewInt(1000000000000000000), // challengeStake in tokenWei (10**18 == 1 token)
@@ -86,7 +86,7 @@ func Deploy(initialBalance *big.Int, c *ctx) (*dep, error) {
 		big.NewInt(100),                 // conversionSlopeNumerator, a scaling factor
 		big.NewInt(1000000000000000000), // listReward (one token)
 		big.NewInt(50),                  // quorum
-		big.NewInt(300),                 // voteBy (5 mins)
+		big.NewInt(20),                  // voteBy (20 seconds)
 	)
 
 	if paramErr != nil {
@@ -97,7 +97,7 @@ func Deploy(initialBalance *big.Int, c *ctx) (*dep, error) {
 
 	// finally the market...
 	marketAddr, marketTrans, marketCont, marketErr := DeployMarket(
-		c.AuthOwner,
+		c.AuthFactory,
 		c.Blockchain,
 		"FooMarket",
 		networkTokenAddr,
@@ -133,27 +133,27 @@ func Deploy(initialBalance *big.Int, c *ctx) (*dep, error) {
 
 func SetupBlockchain(accountBalance *big.Int) *ctx {
 	// generate a new key, toss the error for now as it shouldnt happen
-	keyOwner, _ := crypto.GenerateKey()
-	keyChallenger, _ := crypto.GenerateKey()
-	keyVoter, _ := crypto.GenerateKey()
+	keyFac, _ := crypto.GenerateKey()
+	keyMem1, _ := crypto.GenerateKey()
+	keyMem2, _ := crypto.GenerateKey()
 
-	authOwner := bind.NewKeyedTransactor(keyOwner)
-	authOwner.GasPrice = big.NewInt(2000000000) // 2 Gwei
-	authOwner.GasLimit = 1000000
+	authFac := bind.NewKeyedTransactor(keyFac)
+	authFac.GasPrice = big.NewInt(2000000000) // 2 Gwei
+	authFac.GasLimit = 1000000
 
-	authChallenger := bind.NewKeyedTransactor(keyChallenger)
-	authVoter := bind.NewKeyedTransactor(keyVoter)
+	authMem1 := bind.NewKeyedTransactor(keyMem1)
+	authMem2 := bind.NewKeyedTransactor(keyMem2)
 	alloc := make(core.GenesisAlloc)
-	alloc[authOwner.From] = core.GenesisAccount{Balance: accountBalance}
-	alloc[authChallenger.From] = core.GenesisAccount{Balance: accountBalance}
-	alloc[authVoter.From] = core.GenesisAccount{Balance: accountBalance}
+	alloc[authFac.From] = core.GenesisAccount{Balance: accountBalance}
+	alloc[authMem1.From] = core.GenesisAccount{Balance: accountBalance}
+	alloc[authMem2.From] = core.GenesisAccount{Balance: accountBalance}
 	// 2nd arg is a gas limit, a uint64. we'll use 4.7M
 	bc := backends.NewSimulatedBackend(alloc, 4700000)
 
 	return &ctx{
-		AuthOwner:      authOwner,
-		AuthChallenger: authChallenger,
-		AuthVoter:      authVoter,
-		Blockchain:     bc,
+		AuthFactory: authFac,
+		AuthMember1: authMem1,
+		AuthMember2: authMem2,
+		Blockchain:  bc,
 	}
 }

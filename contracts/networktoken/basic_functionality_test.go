@@ -23,8 +23,8 @@ func TestTransfer(t *testing.T) {
 
 	// NOTE: if we want to view the transaction itself, it would be the first return arg
 	_, err := deployed.Contract.Transfer(&bind.TransactOpts{
-		From:     context.AuthOwner.From,
-		Signer:   context.AuthOwner.Signer,
+		From:     context.AuthFactory.From,
+		Signer:   context.AuthFactory.Signer,
 		Value:    nil,
 		GasPrice: big.NewInt(2000000000), //2 gwei
 		GasLimit: 100000,
@@ -50,7 +50,7 @@ func TestBalanceOf(t *testing.T) {
 	}
 
 	// that 100000 should have been subtracted from the original owner, Auth.From in this case
-	ownerBal, _ := deployed.Contract.BalanceOf(&bind.CallOpts{From: context.AuthOwner.From}, context.AuthOwner.From)
+	ownerBal, _ := deployed.Contract.BalanceOf(&bind.CallOpts{From: context.AuthFactory.From}, context.AuthFactory.From)
 
 	if ownerBal.Cmp(big.NewInt(900)) != 0 {
 		t.Errorf("Expected owner balance of 900, got %v", ownerBal)
