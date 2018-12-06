@@ -31,7 +31,7 @@ func TestDeployParameterizer(t *testing.T) {
 }
 
 func TestVotingSetPrivilegedContracts(t *testing.T) {
-	t.Log("Voting contract allowed the setting of the privileged contracts (by owner)")
+	t.Log("Voting contract allowed the setting of the privileged contracts (by factory)")
 
 	market, p11r, _ := deployed.VotingContract.GetPrivilegedAddresses(nil)
 

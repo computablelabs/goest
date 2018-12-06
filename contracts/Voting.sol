@@ -6,9 +6,20 @@ contract Voting {
 
   using SafeMath for uint;
 
+  /**
+    Note that we use uint8s for Candidate.kind
+    {
+      application: 1,
+      challenge: 2,
+      reparam: 3
+    }
+
+    we could store these in an enum, but as they are passed from elsewhere, its rather useless
+  */
+
   struct Candidate {
     uint index; // where is this key in CandidateKeys?
-    bytes kind; // application | reparam | challenge
+    uint8 kind; // member of the enum...
     uint voteBy; // timestamp via `block.timestamp` (seconds since epoch)
     uint votes; // tally of votes 'for' the candidate
     mapping(address => bool) voted;  // indicates whether an address committed a vote for this poll
@@ -34,32 +45,28 @@ contract Voting {
 
   /**
   @dev Place a new candidate into the candidates array with the necessary info
-  @param kind 'application' | 'challenge' | 'reparam'. NOTE: this is passed by the contract itself, not input from a user
   @param hash hash which key's this candidate's kind
+  @param kind uint8 that is one of our Kinds enum NOTE: this is passed by the contract itself, not input from a user
   @param voteBy some amount of time, in seconds, from "now" that the poll for this candidate will close
-  @return true if a success
   */
-  function addCandidate(string calldata kind, bytes32 hash, uint voteBy) external hasPrivilege returns(bool) {
+  function addCandidate(bytes32 hash, uint8 kind, uint voteBy) external hasPrivilege {
     // can't be dupe candidates
-    require(!isCandidate(hash), "Error:Voting.addCandidate - Candidate already exists");
+    require(isCandidate(hash) != true, "Error:Voting.addCandidate - Candidate already exists");
 
     uint end = block.timestamp.add(voteBy);
-
     Candidate storage c = selfCandidates[hash];
-
     // both push the hash into the array, and get the index. NOTE: push returns array length (hence - 1)
     c.index = selfCandidateKeys.push(hash) - 1; // no need to use .sub here
-    c.kind = bytes(kind); // again, not checking the string as we control its passing
+    c.kind = kind; // not checking this input as we control its passing...
     c.voteBy = end;
     c.votes = 0;
 
-    emit CandidateAddedEvent(kind, hash, voteBy);
-
-    return true;
+    emit CandidateAddedEvent(hash, kind, voteBy);
   }
 
-  function addToCouncil(address member) external hasPrivilege returns(bool) {
-    require(!inCouncil(member), "Error:Voting.addToCouncil - Already a council member");
+  function addToCouncil(address member) external hasPrivilege {
+    require(inCouncil(member) != true, "Error:Voting.addToCouncil - Already a council member");
+
     selfCouncil[member] = selfCouncilKeys.push(member) - 1;
   }
 
@@ -69,13 +76,8 @@ contract Voting {
     @param kind The type of candidate we expect it to be
     @return boolean
   */
-  function candidateIs(bytes32 hash, string calldata kind) external view returns (bool) {
-    require(isCandidate(hash), "Error:Voting.pollClosed - Candidate does not exist");
-    bytes memory cast = bytes(kind);
-    // fast check for an obvious case
-    if (selfCandidates[hash].kind.length != cast.length) return false;
-    // more thorough if the lengths match. we can't compare strings but we can compare hashes
-    else return keccak256(selfCandidates[hash].kind) == keccak256(cast);
+  function candidateIs(bytes32 hash, uint8 kind) external view returns (bool) {
+    return selfCandidates[hash].kind == kind;
   }
 
   /**
@@ -85,24 +87,32 @@ contract Voting {
   @param quorum the current % of 100 majority that this candidate needs to pass
   */
   function didPass(bytes32 hash, uint quorum) public view returns (bool) {
-    require(isCandidate(hash), "Error:Voting.pass - Candidate does not exist");
+    require(isCandidate(hash) == true, "Error:Voting.didPass - Candidate does not exist");
     require(selfCandidates[hash].voteBy < block.timestamp, "Error:Voting.pass - Polling must be closed for this candidate");
     require(selfCouncilKeys.length > 0, "Error:Voting.didPass - No council members");
 
-    return ((selfCandidates[hash].votes.div(selfCouncilKeys.length)).mul(100) > quorum);
+    // Case: no one voted
+    if (selfCandidates[hash].votes == 0) {
+      // there _could_ be a market with a quorum set to zero
+      return quorum == 0;
+    } else {
+      // There are votes, TODO revisit for small int math problems...
+      return ((selfCandidates[hash].votes.div(selfCouncilKeys.length)).mul(100) > quorum);
+    }
   }
 
   function didVote(bytes32 hash, address member) public view returns(bool) {
-    // likely do not need to check candidate validity here TODO
+    require(isCandidate(hash) == true, "Error:Voting.didVote - Candidate does not exist");
+
     return selfCandidates[hash].voted[member] == true;
   }
 
-  function getCandidate(bytes32 hash) external view returns (string memory, uint, uint) {
-    require(isCandidate(hash), "Error:Voting.getCandidate - Candidate does not exist");
+  function getCandidate(bytes32 hash) external view returns (uint8, uint, uint) {
+    // Not requiring existance with getters like this. TODO
 
     // NOTE: we don't need to return the quorum, and we cannot return the voted mapping...
     return (
-      string(selfCandidates[hash].kind),
+      selfCandidates[hash].kind,
       selfCandidates[hash].voteBy,
       selfCandidates[hash].votes
     );
@@ -121,7 +131,10 @@ contract Voting {
   }
 
   modifier hasPrivilege() {
-    require(msg.sender == selfMarketAddress || msg.sender == selfParameterizerAddress, "Error:Voting.hasPrivilege - Sender must be a privileged contract");
+    require(
+      msg.sender == selfOwner ||
+      msg.sender == selfMarketAddress ||
+      msg.sender == selfParameterizerAddress, "Error:Voting.hasPrivilege - Sender must be a privileged contract");
     _;
   }
 
@@ -145,14 +158,16 @@ contract Voting {
   }
 
   function pollClosed(bytes32 hash) external view returns (bool) {
-    require(isCandidate(hash), "Error:Voting.pollClosed - Candidate does not exist");
+    // NOTE: we _are_ checking existance here as otherwise result might be surprising
+    require(isCandidate(hash) == true, "Error:Voting.pollClosed - Candidate does not exist");
+
     return selfCandidates[hash].voteBy < block.timestamp;
   }
 
   // not sold that we need to forbid the removing of a candidate with an 'active' voteBy,
   // as this is triggered internally, so not implementing for now...
-  function removeCandidate(bytes32 hash) external hasPrivilege returns(bool) {
-    require(isCandidate(hash), "Error:Voting.removeCandidate - Candidate does not exist");
+  function removeCandidate(bytes32 hash) external hasPrivilege {
+    require(isCandidate(hash) == true, "Error:Voting.removeCandidate - Candidate does not exist");
 
     // first let's efficiently prune the array of keys
     uint deleted = selfCandidates[hash].index; // getting rid of this one
@@ -167,37 +182,29 @@ contract Voting {
     delete selfCandidates[hash];
 
     emit CandidateRemovedEvent(hash);
-
-    return true;
   }
 
-  function removeFromCouncil(address member) external hasPrivilege returns(bool) {
-    require(inCouncil(member), "Error:Voting.removeFromCouncil - Not a member");
-
-    // first let's efficiently prune the array of keys
-    uint deleted = selfCouncil[member]; // getting rid of this one
-    address moved = selfCouncilKeys[selfCouncilKeys.length - 1]; // moving this one to where 'deleted' was
-    selfCouncilKeys[deleted] = moved; // delete target now overwritten
-    selfCouncilKeys.length--; // drops the last item, which we already moved
-
-    // now update the index of the moved member
-    selfCouncil[moved] = deleted;
-
-    // finally zero out the removed member
-    delete selfCouncil[member];
-
-    emit CouncilMemberRemovedEvent(member);
-
-    return true;
+  function removeFromCouncil(address member) external hasPrivilege {
+    if (inCouncil(member) == true) {
+      // first let's efficiently prune the array of keys
+      uint deleted = selfCouncil[member]; // getting rid of this one
+      address moved = selfCouncilKeys[selfCouncilKeys.length - 1]; // moving this one to where 'deleted' was
+      selfCouncilKeys[deleted] = moved; // delete target now overwritten
+      selfCouncilKeys.length--; // drops the last item, which we already moved
+      // now update the index of the moved member
+      selfCouncil[moved] = deleted;
+      // finally zero out the removed member
+      delete selfCouncil[member];
+      emit CouncilMemberRemovedEvent(member);
+    }
   }
 
-  function setPrivilegedContracts(address market, address parameterizer) external isOwner returns (bool) {
+  function setPrivilegedContracts(address market, address parameterizer) external isOwner {
     // can only ever be set once
     require(selfMarketAddress == address(0), "Error:Voting.setPrivilegedContracts - Market address already set");
     require(selfParameterizerAddress == address(0), "Error:Voting.setPrivilegedContracts - Parameterizer address already set");
     selfMarketAddress = market;
     selfParameterizerAddress = parameterizer;
-    return true;
   }
 
   /**
@@ -205,22 +212,21 @@ contract Voting {
   @param hash bytes32 identifier associated with target listing or reparam
   @return true if a success
   */
-  function vote(bytes32 hash) external returns (bool) {
-    require(inCouncil(msg.sender), "Error:Voting.vote - Sender must be council member");
-    require(isCandidate(hash), "Error:Voting.vote - Candidate does not exist");
+  function vote(bytes32 hash) external {
+    require(inCouncil(msg.sender) == true, "Error:Voting.vote - Sender must be council member");
+    require(isCandidate(hash) == true, "Error:Voting.vote - Candidate does not exist");
     require(selfCandidates[hash].voteBy > block.timestamp, "Error:Voting.vote - Polling is closed for this candidate");
-    require(!didVote(hash, msg.sender), "Error:Voting.vote - Sender has already voted");
+    require(didVote(hash, msg.sender) != true, "Error:Voting.vote - Sender has already voted");
 
     selfCandidates[hash].voted[msg.sender] = true; // we will keep track of who voted
     selfCandidates[hash].votes = selfCandidates[hash].votes.add(1);
 
     // NOTE: this creates the public record of the vote being cast (read: not concealed)
     emit VotedEvent(msg.sender, hash);
-    return true;
   }
 
   event VotedEvent(address indexed voter, bytes32 indexed hash);
-  event CandidateAddedEvent(string indexed kind, bytes32 indexed hash, uint indexed voteBy);
+  event CandidateAddedEvent(bytes32 indexed hash, uint8 indexed kind, uint indexed voteBy);
   event CandidateRemovedEvent(bytes32 indexed hash);
   event CouncilMemberAddedEvent(address indexed member);
   event CouncilMemberRemovedEvent(address indexed member);

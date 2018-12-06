@@ -8,14 +8,27 @@ contract Parameterizer {
 
   struct Reparam {
     address proposer; // who asked for the change
-    bytes name; // string name of the param converted to a byte array
+    uint8 param;
     uint value; // what to change 'name' to
+  }
+
+  // so that we don't get into casting strings <-> bytes for parameter names
+  enum Params {
+    undefined, // 0
+    challengeStake, // 1
+    conversionRate, // 2
+    conversionSlopeDenominator, // 3
+    conversionSlopeNumerator, // 4
+    listReward, // 5
+    quorum, // 6
+    voteBy // 7
   }
 
   mapping(bytes32 => Reparam) private selfReparams;
 
-  // Global Variables
   Voting private selfVoting;
+
+  // the values counterpart for the Param keys.
   uint private selfChallengeStake;
   uint private selfConversionRate;
   uint private selfConversionSlopeDenominator;
@@ -24,7 +37,9 @@ contract Parameterizer {
   uint private selfQuorum;
   uint private selfVoteBy;
 
-  // uint private VOTEBY = 604800; // 7 days
+  // we don't need a full kinds enum here, just the one type pertinent to the p11r
+  uint8 constant REPARAM  = 3;
+  // uint constant VOTEBY = 604800; // 7 days
 
   /**
     @dev constructor
@@ -80,22 +95,22 @@ contract Parameterizer {
 
   /**
     @dev a purely external version of how the Parameterizer generates the candidate paramHash.
-    @param name The string name to get packed and hashed
+    @param param The string name to get packed and hashed
     @param value The proposed value change to get packed and hashed
     @return The single hashed value of both combined args
   */
-  function getParamHash(string calldata name, uint value) external pure returns(bytes32) {
-    return keccak256(abi.encodePacked(name, value));
+  function getParamHash(uint8 param, uint value) external pure returns(bytes32) {
+    return keccak256(abi.encodePacked(param, value));
   }
 
   function getQuorum() external view returns(uint) {
     return selfQuorum;
   }
 
-  function getReparam(bytes32 paramHash) external view returns(address, string memory, uint) {
+  function getReparam(bytes32 paramHash) external view returns(address, uint8, uint) {
     return (
       selfReparams[paramHash].proposer,
-      string(selfReparams[paramHash].name),
+      selfReparams[paramHash].param,
       selfReparams[paramHash].value
     );
   }
@@ -108,80 +123,76 @@ contract Parameterizer {
     @dev Determine if a reparam proposal collected the necessary votes, setting it if so.
     @notice This function must be called by a council member.
     @param paramHash the proposal to make a determination and possible state transition for
+    TODO revisit for possibly using an enum
   */
-  function resolveReparam(bytes32 paramHash) public returns (bool) {
-    require(selfVoting.inCouncil(msg.sender), "Error:Parameterizer.resolveReparam - Sender must be council member");
-    require(selfVoting.candidateIs(paramHash, "reparam"), "Error:Parameterizer.resolveReparam - Must be a Reparam");
-    require(selfVoting.pollClosed(paramHash), "Error:Parameterizer.resolveReparam - Polls for this candidate must be closed");
+  function resolveReparam(bytes32 paramHash) public {
+    require(selfVoting.inCouncil(msg.sender) == true, "Error:Parameterizer.resolveReparam - Sender must be council member");
+    require(selfVoting.candidateIs(paramHash, REPARAM) == true, "Error:Parameterizer.resolveReparam - Must be a Reparam");
+    require(selfVoting.pollClosed(paramHash) == true, "Error:Parameterizer.resolveReparam - Polls for this candidate must be closed");
 
     // Case: reparam accepted
     if(selfVoting.didPass(paramHash, selfQuorum)) {
-      bytes32 cmp = keccak256(selfReparams[paramHash].name);
-      // a switch would have been nice... TODO better way to compare?
-      if (cmp == keccak256(bytes("challengeStake"))) {
+      uint8 param = selfReparams[paramHash].param;
+      // a switch would have been nice...
+      if (param == uint8(Params.challengeStake)) {
         selfChallengeStake = selfReparams[paramHash].value;
-      } else if (cmp == keccak256(bytes("conversionRate"))) {
+      } else if (param == uint8(Params.conversionRate)) {
         selfConversionRate = selfReparams[paramHash].value;
-      } else if (cmp == keccak256(bytes("conversionSlopeDenominator"))) {
+      } else if (param == uint8(Params.conversionSlopeDenominator)) {
         selfConversionSlopeDenominator = selfReparams[paramHash].value;
-      } else if (cmp == keccak256(bytes("conversionSlopeNumerator"))) {
+      } else if (param == uint8(Params.conversionSlopeNumerator)) {
         selfConversionSlopeNumerator = selfReparams[paramHash].value;
-      } else if (cmp == keccak256(bytes("listReward"))) {
+      } else if (param == uint8(Params.listReward)) {
         selfListReward = selfReparams[paramHash].value;
-      } else if (cmp == keccak256(bytes("quorum"))) {
+      } else if (param == uint8(Params.quorum)) {
         selfQuorum = selfReparams[paramHash].value;
-      } else if (cmp == keccak256(bytes("voteBy"))) {
+      } else if (param == uint8(Params.voteBy)) {
         selfVoteBy = selfReparams[paramHash].value;
       }
     }
 
     // Pass or not, clean up the reparam and candidate
-    require(selfVoting.removeCandidate(paramHash), "Error:Parameterizer.resolveReparam - Could not remove candidate from voting");
+    selfVoting.removeCandidate(paramHash);
     delete selfReparams[paramHash];
-    return true;
   }
 
   /**
     @dev propose a reparamaterization of name's value to value.
-    @param name the name of the proposed param to be set
+    @param param the name of the proposed param to be set
     @param value the proposed value to set the param to be set
   */
-  function reparameterize(string calldata name, uint value) external returns (bytes32) {
-    require(selfVoting.inCouncil(msg.sender), "Error:Parameterizer.reparameterize - Sender must be council member");
+  function reparameterize(uint8 param, uint value) external {
+    require(selfVoting.inCouncil(msg.sender) == true, "Error:Parameterizer.reparameterize - Sender must be council member");
 
-    bytes32 paramHash = keccak256(abi.encodePacked(name, value));
+    bytes32 paramHash = keccak256(abi.encodePacked(param, value));
 
     // TODO any type checks or anything else for auto-rejecting reparams on certain params?
 
-    require(!selfVoting.isCandidate(paramHash), "Error:Parameterizer.proposeReparam - Proposed reparam is already a voting candidate"); // Forbid duplicate proposals
+    require(selfVoting.isCandidate(paramHash) != true, "Error:Parameterizer.proposeReparam - Proposed reparam is already a voting candidate"); // Forbid duplicate proposals
 
     // first, stash the proposition details here
     selfReparams[paramHash] = Reparam({
       proposer: msg.sender,
-      name: bytes(name),
+      param: param,
       value: value
     });
 
     // now create the voting candidate for it
-    bool added = selfVoting.addCandidate(
-      "reparam",
+    selfVoting.addCandidate(
       paramHash,
+      REPARAM,
       selfVoteBy
     );
-
-    require(added, "Error:Parameterizer.reparameterize - Could not add reparam to voting candidates list");
 
     emit ReparamProposedEvent(
       msg.sender,
       paramHash,
-      name,
+      param,
       value
     );
-
-    return paramHash;
   }
 
-  event ReparamProposedEvent(address indexed proposer, bytes32 indexed paramHash, string indexed name, uint value);
+  event ReparamProposedEvent(address indexed proposer, bytes32 indexed paramHash, uint8 indexed param, uint value);
   event ReparamFailedEvent(bytes32 indexed propHash, string indexed name, uint value);
   event ReparamSucceededEvent(bytes32 indexed propHash, string indexed name, uint value);
 }

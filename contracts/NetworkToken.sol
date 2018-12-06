@@ -37,10 +37,9 @@ contract NetworkToken {
    * @param spender The address which will spend the funds.
    * @param amount The amount of tokens to be spent.
    */
-  function approve(address spender, uint256 amount) external returns (bool) {
+  function approve(address spender, uint256 amount) external {
     selfAllowed[msg.sender][spender] = amount;
     emit ApprovalEvent(msg.sender, spender, amount);
-    return true;
   }
 
   /**
@@ -57,19 +56,16 @@ contract NetworkToken {
    * approve should be called when allowed[spender] == 0. To decrement
    * allowed value is better to use this function to avoid 2 calls (and wait until
    * the first transaction is mined)
-   * From MonolithDAO Token.sol
    * @param spender The address which will spend the funds.
-   * @param subtractedAmount The amount of tokens to decrease the allowance by.
+   * @param amount The amount of tokens to decrease the allowance by.
    */
-  function decreaseApproval(address spender, uint256 subtractedAmount) external returns (bool) {
-    uint256 oldAmount = selfAllowed[msg.sender][spender];
-    if (subtractedAmount > oldAmount) {
+  function decreaseApproval(address spender, uint256 amount) external {
+    if (amount > selfAllowed[msg.sender][spender]) {
       selfAllowed[msg.sender][spender] = 0;
     } else {
-      selfAllowed[msg.sender][spender] = oldAmount.sub(subtractedAmount);
+      selfAllowed[msg.sender][spender] = selfAllowed[msg.sender][spender].sub(amount);
     }
     emit ApprovalEvent(msg.sender, spender, selfAllowed[msg.sender][spender]);
-    return true;
   }
 
   /**
@@ -77,15 +73,13 @@ contract NetworkToken {
    * approve should be called when allowed[spender] == 0. To increment
    * allowed value is better to use this function to avoid 2 calls (and wait until
    * the first transaction is mined)
-   * From MonolithDAO Token.sol
    * @param spender The address which will spend the funds.
-   * @param addedAmount The amount of tokens to increase the allowance by.
+   * @param amount The amount of tokens to increase the allowance by.
    */
-  function increaseApproval(address spender, uint256 addedAmount) external returns (bool) {
+  function increaseApproval(address spender, uint256 amount) external {
     selfAllowed[msg.sender][spender] = (
-      selfAllowed[msg.sender][spender].add(addedAmount));
+      selfAllowed[msg.sender][spender].add(amount));
     emit ApprovalEvent(msg.sender, spender, selfAllowed[msg.sender][spender]);
-    return true;
   }
 
   /**
@@ -100,14 +94,13 @@ contract NetworkToken {
   * @param to The address to transfer to.
   * @param amount The amount to be transferred.
   */
-  function transfer(address to, uint256 amount) external returns (bool) {
+  function transfer(address to, uint256 amount) external {
     require(to != address(0), "Error:Basic.transfer - 'to' address must be specified");
     require(amount <= selfBalances[msg.sender], "Error:Basic.transfer - Amount exceeds the balance of msg.sender");
 
     selfBalances[msg.sender] = selfBalances[msg.sender].sub(amount);
     selfBalances[to] = selfBalances[to].add(amount);
     emit TransferEvent(msg.sender, to, amount);
-    return true;
   }
 
   /**
@@ -116,7 +109,7 @@ contract NetworkToken {
    * @param to address The address which you want to transfer to
    * @param amount uint256 the amount of tokens to be transferred
    */
-  function transferFrom(address from, address to, uint256 amount) external returns (bool) {
+  function transferFrom(address from, address to, uint256 amount) external {
     require(to != address(0), "Error:Standard.transferFrom - 'to' address must be specified");
     require(amount <= selfBalances[from], "Error:Standard.transferFrom - Amount exceeds available balance");
     require(amount <= selfAllowed[from][msg.sender], "Error.Standard.transferFrom - Amount exceeds allowed amount");
@@ -125,7 +118,6 @@ contract NetworkToken {
     selfBalances[to] = selfBalances[to].add(amount);
     selfAllowed[from][msg.sender] = selfAllowed[from][msg.sender].sub(amount);
     emit TransferEvent(from, to, amount);
-    return true;
   }
 
   event ApprovalEvent(address indexed holder, address indexed spender, uint256 amount);

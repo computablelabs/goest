@@ -10,6 +10,13 @@ import (
 	"math/big"
 )
 
+const (
+	UNDEFINED uint8 = iota
+	APPLICATION
+	CHALLENGE
+	REPARAM
+)
+
 type ctx struct {
 	AuthMarket        *bind.TransactOpts
 	AuthFactory       *bind.TransactOpts
@@ -45,7 +52,7 @@ func Deploy(c *ctx) (*dep, error) {
 }
 
 // helper for creating the solidity bytes32 listing hash
-func genBytes32(name string) [32]byte {
+func GenBytes32(name string) [32]byte {
 	bytes := [32]byte{}
 	copy(bytes[:], []byte(name))
 	return bytes

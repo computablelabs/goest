@@ -1,6 +1,8 @@
 package market
 
 import (
+	"github.com/ethereum/go-ethereum/accounts/abi/bind"
+	"log"
 	"math/big"
 	"os"
 	"testing"
@@ -38,6 +40,10 @@ func TestDeployMarket(t *testing.T) {
 		t.Error("Expected a valid market deployment address to be returned from deploy, got empty byte array instead")
 	}
 
+	// what does the hex string look like?
+	// t.Log("********************************************************")
+	// t.Log(deployed.MarketAddress.Hex())
+
 	// ntr, _ := context.Blockchain.TransactionReceipt(nil, deployed.NetworkTokenTransaction.Hash())
 	// mtr, _ := context.Blockchain.TransactionReceipt(nil, deployed.MarketTokenTransaction.Hash())
 	// pr, _ := context.Blockchain.TransactionReceipt(nil, deployed.ParameterizerTransaction.Hash())
@@ -52,6 +58,30 @@ func TestDeployMarket(t *testing.T) {
 	// t.Logf("Gas used to deploy Market %v", mr.GasUsed)
 }
 
+func TestMarketTokenSetPrivilegedContracts(t *testing.T) {
+	t.Log("Market contract allowed the setting of the privileged contracts (by factory)")
+
+	market, _ := deployed.MarketTokenContract.GetPrivilegedAddresses(nil)
+
+	if market != deployed.MarketAddress {
+		t.Fatalf("Expected market address of %v but got %v", deployed.MarketAddress, market)
+	}
+}
+
+func TestVotingSetPrivilegedContracts(t *testing.T) {
+	t.Log("Voting contract allowed the setting of the privileged contracts (by factory)")
+
+	market, p11r, _ := deployed.VotingContract.GetPrivilegedAddresses(nil)
+
+	if market != deployed.MarketAddress {
+		t.Fatalf("Expected market address of %v but got %v", deployed.MarketAddress, market)
+	}
+
+	if p11r != deployed.ParameterizerAddress {
+		t.Fatalf("Expected p11r address of %v but got %v", deployed.ParameterizerAddress, p11r)
+	}
+}
+
 // we'll locate our testmain in these deploy_foo_test files as a pattern.
 // NOTE the test main is run once per package, therefore
 // the ctx and dep vars will be avail to the other tests in the package
@@ -60,6 +90,32 @@ func TestMain(m *testing.M) {
 	context = SetupBlockchain(big.NewInt(1000000000000000000)) // 1 ETH in wei
 	// see ./helpers#deployed
 	deployed, deployedError = Deploy(big.NewInt(1000), context)
+
+	// the markettoken must have its privileges set
+	_, marketErr := deployed.MarketTokenContract.SetPrivilegedContracts(&bind.TransactOpts{
+		From:     context.AuthFactory.From,
+		Signer:   context.AuthFactory.Signer,
+		GasPrice: big.NewInt(2000000000),
+		GasLimit: 1000000,
+	}, deployed.MarketAddress)
+
+	if marketErr != nil {
+		log.Fatalf("Error setting privileged contract address: %v", marketErr)
+	}
+
+	_, votingErr := deployed.VotingContract.SetPrivilegedContracts(&bind.TransactOpts{
+		From:     context.AuthFactory.From,
+		Signer:   context.AuthFactory.Signer,
+		GasPrice: big.NewInt(2000000000),
+		GasLimit: 1000000,
+	}, deployed.MarketAddress, deployed.ParameterizerAddress)
+
+	if votingErr != nil {
+		// no T pointer here...
+		log.Fatalf("Error setting privileged contract addresses: %v", votingErr)
+	}
+
+	context.Blockchain.Commit()
 	code := m.Run()
 	os.Exit(code)
 }
