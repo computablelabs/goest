@@ -30,7 +30,7 @@ func TestParameterize(t *testing.T) {
 		Signer:   context.AuthMember1.Signer,
 		GasPrice: big.NewInt(2000000000), // 2 Gwei
 		GasLimit: 200000,
-	}, "voteBy", big.NewInt(25))
+	}, VOTE_BY, big.NewInt(25))
 
 	if err != nil {
 		t.Fatalf("Error creating proposal: %v", err)
@@ -47,14 +47,14 @@ func TestParameterize(t *testing.T) {
 }
 
 func TestGetReparam(t *testing.T) {
-	paramHash, _ := deployed.ParameterizerContract.GetParamHash(nil, "voteBy", big.NewInt(25))
+	paramHash, _ := deployed.ParameterizerContract.GetParamHash(nil, VOTE_BY, big.NewInt(25))
 	proposer, name, val, _ := deployed.ParameterizerContract.GetReparam(nil, paramHash)
 
 	if proposer != context.AuthMember1.From {
 		t.Fatalf("Expected proposer to be %v, got: %v", context.AuthMember1.From, proposer)
 	}
 
-	if name != "voteBy" {
+	if name != VOTE_BY {
 		t.Fatalf("Expected name to be 'voteBy', got: %v", name)
 	}
 
@@ -72,7 +72,7 @@ func TestResolveReparam(t *testing.T) {
 	}
 
 	// how we will fetch this proposal
-	paramHash, _ := deployed.ParameterizerContract.GetParamHash(nil, "voteBy", big.NewInt(25))
+	paramHash, _ := deployed.ParameterizerContract.GetParamHash(nil, VOTE_BY, big.NewInt(25))
 
 	// cast a vote, one will suffice as we only have one council member here
 	_, voteErr := deployed.VotingContract.Vote(&bind.TransactOpts{
@@ -134,7 +134,7 @@ func TestResolveReparam(t *testing.T) {
 		t.Fatalf("Expected proposer to be falsy, got: %v", proposer)
 	}
 
-	if name != "" {
+	if name != UNDEFINED {
 		t.Fatalf("Expected name to be falsy, got: %v", name)
 	}
 

@@ -11,6 +11,18 @@ import (
 	"math/big"
 )
 
+// to match the p11r's internal params enum
+const (
+	UNDEFINED uint8 = iota
+	CHALLENGE_STAKE
+	CONVERSION_RATE
+	CONVERSION_SLOPE_D
+	CONVERSION_SLOPE_N
+	LIST_REWARD
+	QUORUM
+	VOTE_BY
+)
+
 type ctx struct {
 	// 	Alloc          core.GenesisAlloc
 	AuthMarket  *bind.TransactOpts

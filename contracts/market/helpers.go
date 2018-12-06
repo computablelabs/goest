@@ -14,6 +14,14 @@ import (
 	"math/big"
 )
 
+// the candidate "kinds"
+const (
+	UNDEFINED uint8 = iota
+	APPLICATION
+	CHALLENGE
+	REPARAM
+)
+
 type ctx struct {
 	AuthFactory *bind.TransactOpts
 	AuthMember1 *bind.TransactOpts
@@ -22,35 +30,24 @@ type ctx struct {
 }
 
 type dep struct {
-	NetworkTokenAddress      common.Address
-	MarketTokenAddress       common.Address
-	VotingAddress            common.Address
-	ParameterizerAddress     common.Address
 	MarketAddress            common.Address
-	NetworkTokenContract     *networktoken.NetworkToken
-	MarketTokenContract      *markettoken.MarketToken
-	VotingContract           *voting.Voting
-	ParameterizerContract    *parameterizer.Parameterizer
+	MarketTokenAddress       common.Address
+	NetworkTokenAddress      common.Address
+	ParameterizerAddress     common.Address
+	VotingAddress            common.Address
 	MarketContract           *Market
-	NetworkTokenTransaction  *types.Transaction
-	MarketTokenTransaction   *types.Transaction
-	VotingTransaction        *types.Transaction
-	ParameterizerTransaction *types.Transaction
+	MarketTokenContract      *markettoken.MarketToken
+	NetworkTokenContract     *networktoken.NetworkToken
+	ParameterizerContract    *parameterizer.Parameterizer
+	VotingContract           *voting.Voting
 	MarketTransaction        *types.Transaction
+	MarketTokenTransaction   *types.Transaction
+	NetworkTokenTransaction  *types.Transaction
+	ParameterizerTransaction *types.Transaction
+	VotingTransaction        *types.Transaction
 }
 
 func Deploy(initialBalance *big.Int, c *ctx) (*dep, error) {
-	networkTokenAddr, networkTokenTrans, networkTokenCont, networkTokenErr := networktoken.DeployNetworkToken(
-		c.AuthFactory,
-		c.Blockchain,
-		c.AuthFactory.From,
-		initialBalance,
-	)
-
-	if networkTokenErr != nil {
-		return nil, networkTokenErr
-	}
-
 	marketTokenAddr, marketTokenTrans, marketTokenCont, marketTokenErr := markettoken.DeployMarketToken(
 		c.AuthFactory,
 		c.Blockchain,
@@ -60,6 +57,17 @@ func Deploy(initialBalance *big.Int, c *ctx) (*dep, error) {
 
 	if marketTokenErr != nil {
 		return nil, marketTokenErr
+	}
+
+	networkTokenAddr, networkTokenTrans, networkTokenCont, networkTokenErr := networktoken.DeployNetworkToken(
+		c.AuthFactory,
+		c.Blockchain,
+		c.AuthFactory.From,
+		initialBalance,
+	)
+
+	if networkTokenErr != nil {
+		return nil, networkTokenErr
 	}
 
 	// commit the deploy before deploying voting
@@ -86,7 +94,7 @@ func Deploy(initialBalance *big.Int, c *ctx) (*dep, error) {
 		big.NewInt(100),                 // conversionSlopeNumerator, a scaling factor
 		big.NewInt(1000000000000000000), // listReward (one token)
 		big.NewInt(50),                  // quorum
-		big.NewInt(20),                  // voteBy (20 seconds)
+		big.NewInt(100),                 // voteBy
 	)
 
 	if paramErr != nil {
@@ -99,11 +107,10 @@ func Deploy(initialBalance *big.Int, c *ctx) (*dep, error) {
 	marketAddr, marketTrans, marketCont, marketErr := DeployMarket(
 		c.AuthFactory,
 		c.Blockchain,
-		"FooMarket",
-		networkTokenAddr,
 		marketTokenAddr,
-		votingAddr,
+		networkTokenAddr,
 		paramAddr,
+		votingAddr,
 	)
 
 	if marketErr != nil {
@@ -113,21 +120,21 @@ func Deploy(initialBalance *big.Int, c *ctx) (*dep, error) {
 	c.Blockchain.Commit()
 
 	return &dep{
-		NetworkTokenAddress:      networkTokenAddr,
-		NetworkTokenTransaction:  networkTokenTrans,
-		NetworkTokenContract:     networkTokenCont,
-		MarketTokenAddress:       marketTokenAddr,
-		MarketTokenContract:      marketTokenCont,
-		MarketTokenTransaction:   marketTokenTrans,
-		VotingAddress:            votingAddr,
-		VotingContract:           votingCont,
-		VotingTransaction:        votingTrans,
-		ParameterizerAddress:     paramAddr,
-		ParameterizerContract:    paramCont,
-		ParameterizerTransaction: paramTrans,
 		MarketAddress:            marketAddr,
 		MarketContract:           marketCont,
 		MarketTransaction:        marketTrans,
+		MarketTokenAddress:       marketTokenAddr,
+		MarketTokenContract:      marketTokenCont,
+		MarketTokenTransaction:   marketTokenTrans,
+		NetworkTokenAddress:      networkTokenAddr,
+		NetworkTokenTransaction:  networkTokenTrans,
+		NetworkTokenContract:     networkTokenCont,
+		ParameterizerAddress:     paramAddr,
+		ParameterizerContract:    paramCont,
+		ParameterizerTransaction: paramTrans,
+		VotingAddress:            votingAddr,
+		VotingContract:           votingCont,
+		VotingTransaction:        votingTrans,
 	}, nil
 }
 
@@ -139,7 +146,7 @@ func SetupBlockchain(accountBalance *big.Int) *ctx {
 
 	authFac := bind.NewKeyedTransactor(keyFac)
 	authFac.GasPrice = big.NewInt(2000000000) // 2 Gwei
-	authFac.GasLimit = 1000000
+	// authFac.GasLimit = 4000000             // setting a gas limit here causes the "silent simulated backed fail"... TODO PR
 
 	authMem1 := bind.NewKeyedTransactor(keyMem1)
 	authMem2 := bind.NewKeyedTransactor(keyMem2)

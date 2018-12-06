@@ -23,14 +23,14 @@ func TestVote(t *testing.T) {
 	}
 
 	// we need a candidate
-	bytes := genBytes32("iLoveListing.com")
+	bytes := GenBytes32("iLoveListing.com")
 
 	_, candidateErr := deployed.VotingContract.AddCandidate(&bind.TransactOpts{
 		From:     context.AuthMarket.From,
 		Signer:   context.AuthMarket.Signer,
 		GasPrice: big.NewInt(2000000000), // 2 Gwei
 		GasLimit: 150000,
-	}, "application", bytes, big.NewInt(20)) // numbers smaller that 10 can be erratic?
+	}, bytes, APPLICATION, big.NewInt(20)) // numbers smaller that 10 can be erratic?
 
 	if candidateErr != nil {
 		t.Fatalf("Error adding candidate: %v", candidateErr)
@@ -63,7 +63,7 @@ func TestVote(t *testing.T) {
 func TestDidVote(t *testing.T) {
 	t.Log("Voting contract has recorded that a member cast a vote")
 
-	bytes := genBytes32("iLoveListing.com")
+	bytes := GenBytes32("iLoveListing.com")
 	voted, _ := deployed.VotingContract.DidVote(nil, bytes, context.AuthMember1.From)
 
 	if voted != true {
@@ -74,7 +74,7 @@ func TestDidVote(t *testing.T) {
 func TestPollClosed(t *testing.T) {
 	t.Log("Voting contract correcly identifies that polls are closed")
 	// should still be open
-	bytes := genBytes32("iLoveListing.com")
+	bytes := GenBytes32("iLoveListing.com")
 	closed, _ := deployed.VotingContract.PollClosed(nil, bytes)
 
 	if closed != false {
@@ -95,7 +95,7 @@ func TestPollClosed(t *testing.T) {
 func TestDidPass(t *testing.T) {
 	t.Log("Voting contract correctly states if a cadidate passed a vote")
 
-	bytes := genBytes32("iLoveListing.com")
+	bytes := GenBytes32("iLoveListing.com")
 	// with only one council member, the one vote will do it
 	passed, _ := deployed.VotingContract.DidPass(nil, bytes, big.NewInt(50))
 

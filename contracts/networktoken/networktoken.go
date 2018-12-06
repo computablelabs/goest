@@ -16,10 +16,10 @@ import (
 )
 
 // NetworkTokenABI is the input ABI used to generate the binding from.
-const NetworkTokenABI = "[{\"constant\":false,\"inputs\":[{\"name\":\"spender\",\"type\":\"address\"},{\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"approve\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"totalSupply\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"from\",\"type\":\"address\"},{\"name\":\"to\",\"type\":\"address\"},{\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"transferFrom\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"spender\",\"type\":\"address\"},{\"name\":\"subtractedAmount\",\"type\":\"uint256\"}],\"name\":\"decreaseApproval\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"holder\",\"type\":\"address\"}],\"name\":\"balanceOf\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"to\",\"type\":\"address\"},{\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"transfer\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"spender\",\"type\":\"address\"},{\"name\":\"addedAmount\",\"type\":\"uint256\"}],\"name\":\"increaseApproval\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"holder\",\"type\":\"address\"},{\"name\":\"spender\",\"type\":\"address\"}],\"name\":\"allowance\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"name\":\"initialAccount\",\"type\":\"address\"},{\"name\":\"initialBalance\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"holder\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"spender\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"ApprovalEvent\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"from\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"to\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"TransferEvent\",\"type\":\"event\"}]"
+const NetworkTokenABI = "[{\"constant\":false,\"inputs\":[{\"name\":\"spender\",\"type\":\"address\"},{\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"approve\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"totalSupply\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"from\",\"type\":\"address\"},{\"name\":\"to\",\"type\":\"address\"},{\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"transferFrom\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"spender\",\"type\":\"address\"},{\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"decreaseApproval\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"holder\",\"type\":\"address\"}],\"name\":\"balanceOf\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"to\",\"type\":\"address\"},{\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"transfer\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"spender\",\"type\":\"address\"},{\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"increaseApproval\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"holder\",\"type\":\"address\"},{\"name\":\"spender\",\"type\":\"address\"}],\"name\":\"allowance\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"name\":\"initialAccount\",\"type\":\"address\"},{\"name\":\"initialBalance\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"holder\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"spender\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"ApprovalEvent\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"from\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"to\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"TransferEvent\",\"type\":\"event\"}]"
 
 // NetworkTokenBin is the compiled bytecode used for deploying new contracts.
-const NetworkTokenBin = `0x608060405234801561001057600080fd5b506040516040806109e58339810180604052604081101561003057600080fd5b508051602091820151600160a060020a039091166000908152600190925260408220819055905561097f806100666000396000f3fe60806040526004361061008d5763ffffffff7c0100000000000000000000000000000000000000000000000000000000600035041663095ea7b3811461009257806318160ddd146100df57806323b872dd14610106578063661884631461014957806370a0823114610182578063a9059cbb146101b5578063d73dd623146101ee578063dd62ed3e14610227575b600080fd5b34801561009e57600080fd5b506100cb600480360360408110156100b557600080fd5b50600160a060020a038135169060200135610262565b604080519115158252519081900360200190f35b3480156100eb57600080fd5b506100f46102c8565b60408051918252519081900360200190f35b34801561011257600080fd5b506100cb6004803603606081101561012957600080fd5b50600160a060020a038135811691602081013590911690604001356102ce565b34801561015557600080fd5b506100cb6004803603604081101561016c57600080fd5b50600160a060020a03813516906020013561059a565b34801561018e57600080fd5b506100f4600480360360208110156101a557600080fd5b5035600160a060020a031661068a565b3480156101c157600080fd5b506100cb600480360360408110156101d857600080fd5b50600160a060020a0381351690602001356106a5565b3480156101fa57600080fd5b506100cb6004803603604081101561021157600080fd5b50600160a060020a03813516906020013561086a565b34801561023357600080fd5b506100f46004803603604081101561024a57600080fd5b50600160a060020a0381358116916020013516610903565b336000818152600260209081526040808320600160a060020a038716808552908352818420869055815186815291519394909390927f08245b82180b1f5e514e503c113ab0197093b2cb542145037c0a31b54b1d998e928290030190a350600192915050565b60005490565b6000600160a060020a0383161515610356576040805160e560020a62461bcd02815260206004820152603c60248201527f4572726f723a5374616e646172642e7472616e7366657246726f6d202d20277460448201527f6f272061646472657373206d7573742062652073706563696669656400000000606482015290519081900360840190fd5b600160a060020a0384166000908152600160205260409020548211156103ec576040805160e560020a62461bcd02815260206004820152603e60248201527f4572726f723a5374616e646172642e7472616e7366657246726f6d202d20416d60448201527f6f756e74206578636565647320617661696c61626c652062616c616e63650000606482015290519081900360840190fd5b600160a060020a038416600090815260026020908152604080832033845290915290205482111561048d576040805160e560020a62461bcd02815260206004820152603b60248201527f4572726f722e5374616e646172642e7472616e7366657246726f6d202d20416d60448201527f6f756e74206578636565647320616c6c6f77656420616d6f756e740000000000606482015290519081900360840190fd5b600160a060020a0384166000908152600160205260409020546104b6908363ffffffff61092e16565b600160a060020a0380861660009081526001602052604080822093909355908516815220546104eb908363ffffffff61094016565b600160a060020a03808516600090815260016020908152604080832094909455918716815260028252828120338252909152205461052f908363ffffffff61092e16565b600160a060020a03808616600081815260026020908152604080832033845282529182902094909455805186815290519287169391927feaf1c4b3ce0f4f62a2bae7eb3e68225c75f7e6ff4422073b7437b9a78d25f170929181900390910190a35060019392505050565b336000908152600260209081526040808320600160a060020a0386168452909152812054808311156105ef57336000908152600260209081526040808320600160a060020a0388168452909152812055610624565b6105ff818463ffffffff61092e16565b336000908152600260209081526040808320600160a060020a03891684529091529020555b336000818152600260209081526040808320600160a060020a0389168085529083529281902054815190815290519293927f08245b82180b1f5e514e503c113ab0197093b2cb542145037c0a31b54b1d998e929181900390910190a35060019392505050565b600160a060020a031660009081526001602052604090205490565b6000600160a060020a038316151561072d576040805160e560020a62461bcd02815260206004820152603560248201527f4572726f723a42617369632e7472616e73666572202d2027746f27206164647260448201527f657373206d757374206265207370656369666965640000000000000000000000606482015290519081900360840190fd5b336000908152600160205260409020548211156107ba576040805160e560020a62461bcd02815260206004820152603f60248201527f4572726f723a42617369632e7472616e73666572202d20416d6f756e7420657860448201527f6365656473207468652062616c616e6365206f66206d73672e73656e64657200606482015290519081900360840190fd5b336000908152600160205260409020546107da908363ffffffff61092e16565b3360009081526001602052604080822092909255600160a060020a0385168152205461080c908363ffffffff61094016565b600160a060020a0384166000818152600160209081526040918290209390935580518581529051919233927feaf1c4b3ce0f4f62a2bae7eb3e68225c75f7e6ff4422073b7437b9a78d25f1709281900390910190a350600192915050565b336000908152600260209081526040808320600160a060020a038616845290915281205461089e908363ffffffff61094016565b336000818152600260209081526040808320600160a060020a0389168085529083529281902085905580519485525191937f08245b82180b1f5e514e503c113ab0197093b2cb542145037c0a31b54b1d998e929081900390910190a350600192915050565b600160a060020a03918216600090815260026020908152604080832093909416825291909152205490565b60008282111561093a57fe5b50900390565b8181018281101561094d57fe5b9291505056fea165627a7a72305820b2b06703a3f12b17a9ed31d0ee1d766c8a62bdda8f43b8f339b4f83feb266a910029`
+const NetworkTokenBin = `0x608060405234801561001057600080fd5b506040516040806109798339810180604052604081101561003057600080fd5b508051602091820151600160a060020a0390911660009081526001909252604082208190559055610913806100666000396000f3fe60806040526004361061008d5763ffffffff7c0100000000000000000000000000000000000000000000000000000000600035041663095ea7b3811461009257806318160ddd146100cd57806323b872dd146100f4578063661884631461013757806370a0823114610170578063a9059cbb146101a3578063d73dd623146101dc578063dd62ed3e14610215575b600080fd5b34801561009e57600080fd5b506100cb600480360360408110156100b557600080fd5b50600160a060020a038135169060200135610250565b005b3480156100d957600080fd5b506100e26102b2565b60408051918252519081900360200190f35b34801561010057600080fd5b506100cb6004803603606081101561011757600080fd5b50600160a060020a038135811691602081013590911690604001356102b8565b34801561014357600080fd5b506100cb6004803603604081101561015a57600080fd5b50600160a060020a03813516906020013561057d565b34801561017c57600080fd5b506100e26004803603602081101561019357600080fd5b5035600160a060020a031661068a565b3480156101af57600080fd5b506100cb600480360360408110156101c657600080fd5b50600160a060020a0381351690602001356106a5565b3480156101e857600080fd5b506100cb600480360360408110156101ff57600080fd5b50600160a060020a038135169060200135610863565b34801561022157600080fd5b506100e26004803603604081101561023857600080fd5b50600160a060020a0381358116916020013516610897565b336000818152600260209081526040808320600160a060020a03871680855290835292819020859055805185815290519293927f08245b82180b1f5e514e503c113ab0197093b2cb542145037c0a31b54b1d998e929181900390910190a35050565b60005490565b600160a060020a038216151561033e576040805160e560020a62461bcd02815260206004820152603c60248201527f4572726f723a5374616e646172642e7472616e7366657246726f6d202d20277460448201527f6f272061646472657373206d7573742062652073706563696669656400000000606482015290519081900360840190fd5b600160a060020a0383166000908152600160205260409020548111156103d4576040805160e560020a62461bcd02815260206004820152603e60248201527f4572726f723a5374616e646172642e7472616e7366657246726f6d202d20416d60448201527f6f756e74206578636565647320617661696c61626c652062616c616e63650000606482015290519081900360840190fd5b600160a060020a0383166000908152600260209081526040808320338452909152902054811115610475576040805160e560020a62461bcd02815260206004820152603b60248201527f4572726f722e5374616e646172642e7472616e7366657246726f6d202d20416d60448201527f6f756e74206578636565647320616c6c6f77656420616d6f756e740000000000606482015290519081900360840190fd5b600160a060020a03831660009081526001602052604090205461049e908263ffffffff6108c216565b600160a060020a0380851660009081526001602052604080822093909355908416815220546104d3908263ffffffff6108d416565b600160a060020a038084166000908152600160209081526040808320949094559186168152600282528281203382529091522054610517908263ffffffff6108c216565b600160a060020a03808516600081815260026020908152604080832033845282529182902094909455805185815290519286169391927feaf1c4b3ce0f4f62a2bae7eb3e68225c75f7e6ff4422073b7437b9a78d25f170929181900390910190a3505050565b336000908152600260209081526040808320600160a060020a03861684529091529020548111156105d157336000908152600260209081526040808320600160a060020a038616845290915281205561062a565b336000908152600260209081526040808320600160a060020a0386168452909152902054610605908263ffffffff6108c216565b336000908152600260209081526040808320600160a060020a03871684529091529020555b336000818152600260209081526040808320600160a060020a0387168085529083529281902054815190815290519293927f08245b82180b1f5e514e503c113ab0197093b2cb542145037c0a31b54b1d998e929181900390910190a35050565b600160a060020a031660009081526001602052604090205490565b600160a060020a038216151561072b576040805160e560020a62461bcd02815260206004820152603560248201527f4572726f723a42617369632e7472616e73666572202d2027746f27206164647260448201527f657373206d757374206265207370656369666965640000000000000000000000606482015290519081900360840190fd5b336000908152600160205260409020548111156107b8576040805160e560020a62461bcd02815260206004820152603f60248201527f4572726f723a42617369632e7472616e73666572202d20416d6f756e7420657860448201527f6365656473207468652062616c616e6365206f66206d73672e73656e64657200606482015290519081900360840190fd5b336000908152600160205260409020546107d8908263ffffffff6108c216565b3360009081526001602052604080822092909255600160a060020a0384168152205461080a908263ffffffff6108d416565b600160a060020a0383166000818152600160209081526040918290209390935580518481529051919233927feaf1c4b3ce0f4f62a2bae7eb3e68225c75f7e6ff4422073b7437b9a78d25f1709281900390910190a35050565b336000908152600260209081526040808320600160a060020a0386168452909152902054610605908263ffffffff6108d416565b600160a060020a03918216600090815260026020908152604080832093909416825291909152205490565b6000828211156108ce57fe5b50900390565b818101828110156108e157fe5b9291505056fea165627a7a723058201f8df9679cb94fb57c17f215c7d60a1adc057ff8534491ac8ca9b903d325d6220029`
 
 // DeployNetworkToken deploys a new Ethereum contract, binding an instance of NetworkToken to it.
 func DeployNetworkToken(auth *bind.TransactOpts, backend bind.ContractBackend, initialAccount common.Address, initialBalance *big.Int) (common.Address, *types.Transaction, *NetworkToken, error) {
@@ -256,105 +256,105 @@ func (_NetworkToken *NetworkTokenCallerSession) TotalSupply() (*big.Int, error) 
 
 // Approve is a paid mutator transaction binding the contract method 0x095ea7b3.
 //
-// Solidity: function approve(spender address, amount uint256) returns(bool)
+// Solidity: function approve(spender address, amount uint256) returns()
 func (_NetworkToken *NetworkTokenTransactor) Approve(opts *bind.TransactOpts, spender common.Address, amount *big.Int) (*types.Transaction, error) {
 	return _NetworkToken.contract.Transact(opts, "approve", spender, amount)
 }
 
 // Approve is a paid mutator transaction binding the contract method 0x095ea7b3.
 //
-// Solidity: function approve(spender address, amount uint256) returns(bool)
+// Solidity: function approve(spender address, amount uint256) returns()
 func (_NetworkToken *NetworkTokenSession) Approve(spender common.Address, amount *big.Int) (*types.Transaction, error) {
 	return _NetworkToken.Contract.Approve(&_NetworkToken.TransactOpts, spender, amount)
 }
 
 // Approve is a paid mutator transaction binding the contract method 0x095ea7b3.
 //
-// Solidity: function approve(spender address, amount uint256) returns(bool)
+// Solidity: function approve(spender address, amount uint256) returns()
 func (_NetworkToken *NetworkTokenTransactorSession) Approve(spender common.Address, amount *big.Int) (*types.Transaction, error) {
 	return _NetworkToken.Contract.Approve(&_NetworkToken.TransactOpts, spender, amount)
 }
 
 // DecreaseApproval is a paid mutator transaction binding the contract method 0x66188463.
 //
-// Solidity: function decreaseApproval(spender address, subtractedAmount uint256) returns(bool)
-func (_NetworkToken *NetworkTokenTransactor) DecreaseApproval(opts *bind.TransactOpts, spender common.Address, subtractedAmount *big.Int) (*types.Transaction, error) {
-	return _NetworkToken.contract.Transact(opts, "decreaseApproval", spender, subtractedAmount)
+// Solidity: function decreaseApproval(spender address, amount uint256) returns()
+func (_NetworkToken *NetworkTokenTransactor) DecreaseApproval(opts *bind.TransactOpts, spender common.Address, amount *big.Int) (*types.Transaction, error) {
+	return _NetworkToken.contract.Transact(opts, "decreaseApproval", spender, amount)
 }
 
 // DecreaseApproval is a paid mutator transaction binding the contract method 0x66188463.
 //
-// Solidity: function decreaseApproval(spender address, subtractedAmount uint256) returns(bool)
-func (_NetworkToken *NetworkTokenSession) DecreaseApproval(spender common.Address, subtractedAmount *big.Int) (*types.Transaction, error) {
-	return _NetworkToken.Contract.DecreaseApproval(&_NetworkToken.TransactOpts, spender, subtractedAmount)
+// Solidity: function decreaseApproval(spender address, amount uint256) returns()
+func (_NetworkToken *NetworkTokenSession) DecreaseApproval(spender common.Address, amount *big.Int) (*types.Transaction, error) {
+	return _NetworkToken.Contract.DecreaseApproval(&_NetworkToken.TransactOpts, spender, amount)
 }
 
 // DecreaseApproval is a paid mutator transaction binding the contract method 0x66188463.
 //
-// Solidity: function decreaseApproval(spender address, subtractedAmount uint256) returns(bool)
-func (_NetworkToken *NetworkTokenTransactorSession) DecreaseApproval(spender common.Address, subtractedAmount *big.Int) (*types.Transaction, error) {
-	return _NetworkToken.Contract.DecreaseApproval(&_NetworkToken.TransactOpts, spender, subtractedAmount)
+// Solidity: function decreaseApproval(spender address, amount uint256) returns()
+func (_NetworkToken *NetworkTokenTransactorSession) DecreaseApproval(spender common.Address, amount *big.Int) (*types.Transaction, error) {
+	return _NetworkToken.Contract.DecreaseApproval(&_NetworkToken.TransactOpts, spender, amount)
 }
 
 // IncreaseApproval is a paid mutator transaction binding the contract method 0xd73dd623.
 //
-// Solidity: function increaseApproval(spender address, addedAmount uint256) returns(bool)
-func (_NetworkToken *NetworkTokenTransactor) IncreaseApproval(opts *bind.TransactOpts, spender common.Address, addedAmount *big.Int) (*types.Transaction, error) {
-	return _NetworkToken.contract.Transact(opts, "increaseApproval", spender, addedAmount)
+// Solidity: function increaseApproval(spender address, amount uint256) returns()
+func (_NetworkToken *NetworkTokenTransactor) IncreaseApproval(opts *bind.TransactOpts, spender common.Address, amount *big.Int) (*types.Transaction, error) {
+	return _NetworkToken.contract.Transact(opts, "increaseApproval", spender, amount)
 }
 
 // IncreaseApproval is a paid mutator transaction binding the contract method 0xd73dd623.
 //
-// Solidity: function increaseApproval(spender address, addedAmount uint256) returns(bool)
-func (_NetworkToken *NetworkTokenSession) IncreaseApproval(spender common.Address, addedAmount *big.Int) (*types.Transaction, error) {
-	return _NetworkToken.Contract.IncreaseApproval(&_NetworkToken.TransactOpts, spender, addedAmount)
+// Solidity: function increaseApproval(spender address, amount uint256) returns()
+func (_NetworkToken *NetworkTokenSession) IncreaseApproval(spender common.Address, amount *big.Int) (*types.Transaction, error) {
+	return _NetworkToken.Contract.IncreaseApproval(&_NetworkToken.TransactOpts, spender, amount)
 }
 
 // IncreaseApproval is a paid mutator transaction binding the contract method 0xd73dd623.
 //
-// Solidity: function increaseApproval(spender address, addedAmount uint256) returns(bool)
-func (_NetworkToken *NetworkTokenTransactorSession) IncreaseApproval(spender common.Address, addedAmount *big.Int) (*types.Transaction, error) {
-	return _NetworkToken.Contract.IncreaseApproval(&_NetworkToken.TransactOpts, spender, addedAmount)
+// Solidity: function increaseApproval(spender address, amount uint256) returns()
+func (_NetworkToken *NetworkTokenTransactorSession) IncreaseApproval(spender common.Address, amount *big.Int) (*types.Transaction, error) {
+	return _NetworkToken.Contract.IncreaseApproval(&_NetworkToken.TransactOpts, spender, amount)
 }
 
 // Transfer is a paid mutator transaction binding the contract method 0xa9059cbb.
 //
-// Solidity: function transfer(to address, amount uint256) returns(bool)
+// Solidity: function transfer(to address, amount uint256) returns()
 func (_NetworkToken *NetworkTokenTransactor) Transfer(opts *bind.TransactOpts, to common.Address, amount *big.Int) (*types.Transaction, error) {
 	return _NetworkToken.contract.Transact(opts, "transfer", to, amount)
 }
 
 // Transfer is a paid mutator transaction binding the contract method 0xa9059cbb.
 //
-// Solidity: function transfer(to address, amount uint256) returns(bool)
+// Solidity: function transfer(to address, amount uint256) returns()
 func (_NetworkToken *NetworkTokenSession) Transfer(to common.Address, amount *big.Int) (*types.Transaction, error) {
 	return _NetworkToken.Contract.Transfer(&_NetworkToken.TransactOpts, to, amount)
 }
 
 // Transfer is a paid mutator transaction binding the contract method 0xa9059cbb.
 //
-// Solidity: function transfer(to address, amount uint256) returns(bool)
+// Solidity: function transfer(to address, amount uint256) returns()
 func (_NetworkToken *NetworkTokenTransactorSession) Transfer(to common.Address, amount *big.Int) (*types.Transaction, error) {
 	return _NetworkToken.Contract.Transfer(&_NetworkToken.TransactOpts, to, amount)
 }
 
 // TransferFrom is a paid mutator transaction binding the contract method 0x23b872dd.
 //
-// Solidity: function transferFrom(from address, to address, amount uint256) returns(bool)
+// Solidity: function transferFrom(from address, to address, amount uint256) returns()
 func (_NetworkToken *NetworkTokenTransactor) TransferFrom(opts *bind.TransactOpts, from common.Address, to common.Address, amount *big.Int) (*types.Transaction, error) {
 	return _NetworkToken.contract.Transact(opts, "transferFrom", from, to, amount)
 }
 
 // TransferFrom is a paid mutator transaction binding the contract method 0x23b872dd.
 //
-// Solidity: function transferFrom(from address, to address, amount uint256) returns(bool)
+// Solidity: function transferFrom(from address, to address, amount uint256) returns()
 func (_NetworkToken *NetworkTokenSession) TransferFrom(from common.Address, to common.Address, amount *big.Int) (*types.Transaction, error) {
 	return _NetworkToken.Contract.TransferFrom(&_NetworkToken.TransactOpts, from, to, amount)
 }
 
 // TransferFrom is a paid mutator transaction binding the contract method 0x23b872dd.
 //
-// Solidity: function transferFrom(from address, to address, amount uint256) returns(bool)
+// Solidity: function transferFrom(from address, to address, amount uint256) returns()
 func (_NetworkToken *NetworkTokenTransactorSession) TransferFrom(from common.Address, to common.Address, amount *big.Int) (*types.Transaction, error) {
 	return _NetworkToken.Contract.TransferFrom(&_NetworkToken.TransactOpts, from, to, amount)
 }

@@ -9,14 +9,14 @@ import (
 func TestAddCandidate(t *testing.T) {
 	t.Log("Voting contract should add a candidate on demand")
 
-	bytes := genBytes32("iCanHazListing")
+	bytes := GenBytes32("iCanHazListing")
 
 	_, err := deployed.VotingContract.AddCandidate(&bind.TransactOpts{
 		From:     context.AuthMarket.From,
 		Signer:   context.AuthMarket.Signer,
 		GasPrice: big.NewInt(2000000000), // 2 Gwei
 		GasLimit: 150000,
-	}, "application", bytes, big.NewInt(2))
+	}, bytes, APPLICATION, big.NewInt(2))
 
 	if err != nil {
 		t.Fatalf("Error adding candidate: %v", err)
@@ -39,7 +39,7 @@ func TestGetCandidates(t *testing.T) {
 
 func TestGetCandidate(t *testing.T) {
 	t.Log("Voting contract should fetch a candidate on demand")
-	bytes := genBytes32("iCanHazListing")
+	bytes := GenBytes32("iCanHazListing")
 
 	kind, voteBy, votes, err := deployed.VotingContract.GetCandidate(nil, bytes)
 
@@ -47,7 +47,7 @@ func TestGetCandidate(t *testing.T) {
 		t.Fatalf("Error getting candidate: %v", err)
 	}
 
-	if kind != "application" {
+	if kind != APPLICATION {
 		t.Fatalf("Expected kind to be application, got: %v", kind)
 	}
 
@@ -63,26 +63,26 @@ func TestGetCandidate(t *testing.T) {
 
 func TestCandidateIs(t *testing.T) {
 	t.Log("Voting contract should correctly check the candidate type")
-	bytes := genBytes32("iCanHazListing")
+	bytes := GenBytes32("iCanHazListing")
 
 	// it's not a challenge...
-	shouldBeFalse, _ := deployed.VotingContract.CandidateIs(nil, bytes, "challenge")
+	shouldBeFalse, _ := deployed.VotingContract.CandidateIs(nil, bytes, CHALLENGE)
 
 	if shouldBeFalse != false {
 		t.Fatalf("Expected kind == challenge to be false, got: %v", shouldBeFalse)
 	}
 
-	shouldBeTrue, _ := deployed.VotingContract.CandidateIs(nil, bytes, "application")
+	shouldBeTrue, _ := deployed.VotingContract.CandidateIs(nil, bytes, APPLICATION)
 
 	if shouldBeTrue != true {
 		t.Fatalf("Expected kind == application to be true, got: %v", shouldBeTrue)
 	}
 
-	// test the case where length is equal (11), but the word itself is wrong
-	alsoBeFalse, _ := deployed.VotingContract.CandidateIs(nil, bytes, "beetlejuice")
+	// test the case where the option does not exist
+	alsoBeFalse, _ := deployed.VotingContract.CandidateIs(nil, bytes, 4)
 
 	if alsoBeFalse != false {
-		t.Fatalf("Expected kind == beetlejuice to be false, got: %v", alsoBeFalse)
+		t.Fatalf("Expected kind == 4 to be false, got: %v", alsoBeFalse)
 	}
 }
 
@@ -96,7 +96,7 @@ func TestRemoveCandidate(t *testing.T) {
 		t.Fatalf("Expected candidate length to be > 0, got : %v", length)
 	}
 
-	bytes := genBytes32("iCanHazListing")
+	bytes := GenBytes32("iCanHazListing")
 
 	_, err := deployed.VotingContract.RemoveCandidate(&bind.TransactOpts{
 		From:     context.AuthMarket.From,
