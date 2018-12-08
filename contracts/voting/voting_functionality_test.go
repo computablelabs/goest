@@ -8,8 +8,6 @@ import (
 )
 
 func TestVote(t *testing.T) {
-	t.Log("Voting contract should allow a council member to vote")
-
 	// we need a council member
 	_, councilErr := deployed.VotingContract.AddToCouncil(&bind.TransactOpts{
 		From:     context.AuthMarket.From,
@@ -61,8 +59,6 @@ func TestVote(t *testing.T) {
 }
 
 func TestDidVote(t *testing.T) {
-	t.Log("Voting contract has recorded that a member cast a vote")
-
 	bytes := GenBytes32("iLoveListing.com")
 	voted, _ := deployed.VotingContract.DidVote(nil, bytes, context.AuthMember1.From)
 
@@ -72,7 +68,6 @@ func TestDidVote(t *testing.T) {
 }
 
 func TestPollClosed(t *testing.T) {
-	t.Log("Voting contract correcly identifies that polls are closed")
 	// should still be open
 	bytes := GenBytes32("iLoveListing.com")
 	closed, _ := deployed.VotingContract.PollClosed(nil, bytes)
@@ -93,8 +88,6 @@ func TestPollClosed(t *testing.T) {
 }
 
 func TestDidPass(t *testing.T) {
-	t.Log("Voting contract correctly states if a cadidate passed a vote")
-
 	bytes := GenBytes32("iLoveListing.com")
 	// with only one council member, the one vote will do it
 	passed, _ := deployed.VotingContract.DidPass(nil, bytes, big.NewInt(50))

@@ -9,8 +9,6 @@ import (
 )
 
 func TestParameterize(t *testing.T) {
-	t.Log("Parameterizer can create a new reparam proposal")
-
 	// we need a council member
 	_, councilErr := deployed.VotingContract.AddToCouncil(&bind.TransactOpts{
 		From:     context.AuthMarket.From,

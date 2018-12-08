@@ -1,4 +1,4 @@
-pragma solidity 0.5.0;
+pragma solidity 0.5.1;
 
 import "./SafeMath.sol";
 import "./IERC20.sol";
@@ -323,9 +323,9 @@ contract Market {
 
     // the amount is optional here, but if sent, we need to bank them
     if (amount > 0) {
-      listing.supply = amount; // optional arg here, may be 0
       // Transfers tokens from user to Market contract (market acts as banker for all listing market tokens)
       selfMarketToken.transferFrom(listing.owner, address(this), amount);
+      listing.supply = amount; // optional arg here, may be 0
     }
 
     // with that in place, create the candidate for this listing, NOTE: will trigger a CandidateCreatedEvent as well
@@ -349,7 +349,8 @@ contract Market {
     @param listingHash The listing hash to delete
   */
   function removeListing(bytes32 listingHash) private {
-    require(selfListings[listingHash].listed == true, "Error:Market.removeListing - Must be a listing");
+    // must be a listing, but not necessarily listed
+    require(isListing(listingHash) == true, "Error:Market.removeListing - Must be a listing");
 
     // Transfers any remaining balance back to the owner and burns any minted tokens
     if (selfListings[listingHash].supply > 0) {

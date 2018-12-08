@@ -8,7 +8,6 @@ import (
 )
 
 func TestTotalSupply(t *testing.T) {
-	t.Log("Network token should fetch total supply on demand")
 	// the supply should have been passed in as initial balance in the deploy spec
 	if supply, _ := deployed.Contract.TotalSupply(nil); supply.Cmp(big.NewInt(1000)) != 0 {
 		t.Errorf("Expected total supply to equal initial balance, got %v", supply)
@@ -16,8 +15,6 @@ func TestTotalSupply(t *testing.T) {
 }
 
 func TestTransfer(t *testing.T) {
-	t.Log("Network token should transfer funds between addresses")
-
 	// should be able to feed HexToAddress a short string and get back a full length address...
 	user := common.HexToAddress("0xabc")
 
@@ -38,8 +35,6 @@ func TestTransfer(t *testing.T) {
 }
 
 func TestBalanceOf(t *testing.T) {
-	t.Log("Network token should fetch the balance of a given address")
-
 	user := common.HexToAddress("0xabc")
 
 	// the user should have been transfered 100000 whatever
