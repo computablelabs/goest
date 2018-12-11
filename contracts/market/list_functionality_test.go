@@ -379,3 +379,40 @@ func TestWithdrawFromListing(t *testing.T) {
 		t.Fatalf("Expected %v to be > %v", newUserBal, userBal)
 	}
 }
+
+func TestExit(t *testing.T) {
+	// note the number of listings atm
+	listings, _ := deployed.MarketContract.GetListings(nil)
+	count := len(listings)
+
+	// going to remove this one
+	listingHash, _ := deployed.MarketContract.GetListingHash(nil, "FooMarket, AZ.")
+
+	// we know that the market's bank will decrease here by the listReward
+	marketBal, _ := deployed.MarketTokenContract.BalanceOf(nil, deployed.MarketAddress)
+
+	_, exitErr := deployed.MarketContract.Exit(&bind.TransactOpts{
+		From:     context.AuthMember1.From,
+		Signer:   context.AuthMember1.Signer,
+		GasPrice: big.NewInt(2000000000),
+		GasLimit: 1000000,
+	}, listingHash)
+
+	if exitErr != nil {
+		t.Fatalf("Error exiting listing from market, %v", exitErr)
+	}
+
+	context.Blockchain.Commit()
+
+	updatedListings, _ := deployed.MarketContract.GetListings(nil)
+	updatedCount := len(updatedListings)
+
+	if updatedCount >= count {
+		t.Fatalf("Expected %v to be > %v", count, updatedCount)
+	}
+
+	updatedMarketBal, _ := deployed.MarketTokenContract.BalanceOf(nil, deployed.MarketAddress)
+	if updatedMarketBal.Cmp(marketBal) != -1 {
+		t.Fatalf("Expected %v to be > %v", marketBal, updatedMarketBal)
+	}
+}
