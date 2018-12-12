@@ -8,7 +8,6 @@ import (
 )
 
 func TestTotalSupply(t *testing.T) {
-	t.Log("Market token should fetch supply on demand")
 	// the supply should be truthy (return of 1 if > 0)
 	if supply, _ := deployed.Contract.TotalSupply(nil); supply.Cmp(big.NewInt(0)) != 1 {
 		t.Errorf("Expected total supply to be greater than 0, got %v", supply)
@@ -16,8 +15,6 @@ func TestTotalSupply(t *testing.T) {
 }
 
 func TestBalanceOf(t *testing.T) {
-	t.Log("Market token should fetch the balance of a given address")
-
 	user := common.HexToAddress("0xabc")
 
 	// should have a 0 bal atm
@@ -38,8 +35,6 @@ func TestBalanceOf(t *testing.T) {
 // TODO test that calling mint from non-market address throws (or that it does nothing)
 
 func TestMint(t *testing.T) {
-	t.Log("Market token should mint on demand")
-
 	// the starting supply at this point
 	supply, _ := deployed.Contract.TotalSupply(nil)
 	// owner's current token holdings TODO this check may change?
@@ -82,8 +77,6 @@ func TestMint(t *testing.T) {
 }
 
 func TestStopMinting(t *testing.T) {
-	t.Log("Market token can stop minting on demand (by market)")
-
 	// the starting supply at this point
 	supply, _ := deployed.Contract.TotalSupply(nil)
 

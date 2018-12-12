@@ -12,8 +12,6 @@ var deployed *dep
 var deployedError error
 
 func TestDeployNetworkToken(t *testing.T) {
-	t.Log("Network token contract should deploy correctly")
-
 	if deployedError != nil {
 		t.Fatalf("Failed to deploy the network token contract: %v", deployedError)
 	}

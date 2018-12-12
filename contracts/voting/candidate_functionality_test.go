@@ -7,8 +7,6 @@ import (
 )
 
 func TestAddCandidate(t *testing.T) {
-	t.Log("Voting contract should add a candidate on demand")
-
 	bytes := GenBytes32("iCanHazListing")
 
 	_, err := deployed.VotingContract.AddCandidate(&bind.TransactOpts{
@@ -26,7 +24,6 @@ func TestAddCandidate(t *testing.T) {
 }
 
 func TestGetCandidates(t *testing.T) {
-	t.Log("Voting contract should fetch all candidates on demand")
 	// we should have at least one candidate now, fetch the array
 	candidates, _ := deployed.VotingContract.GetCandidates(nil)
 	// it's an array of the bytes32s
@@ -38,7 +35,6 @@ func TestGetCandidates(t *testing.T) {
 }
 
 func TestGetCandidate(t *testing.T) {
-	t.Log("Voting contract should fetch a candidate on demand")
 	bytes := GenBytes32("iCanHazListing")
 
 	kind, voteBy, votes, err := deployed.VotingContract.GetCandidate(nil, bytes)
@@ -62,7 +58,6 @@ func TestGetCandidate(t *testing.T) {
 }
 
 func TestCandidateIs(t *testing.T) {
-	t.Log("Voting contract should correctly check the candidate type")
 	bytes := GenBytes32("iCanHazListing")
 
 	// it's not a challenge...
@@ -87,7 +82,6 @@ func TestCandidateIs(t *testing.T) {
 }
 
 func TestRemoveCandidate(t *testing.T) {
-	t.Log("Voting contract should correctly remove a candidate on demand")
 	candidates, _ := deployed.VotingContract.GetCandidates(nil)
 	// it's an array of the bytes32s
 	length := len(candidates)

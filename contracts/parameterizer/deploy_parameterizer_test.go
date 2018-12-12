@@ -15,8 +15,6 @@ var deployed *dep
 var deployedError error
 
 func TestDeployParameterizer(t *testing.T) {
-	t.Log("Parameterizer contract should deploy correctly")
-
 	if deployedError != nil {
 		t.Fatalf("Failed to deploy the Parameterizer contract or a dependency: %v", deployedError)
 	}
@@ -31,8 +29,6 @@ func TestDeployParameterizer(t *testing.T) {
 }
 
 func TestVotingSetPrivilegedContracts(t *testing.T) {
-	t.Log("Voting contract allowed the setting of the privileged contracts (by factory)")
-
 	market, p11r, _ := deployed.VotingContract.GetPrivilegedAddresses(nil)
 
 	if market != context.AuthMarket.From {

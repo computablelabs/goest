@@ -7,8 +7,6 @@ import (
 )
 
 func TestTransferFrom(t *testing.T) {
-	t.Log("Network token should be able to transfer from one address to another")
-
 	ownerBal, _ := deployed.Contract.BalanceOf(&bind.CallOpts{From: context.AuthFactory.From}, context.AuthFactory.From)
 
 	// if we wanted to check the owner's account bal
@@ -68,8 +66,6 @@ func TestTransferFrom(t *testing.T) {
 }
 
 func TestApprove(t *testing.T) {
-	t.Log("Standard token should allow a user to approve a spender for some amount")
-
 	_, err := deployed.Contract.Approve(&bind.TransactOpts{
 		From:     context.AuthMember.From,
 		Signer:   context.AuthMember.Signer,
@@ -86,8 +82,6 @@ func TestApprove(t *testing.T) {
 }
 
 func TestAllowance(t *testing.T) {
-	t.Log("Standard token should be able to check the spending allowance of a given address for a given user")
-
 	allowed, _ := deployed.Contract.Allowance(&bind.CallOpts{From: context.AuthMember.From}, context.AuthMember.From, context.OtherContract)
 	if allowed.Cmp(big.NewInt(4)) != 0 {
 		t.Errorf("Expected spender to be approved for 4, got %v", allowed)
@@ -95,8 +89,6 @@ func TestAllowance(t *testing.T) {
 }
 
 func TestDecreaseApproval(t *testing.T) {
-	t.Log("Standard token should be able to decrease the spending allowance of a given address for a given user")
-
 	_, err := deployed.Contract.DecreaseApproval(&bind.TransactOpts{
 		From:     context.AuthMember.From,
 		Signer:   context.AuthMember.Signer,
@@ -118,8 +110,6 @@ func TestDecreaseApproval(t *testing.T) {
 }
 
 func TestIncreaseApproval(t *testing.T) {
-	t.Log("Standard token should be able to increase the spending allowance of a given address for a given user")
-
 	_, err := deployed.Contract.IncreaseApproval(&bind.TransactOpts{
 		From:     context.AuthMember.From,
 		Signer:   context.AuthMember.Signer,

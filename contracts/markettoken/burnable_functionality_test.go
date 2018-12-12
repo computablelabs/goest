@@ -7,11 +7,8 @@ import (
 )
 
 func TestBurn(t *testing.T) {
-	t.Log("Market token contract should burn tokens on demand")
 	// check for any market balance first...
 	bal, _ := deployed.Contract.BalanceOf(&bind.CallOpts{From: context.AuthMarket.From}, context.AuthMarket.From)
-
-	t.Logf("Market token balance, %v", bal)
 
 	// mint 10 more and add to whatever bal was
 	_, mintErr := deployed.Contract.Mint(&bind.TransactOpts{

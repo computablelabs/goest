@@ -12,8 +12,6 @@ var deployed *dep
 var deployedError error
 
 func TestDeployMarketToken(t *testing.T) {
-	t.Log("Market token contract should deploy correctly")
-
 	if deployedError != nil {
 		t.Fatalf("Failed to deploy the market token contract: %v", deployedError)
 	}

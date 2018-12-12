@@ -14,8 +14,6 @@ var deployed *dep
 var deployedError error
 
 func TestDeployMarket(t *testing.T) {
-	t.Log("Market contract should deploy correctly")
-
 	if deployedError != nil {
 		t.Fatalf("Failed to deploy the Market contract or a dependency: %v", deployedError)
 	}
@@ -59,8 +57,6 @@ func TestDeployMarket(t *testing.T) {
 }
 
 func TestMarketTokenSetPrivilegedContracts(t *testing.T) {
-	t.Log("Market contract allowed the setting of the privileged contracts (by factory)")
-
 	market, _ := deployed.MarketTokenContract.GetPrivilegedAddresses(nil)
 
 	if market != deployed.MarketAddress {
@@ -69,8 +65,6 @@ func TestMarketTokenSetPrivilegedContracts(t *testing.T) {
 }
 
 func TestVotingSetPrivilegedContracts(t *testing.T) {
-	t.Log("Voting contract allowed the setting of the privileged contracts (by factory)")
-
 	market, p11r, _ := deployed.VotingContract.GetPrivilegedAddresses(nil)
 
 	if market != deployed.MarketAddress {
@@ -89,7 +83,7 @@ func TestMain(m *testing.M) {
 	// see ./helpers#context
 	context = SetupBlockchain(big.NewInt(1000000000000000000)) // 1 ETH in wei
 	// see ./helpers#deployed
-	deployed, deployedError = Deploy(big.NewInt(1000), context)
+	deployed, deployedError = Deploy(big.NewInt(4000000000000000000), context) // 4 tokens in wei
 
 	// the markettoken must have its privileges set
 	_, marketErr := deployed.MarketTokenContract.SetPrivilegedContracts(&bind.TransactOpts{

@@ -14,8 +14,6 @@ var deployed *dep
 var deployedError error
 
 func TestDeployVoting(t *testing.T) {
-	t.Log("Voting contract should have deployed correctly")
-
 	if deployedError != nil {
 		t.Fatalf("Failed to deploy the Voting contract or Market token: %v", deployedError)
 	}
@@ -27,8 +25,6 @@ func TestDeployVoting(t *testing.T) {
 
 // NOTE: actual setting done in Main, as it must be, but tested here similar to deploy
 func TestSetPrivilegedContracts(t *testing.T) {
-	t.Log("Voting contract allowed the setting of the privileged contracts (by owner)")
-
 	market, p11r, _ := deployed.VotingContract.GetPrivilegedAddresses(nil)
 
 	if market != context.AuthMarket.From {

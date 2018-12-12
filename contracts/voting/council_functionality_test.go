@@ -8,8 +8,6 @@ import (
 )
 
 func TestAddToCouncil(t *testing.T) {
-	t.Log("Voting contract should add a council member")
-
 	member := common.HexToAddress("0xfgh")
 
 	_, err := deployed.VotingContract.AddToCouncil(&bind.TransactOpts{
@@ -27,8 +25,6 @@ func TestAddToCouncil(t *testing.T) {
 }
 
 func TestGetCouncil(t *testing.T) {
-	t.Log("Voting contract should return all council members")
-
 	council, _ := deployed.VotingContract.GetCouncil(nil)
 
 	if !(len(council) > 0) {
@@ -37,8 +33,6 @@ func TestGetCouncil(t *testing.T) {
 }
 
 func TestInCouncil(t *testing.T) {
-	t.Log("Voting contract should identify a council member")
-
 	member := common.HexToAddress("0xfgh")
 	res, _ := deployed.VotingContract.InCouncil(nil, member)
 
@@ -48,8 +42,6 @@ func TestInCouncil(t *testing.T) {
 }
 
 func TestRemoveFromCouncil(t *testing.T) {
-	t.Log("Voting contract should remove a council member")
-
 	// what is the array length right now?
 	council, _ := deployed.VotingContract.GetCouncil(nil)
 	length := len(council)
