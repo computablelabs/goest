@@ -58,8 +58,8 @@ contract Market {
   address private selfOwner;
 
   // voting candidate kinds are denoted by uint8s. Not using an enum for just 2
-  uint8 constant APPLICATION  = 1;
-  uint8 constant CHALLENGE  = 2;
+  uint8 constant APPLICATION = 1;
+  uint8 constant CHALLENGE = 2;
 
   /**
     @param marketTokenAddr Address of the deployed market token contract
@@ -176,6 +176,14 @@ contract Market {
 
     // Delete listingHash & return tokens
     removeListing(listingHash);
+  }
+
+  function getChallenge(bytes32 listingHash) external view returns (address, uint, uint) {
+    return (
+      selfChallenges[listingHash].challenger,
+      selfChallenges[listingHash].fromChallengeeSupply,
+      selfChallenges[listingHash].fromChallengeeRewards
+    );
   }
 
   /**

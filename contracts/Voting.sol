@@ -22,7 +22,7 @@ contract Voting {
     uint8 kind; // member of the enum...
     uint voteBy; // timestamp via `block.timestamp` (seconds since epoch)
     uint votes; // tally of votes 'for' the candidate
-    mapping(address => bool) voted;  // indicates whether an address committed a vote for this poll
+    address[] voted; // an address present in this array inidicates that user voted for this poll
   }
 
   // a mapping to hold the actual candidate data
@@ -59,7 +59,7 @@ contract Voting {
     c.index = selfCandidateKeys.push(hash) - 1; // no need to use .sub here
     c.kind = kind; // not checking this input as we control its passing...
     c.voteBy = end;
-    c.votes = 0;
+    // c.votes = 0; this is already 0...
 
     emit CandidateAddedEvent(hash, kind, voteBy);
   }
@@ -96,15 +96,23 @@ contract Voting {
       // there _could_ be a market with a quorum set to zero
       return quorum == 0;
     } else {
-      // There are votes, TODO revisit for small int math problems...
-      return ((selfCandidates[hash].votes.div(selfCouncilKeys.length)).mul(100) > quorum);
+      // (councilMembers*100 - (delta between councilMembers*100 - votes*100)) divided by actual number of council members
+      return ((selfCouncilKeys.length * 100) - ((selfCouncilKeys.length * 100) - (selfCandidates[hash].votes * 100))) / selfCouncilKeys.length >= quorum;
     }
   }
 
   function didVote(bytes32 hash, address member) public view returns(bool) {
     require(isCandidate(hash) == true, "Error:Voting.didVote - Candidate does not exist");
 
-    return selfCandidates[hash].voted[member] == true;
+    // return selfCandidates[hash].voted[member] == true;
+    for (uint i=0; i < selfCandidates[hash].voted.length; i++) {
+      // sol says we can directly compare addresses
+      if (selfCandidates[hash].voted[i] == member) {
+        return true;
+      }
+    }
+
+    return false;
   }
 
   function getCandidate(bytes32 hash) external view returns (uint8, uint, uint) {
@@ -218,7 +226,7 @@ contract Voting {
     require(selfCandidates[hash].voteBy > block.timestamp, "Error:Voting.vote - Polling is closed for this candidate");
     require(didVote(hash, msg.sender) != true, "Error:Voting.vote - Sender has already voted");
 
-    selfCandidates[hash].voted[msg.sender] = true; // we will keep track of who voted
+    selfCandidates[hash].voted.push(msg.sender); // we will keep track of who voted
     selfCandidates[hash].votes = selfCandidates[hash].votes.add(1);
 
     // NOTE: this creates the public record of the vote being cast (read: not concealed)
