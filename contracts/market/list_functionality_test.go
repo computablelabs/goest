@@ -104,16 +104,19 @@ func TestResolveApplication(t *testing.T) {
 	// our listing
 	listingHash, _ := deployed.MarketContract.GetListingHash(nil, "FooMarket, AZ.")
 
-	// make member2 a council member, the owner (factory) can do this...
-	_, councilErr := deployed.VotingContract.AddToCouncil(&bind.TransactOpts{
-		From:     context.AuthFactory.From,
-		Signer:   context.AuthFactory.Signer,
-		GasPrice: big.NewInt(2000000000), // 2 Gwei
-		GasLimit: 100000,
-	}, context.AuthMember2.From)
+	// make member2 a council member (if not one). the owner (factory) can do this...
+	isMember, _ := deployed.VotingContract.InCouncil(nil, context.AuthMember2.From)
+	if isMember != true {
+		_, councilErr := deployed.VotingContract.AddToCouncil(&bind.TransactOpts{
+			From:     context.AuthFactory.From,
+			Signer:   context.AuthFactory.Signer,
+			GasPrice: big.NewInt(2000000000), // 2 Gwei
+			GasLimit: 100000,
+		}, context.AuthMember2.From)
 
-	if councilErr != nil {
-		t.Fatal("Error adding member to council")
+		if councilErr != nil {
+			t.Fatal("Error adding member to council")
+		}
 	}
 
 	context.Blockchain.Commit()

@@ -36,6 +36,13 @@ func TestVote(t *testing.T) {
 
 	context.Blockchain.Commit()
 
+	// should be no votes atm
+	_, _, preVote, _ := deployed.VotingContract.GetCandidate(nil, bytes)
+
+	if preVote.Cmp(big.NewInt(0)) != 0 {
+		t.Fatalf("Expected number of votes to be 0, got: %v", preVote)
+	}
+
 	// cast a vote
 	_, voteErr := deployed.VotingContract.Vote(&bind.TransactOpts{
 		From:     context.AuthMember1.From,
