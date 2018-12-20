@@ -96,8 +96,7 @@ contract Voting {
       // there _could_ be a market with a quorum set to zero
       return quorum == 0;
     } else {
-      // (councilMembers*100 - (delta between councilMembers*100 - votes*100)) divided by actual number of council members
-      return ((selfCouncilKeys.length * 100) - ((selfCouncilKeys.length * 100) - (selfCandidates[hash].votes * 100))) / selfCouncilKeys.length >= quorum;
+      return (selfCandidates[hash].votes * 100) / selfCouncilKeys.length >= quorum;
     }
   }
 
