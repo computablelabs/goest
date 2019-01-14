@@ -14,6 +14,9 @@ import (
 	"math/big"
 )
 
+const ONE_WEI = 1000000000000000000
+const ONE_GWEI = 1000000000
+
 // the candidate "kinds"
 const (
 	UNDEFINED uint8 = iota
@@ -26,6 +29,7 @@ type ctx struct {
 	AuthFactory *bind.TransactOpts
 	AuthMember1 *bind.TransactOpts
 	AuthMember2 *bind.TransactOpts
+	AuthMember3 *bind.TransactOpts
 	Blockchain  *backends.SimulatedBackend
 }
 
@@ -88,13 +92,13 @@ func Deploy(initialBalance *big.Int, c *ctx) (*dep, error) {
 		c.AuthFactory,
 		c.Blockchain,
 		votingAddr,
-		big.NewInt(1000000000000000000), // challengeStake in tokenWei (10**18 == 1 token)
-		big.NewInt(10000000000000000),   // conversionRate tokenWei, .1 of a token (10**16)
-		big.NewInt(101),                 // conversionSlopeDenominator, a scaling factor
-		big.NewInt(100),                 // conversionSlopeNumerator, a scaling factor
-		big.NewInt(1000000000000000000), // listReward (one token)
-		big.NewInt(50),                  // quorum
-		big.NewInt(100),                 // voteBy
+		big.NewInt(ONE_WEI),     // challengeStake
+		big.NewInt(ONE_WEI*0.1), // conversionRate tokenWei, .1 of a token (10**16)
+		big.NewInt(101),         // conversionSlopeDenominator, a scaling factor
+		big.NewInt(100),         // conversionSlopeNumerator, a scaling factor
+		big.NewInt(ONE_WEI),     // listReward (one token)
+		big.NewInt(50),          // quorum
+		big.NewInt(100),         // voteBy
 	)
 
 	if paramErr != nil {
@@ -143,17 +147,23 @@ func SetupBlockchain(accountBalance *big.Int) *ctx {
 	keyFac, _ := crypto.GenerateKey()
 	keyMem1, _ := crypto.GenerateKey()
 	keyMem2, _ := crypto.GenerateKey()
+	keyMem3, _ := crypto.GenerateKey()
 
 	authFac := bind.NewKeyedTransactor(keyFac)
-	authFac.GasPrice = big.NewInt(2000000000) // 2 Gwei
+	authFac.GasPrice = big.NewInt(ONE_GWEI * 2)
 	// authFac.GasLimit = 4000000             // setting a gas limit here causes the "silent simulated backed fail"... TODO PR
 
+	// members 1 and 2 used in list_functionality
 	authMem1 := bind.NewKeyedTransactor(keyMem1)
 	authMem2 := bind.NewKeyedTransactor(keyMem2)
+	// member 3 used in invest_functionality
+	authMem3 := bind.NewKeyedTransactor(keyMem3)
+
 	alloc := make(core.GenesisAlloc)
 	alloc[authFac.From] = core.GenesisAccount{Balance: accountBalance}
 	alloc[authMem1.From] = core.GenesisAccount{Balance: accountBalance}
 	alloc[authMem2.From] = core.GenesisAccount{Balance: accountBalance}
+	alloc[authMem3.From] = core.GenesisAccount{Balance: accountBalance}
 	// 2nd arg is a gas limit, a uint64. we'll use 4.7M
 	bc := backends.NewSimulatedBackend(alloc, 4700000)
 
@@ -161,6 +171,7 @@ func SetupBlockchain(accountBalance *big.Int) *ctx {
 		AuthFactory: authFac,
 		AuthMember1: authMem1,
 		AuthMember2: authMem2,
+		AuthMember3: authMem3,
 		Blockchain:  bc,
 	}
 }

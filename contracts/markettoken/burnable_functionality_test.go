@@ -10,13 +10,13 @@ func TestBurn(t *testing.T) {
 	// check for any market balance first...
 	bal, _ := deployed.Contract.BalanceOf(&bind.CallOpts{From: context.AuthMarket.From}, context.AuthMarket.From)
 
-	// mint 10 more and add to whatever bal was
+	// mint 4 more and add to whatever bal was
 	_, mintErr := deployed.Contract.Mint(&bind.TransactOpts{
 		From:     context.AuthMarket.From,
 		Signer:   context.AuthMarket.Signer,
-		GasPrice: big.NewInt(2000000000), // 2 Gwei
+		GasPrice: big.NewInt(ONE_GWEI * 2),
 		GasLimit: 100000,
-	}, big.NewInt(10))
+	}, big.NewInt(ONE_WEI*4))
 
 	if mintErr != nil {
 		t.Fatalf("Error minting tokens: %v", mintErr)
@@ -24,15 +24,15 @@ func TestBurn(t *testing.T) {
 
 	context.Blockchain.Commit()
 
-	bal.Add(bal, big.NewInt(10)) // update the balance that we know about
+	bal.Add(bal, big.NewInt(ONE_WEI*4)) // update the balance that we know about
 
-	// burn 5 of them, check bal
+	// burn 2 of them, check bal
 	_, burnErr := deployed.Contract.Burn(&bind.TransactOpts{
 		From:     context.AuthMarket.From,
 		Signer:   context.AuthMarket.Signer,
-		GasPrice: big.NewInt(2000000000), // 2 Gwei
+		GasPrice: big.NewInt(ONE_GWEI * 2),
 		GasLimit: 100000,
-	}, big.NewInt(5))
+	}, big.NewInt(ONE_WEI*2))
 
 	if burnErr != nil {
 		t.Fatalf("Error burning tokens: %v", burnErr)
@@ -40,7 +40,7 @@ func TestBurn(t *testing.T) {
 
 	context.Blockchain.Commit()
 
-	expectedBal := bal.Sub(bal, big.NewInt(5)) // we burned 5
+	expectedBal := bal.Sub(bal, big.NewInt(ONE_WEI*2)) // we burned 2
 	newBal, _ := deployed.Contract.BalanceOf(&bind.CallOpts{From: context.AuthMarket.From}, context.AuthMarket.From)
 
 	if newBal.Cmp(expectedBal) != 0 {

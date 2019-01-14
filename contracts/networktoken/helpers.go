@@ -10,6 +10,9 @@ import (
 	"math/big"
 )
 
+const ONE_WEI = 1000000000000000000
+const ONE_GWEI = 1000000000
+
 type ctx struct {
 	Alloc         core.GenesisAlloc // a map of accounts as { address: account }
 	AuthFactory   *bind.TransactOpts

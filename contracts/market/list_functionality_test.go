@@ -14,7 +14,7 @@ func TestList(t *testing.T) {
 	_, listErr := deployed.MarketContract.List(&bind.TransactOpts{
 		From:     context.AuthMember1.From,
 		Signer:   context.AuthMember1.Signer,
-		GasPrice: big.NewInt(2000000000), // 2 Gwei
+		GasPrice: big.NewInt(ONE_GWEI * 2),
 		GasLimit: 250000,
 	}, "FooMarket, AZ.", dataHash, big.NewInt(0))
 
@@ -110,7 +110,7 @@ func TestResolveApplication(t *testing.T) {
 		_, councilErr := deployed.VotingContract.AddToCouncil(&bind.TransactOpts{
 			From:     context.AuthFactory.From,
 			Signer:   context.AuthFactory.Signer,
-			GasPrice: big.NewInt(2000000000), // 2 Gwei
+			GasPrice: big.NewInt(ONE_GWEI * 2),
 			GasLimit: 100000,
 		}, context.AuthMember2.From)
 
@@ -125,7 +125,7 @@ func TestResolveApplication(t *testing.T) {
 	_, voteErr := deployed.VotingContract.Vote(&bind.TransactOpts{
 		From:     context.AuthMember2.From,
 		Signer:   context.AuthMember2.Signer,
-		GasPrice: big.NewInt(2000000000),
+		GasPrice: big.NewInt(ONE_GWEI * 2),
 		GasLimit: 100000,
 	}, listingHash)
 
@@ -143,7 +143,7 @@ func TestResolveApplication(t *testing.T) {
 	_, resolveErr := deployed.MarketContract.ResolveApplication(&bind.TransactOpts{
 		From:     context.AuthMember2.From,
 		Signer:   context.AuthMember2.Signer,
-		GasPrice: big.NewInt(2000000000),
+		GasPrice: big.NewInt(ONE_GWEI * 2),
 		GasLimit: 1000000,
 	}, listingHash)
 
@@ -166,7 +166,7 @@ func TestResolveApplication(t *testing.T) {
 	}
 
 	// list reward here is 1 token (tokenWei)
-	if rewards.Cmp(big.NewInt(1000000000000000000)) != 0 {
+	if rewards.Cmp(big.NewInt(ONE_WEI)) != 0 {
 		t.Fatalf("Exepected rewards to be 1 (in tokenWei), got: %v", rewards)
 	}
 
@@ -191,9 +191,9 @@ func TestResolveApplicationThatFails(t *testing.T) {
 	_, transErr := deployed.MarketTokenContract.Transfer(&bind.TransactOpts{
 		From:     context.AuthFactory.From,
 		Signer:   context.AuthFactory.Signer,
-		GasPrice: big.NewInt(2000000000), // 2 Gwei
+		GasPrice: big.NewInt(ONE_GWEI * 2),
 		GasLimit: 1000000,
-	}, context.AuthMember1.From, big.NewInt(2000000000000000000)) // 2 token in wei
+	}, context.AuthMember1.From, big.NewInt(ONE_WEI*2)) // 2 tokens
 
 	if transErr != nil {
 		t.Fatalf("Error transferring tokens to member: %v", transErr)
@@ -205,9 +205,9 @@ func TestResolveApplicationThatFails(t *testing.T) {
 	_, approveErr := deployed.MarketTokenContract.Approve(&bind.TransactOpts{
 		From:     context.AuthMember1.From,
 		Signer:   context.AuthMember1.Signer,
-		GasPrice: big.NewInt(2000000000), // 2 Gwei
+		GasPrice: big.NewInt(ONE_GWEI * 2),
 		GasLimit: 1000000,
-	}, deployed.MarketAddress, big.NewInt(2000000000000000000)) // up to 2 tokenWei
+	}, deployed.MarketAddress, big.NewInt(ONE_WEI*2)) // up to 2 tokenWei
 
 	if approveErr != nil {
 		t.Fatalf("Error approving market contract to spend: %v", approveErr)
@@ -217,7 +217,7 @@ func TestResolveApplicationThatFails(t *testing.T) {
 
 	// assure balances and permissions
 	memberBal, _ := deployed.MarketTokenContract.BalanceOf(nil, context.AuthMember1.From)
-	if memberBal.Cmp(big.NewInt(2000000000000000000)) != 0 {
+	if memberBal.Cmp(big.NewInt(ONE_WEI*2)) != 0 {
 		t.Fatalf("Expected member to have a 2 token balance, got: %v", memberBal)
 	}
 
@@ -227,9 +227,9 @@ func TestResolveApplicationThatFails(t *testing.T) {
 	_, listErr := deployed.MarketContract.List(&bind.TransactOpts{
 		From:     context.AuthMember1.From,
 		Signer:   context.AuthMember1.Signer,
-		GasPrice: big.NewInt(2000000000), // 2 Gwei
+		GasPrice: big.NewInt(ONE_GWEI * 2),
 		GasLimit: 1000000,
-	}, "BarMarket, CA.", dataHash, big.NewInt(1000000000000000000)) // 1 token in wei
+	}, "BarMarket, CA.", dataHash, big.NewInt(ONE_WEI)) // 1 token
 
 	if listErr != nil {
 		t.Fatalf("Error applying for list status: %v", listErr)
@@ -250,7 +250,7 @@ func TestResolveApplicationThatFails(t *testing.T) {
 	// we should see a listing with a supply in place
 	_, _, supply, _, _, _ := deployed.MarketContract.GetListing(nil, listingHash)
 
-	if supply.Cmp(big.NewInt(1000000000000000000)) != 0 {
+	if supply.Cmp(big.NewInt(ONE_WEI)) != 0 {
 		t.Fatalf("Expected listing supply to be 1 token in wei, got: %v", supply)
 	}
 
@@ -262,7 +262,7 @@ func TestResolveApplicationThatFails(t *testing.T) {
 	_, resolveErr := deployed.MarketContract.ResolveApplication(&bind.TransactOpts{
 		From:     context.AuthMember2.From,
 		Signer:   context.AuthMember2.Signer,
-		GasPrice: big.NewInt(2000000000),
+		GasPrice: big.NewInt(ONE_GWEI * 2),
 		GasLimit: 1000000,
 	}, listingHash)
 
@@ -316,9 +316,9 @@ func TestDepositToListing(t *testing.T) {
 	_, depErr := deployed.MarketContract.DepositToListing(&bind.TransactOpts{
 		From:     context.AuthMember1.From,
 		Signer:   context.AuthMember1.Signer,
-		GasPrice: big.NewInt(2000000000),
+		GasPrice: big.NewInt(ONE_GWEI * 2),
 		GasLimit: 1000000,
-	}, listingHash, big.NewInt(1000000000))
+	}, listingHash, big.NewInt(ONE_WEI*0.01)) // some random small amount
 
 	if depErr != nil {
 		t.Fatalf("Error depositing to listing: %v", depErr)
@@ -356,9 +356,9 @@ func TestWithdrawFromListing(t *testing.T) {
 	_, withErr := deployed.MarketContract.WithdrawFromListing(&bind.TransactOpts{
 		From:     context.AuthMember1.From,
 		Signer:   context.AuthMember1.Signer,
-		GasPrice: big.NewInt(2000000000),
+		GasPrice: big.NewInt(ONE_GWEI * 2),
 		GasLimit: 1000000,
-	}, listingHash, big.NewInt(1000000000))
+	}, listingHash, big.NewInt(ONE_WEI*0.01))
 
 	if withErr != nil {
 		t.Fatalf("Error withdrawing from listing: %v", withErr)
@@ -397,7 +397,7 @@ func TestExit(t *testing.T) {
 	_, exitErr := deployed.MarketContract.Exit(&bind.TransactOpts{
 		From:     context.AuthMember1.From,
 		Signer:   context.AuthMember1.Signer,
-		GasPrice: big.NewInt(2000000000),
+		GasPrice: big.NewInt(ONE_GWEI * 2),
 		GasLimit: 1000000,
 	}, listingHash)
 

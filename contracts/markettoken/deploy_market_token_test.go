@@ -26,9 +26,9 @@ func TestDeployMarketToken(t *testing.T) {
 // the ctx and dep vars will be avail to the other tests in the package
 func TestMain(m *testing.M) {
 	// see ./helpers#context
-	context = SetupBlockchain(big.NewInt(1000000000000000000)) // 1 ETH in wei
+	context = SetupBlockchain(big.NewInt(ONE_WEI))
 	// see ./helpers#deployed
-	deployed, deployedError = Deploy(big.NewInt(1000), context)
+	deployed, deployedError = Deploy(big.NewInt(ONE_WEI*5), context) // deployed with a 5 token balance
 	code := m.Run()
 	os.Exit(code)
 }

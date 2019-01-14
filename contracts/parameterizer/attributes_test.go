@@ -8,7 +8,7 @@ import (
 func TestGetChallengeStake(t *testing.T) {
 	stake, _ := deployed.ParameterizerContract.GetChallengeStake(nil)
 
-	if stake.Cmp(big.NewInt(1000000000000000000)) != 0 {
+	if stake.Cmp(big.NewInt(ONE_WEI)) != 0 {
 		t.Fatalf("Expected challengeStake to be 10**18, got: %v", stake)
 	}
 }
@@ -16,8 +16,8 @@ func TestGetChallengeStake(t *testing.T) {
 func TestGetConversionRate(t *testing.T) {
 	rate, _ := deployed.ParameterizerContract.GetConversionRate(nil)
 
-	if rate.Cmp(big.NewInt(10000000000000000)) != 0 {
-		t.Fatalf("Expected conversionRate to be 10**16, got: %v", rate)
+	if rate.Cmp(big.NewInt(ONE_WEI*0.1)) != 0 {
+		t.Fatalf("Expected conversionRate to be 10**17, got: %v", rate)
 	}
 }
 
@@ -40,7 +40,7 @@ func TestGetConversionSlopeNumerator(t *testing.T) {
 func TestGetListReward(t *testing.T) {
 	reward, _ := deployed.ParameterizerContract.GetListReward(nil)
 
-	if reward.Cmp(big.NewInt(1000000000000000000)) != 0 {
+	if reward.Cmp(big.NewInt(ONE_WEI)) != 0 {
 		t.Fatalf("Expected listReward to be 10**18, got: %v", reward)
 	}
 }
@@ -57,6 +57,6 @@ func TestGetVoteBy(t *testing.T) {
 	voteBy, _ := deployed.ParameterizerContract.GetVoteBy(nil)
 
 	if voteBy.Cmp(big.NewInt(20)) != 0 {
-		t.Fatalf("Expected voteBy to be 300, got: %v", voteBy)
+		t.Fatalf("Expected voteBy to be 20, got: %v", voteBy)
 	}
 }

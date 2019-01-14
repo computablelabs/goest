@@ -9,7 +9,7 @@ import (
 
 func TestTotalSupply(t *testing.T) {
 	// the supply should have been passed in as initial balance in the deploy spec
-	if supply, _ := deployed.Contract.TotalSupply(nil); supply.Cmp(big.NewInt(1000)) != 0 {
+	if supply, _ := deployed.Contract.TotalSupply(nil); supply.Cmp(big.NewInt(ONE_WEI*9)) != 0 {
 		t.Errorf("Expected total supply to equal initial balance, got %v", supply)
 	}
 }
@@ -23,9 +23,9 @@ func TestTransfer(t *testing.T) {
 		From:     context.AuthFactory.From,
 		Signer:   context.AuthFactory.Signer,
 		Value:    nil,
-		GasPrice: big.NewInt(2000000000), //2 gwei
+		GasPrice: big.NewInt(ONE_GWEI * 2),
 		GasLimit: 100000,
-	}, user, big.NewInt(100))
+	}, user, big.NewInt(ONE_WEI))
 
 	if err != nil {
 		t.Fatalf("Error transferring funds to another account: %v", err)
@@ -40,14 +40,14 @@ func TestBalanceOf(t *testing.T) {
 	// the user should have been transfered 100000 whatever
 	userBal, _ := deployed.Contract.BalanceOf(&bind.CallOpts{From: user}, user)
 
-	if userBal.Cmp(big.NewInt(100)) != 0 {
-		t.Errorf("Expected user balance of 100, got %v", userBal)
+	if userBal.Cmp(big.NewInt(ONE_WEI)) != 0 {
+		t.Errorf("Expected user balance of 1 in wei, got %v", userBal)
 	}
 
 	// that 100000 should have been subtracted from the original owner, Auth.From in this case
 	ownerBal, _ := deployed.Contract.BalanceOf(&bind.CallOpts{From: context.AuthFactory.From}, context.AuthFactory.From)
 
-	if ownerBal.Cmp(big.NewInt(900)) != 0 {
-		t.Errorf("Expected owner balance of 900, got %v", ownerBal)
+	if ownerBal.Cmp(big.NewInt(ONE_WEI*8)) != 0 {
+		t.Errorf("Expected owner balance of 8 tokens in wei, got %v", ownerBal)
 	}
 }

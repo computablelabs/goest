@@ -81,15 +81,15 @@ func TestVotingSetPrivilegedContracts(t *testing.T) {
 // the ctx and dep vars will be avail to the other tests in the package
 func TestMain(m *testing.M) {
 	// see ./helpers#context
-	context = SetupBlockchain(big.NewInt(1000000000000000000)) // 1 ETH in wei
+	context = SetupBlockchain(big.NewInt(ONE_WEI))
 	// see ./helpers#deployed
-	deployed, deployedError = Deploy(big.NewInt(4000000000000000000), context) // 4 tokens in wei
+	deployed, deployedError = Deploy(big.NewInt(ONE_WEI*6), context) // 6 tokens in wei
 
 	// the markettoken must have its privileges set
 	_, marketErr := deployed.MarketTokenContract.SetPrivilegedContracts(&bind.TransactOpts{
 		From:     context.AuthFactory.From,
 		Signer:   context.AuthFactory.Signer,
-		GasPrice: big.NewInt(2000000000),
+		GasPrice: big.NewInt(ONE_GWEI * 2),
 		GasLimit: 1000000,
 	}, deployed.MarketAddress)
 
@@ -100,7 +100,7 @@ func TestMain(m *testing.M) {
 	_, votingErr := deployed.VotingContract.SetPrivilegedContracts(&bind.TransactOpts{
 		From:     context.AuthFactory.From,
 		Signer:   context.AuthFactory.Signer,
-		GasPrice: big.NewInt(2000000000),
+		GasPrice: big.NewInt(ONE_GWEI * 2),
 		GasLimit: 1000000,
 	}, deployed.MarketAddress, deployed.ParameterizerAddress)
 

@@ -45,9 +45,9 @@ func TestMint(t *testing.T) {
 	_, err := deployed.Contract.Mint(&bind.TransactOpts{
 		From:     context.AuthMarket.From, // only the market can call for mint
 		Signer:   context.AuthMarket.Signer,
-		GasPrice: big.NewInt(2000000000), // 2 Gwei
+		GasPrice: big.NewInt(ONE_GWEI * 2),
 		GasLimit: 100000,
-	}, big.NewInt(200))
+	}, big.NewInt(ONE_WEI*2))
 
 	if err != nil {
 		t.Fatalf("Error minting tokens: %v", err)
@@ -56,14 +56,14 @@ func TestMint(t *testing.T) {
 	context.Blockchain.Commit()
 
 	newMarketBal, _ := deployed.Contract.BalanceOf(&bind.CallOpts{From: context.AuthMarket.From}, context.AuthMarket.From)
-	expectedMarketBal := marketBal.Add(marketBal, big.NewInt(200)) // we just minted 200
+	expectedMarketBal := marketBal.Add(marketBal, big.NewInt(ONE_WEI*2)) // we just minted 2...
 
 	if newMarketBal.Cmp(expectedMarketBal) != 0 {
 		t.Errorf("Expected market balance of %v, got %v", expectedMarketBal, newMarketBal)
 	}
 
 	// will have increased the total supply by the minted amount
-	expectedSupply := supply.Add(supply, big.NewInt(200))
+	expectedSupply := supply.Add(supply, big.NewInt(ONE_WEI*2))
 
 	if newSupply, _ := deployed.Contract.TotalSupply(nil); newSupply.Cmp(expectedSupply) != 0 {
 		t.Errorf("Expected total supply to equal %v, got %v", expectedSupply, newSupply)
@@ -88,7 +88,7 @@ func TestStopMinting(t *testing.T) {
 	_, err := deployed.Contract.StopMinting(&bind.TransactOpts{
 		From:     context.AuthMarket.From,
 		Signer:   context.AuthMarket.Signer,
-		GasPrice: big.NewInt(2000000000), // 2 Gwei
+		GasPrice: big.NewInt(ONE_GWEI * 2),
 		GasLimit: 100000,
 	})
 
@@ -106,9 +106,9 @@ func TestStopMinting(t *testing.T) {
 	_, noMint := deployed.Contract.Mint(&bind.TransactOpts{
 		From:     context.AuthMarket.From,
 		Signer:   context.AuthMarket.Signer,
-		GasPrice: big.NewInt(2000000000), // 2 Gwei
+		GasPrice: big.NewInt(ONE_GWEI * 2),
 		GasLimit: 100000,
-	}, big.NewInt(100))
+	}, big.NewInt(ONE_WEI))
 
 	if noMint != nil {
 		t.Fatal("Error checking that no minting occurred")

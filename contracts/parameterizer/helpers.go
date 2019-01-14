@@ -11,6 +11,9 @@ import (
 	"math/big"
 )
 
+const ONE_WEI = 1000000000000000000
+const ONE_GWEI = 1000000000
+
 // to match the p11r's internal params enum
 const (
 	UNDEFINED uint8 = iota
@@ -58,13 +61,13 @@ func Deploy(c *ctx) (*dep, error) {
 		c.AuthFactory,
 		c.Blockchain,
 		votingAddr,
-		big.NewInt(1000000000000000000), // challengeStake in tokenWei (10**18 == 1 token)
-		big.NewInt(10000000000000000),   // conversionRate tokenWei, .1 of a token (10**16)
-		big.NewInt(101),                 // conversionSlopeDenominator, a scaling factor
-		big.NewInt(100),                 // conversionSlopeNumerator, a scaling factor
-		big.NewInt(1000000000000000000), // listReward (one token)
-		big.NewInt(50),                  // quorum
-		big.NewInt(20),                  // voteBy of 20 seconds
+		big.NewInt(ONE_WEI),     // challengeStake
+		big.NewInt(ONE_WEI*0.1), // conversionRate tokenWei, .1 of a token (10**17)
+		big.NewInt(101),         // conversionSlopeDenominator, a scaling factor
+		big.NewInt(100),         // conversionSlopeNumerator, a scaling factor
+		big.NewInt(ONE_WEI),     // listReward
+		big.NewInt(50),          // quorum
+		big.NewInt(20),          // voteBy of 20 seconds for specs
 	)
 
 	if paramErr != nil {
