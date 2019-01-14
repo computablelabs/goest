@@ -93,7 +93,7 @@ func Deploy(initialBalance *big.Int, c *ctx) (*dep, error) {
 		c.Blockchain,
 		votingAddr,
 		big.NewInt(ONE_WEI),     // challengeStake
-		big.NewInt(ONE_WEI*0.1), // conversionRate tokenWei, .1 of a token (10**16)
+		big.NewInt(ONE_WEI*0.1), // conversionRate tokenWei, .1 of a token (10**17)
 		big.NewInt(101),         // conversionSlopeDenominator, a scaling factor
 		big.NewInt(100),         // conversionSlopeNumerator, a scaling factor
 		big.NewInt(ONE_WEI),     // listReward (one token)
