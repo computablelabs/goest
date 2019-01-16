@@ -69,7 +69,6 @@ contract MarketToken {
     selfBalances[msg.sender] = selfBalances[msg.sender].sub(amount);
     selfSupply = selfSupply.sub(amount);
     emit BurnEvent(msg.sender, amount);
-    emit TransferEvent(msg.sender, address(0), amount); // from: market, to: nobody
   }
 
   /**
@@ -136,7 +135,7 @@ contract MarketToken {
   function mint(uint256 amount) external hasPrivilege canMint {
     selfSupply = selfSupply.add(amount);
     selfBalances[msg.sender] = selfBalances[msg.sender].add(amount);
-    emit TransferEvent(address(0), msg.sender, amount); // from: nobody, to: market
+    emit MintEvent(msg.sender, amount); // to, amt
   }
 
   /**
@@ -203,5 +202,6 @@ contract MarketToken {
   event ApprovalEvent(address indexed holder, address indexed spender, uint256 amount);
   event TransferEvent(address indexed from, address indexed to, uint256 amount);
   event BurnEvent(address indexed burner, uint256 amount);
+  event MintEvent(address indexed to, uint256 amount);
   event MintStoppedEvent();
 }
