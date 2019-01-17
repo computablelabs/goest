@@ -13,7 +13,7 @@ func TestAddToCouncil(t *testing.T) {
 	_, err := deployed.VotingContract.AddToCouncil(&bind.TransactOpts{
 		From:     context.AuthMarket.From,
 		Signer:   context.AuthMarket.Signer,
-		GasPrice: big.NewInt(2000000000), // 2 Gwei
+		GasPrice: big.NewInt(ONE_GWEI * 2),
 		GasLimit: 100000,
 	}, member)
 
@@ -51,7 +51,7 @@ func TestRemoveFromCouncil(t *testing.T) {
 	_, err := deployed.VotingContract.RemoveFromCouncil(&bind.TransactOpts{
 		From:     context.AuthMarket.From,
 		Signer:   context.AuthMarket.Signer,
-		GasPrice: big.NewInt(2000000000), // 2 Gwei
+		GasPrice: big.NewInt(ONE_GWEI * 2),
 		GasLimit: 100000,
 	}, member)
 

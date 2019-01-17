@@ -41,7 +41,7 @@ func TestSetPrivilegedContracts(t *testing.T) {
 // the ctx and dep vars will be avail to the other tests in the package
 func TestMain(m *testing.M) {
 	// see ./helpers#context
-	context = SetupBlockchain(big.NewInt(1000000000000000000)) // 1 ETH in wei
+	context = SetupBlockchain(big.NewInt(ONE_WEI))
 	// see ./helpers#deployed
 	deployed, deployedError = Deploy(context)
 
@@ -49,7 +49,7 @@ func TestMain(m *testing.M) {
 	_, err := deployed.VotingContract.SetPrivilegedContracts(&bind.TransactOpts{
 		From:     context.AuthFactory.From,
 		Signer:   context.AuthFactory.Signer,
-		GasPrice: big.NewInt(2000000000),
+		GasPrice: big.NewInt(ONE_GWEI * 2),
 		GasLimit: 1000000,
 	}, context.AuthMarket.From, context.AuthParameterizer.From)
 

@@ -1,4 +1,4 @@
-pragma solidity 0.5.1;
+pragma solidity 0.5.2;
 
 import "./Voting.sol";
 import "./SafeMath.sol";
@@ -149,6 +149,10 @@ contract Parameterizer {
       } else if (param == uint8(Params.voteBy)) {
         selfVoteBy = selfReparams[paramHash].value;
       }
+
+      emit ReparamSucceededEvent(paramHash, selfReparams[paramHash].param, selfReparams[paramHash].value);
+    } else {
+      emit ReparamFailedEvent(paramHash, selfReparams[paramHash].param, selfReparams[paramHash].value);
     }
 
     // Pass or not, clean up the reparam and candidate
@@ -193,6 +197,6 @@ contract Parameterizer {
   }
 
   event ReparamProposedEvent(address indexed proposer, bytes32 indexed paramHash, uint8 indexed param, uint value);
-  event ReparamFailedEvent(bytes32 indexed propHash, string indexed name, uint value);
-  event ReparamSucceededEvent(bytes32 indexed propHash, string indexed name, uint value);
+  event ReparamFailedEvent(bytes32 indexed propHash, uint8 indexed name, uint value);
+  event ReparamSucceededEvent(bytes32 indexed propHash, uint8 indexed param, uint value);
 }

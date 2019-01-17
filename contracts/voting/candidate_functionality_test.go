@@ -12,7 +12,7 @@ func TestAddCandidate(t *testing.T) {
 	_, err := deployed.VotingContract.AddCandidate(&bind.TransactOpts{
 		From:     context.AuthMarket.From,
 		Signer:   context.AuthMarket.Signer,
-		GasPrice: big.NewInt(2000000000), // 2 Gwei
+		GasPrice: big.NewInt(ONE_GWEI * 2),
 		GasLimit: 150000,
 	}, bytes, APPLICATION, big.NewInt(2))
 
@@ -95,7 +95,7 @@ func TestRemoveCandidate(t *testing.T) {
 	_, err := deployed.VotingContract.RemoveCandidate(&bind.TransactOpts{
 		From:     context.AuthMarket.From,
 		Signer:   context.AuthMarket.Signer,
-		GasPrice: big.NewInt(2000000000), // 2 Gwei
+		GasPrice: big.NewInt(ONE_GWEI * 2),
 		GasLimit: 150000,
 	}, bytes)
 

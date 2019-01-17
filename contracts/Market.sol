@@ -1,4 +1,4 @@
-pragma solidity 0.5.1;
+pragma solidity 0.5.2;
 
 import "./SafeMath.sol";
 import "./IERC20.sol";
@@ -186,6 +186,10 @@ contract Market {
     );
   }
 
+  function getInvested() external view returns (uint) {
+    return selfInvested;
+  }
+
   /**
     @dev Return the current minimum amount of network tokens required to invest in this market (rate + slope * reserve)
     @return uint Said number of network tokens
@@ -197,6 +201,13 @@ contract Market {
     uint slopeN = selfParameterizer.getConversionSlopeNumerator();
     uint reserve = selfNetworkToken.balanceOf(address(this));
     return rate.add(slopeN.mul(reserve).div(slopeD));
+  }
+
+  function getInvestor(address addr) external view returns (uint, uint) {
+    return (
+      selfInvestors[addr].invested,
+      selfInvestors[addr].minted
+    );
   }
 
   function getListing(bytes32 listingHash) external view returns (bool, address, uint, bytes32, uint) {
@@ -240,7 +251,7 @@ contract Market {
     // sender could have invest more than the price, but we will only use evenly divisable numbers as we cannot mint fractional tokens
     uint remainder = offered % price;
     // regardless of price multiples, any remainder will be unused
-    uint taken = remainder != 0 ? offered.sub(remainder) : remainder;
+    uint taken = offered.sub(remainder);
     // move those used tokens from investor to the reserve. NOTE this also subtracts from network token allowance[sender][market]
     selfNetworkToken.transferFrom(msg.sender, address(this), taken);
     // we mint amount taken / investment price. TODO audit

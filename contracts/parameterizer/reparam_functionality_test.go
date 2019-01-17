@@ -13,7 +13,7 @@ func TestParameterize(t *testing.T) {
 	_, councilErr := deployed.VotingContract.AddToCouncil(&bind.TransactOpts{
 		From:     context.AuthMarket.From,
 		Signer:   context.AuthMarket.Signer,
-		GasPrice: big.NewInt(2000000000), // 2 Gwei
+		GasPrice: big.NewInt(ONE_GWEI * 2),
 		GasLimit: 100000,
 	}, context.AuthMember1.From)
 
@@ -26,7 +26,7 @@ func TestParameterize(t *testing.T) {
 	_, err := deployed.ParameterizerContract.Reparameterize(&bind.TransactOpts{
 		From:     context.AuthMember1.From,
 		Signer:   context.AuthMember1.Signer,
-		GasPrice: big.NewInt(2000000000), // 2 Gwei
+		GasPrice: big.NewInt(ONE_GWEI * 2),
 		GasLimit: 200000,
 	}, VOTE_BY, big.NewInt(25))
 
@@ -76,7 +76,7 @@ func TestResolveReparam(t *testing.T) {
 	_, voteErr := deployed.VotingContract.Vote(&bind.TransactOpts{
 		From:     context.AuthMember1.From,
 		Signer:   context.AuthMember1.Signer,
-		GasPrice: big.NewInt(2000000000), // 2 Gwei
+		GasPrice: big.NewInt(ONE_GWEI * 2),
 		GasLimit: 100000,
 	}, paramHash)
 
@@ -101,7 +101,7 @@ func TestResolveReparam(t *testing.T) {
 	_, resolveErr := deployed.ParameterizerContract.ResolveReparam(&bind.TransactOpts{
 		From:     context.AuthMember1.From,
 		Signer:   context.AuthMember1.Signer,
-		GasPrice: big.NewInt(2000000000), // 2 Gwei
+		GasPrice: big.NewInt(ONE_GWEI * 2),
 		GasLimit: 150000,
 	}, paramHash)
 

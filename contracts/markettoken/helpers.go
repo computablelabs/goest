@@ -10,6 +10,9 @@ import (
 	"math/big"
 )
 
+const ONE_WEI = 1000000000000000000
+const ONE_GWEI = 1000000000
+
 type ctx struct {
 	AuthFactory *bind.TransactOpts
 	AuthMember1 *bind.TransactOpts
@@ -44,7 +47,7 @@ func Deploy(initialBalance *big.Int, c *ctx) (*dep, error) {
 	_, setErr := cont.SetPrivilegedContracts(&bind.TransactOpts{
 		From:     c.AuthFactory.From,
 		Signer:   c.AuthFactory.Signer,
-		GasPrice: big.NewInt(2000000000), // 2 Gwei
+		GasPrice: big.NewInt(ONE_GWEI * 2), // 2 Gwei
 		GasLimit: 100000,
 	}, c.AuthMarket.From)
 
