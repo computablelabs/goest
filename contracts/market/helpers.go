@@ -1,8 +1,8 @@
 package market
 
 import (
+	"github.com/computablelabs/goest/contracts/ethertoken"
 	"github.com/computablelabs/goest/contracts/markettoken"
-	"github.com/computablelabs/goest/contracts/networktoken"
 	"github.com/computablelabs/goest/contracts/parameterizer"
 	"github.com/computablelabs/goest/contracts/voting"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
@@ -36,17 +36,17 @@ type ctx struct {
 type dep struct {
 	MarketAddress            common.Address
 	MarketTokenAddress       common.Address
-	NetworkTokenAddress      common.Address
+	EtherTokenAddress        common.Address
 	ParameterizerAddress     common.Address
 	VotingAddress            common.Address
 	MarketContract           *Market
 	MarketTokenContract      *markettoken.MarketToken
-	NetworkTokenContract     *networktoken.NetworkToken
+	EtherTokenContract       *ethertoken.EtherToken
 	ParameterizerContract    *parameterizer.Parameterizer
 	VotingContract           *voting.Voting
 	MarketTransaction        *types.Transaction
 	MarketTokenTransaction   *types.Transaction
-	NetworkTokenTransaction  *types.Transaction
+	EtherTokenTransaction    *types.Transaction
 	ParameterizerTransaction *types.Transaction
 	VotingTransaction        *types.Transaction
 }
@@ -63,15 +63,15 @@ func Deploy(initialBalance *big.Int, c *ctx) (*dep, error) {
 		return nil, marketTokenErr
 	}
 
-	networkTokenAddr, networkTokenTrans, networkTokenCont, networkTokenErr := networktoken.DeployNetworkToken(
+	etherTokenAddr, etherTokenTrans, etherTokenCont, etherTokenErr := ethertoken.DeployEtherToken(
 		c.AuthFactory,
 		c.Blockchain,
 		c.AuthFactory.From,
 		initialBalance,
 	)
 
-	if networkTokenErr != nil {
-		return nil, networkTokenErr
+	if etherTokenErr != nil {
+		return nil, etherTokenErr
 	}
 
 	// commit the deploy before deploying voting
@@ -112,7 +112,7 @@ func Deploy(initialBalance *big.Int, c *ctx) (*dep, error) {
 		c.AuthFactory,
 		c.Blockchain,
 		marketTokenAddr,
-		networkTokenAddr,
+		etherTokenAddr,
 		paramAddr,
 		votingAddr,
 	)
@@ -130,9 +130,9 @@ func Deploy(initialBalance *big.Int, c *ctx) (*dep, error) {
 		MarketTokenAddress:       marketTokenAddr,
 		MarketTokenContract:      marketTokenCont,
 		MarketTokenTransaction:   marketTokenTrans,
-		NetworkTokenAddress:      networkTokenAddr,
-		NetworkTokenTransaction:  networkTokenTrans,
-		NetworkTokenContract:     networkTokenCont,
+		EtherTokenAddress:        etherTokenAddr,
+		EtherTokenTransaction:    etherTokenTrans,
+		EtherTokenContract:       etherTokenCont,
 		ParameterizerAddress:     paramAddr,
 		ParameterizerContract:    paramCont,
 		ParameterizerTransaction: paramTrans,

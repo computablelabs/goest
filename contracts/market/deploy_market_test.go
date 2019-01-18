@@ -18,8 +18,8 @@ func TestDeployMarket(t *testing.T) {
 		t.Fatalf("Failed to deploy the Market contract or a dependency: %v", deployedError)
 	}
 
-	if len(deployed.NetworkTokenAddress.Bytes()) == 0 {
-		t.Error("Expected a valid network token deployment address to be returned from deploy, got empty byte array instead")
+	if len(deployed.EtherTokenAddress.Bytes()) == 0 {
+		t.Error("Expected a valid ether token deployment address to be returned from deploy, got empty byte array instead")
 	}
 
 	if len(deployed.MarketTokenAddress.Bytes()) == 0 {
@@ -42,14 +42,14 @@ func TestDeployMarket(t *testing.T) {
 	// t.Log("********************************************************")
 	// t.Log(deployed.MarketAddress.Hex())
 
-	// ntr, _ := context.Blockchain.TransactionReceipt(nil, deployed.NetworkTokenTransaction.Hash())
+	// ntr, _ := context.Blockchain.TransactionReceipt(nil, deployed.EtherTokenTransaction.Hash())
 	// mtr, _ := context.Blockchain.TransactionReceipt(nil, deployed.MarketTokenTransaction.Hash())
 	// pr, _ := context.Blockchain.TransactionReceipt(nil, deployed.ParameterizerTransaction.Hash())
 	// vr, _ := context.Blockchain.TransactionReceipt(nil, deployed.VotingTransaction.Hash())
 	// mr, _ := context.Blockchain.TransactionReceipt(nil, deployed.MarketTransaction.Hash())
 
 	// t.Log("******************** Costs to deploy all-the-things *************************")
-	// t.Logf("Gas used to deploy Network Token %v", ntr.GasUsed)
+	// t.Logf("Gas used to deploy Ether Token %v", ntr.GasUsed)
 	// t.Logf("Gas used to deploy Market Token %v", mtr.GasUsed)
 	// t.Logf("Gas used to deploy Parameterizer %v", pr.GasUsed)
 	// t.Logf("Gas used to deploy Voting %v", vr.GasUsed)
@@ -81,7 +81,7 @@ func TestVotingSetPrivilegedContracts(t *testing.T) {
 // the ctx and dep vars will be avail to the other tests in the package
 func TestMain(m *testing.M) {
 	// see ./helpers#context
-	context = SetupBlockchain(big.NewInt(ONE_WEI))
+	context = SetupBlockchain(big.NewInt(ONE_WEI * 3)) // users have 3 ETH
 	// see ./helpers#deployed
 	deployed, deployedError = Deploy(big.NewInt(ONE_WEI*6), context) // 6 tokens in wei
 

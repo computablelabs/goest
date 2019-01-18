@@ -4,12 +4,12 @@ import "./Voting.sol";
 import "./SafeMath.sol";
 
 contract Parameterizer {
-  using SafeMath for uint;
+  using SafeMath for uint256;
 
   struct Reparam {
     address proposer; // who asked for the change
     uint8 param;
-    uint value; // what to change 'name' to
+    uint256 value; // what to change 'name' to
   }
 
   // so that we don't get into casting strings <-> bytes for parameter names
@@ -29,17 +29,17 @@ contract Parameterizer {
   Voting private selfVoting;
 
   // the values counterpart for the Param keys.
-  uint private selfChallengeStake;
-  uint private selfConversionRate;
-  uint private selfConversionSlopeDenominator;
-  uint private selfConversionSlopeNumerator;
-  uint private selfListReward;
-  uint private selfQuorum;
-  uint private selfVoteBy;
+  uint256 private selfChallengeStake;
+  uint256 private selfConversionRate;
+  uint256 private selfConversionSlopeDenominator;
+  uint256 private selfConversionSlopeNumerator;
+  uint256 private selfListReward;
+  uint256 private selfQuorum;
+  uint256 private selfVoteBy;
 
   // we don't need a full kinds enum here, just the one type pertinent to the p11r
   uint8 constant REPARAM  = 3;
-  // uint constant VOTEBY = 604800; // 7 days
+  // uint256 constant VOTEBY = 604800; // 7 days
 
   /**
     @dev constructor
@@ -54,13 +54,13 @@ contract Parameterizer {
   */
   constructor(
     address votingAddr,
-    uint challengeStake,
-    uint conversionRate,
-    uint conversionSlopeDenominator,
-    uint conversionSlopeNumerator,
-    uint listReward,
-    uint quorum,
-    uint voteBy
+    uint256 challengeStake,
+    uint256 conversionRate,
+    uint256 conversionSlopeDenominator,
+    uint256 conversionSlopeNumerator,
+    uint256 listReward,
+    uint256 quorum,
+    uint256 voteBy
     ) public
   {
     selfVoting = Voting(votingAddr);
@@ -73,23 +73,23 @@ contract Parameterizer {
     selfVoteBy = voteBy;
   }
 
-  function getChallengeStake() external view returns(uint) {
+  function getChallengeStake() external view returns(uint256) {
     return selfChallengeStake;
   }
 
-  function getConversionRate() external view returns(uint) {
+  function getConversionRate() external view returns(uint256) {
     return selfConversionRate;
   }
 
-  function getConversionSlopeDenominator() external view returns(uint) {
+  function getConversionSlopeDenominator() external view returns(uint256) {
     return selfConversionSlopeDenominator;
   }
 
-  function getConversionSlopeNumerator() external view returns(uint) {
+  function getConversionSlopeNumerator() external view returns(uint256) {
     return selfConversionSlopeNumerator;
   }
 
-  function getListReward() external view returns(uint) {
+  function getListReward() external view returns(uint256) {
     return selfListReward;
   }
 
@@ -99,15 +99,15 @@ contract Parameterizer {
     @param value The proposed value change to get packed and hashed
     @return The single hashed value of both combined args
   */
-  function getParamHash(uint8 param, uint value) external pure returns(bytes32) {
+  function getParamHash(uint8 param, uint256 value) external pure returns(bytes32) {
     return keccak256(abi.encodePacked(param, value));
   }
 
-  function getQuorum() external view returns(uint) {
+  function getQuorum() external view returns(uint256) {
     return selfQuorum;
   }
 
-  function getReparam(bytes32 paramHash) external view returns(address, uint8, uint) {
+  function getReparam(bytes32 paramHash) external view returns(address, uint8, uint256) {
     return (
       selfReparams[paramHash].proposer,
       selfReparams[paramHash].param,
@@ -115,7 +115,7 @@ contract Parameterizer {
     );
   }
 
-  function getVoteBy() external view returns(uint) {
+  function getVoteBy() external view returns(uint256) {
     return selfVoteBy;
   }
 
@@ -165,7 +165,7 @@ contract Parameterizer {
     @param param the name of the proposed param to be set
     @param value the proposed value to set the param to be set
   */
-  function reparameterize(uint8 param, uint value) external {
+  function reparameterize(uint8 param, uint256 value) external {
     require(selfVoting.inCouncil(msg.sender) == true, "Error:Parameterizer.reparameterize - Sender must be council member");
 
     bytes32 paramHash = keccak256(abi.encodePacked(param, value));
@@ -196,7 +196,7 @@ contract Parameterizer {
     );
   }
 
-  event ReparamProposedEvent(address indexed proposer, bytes32 indexed paramHash, uint8 indexed param, uint value);
-  event ReparamFailedEvent(bytes32 indexed propHash, uint8 indexed name, uint value);
-  event ReparamSucceededEvent(bytes32 indexed propHash, uint8 indexed param, uint value);
+  event ReparamProposedEvent(address indexed proposer, bytes32 indexed paramHash, uint8 indexed param, uint256 value);
+  event ReparamFailedEvent(bytes32 indexed propHash, uint8 indexed name, uint256 value);
+  event ReparamSucceededEvent(bytes32 indexed propHash, uint8 indexed param, uint256 value);
 }
