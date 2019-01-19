@@ -1,4 +1,4 @@
-package networktoken
+package ethertoken
 
 import (
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"

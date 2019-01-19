@@ -1,7 +1,7 @@
 package market
 
 import (
-	// 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
+	// "github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"math/big"
 	"testing"
 	// "time"
@@ -31,29 +31,36 @@ func TestGetInvestmentPrice(t *testing.T) {
 	}
 }
 
-// TODO the invest method would require that a member have approved network token.
-// what is the status of network token?
+// TODO the invest method would require that a member have approved ether token.
 func TestInvest(t *testing.T) {
-	// member 3 will needs funds to invest with from network token...
-	// _, transErr := deployed.MarketTokenContract.Transfer(&bind.TransactOpts{
-	// From:     context.AuthFactory.From,
-	// Signer:   context.AuthFactory.Signer,
-	// GasPrice: big.NewInt(ONE_GWEI * 2),
-	// GasLimit: 1000000,
-	// }, context.AuthMember3.From, big.NewInt(ONE_WEI*2)) // 2 tokens
-
-	// if transErr != nil {
-	// t.Fatalf("Error transferring tokens to member: %v", transErr)
+	// member3 is not a listing owner
+	// isOwner, _ := deployed.MarketContract.IsListingOwner(nil, context.AuthMember3.From)
+	// if isOwner != false {
+	// t.Fatalf("Expected isOwner to be false, got: %v", isOwner)
 	// }
 
-	// context.Blockchain.Commit()
-
-	// _, approveErr := deployed.MarketTokenContract.Approve(&bind.TransactOpts{
+	// member 3 will need to deposit funds into the ether token
+	// _, depErr := deployed.EtherTokenContract.Deposit(&bind.TransactOpts{
 	// From:     context.AuthMember3.From,
 	// Signer:   context.AuthMember3.Signer,
 	// GasPrice: big.NewInt(ONE_GWEI * 2),
 	// GasLimit: 1000000,
-	// }, deployed.MarketAddress, big.NewInt(ONE_WEI*2)) // up to 2 tokenWei
+	// Value:    big.NewInt(ONE_WEI * 2),
+	// }) // deposit 2 tokens
+
+	// if depErr != nil {
+	// t.Fatalf("Error transferring tokens to member: %v", depErr)
+	// }
+
+	// context.Blockchain.Commit()
+
+	// allow the ether token to spend on user3's behalf
+	// _, approveErr := deployed.EtherTokenContract.Approve(&bind.TransactOpts{
+	// From:     context.AuthMember3.From,
+	// Signer:   context.AuthMember3.Signer,
+	// GasPrice: big.NewInt(ONE_GWEI * 2),
+	// GasLimit: 1000000,
+	// }, deployed.MarketAddress, big.NewInt(ONE_WEI*2)) // up to 2 tokens
 
 	// if approveErr != nil {
 	// t.Fatalf("Error approving market contract to spend: %v", approveErr)
@@ -85,7 +92,14 @@ func TestInvest(t *testing.T) {
 	// }
 
 	// here we will just offer the suggested price
-	// price, _ := deployed.MarketContract.GetInvestmentPrice(nil)
+	// 	price, _ := deployed.MarketContract.GetInvestmentPrice(nil)
+	// t.Logf("Investment price: %v", price)
+	// what is user3's ether token bal?
+	// member3Bal, _ := deployed.EtherTokenContract.BalanceOf(&bind.CallOpts{From: context.AuthMember3.From}, context.AuthMember3.From)
+	// t.Logf("Authmember3 ether token balance: %v", member3Bal)
+	// what is the allowance that ethertoken has for user3-market
+	// member3Allowed, _ := deployed.EtherTokenContract.Allowance(nil, context.AuthMember3.From, deployed.MarketAddress)
+	// t.Logf("Authmember3 allowance to market from ether token: %v", member3Allowed)
 
 	// _, investErr := deployed.MarketContract.Invest(&bind.TransactOpts{
 	// From:     context.AuthMember3.From,

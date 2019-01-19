@@ -7,6 +7,7 @@
     "lint:solium": "node_modules/.bin/solium -d contracts",
     "compile:token:network": "~/go/bin/abigen -sol contracts/NetworkToken.sol -pkg networktoken -out contracts/networktoken/networktoken.go",
     "compile:token:market": "~/go/bin/abigen -sol contracts/MarketToken.sol -pkg markettoken -out contracts/markettoken/markettoken.go",
+    "compile:token:ether": "~/go/bin/abigen -sol contracts/EtherToken.sol -pkg ethertoken -out contracts/ethertoken/ethertoken.go",
     "compile:voting": "~/go/bin/abigen -sol contracts/Voting.sol -pkg voting -out contracts/voting/voting.go",
     "compile:parameterizer": "~/go/bin/abigen -sol contracts/Parameterizer.sol -pkg parameterizer -out contracts/parameterizer/parameterizer.go",
     "compile:market": "~/go/bin/abigen -sol contracts/Market.sol -pkg market -out contracts/market/market.go",

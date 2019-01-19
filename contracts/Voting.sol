@@ -4,7 +4,7 @@ import "./SafeMath.sol";
 
 contract Voting {
 
-  using SafeMath for uint;
+  using SafeMath for uint256;
 
   /**
     Note that we use uint8s for Candidate.kind
@@ -18,10 +18,10 @@ contract Voting {
   */
 
   struct Candidate {
-    uint index; // where is this key in CandidateKeys?
+    uint256 index; // where is this key in CandidateKeys?
     uint8 kind; // member of the enum...
-    uint voteBy; // timestamp via `block.timestamp` (seconds since epoch)
-    uint votes; // tally of votes 'for' the candidate
+    uint256 voteBy; // timestamp via `block.timestamp` (seconds since epoch)
+    uint256 votes; // tally of votes 'for' the candidate
     address[] voted; // an address present in this array inidicates that user voted for this poll
   }
 
@@ -30,7 +30,7 @@ contract Voting {
   // we use a simple dynamic array to house all candidate keys (hashes)
   bytes32[] private selfCandidateKeys;
   // a simple mapping of current countil members to an index in the council array
-  mapping(address => uint) private selfCouncil;
+  mapping(address => uint256) private selfCouncil;
   // dynamic array holding current council member's adrresses
   address[] private selfCouncilKeys;
   // the market and parameterizer have priveledge to add candidates, council members etc
@@ -49,11 +49,11 @@ contract Voting {
   @param kind uint8 that is one of our Kinds enum NOTE: this is passed by the contract itself, not input from a user
   @param voteBy some amount of time, in seconds, from "now" that the poll for this candidate will close
   */
-  function addCandidate(bytes32 hash, uint8 kind, uint voteBy) external hasPrivilege {
+  function addCandidate(bytes32 hash, uint8 kind, uint256 voteBy) external hasPrivilege {
     // can't be dupe candidates
     require(isCandidate(hash) != true, "Error:Voting.addCandidate - Candidate already exists");
 
-    uint end = block.timestamp.add(voteBy);
+    uint256 end = block.timestamp.add(voteBy);
     Candidate storage c = selfCandidates[hash];
     // both push the hash into the array, and get the index. NOTE: push returns array length (hence - 1)
     c.index = selfCandidateKeys.push(hash) - 1; // no need to use .sub here
@@ -86,7 +86,7 @@ contract Voting {
   @param hash  identifier associated with target listing or reparam
   @param quorum the current % of 100 majority that this candidate needs to pass
   */
-  function didPass(bytes32 hash, uint quorum) public view returns (bool) {
+  function didPass(bytes32 hash, uint256 quorum) public view returns (bool) {
     require(isCandidate(hash) == true, "Error:Voting.didPass - Candidate does not exist");
     require(selfCandidates[hash].voteBy < block.timestamp, "Error:Voting.pass - Polling must be closed for this candidate");
     require(selfCouncilKeys.length > 0, "Error:Voting.didPass - No council members");
@@ -104,7 +104,7 @@ contract Voting {
     require(isCandidate(hash) == true, "Error:Voting.didVote - Candidate does not exist");
 
     // return selfCandidates[hash].voted[member] == true;
-    for (uint i=0; i < selfCandidates[hash].voted.length; i++) {
+    for (uint256 i=0; i < selfCandidates[hash].voted.length; i++) {
       // sol says we can directly compare addresses
       if (selfCandidates[hash].voted[i] == member) {
         return true;
@@ -114,7 +114,7 @@ contract Voting {
     return false;
   }
 
-  function getCandidate(bytes32 hash) external view returns (uint8, uint, uint) {
+  function getCandidate(bytes32 hash) external view returns (uint8, uint256, uint256) {
     // Not requiring existance with getters like this. TODO
 
     // NOTE: we don't need to return the quorum, and we cannot return the voted mapping...
@@ -177,7 +177,7 @@ contract Voting {
     require(isCandidate(hash) == true, "Error:Voting.removeCandidate - Candidate does not exist");
 
     // first let's efficiently prune the array of keys
-    uint deleted = selfCandidates[hash].index; // getting rid of this one
+    uint256 deleted = selfCandidates[hash].index; // getting rid of this one
     bytes32 moved = selfCandidateKeys[selfCandidateKeys.length - 1]; // moving this one to where 'deleted' was
     selfCandidateKeys[deleted] = moved; // delete target now overwritten
     selfCandidateKeys.length--; // drops the last item, which we already moved
@@ -194,7 +194,7 @@ contract Voting {
   function removeFromCouncil(address member) external hasPrivilege {
     if (inCouncil(member) == true) {
       // first let's efficiently prune the array of keys
-      uint deleted = selfCouncil[member]; // getting rid of this one
+      uint256 deleted = selfCouncil[member]; // getting rid of this one
       address moved = selfCouncilKeys[selfCouncilKeys.length - 1]; // moving this one to where 'deleted' was
       selfCouncilKeys[deleted] = moved; // delete target now overwritten
       selfCouncilKeys.length--; // drops the last item, which we already moved
@@ -233,7 +233,7 @@ contract Voting {
   }
 
   event VotedEvent(address indexed voter, bytes32 indexed hash);
-  event CandidateAddedEvent(bytes32 indexed hash, uint8 indexed kind, uint indexed voteBy);
+  event CandidateAddedEvent(bytes32 indexed hash, uint8 indexed kind, uint256 indexed voteBy);
   event CandidateRemovedEvent(bytes32 indexed hash);
   event CouncilMemberAddedEvent(address indexed member);
   event CouncilMemberRemovedEvent(address indexed member);

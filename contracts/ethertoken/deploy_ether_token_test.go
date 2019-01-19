@@ -1,4 +1,4 @@
-package networktoken
+package ethertoken
 
 import (
 	"math/big"
@@ -11,9 +11,9 @@ var context *ctx
 var deployed *dep
 var deployedError error
 
-func TestDeployNetworkToken(t *testing.T) {
+func TestDeployEtherToken(t *testing.T) {
 	if deployedError != nil {
-		t.Fatalf("Failed to deploy the network token contract: %v", deployedError)
+		t.Fatalf("Failed to deploy the ether token contract: %v", deployedError)
 	}
 
 	if len(deployed.Address.Bytes()) == 0 {
@@ -27,7 +27,7 @@ func TestDeployNetworkToken(t *testing.T) {
 // the ctx and dep vars will be avail to the other tests in the package
 func TestMain(m *testing.M) {
 	// see ./helpers#context
-	context = SetupBlockchain(big.NewInt(ONE_WEI)) // 1ETH in wei
+	context = SetupBlockchain(big.NewInt(ONE_WEI * 2)) // 2 ETH in wei
 	// see ./helpers#deployed
 	deployed, deployedError = Deploy(big.NewInt(ONE_WEI*9), context) // 9 tokens in wei
 	code := m.Run()

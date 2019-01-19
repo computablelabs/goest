@@ -8,28 +8,28 @@ import "./Voting.sol";
 
 
 contract Market {
-  using SafeMath for uint;
+  using SafeMath for uint256;
 
   struct Listing {
-    uint index; // pointer to the location of this listing's hash in the unordered keys array
+    uint256 index; // pointer to the location of this listing's hash in the unordered keys array
     bool listed; // a 'listing' if true
     address owner; // owns the listing
-    uint supply; // Number of tokens in the listing, banked by the market, put there by the owner
+    uint256 supply; // Number of tokens in the listing, banked by the market, put there by the owner
     bytes32 dataHash; // A magical construct which flies across the sky, pooping unicorns which, in turn, poop rainbows.
-    uint rewards; // Number of Market tokens that have been minted + any challenge winnings
+    uint256 rewards; // Number of Market tokens that have been minted + any challenge winnings
   }
 
   // TODO in another iteration allow challenger to stake a listing's supply/reward if they own one
   struct Challenge {
     address challenger; // adress making the challenge
-    uint fromChallengeeSupply; // how much of `stake` was taken from listing.supply
-    uint fromChallengeeRewards; // how much, if any, of `stake` was taken from listing.rewards
+    uint256 fromChallengeeSupply; // how much of `stake` was taken from listing.supply
+    uint256 fromChallengeeRewards; // how much, if any, of `stake` was taken from listing.rewards
   }
 
   struct Investor {
-    uint index; // pointer to the location of this investor's address in the unordered keys array
-    uint invested; // cumulative total of investment in this market
-    uint minted; // cumulative total of minted market tokens from investing
+    uint256 index; // pointer to the location of this investor's address in the unordered keys array
+    uint256 invested; // cumulative total of investment in this market
+    uint256 minted; // cumulative total of minted market tokens from investing
   }
 
   // Maps listingHash to associated challenge data
@@ -41,17 +41,18 @@ contract Market {
   bytes32[] private selfListingKeys;
 
   // Maps listing owner's address to how many listings they own
-  mapping(address => uint) private selfListingOwners;
+  mapping(address => uint256) private selfListingOwners;
 
   // Maps investor's address to their data
   mapping(address => Investor) private selfInvestors;
   // house the addresses of all current investors
   address[] private selfInvestorKeys;
-  // running total of invested network token
-  uint private selfInvested;
+  // running total of invested ether token
+  uint256 private selfInvested;
 
   MarketToken private selfMarketToken;
-  IERC20 private selfNetworkToken;
+  // though the ether token exposes more than the erc20 interface, the market only needs the latter
+  IERC20 private selfEtherToken;
   Parameterizer private selfParameterizer;
   Voting private selfVoting;
   // will be the market factory
@@ -68,14 +69,14 @@ contract Market {
   */
   constructor(
     address marketTokenAddr,
-    address networkTokenAddr,
+    address etherTokenAddr,
     address parameterizerAddr,
     address votingAddr
   ) public
   {
     selfOwner = msg.sender;
     selfMarketToken = MarketToken(marketTokenAddr);
-    selfNetworkToken = IERC20(networkTokenAddr);
+    selfEtherToken = IERC20(etherTokenAddr);
     selfParameterizer = Parameterizer(parameterizerAddr);
     selfVoting = Voting(votingAddr);
   }
@@ -85,7 +86,7 @@ contract Market {
     @param listingHash The listing being challenged.
   */
   function challenge(bytes32 listingHash) external {
-    uint stake = selfParameterizer.getChallengeStake();
+    uint256 stake = selfParameterizer.getChallengeStake();
     Listing storage listing = selfListings[listingHash];
 
     require(listing.listed == true, "Error:Market.challenge - Must be a listing to be challenged");
@@ -102,8 +103,8 @@ contract Market {
       // NOTE: in the next iteration make it possible for the challenger to stake a listing (by using its rewards)
       selfMarketToken.transferFrom(msg.sender, address(this), stake);
 
-      uint fromChallengeeSupply;
-      uint fromChallengeeRewards;
+      uint256 fromChallengeeSupply;
+      uint256 fromChallengeeRewards;
 
       // we will 'lock' only tokens in the supply if possible
       if (listing.supply >= stake) {
@@ -112,7 +113,7 @@ contract Market {
       } else {
         // lock supply and rewards if necessary
         fromChallengeeSupply = listing.supply;
-        uint remainder = stake.sub(listing.supply);
+        uint256 remainder = stake.sub(listing.supply);
         listing.supply = 0;
         listing.rewards = listing.rewards.sub(remainder);
         fromChallengeeRewards = remainder;
@@ -143,7 +144,7 @@ contract Market {
     @param listingHash A listingHash msg.sender is the owner of
     @param amount The number of Market tokens to increase the listing's supply by
   */
-  function depositToListing(bytes32 listingHash, uint amount) external {
+  function depositToListing(bytes32 listingHash, uint256 amount) external {
     // Listing storage listing = selfListings[listingHash];
     require(isListing(listingHash) == true, "Error:Market.depositToListing - Listing does not exist");
 
@@ -178,7 +179,7 @@ contract Market {
     removeListing(listingHash);
   }
 
-  function getChallenge(bytes32 listingHash) external view returns (address, uint, uint) {
+  function getChallenge(bytes32 listingHash) external view returns (address, uint256, uint256) {
     return (
       selfChallenges[listingHash].challenger,
       selfChallenges[listingHash].fromChallengeeSupply,
@@ -186,31 +187,31 @@ contract Market {
     );
   }
 
-  function getInvested() external view returns (uint) {
+  function getInvested() external view returns (uint256) {
     return selfInvested;
   }
 
   /**
-    @dev Return the current minimum amount of network tokens required to invest in this market (rate + slope * reserve)
-    @return uint Said number of network tokens
+    @dev Return the current minimum amount of ether tokens required to invest in this market (rate + slope * reserve)
+    @return uint256 Said number of ether tokens
     TODO audit...
   */
-  function getInvestmentPrice() public view returns (uint) {
-    uint rate = selfParameterizer.getConversionRate();
-    uint slopeD = selfParameterizer.getConversionSlopeDenominator();
-    uint slopeN = selfParameterizer.getConversionSlopeNumerator();
-    uint reserve = selfNetworkToken.balanceOf(address(this));
+  function getInvestmentPrice() public view returns (uint256) {
+    uint256 rate = selfParameterizer.getConversionRate();
+    uint256 slopeD = selfParameterizer.getConversionSlopeDenominator();
+    uint256 slopeN = selfParameterizer.getConversionSlopeNumerator();
+    uint256 reserve = selfEtherToken.balanceOf(address(this));
     return rate.add(slopeN.mul(reserve).div(slopeD));
   }
 
-  function getInvestor(address addr) external view returns (uint, uint) {
+  function getInvestor(address addr) external view returns (uint256, uint256) {
     return (
       selfInvestors[addr].invested,
       selfInvestors[addr].minted
     );
   }
 
-  function getListing(bytes32 listingHash) external view returns (bool, address, uint, bytes32, uint) {
+  function getListing(bytes32 listingHash) external view returns (bool, address, uint256, bytes32, uint256) {
     // TODO likely a better pattern to _not_ possibly revert on getters like this - just let evm return falsy stuff...
     // require(isListing(listingHash) == true, "Error:Market.getListing - Listing does not exist");
 
@@ -239,23 +240,23 @@ contract Market {
   }
 
   /**
-    @dev Given network tokens as entry, mint and return market tokens to the
+    @dev Given ether tokens as entry, mint and return market tokens to the
     caller as dictated by the pricing curve.
-    @param offered Number of network tokens offered for investment
+    @param offered Number of ether tokens offered for investment
   */
-  function invest(uint offered) external {
+  function invest(uint256 offered) external {
     require(isListingOwner(msg.sender) != true, "Error:Market.invest - Cannot invest while owning an active listing");
     // amount must be >= the investment price
-    uint price = getInvestmentPrice();
+    uint256 price = getInvestmentPrice();
     require(offered >= price, "Error:Market.invest - Amount offered must be greater than or equal to current investment price");
     // sender could have invest more than the price, but we will only use evenly divisable numbers as we cannot mint fractional tokens
-    uint remainder = offered % price;
+    uint256 remainder = offered % price;
     // regardless of price multiples, any remainder will be unused
-    uint taken = offered.sub(remainder);
-    // move those used tokens from investor to the reserve. NOTE this also subtracts from network token allowance[sender][market]
-    selfNetworkToken.transferFrom(msg.sender, address(this), taken);
+    uint256 taken = offered.sub(remainder);
+    // move those used tokens from investor to the reserve. NOTE this also subtracts from ether token allowance[sender][market]
+    selfEtherToken.transferFrom(msg.sender, address(this), taken);
     // we mint amount taken / investment price. TODO audit
-    uint mint = taken.div(price);
+    uint256 mint = taken.div(price);
     // NOTE this is, at origin, owned by the market
     selfMarketToken.mint(mint);
     // now we can transfer those minted market tokens to the investor
@@ -325,7 +326,7 @@ contract Market {
     @param dataHash unique key for the backend to find this bespoke data
     @param amount The number of (market) tokens a user wants to bank in the listing (optional)
   */
-  function list(string calldata listing, bytes32 dataHash, uint amount) external {
+  function list(string calldata listing, bytes32 dataHash, uint256 amount) external {
     bytes32 listingHash = keccak256(bytes(listing));
 
     require(selfVoting.isCandidate(listingHash) != true, "Error:Market.apply - Already a candidate");
@@ -382,7 +383,7 @@ contract Market {
     }
 
     // remove the keys entry first
-    uint deleted = selfListings[listingHash].index; // being removed
+    uint256 deleted = selfListings[listingHash].index; // being removed
     bytes32 moved = selfListingKeys[selfListingKeys.length - 1]; // moving to overwrite 'deleted'
     selfListingKeys[deleted] = moved; // delete target now overwritten
     selfListingKeys.length--;
@@ -416,7 +417,7 @@ contract Market {
     if (selfVoting.didPass(listingHash, selfParameterizer.getQuorum()) == true) {
       selfListings[listingHash].listed = true;
       // NOTE the market acts as a bank for the minted tokens as well (same as deposits)
-      uint amount = selfParameterizer.getListReward();
+      uint256 amount = selfParameterizer.getListReward();
       // there is no `to` adress as all mint balances are banked by the market
       selfMarketToken.mint(amount);
       // no need to .add here
@@ -452,7 +453,7 @@ contract Market {
     require(selfVoting.candidateIs(listingHash, CHALLENGE) == true, "Error:Market.resolveChallenge - Must be a challenge");
     require(selfVoting.pollClosed(listingHash) == true, "Error:Market.resolveChallenge - Polls for this candidate must be closed");
     // somebody gets a prize...
-    uint stake = selfParameterizer.getChallengeStake();
+    uint256 stake = selfParameterizer.getChallengeStake();
 
     // Case: challenge won
     if (selfVoting.didPass(listingHash, selfParameterizer.getQuorum())) {
@@ -489,7 +490,7 @@ contract Market {
     @param listingHash A listingHash msg.sender is the owner of.
     @param amount The number of Market tokens to withdraw from the supply (must be <= (supply - minted)).
   */
-  function withdrawFromListing(bytes32 listingHash, uint amount) external {
+  function withdrawFromListing(bytes32 listingHash, uint256 amount) external {
     require(isListing(listingHash) == true, "Error:Market.withdrawFromListing - Listing does not exist");
     require(selfListings[listingHash].owner == msg.sender, "Error:Market.withdraw - Must be listing owner");
     // can't outright withdraw more than the supply
@@ -508,13 +509,13 @@ contract Market {
   }
 
   event ApplicationFailedEvent(bytes32 indexed listingHash);
-  event AppliedEvent(bytes32 indexed listingHash, address indexed applicant, bytes32 indexed dataHash, uint voteBy, uint amount);
+  event AppliedEvent(bytes32 indexed listingHash, address indexed applicant, bytes32 indexed dataHash, uint256 voteBy, uint256 amount);
   event ChallengedEvent(bytes32 indexed listingHash, address indexed challenger);
-  event ChallengeFailedEvent(bytes32 indexed listingHash, address indexed challenger, uint reward);
-  event ChallengeSucceededEvent(bytes32 indexed listingHash, address indexed challenger, uint reward);
-  event InvestedEvent(address indexed investor, uint offered, uint taken, uint minted);
-  event ListedEvent(bytes32 indexed listingHash, address indexed owner, uint reward, uint supply);
-  event ListingDepositEvent(bytes32 indexed listingHash, address indexed owner, uint added, uint supply, uint rewards);
+  event ChallengeFailedEvent(bytes32 indexed listingHash, address indexed challenger, uint256 reward);
+  event ChallengeSucceededEvent(bytes32 indexed listingHash, address indexed challenger, uint256 reward);
+  event InvestedEvent(address indexed investor, uint256 offered, uint256 taken, uint256 minted);
+  event ListedEvent(bytes32 indexed listingHash, address indexed owner, uint256 reward, uint256 supply);
+  event ListingDepositEvent(bytes32 indexed listingHash, address indexed owner, uint256 added, uint256 supply, uint256 rewards);
   event ListingDeletedEvent(bytes32 indexed listingHash);
-  event ListingWithdrawEvent(bytes32 indexed listingHash, address indexed owner, uint added, uint supply, uint rewards);
+  event ListingWithdrawEvent(bytes32 indexed listingHash, address indexed owner, uint256 added, uint256 supply, uint256 rewards);
 }
