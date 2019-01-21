@@ -1,12 +1,13 @@
 pragma solidity 0.5.2;
 
+import "./IERC20.sol";
 import "./SafeMath.sol";
 
 /*
  * The Computable Ether token is a stand-alone (no inheritance) implementation of an ERC20 Standard Token
  * with added deposit and withdraw methods. Inspired by github.com/gnosis/contracs/tokens/EtherToken.sol
 */
-contract EtherToken {
+contract EtherToken is IERC20 {
   using SafeMath for uint256;
 
   uint256 private selfSupply;
@@ -37,9 +38,10 @@ contract EtherToken {
    * @param spender The address which will spend the funds.
    * @param amount The amount of tokens to be spent.
    */
-  function approve(address spender, uint256 amount) external {
+  function approve(address spender, uint256 amount) external returns (bool) {
     selfAllowed[msg.sender][spender] = amount;
     emit ApprovalEvent(msg.sender, spender, amount);
+    return true;
   }
 
   /**
@@ -103,13 +105,14 @@ contract EtherToken {
   * @param to The address to transfer to.
   * @param amount The amount to be transferred.
   */
-  function transfer(address to, uint256 amount) external {
-    require(to != address(0), "Error:Basic.transfer - 'to' address must be specified");
-    require(amount <= selfBalances[msg.sender], "Error:Basic.transfer - Amount exceeds the balance of msg.sender");
+  function transfer(address to, uint256 amount) external returns (bool) {
+    require(to != address(0), "Error:EtherToken.transfer - 'to' address must be specified");
+    require(amount <= selfBalances[msg.sender], "Error:EtherToken.transfer - Amount exceeds the balance of msg.sender");
 
     selfBalances[msg.sender] = selfBalances[msg.sender].sub(amount);
     selfBalances[to] = selfBalances[to].add(amount);
     emit TransferEvent(msg.sender, to, amount);
+    return true;
   }
 
   /**
@@ -118,15 +121,16 @@ contract EtherToken {
    * @param to address The address which you want to transfer to
    * @param amount uint256 the amount of tokens to be transferred
    */
-  function transferFrom(address from, address to, uint256 amount) external {
-    require(to != address(0), "Error:Standard.transferFrom - 'to' address must be specified");
-    require(amount <= selfBalances[from], "Error:Standard.transferFrom - Amount exceeds available balance");
-    require(amount <= selfAllowed[from][msg.sender], "Error.Standard.transferFrom - Amount exceeds allowed amount");
+  function transferFrom(address from, address to, uint256 amount) external returns (bool) {
+    require(to != address(0), "Error:EtherToken.transferFrom - 'to' address must be specified");
+    require(amount <= selfBalances[from], "Error:EtherToken.transferFrom - Amount exceeds available balance");
+    require(amount <= selfAllowed[from][msg.sender], "Error.EtherToken.transferFrom - Amount exceeds allowed amount");
 
     selfBalances[from] = selfBalances[from].sub(amount);
     selfBalances[to] = selfBalances[to].add(amount);
     selfAllowed[from][msg.sender] = selfAllowed[from][msg.sender].sub(amount);
     emit TransferEvent(from, to, amount);
+    return true;
   }
 
   /**

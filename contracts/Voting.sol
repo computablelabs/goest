@@ -87,7 +87,7 @@ contract Voting {
   @param quorum the current % of 100 majority that this candidate needs to pass
   */
   function didPass(bytes32 hash, uint256 quorum) public view returns (bool) {
-    require(isCandidate(hash) == true, "Error:Voting.didPass - Candidate does not exist");
+    require(isCandidate(hash), "Error:Voting.didPass - Candidate does not exist");
     require(selfCandidates[hash].voteBy < block.timestamp, "Error:Voting.pass - Polling must be closed for this candidate");
     require(selfCouncilKeys.length > 0, "Error:Voting.didPass - No council members");
 
@@ -101,7 +101,7 @@ contract Voting {
   }
 
   function didVote(bytes32 hash, address member) public view returns(bool) {
-    require(isCandidate(hash) == true, "Error:Voting.didVote - Candidate does not exist");
+    require(isCandidate(hash), "Error:Voting.didVote - Candidate does not exist");
 
     // return selfCandidates[hash].voted[member] == true;
     for (uint256 i=0; i < selfCandidates[hash].voted.length; i++) {
@@ -166,7 +166,7 @@ contract Voting {
 
   function pollClosed(bytes32 hash) external view returns (bool) {
     // NOTE: we _are_ checking existance here as otherwise result might be surprising
-    require(isCandidate(hash) == true, "Error:Voting.pollClosed - Candidate does not exist");
+    require(isCandidate(hash), "Error:Voting.pollClosed - Candidate does not exist");
 
     return selfCandidates[hash].voteBy < block.timestamp;
   }
@@ -174,7 +174,7 @@ contract Voting {
   // not sold that we need to forbid the removing of a candidate with an 'active' voteBy,
   // as this is triggered internally, so not implementing for now...
   function removeCandidate(bytes32 hash) external hasPrivilege {
-    require(isCandidate(hash) == true, "Error:Voting.removeCandidate - Candidate does not exist");
+    require(isCandidate(hash), "Error:Voting.removeCandidate - Candidate does not exist");
 
     // first let's efficiently prune the array of keys
     uint256 deleted = selfCandidates[hash].index; // getting rid of this one
@@ -220,8 +220,8 @@ contract Voting {
   @return true if a success
   */
   function vote(bytes32 hash) external {
-    require(inCouncil(msg.sender) == true, "Error:Voting.vote - Sender must be council member");
-    require(isCandidate(hash) == true, "Error:Voting.vote - Candidate does not exist");
+    require(inCouncil(msg.sender), "Error:Voting.vote - Sender must be council member");
+    require(isCandidate(hash), "Error:Voting.vote - Candidate does not exist");
     require(selfCandidates[hash].voteBy > block.timestamp, "Error:Voting.vote - Polling is closed for this candidate");
     require(didVote(hash, msg.sender) != true, "Error:Voting.vote - Sender has already voted");
 

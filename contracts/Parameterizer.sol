@@ -126,9 +126,9 @@ contract Parameterizer {
     TODO revisit for possibly using an enum
   */
   function resolveReparam(bytes32 paramHash) public {
-    require(selfVoting.inCouncil(msg.sender) == true, "Error:Parameterizer.resolveReparam - Sender must be council member");
-    require(selfVoting.candidateIs(paramHash, REPARAM) == true, "Error:Parameterizer.resolveReparam - Must be a Reparam");
-    require(selfVoting.pollClosed(paramHash) == true, "Error:Parameterizer.resolveReparam - Polls for this candidate must be closed");
+    require(selfVoting.inCouncil(msg.sender), "Error:Parameterizer.resolveReparam - Sender must be council member");
+    require(selfVoting.candidateIs(paramHash, REPARAM), "Error:Parameterizer.resolveReparam - Must be a Reparam");
+    require(selfVoting.pollClosed(paramHash), "Error:Parameterizer.resolveReparam - Polls for this candidate must be closed");
 
     // Case: reparam accepted
     if(selfVoting.didPass(paramHash, selfQuorum)) {
@@ -166,7 +166,7 @@ contract Parameterizer {
     @param value the proposed value to set the param to be set
   */
   function reparameterize(uint8 param, uint256 value) external {
-    require(selfVoting.inCouncil(msg.sender) == true, "Error:Parameterizer.reparameterize - Sender must be council member");
+    require(selfVoting.inCouncil(msg.sender), "Error:Parameterizer.reparameterize - Sender must be council member");
 
     bytes32 paramHash = keccak256(abi.encodePacked(param, value));
 

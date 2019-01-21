@@ -1,5 +1,6 @@
 pragma solidity 0.5.2;
 
+import "./IERC20.sol";
 import "./SafeMath.sol";
 
 /*
@@ -8,7 +9,7 @@ import "./SafeMath.sol";
  * private owner variable, a public getter, and a modifier. If, in the future, we
  * need to provide more ownership functionality we will just add it here.
 */
-contract MarketToken {
+contract MarketToken is IERC20 {
   using SafeMath for uint256;
 
   uint256 private selfSupply;
@@ -43,9 +44,10 @@ contract MarketToken {
    * @param spender The address which will spend the funds.
    * @param amount The amount of tokens to be spent.
    */
-  function approve(address spender, uint256 amount) external {
+  function approve(address spender, uint256 amount) external returns (bool) {
     selfAllowed[msg.sender][spender] = amount;
     emit ApprovalEvent(msg.sender, spender, amount);
+    return true;
   }
 
   /**
@@ -62,7 +64,7 @@ contract MarketToken {
    * @param amount The amount of token to be burned.
    */
   function burn(uint256 amount) external hasPrivilege {
-    require(amount <= selfBalances[msg.sender], "Error:NetworkToken.burn - Amount exceeds available balance");
+    require(amount <= selfBalances[msg.sender], "Error:MarketToken.burn - Amount exceeds available balance");
     // no need to require amout <= supply, since that would imply the
     // sender's balance is greater than the supply, which *should* be an assertion failure
 
@@ -173,13 +175,14 @@ contract MarketToken {
   * @param to The address to transfer to.
   * @param amount The amount to be transferred.
   */
-  function transfer(address to, uint256 amount) external {
-    require(to != address(0), "Error:Basic.transfer - An address must be specified");
-    require(amount <= selfBalances[msg.sender], "Error:Basic.transfer - Amount exceeds the balance of msg.sender");
+  function transfer(address to, uint256 amount) external returns (bool) {
+    require(to != address(0), "Error:MarketToken.transfer - An address must be specified");
+    require(amount <= selfBalances[msg.sender], "Error:MarketToken.transfer - Amount exceeds the balance of msg.sender");
 
     selfBalances[msg.sender] = selfBalances[msg.sender].sub(amount);
     selfBalances[to] = selfBalances[to].add(amount);
     emit TransferEvent(msg.sender, to, amount);
+    return true;
   }
 
   /**
@@ -188,15 +191,16 @@ contract MarketToken {
    * @param to address The address which you want to transfer to
    * @param amount uint256 the amount of tokens to be transferred
    */
-  function transferFrom(address from, address to, uint256 amount) external {
-    require(to != address(0), "Error:Standard.transferFrom - 'to' address must be specified");
-    require(amount <= selfBalances[from], "Error:Standard.transferFrom - Amount exceeds available balance");
-    require(amount <= selfAllowed[from][msg.sender], "Error.Standard.transferFrom - Amount exceeds allowed amount");
+  function transferFrom(address from, address to, uint256 amount) external returns (bool) {
+    require(to != address(0), "Error:MarketToken.transferFrom - 'to' address must be specified");
+    require(amount <= selfBalances[from], "Error:MarketToken.transferFrom - Amount exceeds available balance");
+    require(amount <= selfAllowed[from][msg.sender], "Error.MarketToken.transferFrom - Amount exceeds allowed amount");
 
     selfBalances[from] = selfBalances[from].sub(amount);
     selfBalances[to] = selfBalances[to].add(amount);
     selfAllowed[from][msg.sender] = selfAllowed[from][msg.sender].sub(amount);
     emit TransferEvent(from, to, amount);
+    return true;
   }
 
   event ApprovalEvent(address indexed holder, address indexed spender, uint256 amount);
