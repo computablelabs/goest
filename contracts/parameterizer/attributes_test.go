@@ -16,8 +16,8 @@ func TestGetChallengeStake(t *testing.T) {
 func TestGetConversionRate(t *testing.T) {
 	rate, _ := deployed.ParameterizerContract.GetConversionRate(nil)
 
-	if rate.Cmp(big.NewInt(ONE_WEI*0.1)) != 0 {
-		t.Fatalf("Expected conversionRate to be 10**17, got: %v", rate)
+	if rate.Cmp(big.NewInt(ONE_GWEI)) != 0 {
+		t.Fatalf("Expected conversionRate to be 10**9, got: %v", rate)
 	}
 }
 

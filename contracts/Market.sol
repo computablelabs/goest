@@ -50,9 +50,9 @@ contract Market {
   // running total of invested ether token
   uint256 private selfInvested;
 
-  MarketToken private selfMarketToken;
   // though the ether token exposes more than the erc20 interface, the market only needs the latter
   IERC20 private selfEtherToken;
+  MarketToken private selfMarketToken;
   Parameterizer private selfParameterizer;
   Voting private selfVoting;
   // will be the market factory
@@ -146,7 +146,7 @@ contract Market {
   */
   function depositToListing(bytes32 listingHash, uint256 amount) external {
     // Listing storage listing = selfListings[listingHash];
-    require(isListing(listingHash) == true, "Error:Market.depositToListing - Listing does not exist");
+    require(isListing(listingHash), "Error:Market.depositToListing - Listing does not exist");
 
     // TODO any need to restrict deposit to owner? I don't think so atm
     // require(selfListings[listingHash].owner == msg.sender, "Error:Market.depositToListing - Must be listing owner");
@@ -171,7 +171,7 @@ contract Market {
   */
   function exit(bytes32 listingHash) external {
     require(selfListings[listingHash].owner == msg.sender, "Error:Market.exit - Must be listing owner");
-    require(isListed(listingHash) == true, "Error:Market.exit - Must be listed");
+    require(isListed(listingHash), "Error:Market.exit - Must be listed");
     // Cannot exit during ongoing challenge
     require(selfVoting.isCandidate(listingHash) != true, "Error:Market.exit - Cannot exit during a challenge");
 
@@ -201,7 +201,8 @@ contract Market {
     uint256 slopeD = selfParameterizer.getConversionSlopeDenominator();
     uint256 slopeN = selfParameterizer.getConversionSlopeNumerator();
     uint256 reserve = selfEtherToken.balanceOf(address(this));
-    return rate.add(slopeN.mul(reserve).div(slopeD));
+    // the 1e9 multiplication operation expands the return from an amt in gwei to one in wei
+    return rate.add(slopeN.mul(reserve).div(slopeD.mul(1e9)));
   }
 
   function getInvestor(address addr) external view returns (uint256, uint256) {
@@ -249,28 +250,24 @@ contract Market {
     // amount must be >= the investment price
     uint256 price = getInvestmentPrice();
     require(offered >= price, "Error:Market.invest - Amount offered must be greater than or equal to current investment price");
-    // sender could have invest more than the price, but we will only use evenly divisable numbers as we cannot mint fractional tokens
-    uint256 remainder = offered % price;
-    // regardless of price multiples, any remainder will be unused
-    uint256 taken = offered.sub(remainder);
     // move those used tokens from investor to the reserve. NOTE this also subtracts from ether token allowance[sender][market]
-    selfEtherToken.transferFrom(msg.sender, address(this), taken);
-    // we mint amount taken / investment price. TODO audit
-    uint256 mint = taken.div(price);
+    selfEtherToken.transferFrom(msg.sender, address(this), offered);
+    // we mint `(offered/price) * 1e18`
+    uint256 minted = (offered.div(price)).mul(1e9);
     // NOTE this is, at origin, owned by the market
-    selfMarketToken.mint(mint);
+    selfMarketToken.mint(minted);
     // now we can transfer those minted market tokens to the investor
-    selfMarketToken.transfer(msg.sender, mint);
+    selfMarketToken.transfer(msg.sender, minted);
     // sender is an investor now (if not already)
-    if(isInvestor(msg.sender) == true) {
-      selfInvestors[msg.sender].invested = selfInvestors[msg.sender].invested.add(taken);
-      selfInvestors[msg.sender].minted = selfInvestors[msg.sender].minted.add(mint);
+    if(isInvestor(msg.sender)) {
+      selfInvestors[msg.sender].invested = selfInvestors[msg.sender].invested.add(offered);
+      selfInvestors[msg.sender].minted = selfInvestors[msg.sender].minted.add(minted);
       // TODO check here for council membership when changing to threshold rules...
     } else {
       Investor storage i = selfInvestors[msg.sender];
       // record what we took and gave - NOTE no need to .add here
-      i.invested = taken;
-      i.minted = mint;
+      i.invested = offered;
+      i.minted = minted;
       // address onto the end of the investor keys array, index stored in the struct
       i.index = selfInvestorKeys.push(msg.sender) - 1;
       // currently any new investor is a council member, change when switching to threshold rules TODO
@@ -278,14 +275,9 @@ contract Market {
     }
 
     // the total invested in the market is bumped
-    selfInvested = selfInvested.add(taken);
+    selfInvested = selfInvested.add(offered);
 
-    emit InvestedEvent(
-      msg.sender,
-      offered,
-      taken,
-      mint
-    );
+    emit InvestedEvent(msg.sender, offered, minted);
   }
 
   function isInvestor(address addr) public view returns (bool) {
@@ -370,7 +362,7 @@ contract Market {
   */
   function removeListing(bytes32 listingHash) private {
     // must be a listing, but not necessarily listed
-    require(isListing(listingHash) == true, "Error:Market.removeListing - Must be a listing");
+    require(isListing(listingHash), "Error:Market.removeListing - Must be a listing");
 
     // Transfers any remaining balance back to the owner and burns any minted tokens
     if (selfListings[listingHash].supply > 0) {
@@ -406,15 +398,15 @@ contract Market {
     @param listingHash The listingHash representing the applicant in question
   */
   function resolveApplication(bytes32 listingHash) public {
-    require(selfVoting.inCouncil(msg.sender) == true, "Error:Market.resolveApplication - Sender must be council member");
+    require(selfVoting.inCouncil(msg.sender), "Error:Market.resolveApplication - Sender must be council member");
     // we assure it's not a listing already, there is a candidate, and voting has concluded
     require(selfVoting.candidateIs(listingHash, APPLICATION) == true, "Error:Market.resolveApplication - Must be an application");
     // the above and below remove the need to use isListing
     require(selfListings[listingHash].listed != true, "Error:Market.resolveApplication - Already listed");
-    require(selfVoting.pollClosed(listingHash) == true, "Error:Market.resolveApplication - Polls for this candidate must be closed");
+    require(selfVoting.pollClosed(listingHash), "Error:Market.resolveApplication - Polls for this candidate must be closed");
 
     // Case: listing accepted
-    if (selfVoting.didPass(listingHash, selfParameterizer.getQuorum()) == true) {
+    if (selfVoting.didPass(listingHash, selfParameterizer.getQuorum())) {
       selfListings[listingHash].listed = true;
       // NOTE the market acts as a bank for the minted tokens as well (same as deposits)
       uint256 amount = selfParameterizer.getListReward();
@@ -448,10 +440,10 @@ contract Market {
     @return true if succeeded
   */
   function resolveChallenge(bytes32 listingHash) public {
-    require(selfVoting.inCouncil(msg.sender) == true, "Error:Market.resolveChallenge - Sender must be council member");
+    require(selfVoting.inCouncil(msg.sender), "Error:Market.resolveChallenge - Sender must be council member");
     // dont operate on non challenges. TODO save the bytes arrays for kinds as CONST?
-    require(selfVoting.candidateIs(listingHash, CHALLENGE) == true, "Error:Market.resolveChallenge - Must be a challenge");
-    require(selfVoting.pollClosed(listingHash) == true, "Error:Market.resolveChallenge - Polls for this candidate must be closed");
+    require(selfVoting.candidateIs(listingHash, CHALLENGE), "Error:Market.resolveChallenge - Must be a challenge");
+    require(selfVoting.pollClosed(listingHash), "Error:Market.resolveChallenge - Polls for this candidate must be closed");
     // somebody gets a prize...
     uint256 stake = selfParameterizer.getChallengeStake();
 
@@ -491,7 +483,7 @@ contract Market {
     @param amount The number of Market tokens to withdraw from the supply (must be <= (supply - minted)).
   */
   function withdrawFromListing(bytes32 listingHash, uint256 amount) external {
-    require(isListing(listingHash) == true, "Error:Market.withdrawFromListing - Listing does not exist");
+    require(isListing(listingHash), "Error:Market.withdrawFromListing - Listing does not exist");
     require(selfListings[listingHash].owner == msg.sender, "Error:Market.withdraw - Must be listing owner");
     // can't outright withdraw more than the supply
     require(amount <= selfListings[listingHash].supply, "Error:Market.withdraw - amount must be less than or equal to the listing supply");
@@ -513,7 +505,7 @@ contract Market {
   event ChallengedEvent(bytes32 indexed listingHash, address indexed challenger);
   event ChallengeFailedEvent(bytes32 indexed listingHash, address indexed challenger, uint256 reward);
   event ChallengeSucceededEvent(bytes32 indexed listingHash, address indexed challenger, uint256 reward);
-  event InvestedEvent(address indexed investor, uint256 offered, uint256 taken, uint256 minted);
+  event InvestedEvent(address indexed investor, uint256 offered, uint256 minted);
   event ListedEvent(bytes32 indexed listingHash, address indexed owner, uint256 reward, uint256 supply);
   event ListingDepositEvent(bytes32 indexed listingHash, address indexed owner, uint256 added, uint256 supply, uint256 rewards);
   event ListingDeletedEvent(bytes32 indexed listingHash);
