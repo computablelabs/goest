@@ -201,7 +201,8 @@ contract Market {
     uint256 slopeD = selfParameterizer.getConversionSlopeDenominator();
     uint256 slopeN = selfParameterizer.getConversionSlopeNumerator();
     uint256 reserve = selfEtherToken.balanceOf(address(this));
-    return rate.add(slopeN.mul(reserve).div(slopeD));
+    // the 1e9 multiplication operation expands the return from an amt in gwei to one in wei
+    return rate.add(slopeN.mul(reserve).div(slopeD.mul(1e9)));
   }
 
   function getInvestor(address addr) external view returns (uint256, uint256) {
@@ -252,7 +253,7 @@ contract Market {
     // move those used tokens from investor to the reserve. NOTE this also subtracts from ether token allowance[sender][market]
     selfEtherToken.transferFrom(msg.sender, address(this), offered);
     // we mint `(offered/price) * 1e18`
-    uint256 minted = (offered.div(price)).mul(1e18);
+    uint256 minted = (offered.div(price)).mul(1e9);
     // NOTE this is, at origin, owned by the market
     selfMarketToken.mint(minted);
     // now we can transfer those minted market tokens to the investor

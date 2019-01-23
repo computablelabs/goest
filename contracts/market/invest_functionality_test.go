@@ -116,8 +116,8 @@ func TestInvest(t *testing.T) {
 		t.Fatalf("Expected %v to be %v", invested, price)
 	}
 
-	// if offering the price, you'll always get 1 token in wei
-	if minted.Cmp(big.NewInt(ONE_WEI)) != 0 {
+	// if offering the price, you'll always get 1 gwei worth of market token
+	if minted.Cmp(big.NewInt(ONE_GWEI)) != 0 {
 		t.Fatalf("Expected %v to be one token in wei", minted)
 	}
 }
