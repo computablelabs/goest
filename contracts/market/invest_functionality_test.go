@@ -78,6 +78,8 @@ func TestInvest(t *testing.T) {
 		t.Fatalf("Expected isInvestor to be false, got: %v", isInvestor)
 	}
 
+	// snapshot this user's market token bal as investing will increase by what was minted
+	bal, _ := deployed.MarketTokenContract.BalanceOf(nil, context.AuthMember3.From)
 	// here we will just offer the suggested price
 	price, _ := deployed.MarketContract.GetInvestmentPrice(nil)
 	// t.Logf("Investment price: %v", price)
@@ -109,15 +111,19 @@ func TestInvest(t *testing.T) {
 		t.Fatalf("Expected inCouncil to be true, got: %v", inCouncilNow)
 	}
 
-	// inspect the investor
-	invested, minted, _ := deployed.MarketContract.GetInvestor(nil, context.AuthMember3.From)
+	// inspect the investment
+	invested, _ := deployed.MarketContract.GetInvestment(nil, context.AuthMember3.From)
 
 	if invested.Cmp(price) != 0 {
 		t.Fatalf("Expected %v to be %v", invested, price)
 	}
 
 	// if offering the price, you'll always get 1 gwei worth of market token
-	if minted.Cmp(big.NewInt(ONE_GWEI)) != 0 {
-		t.Fatalf("Expected %v to be one token in wei", minted)
+	// this will be reflected in the market token balance for this investor
+	newBal, _ := deployed.MarketTokenContract.BalanceOf(nil, context.AuthMember3.From)
+	expectedBal := bal.Add(bal, price) // this is true in a market that had no prior reserve (like this spec)
+
+	if bal.Cmp(expectedBal) != 0 {
+		t.Fatalf("Expected %v to be %v", newBal, expectedBal)
 	}
 }

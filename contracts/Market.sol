@@ -29,7 +29,6 @@ contract Market {
   struct Investor {
     uint256 index; // pointer to the location of this investor's address in the unordered keys array
     uint256 invested; // cumulative total of investment in this market
-    uint256 minted; // cumulative total of minted market tokens from investing
   }
 
   // Maps listingHash to associated challenge data
@@ -165,6 +164,49 @@ contract Market {
   }
 
   /**
+    @dev Allows an investor to exit the market. Burning any market tokens and
+    withdrawing their share of the reserve
+  */
+  function divest() external {
+    require(isInvestor(msg.sender), "Error:Market.divest - Must be an investor");
+    // this investor also may not have an active challenge (or anything else that would stake or freeze tokens)
+    bool isChallenger;
+    // use the fact that challenges are candidates, and that there are likely a small number of them
+    bytes32[] memory candidates = selfVoting.getCandidates();
+
+    for(uint256 i=0; i < candidates.length; i++) {
+      // inspect the challenge associated with this candidate (if present) and note the challenger
+      if(selfChallenges[candidates[i]].challenger == msg.sender) {
+        isChallenger = true;
+        break;
+      }
+    }
+
+    require(isChallenger != true, "Error:Market.divest - Must not be the challenger in an active challenge");
+
+    uint256 reserve = selfEtherToken.balanceOf(address(this)); // ether token balance owned by the market
+    uint256 totalSupply = selfMarketToken.totalSupply(); // total amount of market tokens
+    uint256 balance = selfMarketToken.balanceOf(msg.sender); // this user's market token balance
+
+    // before we transfer any reserve amount to the user, burn their market tokens and remove any allowance
+    selfMarketToken.burnAll(msg.sender);
+    // ...and remove this investor
+    uint256 deleted = selfInvestors[msg.sender].index; // getting removed
+    // TODO possibly check if the investor _is_ the last one and skip this
+    address moved = selfInvestorKeys[selfInvestorKeys.length - 1]; // moving to replace the deleted.
+    selfInvestorKeys[deleted] = moved; // target is now overwritten
+    selfInvestorKeys.length--; // our unordered list is now one shorter
+    selfInvestors[moved].index = deleted; // adjust the moved struct's index to that of the one it replaced
+    delete selfInvestors[msg.sender];
+
+    // transfer according to the sell curve
+    uint256 result = balance.mul(reserve).div(totalSupply);
+    selfEtherToken.transfer(msg.sender, result);
+
+    emit DivestedEvent(msg.sender, result);
+  }
+
+  /**
     @dev Allows the owner of a listingHash to remove the listing
     Returns all tokens to the owner of the listingHash. Burns any minted and/or rewards tokens.
     @param listingHash A listingHash msg.sender is the owner of.
@@ -205,11 +247,12 @@ contract Market {
     return rate.add(slopeN.mul(reserve).div(slopeD.mul(1e9)));
   }
 
-  function getInvestor(address addr) external view returns (uint256, uint256) {
-    return (
-      selfInvestors[addr].invested,
-      selfInvestors[addr].minted
-    );
+  /*
+     @dev Returns the amount of Ether token a given investor has invested in this market
+     @param addr The address of a possible investor
+  */
+  function getInvestment(address addr) external view returns (uint256) {
+    return selfInvestors[addr].invested;
   }
 
   function getListing(bytes32 listingHash) external view returns (bool, address, uint256, bytes32, uint256) {
@@ -243,7 +286,7 @@ contract Market {
   /**
     @dev Given ether tokens as entry, mint and return market tokens to the
     caller as dictated by the pricing curve.
-    @param offered Number of ether tokens offered for investment
+    @param offered Amount of ether token wei offered, in exchange for market token gwei for investment
   */
   function invest(uint256 offered) external {
     require(isListingOwner(msg.sender) != true, "Error:Market.invest - Cannot invest while owning an active listing");
@@ -252,7 +295,7 @@ contract Market {
     require(offered >= price, "Error:Market.invest - Amount offered must be greater than or equal to current investment price");
     // move those used tokens from investor to the reserve. NOTE this also subtracts from ether token allowance[sender][market]
     selfEtherToken.transferFrom(msg.sender, address(this), offered);
-    // we mint `(offered/price) * 1e18`
+    // this is simply expanding the ratio into an amount of MarketToken Gwei purched by the offered EtherToken wei
     uint256 minted = (offered.div(price)).mul(1e9);
     // NOTE this is, at origin, owned by the market
     selfMarketToken.mint(minted);
@@ -261,13 +304,11 @@ contract Market {
     // sender is an investor now (if not already)
     if(isInvestor(msg.sender)) {
       selfInvestors[msg.sender].invested = selfInvestors[msg.sender].invested.add(offered);
-      selfInvestors[msg.sender].minted = selfInvestors[msg.sender].minted.add(minted);
       // TODO check here for council membership when changing to threshold rules...
     } else {
       Investor storage i = selfInvestors[msg.sender];
       // record what we took and gave - NOTE no need to .add here
       i.invested = offered;
-      i.minted = minted;
       // address onto the end of the investor keys array, index stored in the struct
       i.index = selfInvestorKeys.push(msg.sender) - 1;
       // currently any new investor is a council member, change when switching to threshold rules TODO
@@ -505,6 +546,7 @@ contract Market {
   event ChallengedEvent(bytes32 indexed listingHash, address indexed challenger);
   event ChallengeFailedEvent(bytes32 indexed listingHash, address indexed challenger, uint256 reward);
   event ChallengeSucceededEvent(bytes32 indexed listingHash, address indexed challenger, uint256 reward);
+  event DivestedEvent(address indexed investor, uint256 transferred);
   event InvestedEvent(address indexed investor, uint256 offered, uint256 minted);
   event ListedEvent(bytes32 indexed listingHash, address indexed owner, uint256 reward, uint256 supply);
   event ListingDepositEvent(bytes32 indexed listingHash, address indexed owner, uint256 added, uint256 supply, uint256 rewards);
