@@ -198,6 +198,8 @@ contract Market {
     selfInvestorKeys.length--; // our unordered list is now one shorter
     selfInvestors[moved].index = deleted; // adjust the moved struct's index to that of the one it replaced
     delete selfInvestors[msg.sender];
+    // remove from council (NOTE: voting will check if sender is in council or not)
+    selfVoting.removeFromCouncil(msg.sender);
 
     // transfer according to the sell curve
     uint256 result = balance.mul(reserve).div(totalSupply);

@@ -103,7 +103,6 @@ contract Voting {
   function didVote(bytes32 hash, address member) public view returns(bool) {
     require(isCandidate(hash), "Error:Voting.didVote - Candidate does not exist");
 
-    // return selfCandidates[hash].voted[member] == true;
     for (uint256 i=0; i < selfCandidates[hash].voted.length; i++) {
       // sol says we can directly compare addresses
       if (selfCandidates[hash].voted[i] == member) {
@@ -192,7 +191,7 @@ contract Voting {
   }
 
   function removeFromCouncil(address member) external hasPrivilege {
-    if (inCouncil(member) == true) {
+    if (inCouncil(member)) {
       // first let's efficiently prune the array of keys
       uint256 deleted = selfCouncil[member]; // getting rid of this one
       address moved = selfCouncilKeys[selfCouncilKeys.length - 1]; // moving this one to where 'deleted' was
@@ -217,7 +216,6 @@ contract Voting {
   /**
   @notice Commits vote using hash of choice and secret salt to conceal vote until reveal
   @param hash bytes32 identifier associated with target listing or reparam
-  @return true if a success
   */
   function vote(bytes32 hash) external {
     require(inCouncil(msg.sender), "Error:Voting.vote - Sender must be council member");
