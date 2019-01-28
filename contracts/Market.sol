@@ -168,8 +168,9 @@ contract Market {
     withdrawing their share of the reserve
   */
   function divest() external {
-    require(isInvestor(msg.sender), "Error:Market.divest - Must be an investor");
-    // this investor also may not have an active challenge (or anything else that would stake or freeze tokens)
+    uint256 balance = selfMarketToken.balanceOf(msg.sender);
+    require(balance > 0, "Error:Market.divest - Must have a Market Token balance");
+    // this stakeholder also may not have an active challenge (or anything else that would stake or freeze tokens)
     bool isChallenger;
     // use the fact that challenges are candidates, and that there are likely a small number of them
     bytes32[] memory candidates = selfVoting.getCandidates();
@@ -186,20 +187,23 @@ contract Market {
 
     uint256 reserve = selfEtherToken.balanceOf(address(this)); // ether token balance owned by the market
     uint256 totalSupply = selfMarketToken.totalSupply(); // total amount of market tokens
-    uint256 balance = selfMarketToken.balanceOf(msg.sender); // this user's market token balance
 
     // before we transfer any reserve amount to the user, burn their market tokens and remove any allowance
+    // TODO: Are there corner cases for stakeholders with multiple listings?
     selfMarketToken.burnAll(msg.sender);
-    // ...and remove this investor
-    uint256 deleted = selfInvestors[msg.sender].index; // getting removed
-    // TODO possibly check if the investor _is_ the last one and skip this
-    address moved = selfInvestorKeys[selfInvestorKeys.length - 1]; // moving to replace the deleted.
-    selfInvestorKeys[deleted] = moved; // target is now overwritten
-    selfInvestorKeys.length--; // our unordered list is now one shorter
-    selfInvestors[moved].index = deleted; // adjust the moved struct's index to that of the one it replaced
-    delete selfInvestors[msg.sender];
-    // remove from council (NOTE: voting will check if sender is in council or not)
-    selfVoting.removeFromCouncil(msg.sender);
+
+    // ...possibly remove investor
+    if(isInvestor(msg.sender)) {
+      uint256 deleted = selfInvestors[msg.sender].index; // getting removed
+      // TODO possibly check if the investor _is_ the last one and skip this
+      address moved = selfInvestorKeys[selfInvestorKeys.length - 1]; // moving to replace the deleted.
+      selfInvestorKeys[deleted] = moved; // target is now overwritten
+      selfInvestorKeys.length--; // our unordered list is now one shorter
+      selfInvestors[moved].index = deleted; // adjust the moved struct's index to that of the one it replaced
+      delete selfInvestors[msg.sender];
+      // remove from council (NOTE: voting will check if sender is in council or not)
+      selfVoting.removeFromCouncil(msg.sender);
+    }
 
     // transfer according to the sell curve
     uint256 result = balance.mul(reserve).div(totalSupply);
@@ -362,6 +366,8 @@ contract Market {
     @param amount The number of (market) tokens a user wants to bank in the listing (optional)
   */
   function list(string calldata listing, bytes32 dataHash, uint256 amount) external {
+    require(isInvestor(msg.sender) != true, "Error:Market.list - Investors cannot be listing owners");
+
     bytes32 listingHash = keccak256(bytes(listing));
 
     require(selfVoting.isCandidate(listingHash) != true, "Error:Market.apply - Already a candidate");
