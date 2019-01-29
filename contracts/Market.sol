@@ -168,9 +168,7 @@ contract Market {
     withdrawing their share of the reserve
   */
   function divest() external {
-    uint256 balance = selfMarketToken.balanceOf(msg.sender);
-    require(balance > 0, "Error:Market.divest - Must have a Market Token balance");
-    // this stakeholder also may not have an active challenge (or anything else that would stake or freeze tokens)
+    // this stakeholder may not have an active challenge (or anything else that would stake or freeze tokens)
     bool isChallenger;
     // use the fact that challenges are candidates, and that there are likely a small number of them
     bytes32[] memory candidates = selfVoting.getCandidates();
@@ -185,8 +183,9 @@ contract Market {
 
     require(isChallenger != true, "Error:Market.divest - Must not be the challenger in an active challenge");
 
-    uint256 reserve = selfEtherToken.balanceOf(address(this)); // ether token balance owned by the market
-    uint256 totalSupply = selfMarketToken.totalSupply(); // total amount of market tokens
+    uint256 divestment = getDivestmentProceeds(msg.sender);
+    // TODO implement any sort of guard-rail?
+    // require(divestment > 0, "Error:Market.divest - You ain't gettin nuthin...");
 
     // before we transfer any reserve amount to the user, burn their market tokens and remove any allowance
     // TODO: Are there corner cases for stakeholders with multiple listings?
@@ -205,11 +204,8 @@ contract Market {
       selfVoting.removeFromCouncil(msg.sender);
     }
 
-    // transfer according to the sell curve
-    uint256 result = balance.mul(reserve).div(totalSupply);
-    selfEtherToken.transfer(msg.sender, result);
-
-    emit DivestedEvent(msg.sender, result);
+    selfEtherToken.transfer(msg.sender, divestment);
+    emit DivestedEvent(msg.sender, divestment);
   }
 
   /**
@@ -233,6 +229,16 @@ contract Market {
       selfChallenges[listingHash].fromChallengeeSupply,
       selfChallenges[listingHash].fromChallengeeRewards
     );
+  }
+
+  function getDivestmentProceeds(address addr) public view returns (uint256) {
+    require(addr != address(0), "Error:Market.getDivestmentProceeds - Must specify stakeholder address");
+
+    uint256 balance = selfMarketToken.balanceOf(addr);
+    uint256 reserve = selfEtherToken.balanceOf(address(this)); // ether token balance owned by the market
+    uint256 totalSupply = selfMarketToken.totalSupply(); // total amount of market tokens
+
+    return balance.mul(reserve).div(totalSupply);
   }
 
   function getInvested() external view returns (uint256) {
