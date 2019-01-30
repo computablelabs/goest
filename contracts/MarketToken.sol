@@ -73,6 +73,17 @@ contract MarketToken is IERC20 {
     emit BurnEvent(msg.sender, amount);
   }
 
+  function burnAll(address holder) external hasPrivilege {
+    require(holder != address(0), "Error:MarketToken.burnFrom - address must be specified");
+
+    uint256 balance = selfBalances[holder];
+    selfSupply = selfSupply.sub(balance);
+    delete selfBalances[holder];
+    // remove any allowance that may have been made for the market contract by the holder
+    delete selfAllowed[holder][msg.sender];
+    emit BurnEvent(holder, balance);
+  }
+
   /**
    * If minting functionality has been explicitly stopped, we don't mint any longer
    */
@@ -103,6 +114,14 @@ contract MarketToken is IERC20 {
   }
 
   /**
+   * Only the market contract has mint and burn permissions
+   */
+  modifier hasPrivilege() {
+    require(msg.sender == selfMarketAddress, "Error:MarketToken.hasPrivilege - Caller must be a privileged  contract");
+    _;
+  }
+
+  /**
    * Increase the amount of tokens that an owner allowed to a spender.
    * approve should be called when allowed[spender] == 0. To increment
    * allowed value is better to use this function to avoid 2 calls (and wait until
@@ -115,14 +134,6 @@ contract MarketToken is IERC20 {
     selfAllowed[msg.sender][spender] = (
       selfAllowed[msg.sender][spender].add(amount));
     emit ApprovalEvent(msg.sender, spender, selfAllowed[msg.sender][spender]);
-  }
-
-  /**
-   * Only the market contract has mint and burn permissions
-   */
-  modifier hasPrivilege() {
-    require(msg.sender == selfMarketAddress, "Error:MarketToken.hasPrivilege - Caller must be a privileged  contract");
-    _;
   }
 
   modifier isOwner() {
