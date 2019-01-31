@@ -11,6 +11,8 @@
     "compile:voting": "~/go/bin/abigen -sol contracts/Voting.sol -pkg voting -out contracts/voting/voting.go",
     "compile:parameterizer": "~/go/bin/abigen -sol contracts/Parameterizer.sol -pkg parameterizer -out contracts/parameterizer/parameterizer.go",
     "compile:market": "~/go/bin/abigen -sol contracts/Market.sol -pkg market -out contracts/market/market.go",
+    "compile:vyper:experiment": "vyper -f abi contracts/Experiment.v.py > contracts/experiment/experiment.abi && vyper -f bytecode contracts/Experiment.v.py > contracts/experiment/experiment.bin",
+    "compile:experiment": "~/go/bin/abigen -abi contracts/experiment/experiment.abi -pkg experiment -out contracts/experiment/experiment.go -bin contracts/experiment/experiment.bin",
     "test": "go test -v ./..."
   },
   "repository": {
