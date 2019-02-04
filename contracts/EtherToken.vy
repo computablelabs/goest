@@ -144,6 +144,9 @@ def transferFrom(source: address, to: address, amount: wei_value) -> bool:
 @public
 def withdraw(amount: wei_value):
   """
+  @notice Allow msg.sender to withdraw an amount of ETH
+  @dev The Vyper builtin `send` is used here
+  @param amount An amount of ETH in wei to be withdrawn
   """
   self.balances[msg.sender] -= amount
   self.supply -= amount
