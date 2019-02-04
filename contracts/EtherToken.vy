@@ -1,5 +1,5 @@
 # @title Computable EtherToken
-# @notice Implementation of an ERC20 compatible token which is purchase with ETH at a 1:1 ratio
+# @notice Implementation of an ERC20 compatible token which is purchased with ETH at a 1:1 ratio
 # @dev 'source' used throughout in place of 'from'
 # @author Computable
 
