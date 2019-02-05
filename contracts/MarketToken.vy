@@ -1,21 +1,27 @@
-# @title Computable EtherToken
-# @notice Implementation of an ERC20 compatible token which is purchased with ETH at a 1:1 ratio
+# @title Computable MarketToken
+# @notice Implementation of an ERC20 compatible token which is both burnable and mintable
 # @author Computable
 
 Approval: event({owner: indexed(address), spender: indexed(address), amount: wei_value})
-Deposit: event({source: indexed(address), amount: wei_value})
+Burn: event({burner: indexed(address), amount: wei_value})
+Mint: event({to: indexed(address), amount: wei_value})
+MintStopped: event()
 Transfer: event({source: indexed(address), to: indexed(address), amount: wei_value})
-Withdraw: event({to: indexed(address), amount: wei_value})
 
 allowances: map(address, map(address, wei_value))
 balances: map(address, wei_value)
 decimals: public(uint256)
+factory_address: address
+market_address: address
+mintingStopped: public(bool)
 supply: wei_value
 
 @public
 def __init__(initial_account: address, initial_balance: wei_value):
-  self.balances[initial_account] = initial_balance
   self.decimals = 18
+  self.mintingStopped = False
+  self.balances[initial_account] = initial_balance
+  self.factory_address = msg.sender
   self.supply = initial_balance
   log.Transfer(ZERO_ADDRESS, initial_account, initial_balance)
 
@@ -57,6 +63,35 @@ def balanceOf(owner: address) -> wei_value:
   """
   return self.balances[owner]
 
+
+@public
+def burn(amount: wei_value):
+  """
+  @notice Burns the given amount of token wei
+  @dev We only allow the market contract to call burn
+  @param amount The amount to burn
+  """
+  assert msg.sender == self.market_address
+  self.balances[msg.sender] -= amount
+  self.supply -= amount
+  log.Burn(msg.sender, amount)
+
+
+@public
+def burnAll(owner: address):
+  """
+  @notice Burns all market token associated with an address
+  @dev We only allow the market contract to call burnAll
+  @param address The owner of the tokens being burnt
+  """
+  assert msg.sender == self.market_address
+  bal: wei_value = self.balances[owner]
+  self.supply -= bal
+  clear(self.balances[owner])
+  clear(self.allowances[owner][msg.sender])
+  log.Burn(owner, bal)
+
+
 @public
 def decreaseApproval(spender: address, amount: wei_value):
   """
@@ -70,19 +105,18 @@ def decreaseApproval(spender: address, amount: wei_value):
     self.allowances[msg.sender][spender] = 0
   else:
     self.allowances[msg.sender][spender] -= amount
-
   log.Approval(msg.sender, spender, self.allowances[msg.sender][spender])
 
 
 @public
-@payable
-def deposit():
+@constant
+def getPrivilegedAddresses() -> address:
   """
-  @notice Facilitate a user purchasing EtherToken with Eth at a 1:1 ratio
+  @notice return the address(es) of contracts that are recognized as being privileged
+  @dev For the Market Token, this is only the Market contract currently
+  @return The address(es)
   """
-  self.balances[msg.sender] += msg.value
-  self.supply += msg.value
-  log.Deposit(msg.sender, msg.value)
+  return self.market_address
 
 
 @public
@@ -94,6 +128,41 @@ def increaseApproval(spender: address, amount: wei_value):
   """
   self.allowances[msg.sender][spender] += amount
   log.Approval(msg.sender, spender, self.allowances[msg.sender][spender])
+
+
+@public
+def mint(amount: wei_value):
+  """
+  @notice Create new Market Token funds and add them to the Market Contract balance
+  @dev We only allow the Market Contract to call for minting, and only when not stopped
+  """
+  assert msg.sender == self.market_address
+  assert self.mintingStopped != True
+  self.supply += amount
+  self.balances[msg.sender] += amount
+  log.Mint(msg.sender, amount)
+
+
+@public
+def setPrivilegedContracts(market: address):
+  """
+  @notice We restrict some activities to only the Market Contract
+  @dev We only allow the factory to set the privileged address(es)
+  @param market The deployed address of the Market Contract
+  """
+  assert msg.sender == self.factory_address
+  # TODO we _could_ also only allow this to occur once
+  self.market_address = market
+
+
+@public
+def stopMinting():
+  """
+  @notice Forbid any further minting of Market Token funds
+  @dev We only allow the Market contract to call for minting to stop
+  """
+  self.mintingStopped = True
+  log.MintStopped()
 
 
 @public
@@ -138,17 +207,4 @@ def transferFrom(source: address, to: address, amount: wei_value) -> bool:
   self.allowances[source][msg.sender] -= amount
   log.Transfer(source, to, amount)
   return True
-
-
-@public
-def withdraw(amount: wei_value):
-  """
-  @notice Allow msg.sender to withdraw an amount of ETH
-  @dev The Vyper builtin `send` is used here
-  @param amount An amount of ETH in wei to be withdrawn
-  """
-  self.balances[msg.sender] -= amount
-  self.supply -= amount
-  send(msg.sender, amount)
-  log.Withdraw(msg.sender, amount)
 

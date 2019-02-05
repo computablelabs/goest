@@ -15,605 +15,19 @@ import (
 	"github.com/ethereum/go-ethereum/event"
 )
 
-// IERC20ABI is the input ABI used to generate the binding from.
-const IERC20ABI = "[{\"constant\":false,\"inputs\":[{\"name\":\"spender\",\"type\":\"address\"},{\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"approve\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"totalSupply\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"from\",\"type\":\"address\"},{\"name\":\"to\",\"type\":\"address\"},{\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"transferFrom\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"holder\",\"type\":\"address\"}],\"name\":\"balanceOf\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"to\",\"type\":\"address\"},{\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"transfer\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"holder\",\"type\":\"address\"},{\"name\":\"spender\",\"type\":\"address\"}],\"name\":\"allowance\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"from\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"to\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"TransferEvent\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"holder\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"spender\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"ApprovalEvent\",\"type\":\"event\"}]"
-
-// IERC20Bin is the compiled bytecode used for deploying new contracts.
-const IERC20Bin = `0x`
-
-// DeployIERC20 deploys a new Ethereum contract, binding an instance of IERC20 to it.
-func DeployIERC20(auth *bind.TransactOpts, backend bind.ContractBackend) (common.Address, *types.Transaction, *IERC20, error) {
-	parsed, err := abi.JSON(strings.NewReader(IERC20ABI))
-	if err != nil {
-		return common.Address{}, nil, nil, err
-	}
-	address, tx, contract, err := bind.DeployContract(auth, parsed, common.FromHex(IERC20Bin), backend)
-	if err != nil {
-		return common.Address{}, nil, nil, err
-	}
-	return address, tx, &IERC20{IERC20Caller: IERC20Caller{contract: contract}, IERC20Transactor: IERC20Transactor{contract: contract}, IERC20Filterer: IERC20Filterer{contract: contract}}, nil
-}
-
-// IERC20 is an auto generated Go binding around an Ethereum contract.
-type IERC20 struct {
-	IERC20Caller     // Read-only binding to the contract
-	IERC20Transactor // Write-only binding to the contract
-	IERC20Filterer   // Log filterer for contract events
-}
-
-// IERC20Caller is an auto generated read-only Go binding around an Ethereum contract.
-type IERC20Caller struct {
-	contract *bind.BoundContract // Generic contract wrapper for the low level calls
-}
-
-// IERC20Transactor is an auto generated write-only Go binding around an Ethereum contract.
-type IERC20Transactor struct {
-	contract *bind.BoundContract // Generic contract wrapper for the low level calls
-}
-
-// IERC20Filterer is an auto generated log filtering Go binding around an Ethereum contract events.
-type IERC20Filterer struct {
-	contract *bind.BoundContract // Generic contract wrapper for the low level calls
-}
-
-// IERC20Session is an auto generated Go binding around an Ethereum contract,
-// with pre-set call and transact options.
-type IERC20Session struct {
-	Contract     *IERC20           // Generic contract binding to set the session for
-	CallOpts     bind.CallOpts     // Call options to use throughout this session
-	TransactOpts bind.TransactOpts // Transaction auth options to use throughout this session
-}
-
-// IERC20CallerSession is an auto generated read-only Go binding around an Ethereum contract,
-// with pre-set call options.
-type IERC20CallerSession struct {
-	Contract *IERC20Caller // Generic contract caller binding to set the session for
-	CallOpts bind.CallOpts // Call options to use throughout this session
-}
-
-// IERC20TransactorSession is an auto generated write-only Go binding around an Ethereum contract,
-// with pre-set transact options.
-type IERC20TransactorSession struct {
-	Contract     *IERC20Transactor // Generic contract transactor binding to set the session for
-	TransactOpts bind.TransactOpts // Transaction auth options to use throughout this session
-}
-
-// IERC20Raw is an auto generated low-level Go binding around an Ethereum contract.
-type IERC20Raw struct {
-	Contract *IERC20 // Generic contract binding to access the raw methods on
-}
-
-// IERC20CallerRaw is an auto generated low-level read-only Go binding around an Ethereum contract.
-type IERC20CallerRaw struct {
-	Contract *IERC20Caller // Generic read-only contract binding to access the raw methods on
-}
-
-// IERC20TransactorRaw is an auto generated low-level write-only Go binding around an Ethereum contract.
-type IERC20TransactorRaw struct {
-	Contract *IERC20Transactor // Generic write-only contract binding to access the raw methods on
-}
-
-// NewIERC20 creates a new instance of IERC20, bound to a specific deployed contract.
-func NewIERC20(address common.Address, backend bind.ContractBackend) (*IERC20, error) {
-	contract, err := bindIERC20(address, backend, backend, backend)
-	if err != nil {
-		return nil, err
-	}
-	return &IERC20{IERC20Caller: IERC20Caller{contract: contract}, IERC20Transactor: IERC20Transactor{contract: contract}, IERC20Filterer: IERC20Filterer{contract: contract}}, nil
-}
-
-// NewIERC20Caller creates a new read-only instance of IERC20, bound to a specific deployed contract.
-func NewIERC20Caller(address common.Address, caller bind.ContractCaller) (*IERC20Caller, error) {
-	contract, err := bindIERC20(address, caller, nil, nil)
-	if err != nil {
-		return nil, err
-	}
-	return &IERC20Caller{contract: contract}, nil
-}
-
-// NewIERC20Transactor creates a new write-only instance of IERC20, bound to a specific deployed contract.
-func NewIERC20Transactor(address common.Address, transactor bind.ContractTransactor) (*IERC20Transactor, error) {
-	contract, err := bindIERC20(address, nil, transactor, nil)
-	if err != nil {
-		return nil, err
-	}
-	return &IERC20Transactor{contract: contract}, nil
-}
-
-// NewIERC20Filterer creates a new log filterer instance of IERC20, bound to a specific deployed contract.
-func NewIERC20Filterer(address common.Address, filterer bind.ContractFilterer) (*IERC20Filterer, error) {
-	contract, err := bindIERC20(address, nil, nil, filterer)
-	if err != nil {
-		return nil, err
-	}
-	return &IERC20Filterer{contract: contract}, nil
-}
-
-// bindIERC20 binds a generic wrapper to an already deployed contract.
-func bindIERC20(address common.Address, caller bind.ContractCaller, transactor bind.ContractTransactor, filterer bind.ContractFilterer) (*bind.BoundContract, error) {
-	parsed, err := abi.JSON(strings.NewReader(IERC20ABI))
-	if err != nil {
-		return nil, err
-	}
-	return bind.NewBoundContract(address, parsed, caller, transactor, filterer), nil
-}
-
-// Call invokes the (constant) contract method with params as input values and
-// sets the output to result. The result type might be a single field for simple
-// returns, a slice of interfaces for anonymous returns and a struct for named
-// returns.
-func (_IERC20 *IERC20Raw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
-	return _IERC20.Contract.IERC20Caller.contract.Call(opts, result, method, params...)
-}
-
-// Transfer initiates a plain transaction to move funds to the contract, calling
-// its default method if one is available.
-func (_IERC20 *IERC20Raw) Transfer(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _IERC20.Contract.IERC20Transactor.contract.Transfer(opts)
-}
-
-// Transact invokes the (paid) contract method with params as input values.
-func (_IERC20 *IERC20Raw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*types.Transaction, error) {
-	return _IERC20.Contract.IERC20Transactor.contract.Transact(opts, method, params...)
-}
-
-// Call invokes the (constant) contract method with params as input values and
-// sets the output to result. The result type might be a single field for simple
-// returns, a slice of interfaces for anonymous returns and a struct for named
-// returns.
-func (_IERC20 *IERC20CallerRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
-	return _IERC20.Contract.contract.Call(opts, result, method, params...)
-}
-
-// Transfer initiates a plain transaction to move funds to the contract, calling
-// its default method if one is available.
-func (_IERC20 *IERC20TransactorRaw) Transfer(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _IERC20.Contract.contract.Transfer(opts)
-}
-
-// Transact invokes the (paid) contract method with params as input values.
-func (_IERC20 *IERC20TransactorRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*types.Transaction, error) {
-	return _IERC20.Contract.contract.Transact(opts, method, params...)
-}
-
-// Allowance is a free data retrieval call binding the contract method 0xdd62ed3e.
-//
-// Solidity: function allowance(holder address, spender address) constant returns(uint256)
-func (_IERC20 *IERC20Caller) Allowance(opts *bind.CallOpts, holder common.Address, spender common.Address) (*big.Int, error) {
-	var (
-		ret0 = new(*big.Int)
-	)
-	out := ret0
-	err := _IERC20.contract.Call(opts, out, "allowance", holder, spender)
-	return *ret0, err
-}
-
-// Allowance is a free data retrieval call binding the contract method 0xdd62ed3e.
-//
-// Solidity: function allowance(holder address, spender address) constant returns(uint256)
-func (_IERC20 *IERC20Session) Allowance(holder common.Address, spender common.Address) (*big.Int, error) {
-	return _IERC20.Contract.Allowance(&_IERC20.CallOpts, holder, spender)
-}
-
-// Allowance is a free data retrieval call binding the contract method 0xdd62ed3e.
-//
-// Solidity: function allowance(holder address, spender address) constant returns(uint256)
-func (_IERC20 *IERC20CallerSession) Allowance(holder common.Address, spender common.Address) (*big.Int, error) {
-	return _IERC20.Contract.Allowance(&_IERC20.CallOpts, holder, spender)
-}
-
-// BalanceOf is a free data retrieval call binding the contract method 0x70a08231.
-//
-// Solidity: function balanceOf(holder address) constant returns(uint256)
-func (_IERC20 *IERC20Caller) BalanceOf(opts *bind.CallOpts, holder common.Address) (*big.Int, error) {
-	var (
-		ret0 = new(*big.Int)
-	)
-	out := ret0
-	err := _IERC20.contract.Call(opts, out, "balanceOf", holder)
-	return *ret0, err
-}
-
-// BalanceOf is a free data retrieval call binding the contract method 0x70a08231.
-//
-// Solidity: function balanceOf(holder address) constant returns(uint256)
-func (_IERC20 *IERC20Session) BalanceOf(holder common.Address) (*big.Int, error) {
-	return _IERC20.Contract.BalanceOf(&_IERC20.CallOpts, holder)
-}
-
-// BalanceOf is a free data retrieval call binding the contract method 0x70a08231.
-//
-// Solidity: function balanceOf(holder address) constant returns(uint256)
-func (_IERC20 *IERC20CallerSession) BalanceOf(holder common.Address) (*big.Int, error) {
-	return _IERC20.Contract.BalanceOf(&_IERC20.CallOpts, holder)
-}
-
-// TotalSupply is a free data retrieval call binding the contract method 0x18160ddd.
-//
-// Solidity: function totalSupply() constant returns(uint256)
-func (_IERC20 *IERC20Caller) TotalSupply(opts *bind.CallOpts) (*big.Int, error) {
-	var (
-		ret0 = new(*big.Int)
-	)
-	out := ret0
-	err := _IERC20.contract.Call(opts, out, "totalSupply")
-	return *ret0, err
-}
-
-// TotalSupply is a free data retrieval call binding the contract method 0x18160ddd.
-//
-// Solidity: function totalSupply() constant returns(uint256)
-func (_IERC20 *IERC20Session) TotalSupply() (*big.Int, error) {
-	return _IERC20.Contract.TotalSupply(&_IERC20.CallOpts)
-}
-
-// TotalSupply is a free data retrieval call binding the contract method 0x18160ddd.
-//
-// Solidity: function totalSupply() constant returns(uint256)
-func (_IERC20 *IERC20CallerSession) TotalSupply() (*big.Int, error) {
-	return _IERC20.Contract.TotalSupply(&_IERC20.CallOpts)
-}
-
-// Approve is a paid mutator transaction binding the contract method 0x095ea7b3.
-//
-// Solidity: function approve(spender address, value uint256) returns(bool)
-func (_IERC20 *IERC20Transactor) Approve(opts *bind.TransactOpts, spender common.Address, value *big.Int) (*types.Transaction, error) {
-	return _IERC20.contract.Transact(opts, "approve", spender, value)
-}
-
-// Approve is a paid mutator transaction binding the contract method 0x095ea7b3.
-//
-// Solidity: function approve(spender address, value uint256) returns(bool)
-func (_IERC20 *IERC20Session) Approve(spender common.Address, value *big.Int) (*types.Transaction, error) {
-	return _IERC20.Contract.Approve(&_IERC20.TransactOpts, spender, value)
-}
-
-// Approve is a paid mutator transaction binding the contract method 0x095ea7b3.
-//
-// Solidity: function approve(spender address, value uint256) returns(bool)
-func (_IERC20 *IERC20TransactorSession) Approve(spender common.Address, value *big.Int) (*types.Transaction, error) {
-	return _IERC20.Contract.Approve(&_IERC20.TransactOpts, spender, value)
-}
-
-// Transfer is a paid mutator transaction binding the contract method 0xa9059cbb.
-//
-// Solidity: function transfer(to address, value uint256) returns(bool)
-func (_IERC20 *IERC20Transactor) Transfer(opts *bind.TransactOpts, to common.Address, value *big.Int) (*types.Transaction, error) {
-	return _IERC20.contract.Transact(opts, "transfer", to, value)
-}
-
-// Transfer is a paid mutator transaction binding the contract method 0xa9059cbb.
-//
-// Solidity: function transfer(to address, value uint256) returns(bool)
-func (_IERC20 *IERC20Session) Transfer(to common.Address, value *big.Int) (*types.Transaction, error) {
-	return _IERC20.Contract.Transfer(&_IERC20.TransactOpts, to, value)
-}
-
-// Transfer is a paid mutator transaction binding the contract method 0xa9059cbb.
-//
-// Solidity: function transfer(to address, value uint256) returns(bool)
-func (_IERC20 *IERC20TransactorSession) Transfer(to common.Address, value *big.Int) (*types.Transaction, error) {
-	return _IERC20.Contract.Transfer(&_IERC20.TransactOpts, to, value)
-}
-
-// TransferFrom is a paid mutator transaction binding the contract method 0x23b872dd.
-//
-// Solidity: function transferFrom(from address, to address, value uint256) returns(bool)
-func (_IERC20 *IERC20Transactor) TransferFrom(opts *bind.TransactOpts, from common.Address, to common.Address, value *big.Int) (*types.Transaction, error) {
-	return _IERC20.contract.Transact(opts, "transferFrom", from, to, value)
-}
-
-// TransferFrom is a paid mutator transaction binding the contract method 0x23b872dd.
-//
-// Solidity: function transferFrom(from address, to address, value uint256) returns(bool)
-func (_IERC20 *IERC20Session) TransferFrom(from common.Address, to common.Address, value *big.Int) (*types.Transaction, error) {
-	return _IERC20.Contract.TransferFrom(&_IERC20.TransactOpts, from, to, value)
-}
-
-// TransferFrom is a paid mutator transaction binding the contract method 0x23b872dd.
-//
-// Solidity: function transferFrom(from address, to address, value uint256) returns(bool)
-func (_IERC20 *IERC20TransactorSession) TransferFrom(from common.Address, to common.Address, value *big.Int) (*types.Transaction, error) {
-	return _IERC20.Contract.TransferFrom(&_IERC20.TransactOpts, from, to, value)
-}
-
-// IERC20ApprovalEventIterator is returned from FilterApprovalEvent and is used to iterate over the raw logs and unpacked data for ApprovalEvent events raised by the IERC20 contract.
-type IERC20ApprovalEventIterator struct {
-	Event *IERC20ApprovalEvent // Event containing the contract specifics and raw log
-
-	contract *bind.BoundContract // Generic contract to use for unpacking event data
-	event    string              // Event name to use for unpacking event data
-
-	logs chan types.Log        // Log channel receiving the found contract events
-	sub  ethereum.Subscription // Subscription for errors, completion and termination
-	done bool                  // Whether the subscription completed delivering logs
-	fail error                 // Occurred error to stop iteration
-}
-
-// Next advances the iterator to the subsequent event, returning whether there
-// are any more events found. In case of a retrieval or parsing error, false is
-// returned and Error() can be queried for the exact failure.
-func (it *IERC20ApprovalEventIterator) Next() bool {
-	// If the iterator failed, stop iterating
-	if it.fail != nil {
-		return false
-	}
-	// If the iterator completed, deliver directly whatever's available
-	if it.done {
-		select {
-		case log := <-it.logs:
-			it.Event = new(IERC20ApprovalEvent)
-			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
-				it.fail = err
-				return false
-			}
-			it.Event.Raw = log
-			return true
-
-		default:
-			return false
-		}
-	}
-	// Iterator still in progress, wait for either a data or an error event
-	select {
-	case log := <-it.logs:
-		it.Event = new(IERC20ApprovalEvent)
-		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
-			it.fail = err
-			return false
-		}
-		it.Event.Raw = log
-		return true
-
-	case err := <-it.sub.Err():
-		it.done = true
-		it.fail = err
-		return it.Next()
-	}
-}
-
-// Error returns any retrieval or parsing error occurred during filtering.
-func (it *IERC20ApprovalEventIterator) Error() error {
-	return it.fail
-}
-
-// Close terminates the iteration process, releasing any pending underlying
-// resources.
-func (it *IERC20ApprovalEventIterator) Close() error {
-	it.sub.Unsubscribe()
-	return nil
-}
-
-// IERC20ApprovalEvent represents a ApprovalEvent event raised by the IERC20 contract.
-type IERC20ApprovalEvent struct {
-	Holder  common.Address
-	Spender common.Address
-	Value   *big.Int
-	Raw     types.Log // Blockchain specific contextual infos
-}
-
-// FilterApprovalEvent is a free log retrieval operation binding the contract event 0x08245b82180b1f5e514e503c113ab0197093b2cb542145037c0a31b54b1d998e.
-//
-// Solidity: e ApprovalEvent(holder indexed address, spender indexed address, value uint256)
-func (_IERC20 *IERC20Filterer) FilterApprovalEvent(opts *bind.FilterOpts, holder []common.Address, spender []common.Address) (*IERC20ApprovalEventIterator, error) {
-
-	var holderRule []interface{}
-	for _, holderItem := range holder {
-		holderRule = append(holderRule, holderItem)
-	}
-	var spenderRule []interface{}
-	for _, spenderItem := range spender {
-		spenderRule = append(spenderRule, spenderItem)
-	}
-
-	logs, sub, err := _IERC20.contract.FilterLogs(opts, "ApprovalEvent", holderRule, spenderRule)
-	if err != nil {
-		return nil, err
-	}
-	return &IERC20ApprovalEventIterator{contract: _IERC20.contract, event: "ApprovalEvent", logs: logs, sub: sub}, nil
-}
-
-// WatchApprovalEvent is a free log subscription operation binding the contract event 0x08245b82180b1f5e514e503c113ab0197093b2cb542145037c0a31b54b1d998e.
-//
-// Solidity: e ApprovalEvent(holder indexed address, spender indexed address, value uint256)
-func (_IERC20 *IERC20Filterer) WatchApprovalEvent(opts *bind.WatchOpts, sink chan<- *IERC20ApprovalEvent, holder []common.Address, spender []common.Address) (event.Subscription, error) {
-
-	var holderRule []interface{}
-	for _, holderItem := range holder {
-		holderRule = append(holderRule, holderItem)
-	}
-	var spenderRule []interface{}
-	for _, spenderItem := range spender {
-		spenderRule = append(spenderRule, spenderItem)
-	}
-
-	logs, sub, err := _IERC20.contract.WatchLogs(opts, "ApprovalEvent", holderRule, spenderRule)
-	if err != nil {
-		return nil, err
-	}
-	return event.NewSubscription(func(quit <-chan struct{}) error {
-		defer sub.Unsubscribe()
-		for {
-			select {
-			case log := <-logs:
-				// New log arrived, parse the event and forward to the user
-				event := new(IERC20ApprovalEvent)
-				if err := _IERC20.contract.UnpackLog(event, "ApprovalEvent", log); err != nil {
-					return err
-				}
-				event.Raw = log
-
-				select {
-				case sink <- event:
-				case err := <-sub.Err():
-					return err
-				case <-quit:
-					return nil
-				}
-			case err := <-sub.Err():
-				return err
-			case <-quit:
-				return nil
-			}
-		}
-	}), nil
-}
-
-// IERC20TransferEventIterator is returned from FilterTransferEvent and is used to iterate over the raw logs and unpacked data for TransferEvent events raised by the IERC20 contract.
-type IERC20TransferEventIterator struct {
-	Event *IERC20TransferEvent // Event containing the contract specifics and raw log
-
-	contract *bind.BoundContract // Generic contract to use for unpacking event data
-	event    string              // Event name to use for unpacking event data
-
-	logs chan types.Log        // Log channel receiving the found contract events
-	sub  ethereum.Subscription // Subscription for errors, completion and termination
-	done bool                  // Whether the subscription completed delivering logs
-	fail error                 // Occurred error to stop iteration
-}
-
-// Next advances the iterator to the subsequent event, returning whether there
-// are any more events found. In case of a retrieval or parsing error, false is
-// returned and Error() can be queried for the exact failure.
-func (it *IERC20TransferEventIterator) Next() bool {
-	// If the iterator failed, stop iterating
-	if it.fail != nil {
-		return false
-	}
-	// If the iterator completed, deliver directly whatever's available
-	if it.done {
-		select {
-		case log := <-it.logs:
-			it.Event = new(IERC20TransferEvent)
-			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
-				it.fail = err
-				return false
-			}
-			it.Event.Raw = log
-			return true
-
-		default:
-			return false
-		}
-	}
-	// Iterator still in progress, wait for either a data or an error event
-	select {
-	case log := <-it.logs:
-		it.Event = new(IERC20TransferEvent)
-		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
-			it.fail = err
-			return false
-		}
-		it.Event.Raw = log
-		return true
-
-	case err := <-it.sub.Err():
-		it.done = true
-		it.fail = err
-		return it.Next()
-	}
-}
-
-// Error returns any retrieval or parsing error occurred during filtering.
-func (it *IERC20TransferEventIterator) Error() error {
-	return it.fail
-}
-
-// Close terminates the iteration process, releasing any pending underlying
-// resources.
-func (it *IERC20TransferEventIterator) Close() error {
-	it.sub.Unsubscribe()
-	return nil
-}
-
-// IERC20TransferEvent represents a TransferEvent event raised by the IERC20 contract.
-type IERC20TransferEvent struct {
-	From  common.Address
-	To    common.Address
-	Value *big.Int
-	Raw   types.Log // Blockchain specific contextual infos
-}
-
-// FilterTransferEvent is a free log retrieval operation binding the contract event 0xeaf1c4b3ce0f4f62a2bae7eb3e68225c75f7e6ff4422073b7437b9a78d25f170.
-//
-// Solidity: e TransferEvent(from indexed address, to indexed address, value uint256)
-func (_IERC20 *IERC20Filterer) FilterTransferEvent(opts *bind.FilterOpts, from []common.Address, to []common.Address) (*IERC20TransferEventIterator, error) {
-
-	var fromRule []interface{}
-	for _, fromItem := range from {
-		fromRule = append(fromRule, fromItem)
-	}
-	var toRule []interface{}
-	for _, toItem := range to {
-		toRule = append(toRule, toItem)
-	}
-
-	logs, sub, err := _IERC20.contract.FilterLogs(opts, "TransferEvent", fromRule, toRule)
-	if err != nil {
-		return nil, err
-	}
-	return &IERC20TransferEventIterator{contract: _IERC20.contract, event: "TransferEvent", logs: logs, sub: sub}, nil
-}
-
-// WatchTransferEvent is a free log subscription operation binding the contract event 0xeaf1c4b3ce0f4f62a2bae7eb3e68225c75f7e6ff4422073b7437b9a78d25f170.
-//
-// Solidity: e TransferEvent(from indexed address, to indexed address, value uint256)
-func (_IERC20 *IERC20Filterer) WatchTransferEvent(opts *bind.WatchOpts, sink chan<- *IERC20TransferEvent, from []common.Address, to []common.Address) (event.Subscription, error) {
-
-	var fromRule []interface{}
-	for _, fromItem := range from {
-		fromRule = append(fromRule, fromItem)
-	}
-	var toRule []interface{}
-	for _, toItem := range to {
-		toRule = append(toRule, toItem)
-	}
-
-	logs, sub, err := _IERC20.contract.WatchLogs(opts, "TransferEvent", fromRule, toRule)
-	if err != nil {
-		return nil, err
-	}
-	return event.NewSubscription(func(quit <-chan struct{}) error {
-		defer sub.Unsubscribe()
-		for {
-			select {
-			case log := <-logs:
-				// New log arrived, parse the event and forward to the user
-				event := new(IERC20TransferEvent)
-				if err := _IERC20.contract.UnpackLog(event, "TransferEvent", log); err != nil {
-					return err
-				}
-				event.Raw = log
-
-				select {
-				case sink <- event:
-				case err := <-sub.Err():
-					return err
-				case <-quit:
-					return nil
-				}
-			case err := <-sub.Err():
-				return err
-			case <-quit:
-				return nil
-			}
-		}
-	}), nil
-}
-
 // MarketTokenABI is the input ABI used to generate the binding from.
-const MarketTokenABI = "[{\"constant\":false,\"inputs\":[{\"name\":\"spender\",\"type\":\"address\"},{\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"approve\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"totalSupply\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"from\",\"type\":\"address\"},{\"name\":\"to\",\"type\":\"address\"},{\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"transferFrom\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[],\"name\":\"stopMinting\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"burn\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"spender\",\"type\":\"address\"},{\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"decreaseApproval\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"holder\",\"type\":\"address\"}],\"name\":\"balanceOf\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"market\",\"type\":\"address\"}],\"name\":\"setPrivilegedContracts\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"holder\",\"type\":\"address\"}],\"name\":\"burnAll\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"mint\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"to\",\"type\":\"address\"},{\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"transfer\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"getPrivilegedAddresses\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"spender\",\"type\":\"address\"},{\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"increaseApproval\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"holder\",\"type\":\"address\"},{\"name\":\"spender\",\"type\":\"address\"}],\"name\":\"allowance\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"mintingStopped\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"name\":\"initialAccount\",\"type\":\"address\"},{\"name\":\"initialBalance\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"holder\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"spender\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"ApprovalEvent\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"from\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"to\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"TransferEvent\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"burner\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"BurnEvent\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"to\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"MintEvent\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[],\"name\":\"MintStoppedEvent\",\"type\":\"event\"}]"
+const MarketTokenABI = "[{\"name\":\"Approval\",\"inputs\":[{\"type\":\"address\",\"name\":\"owner\",\"indexed\":true},{\"type\":\"address\",\"name\":\"spender\",\"indexed\":true},{\"type\":\"uint256\",\"name\":\"amount\",\"indexed\":false,\"unit\":\"wei\"}],\"anonymous\":false,\"type\":\"event\"},{\"name\":\"Burn\",\"inputs\":[{\"type\":\"address\",\"name\":\"burner\",\"indexed\":true},{\"type\":\"uint256\",\"name\":\"amount\",\"indexed\":false,\"unit\":\"wei\"}],\"anonymous\":false,\"type\":\"event\"},{\"name\":\"Mint\",\"inputs\":[{\"type\":\"address\",\"name\":\"to\",\"indexed\":true},{\"type\":\"uint256\",\"name\":\"amount\",\"indexed\":false,\"unit\":\"wei\"}],\"anonymous\":false,\"type\":\"event\"},{\"name\":\"MintStopped\",\"inputs\":[],\"anonymous\":false,\"type\":\"event\"},{\"name\":\"Transfer\",\"inputs\":[{\"type\":\"address\",\"name\":\"source\",\"indexed\":true},{\"type\":\"address\",\"name\":\"to\",\"indexed\":true},{\"type\":\"uint256\",\"name\":\"amount\",\"indexed\":false,\"unit\":\"wei\"}],\"anonymous\":false,\"type\":\"event\"},{\"name\":\"__init__\",\"outputs\":[],\"inputs\":[{\"type\":\"address\",\"name\":\"initial_account\"},{\"type\":\"uint256\",\"name\":\"initial_balance\",\"unit\":\"wei\"}],\"constant\":false,\"payable\":false,\"type\":\"constructor\"},{\"name\":\"allowance\",\"outputs\":[{\"type\":\"uint256\",\"name\":\"out\",\"unit\":\"wei\"}],\"inputs\":[{\"type\":\"address\",\"name\":\"owner\"},{\"type\":\"address\",\"name\":\"spender\"}],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":815},{\"name\":\"approve\",\"outputs\":[{\"type\":\"bool\",\"name\":\"out\"}],\"inputs\":[{\"type\":\"address\",\"name\":\"spender\"},{\"type\":\"uint256\",\"name\":\"amount\",\"unit\":\"wei\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":37719},{\"name\":\"balanceOf\",\"outputs\":[{\"type\":\"uint256\",\"name\":\"out\",\"unit\":\"wei\"}],\"inputs\":[{\"type\":\"address\",\"name\":\"owner\"}],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":715},{\"name\":\"burn\",\"outputs\":[],\"inputs\":[{\"type\":\"uint256\",\"name\":\"amount\",\"unit\":\"wei\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":73635},{\"name\":\"burnAll\",\"outputs\":[],\"inputs\":[{\"type\":\"address\",\"name\":\"owner\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":78713},{\"name\":\"decreaseApproval\",\"outputs\":[],\"inputs\":[{\"type\":\"address\",\"name\":\"spender\"},{\"type\":\"uint256\",\"name\":\"amount\",\"unit\":\"wei\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":39275},{\"name\":\"getPrivilegedAddresses\",\"outputs\":[{\"type\":\"address\",\"name\":\"out\"}],\"inputs\":[],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":663},{\"name\":\"increaseApproval\",\"outputs\":[],\"inputs\":[{\"type\":\"address\",\"name\":\"spender\"},{\"type\":\"uint256\",\"name\":\"amount\",\"unit\":\"wei\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":39068},{\"name\":\"mint\",\"outputs\":[],\"inputs\":[{\"type\":\"uint256\",\"name\":\"amount\",\"unit\":\"wei\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":74494},{\"name\":\"setPrivilegedContracts\",\"outputs\":[],\"inputs\":[{\"type\":\"address\",\"name\":\"market\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":35897},{\"name\":\"stopMinting\",\"outputs\":[],\"inputs\":[],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":36333},{\"name\":\"totalSupply\",\"outputs\":[{\"type\":\"uint256\",\"name\":\"out\",\"unit\":\"wei\"}],\"inputs\":[],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":813},{\"name\":\"transfer\",\"outputs\":[{\"type\":\"bool\",\"name\":\"out\"}],\"inputs\":[{\"type\":\"address\",\"name\":\"to\"},{\"type\":\"uint256\",\"name\":\"amount\",\"unit\":\"wei\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":74474},{\"name\":\"transferFrom\",\"outputs\":[{\"type\":\"bool\",\"name\":\"out\"}],\"inputs\":[{\"type\":\"address\",\"name\":\"source\"},{\"type\":\"address\",\"name\":\"to\"},{\"type\":\"uint256\",\"name\":\"amount\",\"unit\":\"wei\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":110447},{\"name\":\"decimals\",\"outputs\":[{\"type\":\"uint256\",\"name\":\"out\"}],\"inputs\":[],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":903},{\"name\":\"mintingStopped\",\"outputs\":[{\"type\":\"bool\",\"name\":\"out\"}],\"inputs\":[],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":933}]"
 
 // MarketTokenBin is the compiled bytecode used for deploying new contracts.
-const MarketTokenBin = `0x60806040526001805460ff1916905534801561001a57600080fd5b506040516040806111198339810180604052604081101561003a57600080fd5b50805160209182015160018054610100330261010060a860020a0319909116179055600160a060020a0390911660009081526003909252604082208190559055611090806100896000396000f3fe608060405234801561001057600080fd5b5060043610610112576000357c010000000000000000000000000000000000000000000000000000000090048063730e6e84116100b4578063b6896e5f11610083578063b6896e5f146102b5578063d73dd623146102d9578063dd62ed3e14610305578063f339292f1461033357610112565b8063730e6e84146102205780637e9d2ac114610246578063a0712d681461026c578063a9059cbb1461028957610112565b80633e3e0b12116100f05780633e3e0b12146101a757806342966c68146101b157806366188463146101ce57806370a08231146101fa57610112565b8063095ea7b31461011757806318160ddd1461015757806323b872dd14610171575b600080fd5b6101436004803603604081101561012d57600080fd5b50600160a060020a03813516906020013561033b565b604080519115158252519081900360200190f35b61015f6103a1565b60408051918252519081900360200190f35b6101436004803603606081101561018757600080fd5b50600160a060020a038135811691602081013590911690604001356103a7565b6101af6105bf565b005b6101af600480360360208110156101c757600080fd5b503561068b565b6101af600480360360408110156101e457600080fd5b50600160a060020a0381351690602001356107a8565b61015f6004803603602081101561021057600080fd5b5035600160a060020a03166108b5565b6101af6004803603602081101561023657600080fd5b5035600160a060020a03166108d0565b6101af6004803603602081101561025c57600080fd5b5035600160a060020a031661099b565b6101af6004803603602081101561028257600080fd5b5035610ac8565b6101436004803603604081101561029f57600080fd5b50600160a060020a038135169060200135610bde565b6102bd610d2b565b60408051600160a060020a039092168252519081900360200190f35b6101af600480360360408110156102ef57600080fd5b50600160a060020a038135169060200135610d3a565b61015f6004803603604081101561031b57600080fd5b50600160a060020a0381358116916020013516610d6e565b610143610d99565b336000818152600460209081526040808320600160a060020a038716808552908352818420869055815186815291519394909390927f08245b82180b1f5e514e503c113ab0197093b2cb542145037c0a31b54b1d998e928290030190a350600192915050565b60005490565b6000600160a060020a03831615156103f35760405160e560020a62461bcd02815260040180806020018281038252603f815260200180611026603f913960400191505060405180910390fd5b600160a060020a03841660009081526003602052604090205482111561044d5760405160e560020a62461bcd028152600401808060200182810382526041815260200180610ecd6041913960600191505060405180910390fd5b600160a060020a03841660009081526004602090815260408083203384529091529020548211156104b25760405160e560020a62461bcd02815260040180806020018281038252603e815260200180610dcb603e913960400191505060405180910390fd5b600160a060020a0384166000908152600360205260409020546104db908363ffffffff610da216565b600160a060020a038086166000908152600360205260408082209390935590851681522054610510908363ffffffff610db416565b600160a060020a038085166000908152600360209081526040808320949094559187168152600482528281203382529091522054610554908363ffffffff610da216565b600160a060020a03808616600081815260046020908152604080832033845282529182902094909455805186815290519287169391927feaf1c4b3ce0f4f62a2bae7eb3e68225c75f7e6ff4422073b7437b9a78d25f170929181900390910190a35060019392505050565b600254600160a060020a0316331461060b5760405160e560020a62461bcd028152600401808060200182810382526046815260200180610e426046913960600191505060405180910390fd5b6001805460ff16151514156106545760405160e560020a62461bcd028152600401808060200182810382526034815260200180610f0e6034913960400191505060405180910390fd5b6001805460ff1916811790556040517f6ae65cb1ae147362b8906c28687a17e1712ca926bea50710ba279849cec3347190600090a1565b600254600160a060020a031633146106d75760405160e560020a62461bcd028152600401808060200182810382526046815260200180610e426046913960600191505060405180910390fd5b336000908152600360205260409020548111156107285760405160e560020a62461bcd028152600401808060200182810382526039815260200180610e096039913960400191505060405180910390fd5b33600090815260036020526040902054610748908263ffffffff610da216565b336000908152600360205260408120919091555461076c908263ffffffff610da216565b60005560408051828152905133917f512586160ebd4dc6945ba9ec5d21a1f723f26f3c7aa36cdffb6818d4e7b88030919081900360200190a250565b336000908152600460209081526040808320600160a060020a03861684529091529020548111156107fc57336000908152600460209081526040808320600160a060020a0386168452909152812055610855565b336000908152600460209081526040808320600160a060020a0386168452909152902054610830908263ffffffff610da216565b336000908152600460209081526040808320600160a060020a03871684529091529020555b336000818152600460209081526040808320600160a060020a0387168085529083529281902054815190815290519293927f08245b82180b1f5e514e503c113ab0197093b2cb542145037c0a31b54b1d998e929181900390910190a35050565b600160a060020a031660009081526003602052604090205490565b6001546101009004600160a060020a031633146109215760405160e560020a62461bcd028152600401808060200182810382526030815260200180610f7b6030913960400191505060405180910390fd5b600254600160a060020a03161561096c5760405160e560020a62461bcd028152600401808060200182810382526045815260200180610fab6045913960600191505060405180910390fd5b6002805473ffffffffffffffffffffffffffffffffffffffff1916600160a060020a0392909216919091179055565b600254600160a060020a031633146109e75760405160e560020a62461bcd028152600401808060200182810382526046815260200180610e426046913960600191505060405180910390fd5b600160a060020a0381161515610a315760405160e560020a62461bcd028152600401808060200182810382526036815260200180610ff06036913960400191505060405180910390fd5b600160a060020a0381166000908152600360205260408120549054610a5c908263ffffffff610da216565b6000908155600160a060020a038316808252600360209081526040808420849055600482528084203385528252808420939093558251848152925191927f512586160ebd4dc6945ba9ec5d21a1f723f26f3c7aa36cdffb6818d4e7b88030929081900390910190a25050565b600254600160a060020a03163314610b145760405160e560020a62461bcd028152600401808060200182810382526046815260200180610e426046913960600191505060405180910390fd5b6001805460ff1615151415610b5d5760405160e560020a62461bcd028152600401808060200182810382526034815260200180610f0e6034913960400191505060405180910390fd5b600054610b70908263ffffffff610db416565b600090815533815260036020526040902054610b92908263ffffffff610db416565b33600081815260036020908152604091829020939093558051848152905191927f3fffaa5804a26fcec0d70b1d0fb0a2d0031df3a5f9c8af2127c2f4360e97b46392918290030190a250565b6000600160a060020a0383161515610c2a5760405160e560020a62461bcd028152600401808060200182810382526039815260200180610f426039913960400191505060405180910390fd5b33600090815260036020526040902054821115610c7b5760405160e560020a62461bcd028152600401808060200182810382526045815260200180610e886045913960600191505060405180910390fd5b33600090815260036020526040902054610c9b908363ffffffff610da216565b3360009081526003602052604080822092909255600160a060020a03851681522054610ccd908363ffffffff610db416565b600160a060020a0384166000818152600360209081526040918290209390935580518581529051919233927feaf1c4b3ce0f4f62a2bae7eb3e68225c75f7e6ff4422073b7437b9a78d25f1709281900390910190a350600192915050565b600254600160a060020a031690565b336000908152600460209081526040808320600160a060020a0386168452909152902054610830908263ffffffff610db416565b600160a060020a03918216600090815260046020908152604080832093909416825291909152205490565b60015460ff1690565b600082821115610dae57fe5b50900390565b600082820183811015610dc357fe5b939250505056fe4572726f722e4d61726b6574546f6b656e2e7472616e7366657246726f6d202d20416d6f756e74206578636565647320616c6c6f77656420616d6f756e744572726f723a4d61726b6574546f6b656e2e6275726e202d20416d6f756e74206578636565647320617661696c61626c652062616c616e63654572726f723a4d61726b6574546f6b656e2e68617350726976696c656765202d2043616c6c6572206d75737420626520612070726976696c656765642020636f6e74726163744572726f723a4d61726b6574546f6b656e2e7472616e73666572202d20416d6f756e742065786365656473207468652062616c616e6365206f66206d73672e73656e6465724572726f723a4d61726b6574546f6b656e2e7472616e7366657246726f6d202d20416d6f756e74206578636565647320617661696c61626c652062616c616e63654572726f723a4d61726b6574546f6b656e2e63616e4d696e74202d204d696e74696e6720686173206265656e2073746f707065644572726f723a4d61726b6574546f6b656e2e7472616e73666572202d20416e2061646472657373206d757374206265207370656369666965644572726f723a4d61726b6574546f6b656e2e69734f776e6572202d2043616c6c6572206d757374206265206f776e65724572726f723a4d61726b6574546f6b656e2e73657450726976696c65676564436f6e747261637473202d204d61726b6574206164647265737320616c7265616479207365744572726f723a4d61726b6574546f6b656e2e6275726e46726f6d202d2061646472657373206d757374206265207370656369666965644572726f723a4d61726b6574546f6b656e2e7472616e7366657246726f6d202d2027746f272061646472657373206d75737420626520737065636966696564a165627a7a723058201598338df2915f348023e95e7f546868bcd3cf5686c2da025bbddac9dc75dc940029`
+const MarketTokenBin = `0x600035601c52740100000000000000000000000000000000000000006020526f7fffffffffffffffffffffffffffffff6040527fffffffffffffffffffffffffffffffff8000000000000000000000000000000060605274012a05f1fffffffffffffffffffffffffdabf41c006080527ffffffffffffffffffffffffed5fa0e000000000000000000000000000000000060a0526040610a746101403934156100a757600080fd5b6020610a7460c03960c05160205181106100c057600080fd5b50601260025560006005556101605160016101405160e05260c052604060c02055336003556101605160065561016051610180526101405160007fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef6020610180a3610a5c56600035601c52740100000000000000000000000000000000000000006020526f7fffffffffffffffffffffffffffffff6040527fffffffffffffffffffffffffffffffff8000000000000000000000000000000060605274012a05f1fffffffffffffffffffffffffdabf41c006080527ffffffffffffffffffffffffed5fa0e000000000000000000000000000000000060a05263dd62ed3e600051141561010357604060046101403734156100b457600080fd5b60043560205181106100c557600080fd5b5060243560205181106100d757600080fd5b5060006101405160e05260c052604060c0206101605160e05260c052604060c0205460005260206000f3005b63095ea7b36000511415610198576040600461014037341561012457600080fd5b600435602051811061013557600080fd5b506101605160003360e05260c052604060c0206101405160e05260c052604060c02055610160516101805261014051337f8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b9256020610180a3600160005260206000f3005b6370a0823160005114156101e757602060046101403734156101b957600080fd5b60043560205181106101ca57600080fd5b5060016101405160e05260c052604060c0205460005260206000f3005b6342966c68600051141561028e576020600461014037341561020857600080fd5b600454331461021657600080fd5b60013360e05260c052604060c020610140518154101561023557600080fd5b610140518154038155506006610140518154101561025257600080fd5b610140518154038155506101405161016052337fcc16f5dbb4873280815c1ee09dbd06736cffcc184412cf7a71a0fdb75d397ca56020610160a2005b637e9d2ac1600051141561036b57602060046101403734156102af57600080fd5b60043560205181106102c057600080fd5b5060045433146102cf57600080fd5b60016101405160e05260c052604060c0205461016052600661016051815410156102f857600080fd5b61016051815403815550600060016101405160e05260c052604060c02055600060006101405160e05260c052604060c0203360e05260c052604060c020556101605161018052610140517fcc16f5dbb4873280815c1ee09dbd06736cffcc184412cf7a71a0fdb75d397ca56020610180a2005b63661884636000511415610474576040600461014037341561038c57600080fd5b600435602051811061039d57600080fd5b5060003360e05260c052604060c0206101405160e05260c052604060c020546101605111156103eb57600060003360e05260c052604060c0206101405160e05260c052604060c02055610424565b60003360e05260c052604060c0206101405160e05260c052604060c020610160518154101561041957600080fd5b610160518154038155505b60003360e05260c052604060c0206101405160e05260c052604060c020546101805261014051337f8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b9256020610180a3005b63b6896e5f600051141561049a57341561048d57600080fd5b60045460005260206000f3005b63d73dd623600051141561055857604060046101403734156104bb57600080fd5b60043560205181106104cc57600080fd5b5060003360e05260c052604060c0206101405160e05260c052604060c02080546101605182540110156104fe57600080fd5b6101605181540181555060003360e05260c052604060c0206101405160e05260c052604060c020546101805261014051337f8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b9256020610180a3005b63a0712d686000511415610615576020600461014037341561057957600080fd5b600454331461058757600080fd5b6001600554141561059757600080fd5b600680546101405182540110156105ad57600080fd5b6101405181540181555060013360e05260c052604060c02080546101405182540110156105d957600080fd5b610140518154018155506101405161016052337f0f6798a560793a54c3bcfe86a93cde1e73087d944c0ea20544137d41213968856020610160a2005b63730e6e84600051141561065f576020600461014037341561063657600080fd5b600435602051811061064757600080fd5b50600354331461065657600080fd5b61014051600455005b633e3e0b1260005114156106a557341561067857600080fd5b60016005557f58e0e1f03176dfa647922b700f27e00bfa7f939db5a6fb7dd47cc6dcd3cf619c60006000a1005b6318160ddd60005114156106cb5734156106be57600080fd5b60065460005260206000f3005b63a9059cbb60005114156107a757604060046101403734156106ec57600080fd5b60043560205181106106fd57600080fd5b50600061014051141561070f57600080fd5b60013360e05260c052604060c020610160518154101561072e57600080fd5b6101605181540381555060016101405160e05260c052604060c020805461016051825401101561075d57600080fd5b61016051815401815550610160516101805261014051337fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef6020610180a3600160005260206000f3005b6323b872dd60005114156108e457606060046101403734156107c857600080fd5b60043560205181106107d957600080fd5b5060243560205181106107eb57600080fd5b5060006101405114156107fd57600080fd5b600061016051141561080e57600080fd5b60016101405160e05260c052604060c020610180518154101561083057600080fd5b6101805181540381555060016101605160e05260c052604060c020805461018051825401101561085f57600080fd5b6101805181540181555060006101405160e05260c052604060c0203360e05260c052604060c020610180518154101561089757600080fd5b61018051815403815550610180516101a05261016051610140517fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef60206101a0a3600160005260206000f3005b63313ce567600051141561090a5734156108fd57600080fd5b60025460005260206000f3005b63f339292f600051141561093057341561092357600080fd5b60055460005260206000f3005b60006000fd5b610126610a5c03610126600039610126610a5c036000f3`
 
 // DeployMarketToken deploys a new Ethereum contract, binding an instance of MarketToken to it.
-func DeployMarketToken(auth *bind.TransactOpts, backend bind.ContractBackend, initialAccount common.Address, initialBalance *big.Int) (common.Address, *types.Transaction, *MarketToken, error) {
+func DeployMarketToken(auth *bind.TransactOpts, backend bind.ContractBackend, initial_account common.Address, initial_balance *big.Int) (common.Address, *types.Transaction, *MarketToken, error) {
 	parsed, err := abi.JSON(strings.NewReader(MarketTokenABI))
 	if err != nil {
 		return common.Address{}, nil, nil, err
 	}
-	address, tx, contract, err := bind.DeployContract(auth, parsed, common.FromHex(MarketTokenBin), backend, initialAccount, initialBalance)
+	address, tx, contract, err := bind.DeployContract(auth, parsed, common.FromHex(MarketTokenBin), backend, initial_account, initial_balance)
 	if err != nil {
 		return common.Address{}, nil, nil, err
 	}
@@ -764,59 +178,85 @@ func (_MarketToken *MarketTokenTransactorRaw) Transact(opts *bind.TransactOpts, 
 
 // Allowance is a free data retrieval call binding the contract method 0xdd62ed3e.
 //
-// Solidity: function allowance(holder address, spender address) constant returns(uint256)
-func (_MarketToken *MarketTokenCaller) Allowance(opts *bind.CallOpts, holder common.Address, spender common.Address) (*big.Int, error) {
+// Solidity: function allowance(owner address, spender address) constant returns(out uint256)
+func (_MarketToken *MarketTokenCaller) Allowance(opts *bind.CallOpts, owner common.Address, spender common.Address) (*big.Int, error) {
 	var (
 		ret0 = new(*big.Int)
 	)
 	out := ret0
-	err := _MarketToken.contract.Call(opts, out, "allowance", holder, spender)
+	err := _MarketToken.contract.Call(opts, out, "allowance", owner, spender)
 	return *ret0, err
 }
 
 // Allowance is a free data retrieval call binding the contract method 0xdd62ed3e.
 //
-// Solidity: function allowance(holder address, spender address) constant returns(uint256)
-func (_MarketToken *MarketTokenSession) Allowance(holder common.Address, spender common.Address) (*big.Int, error) {
-	return _MarketToken.Contract.Allowance(&_MarketToken.CallOpts, holder, spender)
+// Solidity: function allowance(owner address, spender address) constant returns(out uint256)
+func (_MarketToken *MarketTokenSession) Allowance(owner common.Address, spender common.Address) (*big.Int, error) {
+	return _MarketToken.Contract.Allowance(&_MarketToken.CallOpts, owner, spender)
 }
 
 // Allowance is a free data retrieval call binding the contract method 0xdd62ed3e.
 //
-// Solidity: function allowance(holder address, spender address) constant returns(uint256)
-func (_MarketToken *MarketTokenCallerSession) Allowance(holder common.Address, spender common.Address) (*big.Int, error) {
-	return _MarketToken.Contract.Allowance(&_MarketToken.CallOpts, holder, spender)
+// Solidity: function allowance(owner address, spender address) constant returns(out uint256)
+func (_MarketToken *MarketTokenCallerSession) Allowance(owner common.Address, spender common.Address) (*big.Int, error) {
+	return _MarketToken.Contract.Allowance(&_MarketToken.CallOpts, owner, spender)
 }
 
 // BalanceOf is a free data retrieval call binding the contract method 0x70a08231.
 //
-// Solidity: function balanceOf(holder address) constant returns(uint256)
-func (_MarketToken *MarketTokenCaller) BalanceOf(opts *bind.CallOpts, holder common.Address) (*big.Int, error) {
+// Solidity: function balanceOf(owner address) constant returns(out uint256)
+func (_MarketToken *MarketTokenCaller) BalanceOf(opts *bind.CallOpts, owner common.Address) (*big.Int, error) {
 	var (
 		ret0 = new(*big.Int)
 	)
 	out := ret0
-	err := _MarketToken.contract.Call(opts, out, "balanceOf", holder)
+	err := _MarketToken.contract.Call(opts, out, "balanceOf", owner)
 	return *ret0, err
 }
 
 // BalanceOf is a free data retrieval call binding the contract method 0x70a08231.
 //
-// Solidity: function balanceOf(holder address) constant returns(uint256)
-func (_MarketToken *MarketTokenSession) BalanceOf(holder common.Address) (*big.Int, error) {
-	return _MarketToken.Contract.BalanceOf(&_MarketToken.CallOpts, holder)
+// Solidity: function balanceOf(owner address) constant returns(out uint256)
+func (_MarketToken *MarketTokenSession) BalanceOf(owner common.Address) (*big.Int, error) {
+	return _MarketToken.Contract.BalanceOf(&_MarketToken.CallOpts, owner)
 }
 
 // BalanceOf is a free data retrieval call binding the contract method 0x70a08231.
 //
-// Solidity: function balanceOf(holder address) constant returns(uint256)
-func (_MarketToken *MarketTokenCallerSession) BalanceOf(holder common.Address) (*big.Int, error) {
-	return _MarketToken.Contract.BalanceOf(&_MarketToken.CallOpts, holder)
+// Solidity: function balanceOf(owner address) constant returns(out uint256)
+func (_MarketToken *MarketTokenCallerSession) BalanceOf(owner common.Address) (*big.Int, error) {
+	return _MarketToken.Contract.BalanceOf(&_MarketToken.CallOpts, owner)
+}
+
+// Decimals is a free data retrieval call binding the contract method 0x313ce567.
+//
+// Solidity: function decimals() constant returns(out uint256)
+func (_MarketToken *MarketTokenCaller) Decimals(opts *bind.CallOpts) (*big.Int, error) {
+	var (
+		ret0 = new(*big.Int)
+	)
+	out := ret0
+	err := _MarketToken.contract.Call(opts, out, "decimals")
+	return *ret0, err
+}
+
+// Decimals is a free data retrieval call binding the contract method 0x313ce567.
+//
+// Solidity: function decimals() constant returns(out uint256)
+func (_MarketToken *MarketTokenSession) Decimals() (*big.Int, error) {
+	return _MarketToken.Contract.Decimals(&_MarketToken.CallOpts)
+}
+
+// Decimals is a free data retrieval call binding the contract method 0x313ce567.
+//
+// Solidity: function decimals() constant returns(out uint256)
+func (_MarketToken *MarketTokenCallerSession) Decimals() (*big.Int, error) {
+	return _MarketToken.Contract.Decimals(&_MarketToken.CallOpts)
 }
 
 // GetPrivilegedAddresses is a free data retrieval call binding the contract method 0xb6896e5f.
 //
-// Solidity: function getPrivilegedAddresses() constant returns(address)
+// Solidity: function getPrivilegedAddresses() constant returns(out address)
 func (_MarketToken *MarketTokenCaller) GetPrivilegedAddresses(opts *bind.CallOpts) (common.Address, error) {
 	var (
 		ret0 = new(common.Address)
@@ -828,21 +268,21 @@ func (_MarketToken *MarketTokenCaller) GetPrivilegedAddresses(opts *bind.CallOpt
 
 // GetPrivilegedAddresses is a free data retrieval call binding the contract method 0xb6896e5f.
 //
-// Solidity: function getPrivilegedAddresses() constant returns(address)
+// Solidity: function getPrivilegedAddresses() constant returns(out address)
 func (_MarketToken *MarketTokenSession) GetPrivilegedAddresses() (common.Address, error) {
 	return _MarketToken.Contract.GetPrivilegedAddresses(&_MarketToken.CallOpts)
 }
 
 // GetPrivilegedAddresses is a free data retrieval call binding the contract method 0xb6896e5f.
 //
-// Solidity: function getPrivilegedAddresses() constant returns(address)
+// Solidity: function getPrivilegedAddresses() constant returns(out address)
 func (_MarketToken *MarketTokenCallerSession) GetPrivilegedAddresses() (common.Address, error) {
 	return _MarketToken.Contract.GetPrivilegedAddresses(&_MarketToken.CallOpts)
 }
 
 // MintingStopped is a free data retrieval call binding the contract method 0xf339292f.
 //
-// Solidity: function mintingStopped() constant returns(bool)
+// Solidity: function mintingStopped() constant returns(out bool)
 func (_MarketToken *MarketTokenCaller) MintingStopped(opts *bind.CallOpts) (bool, error) {
 	var (
 		ret0 = new(bool)
@@ -854,21 +294,21 @@ func (_MarketToken *MarketTokenCaller) MintingStopped(opts *bind.CallOpts) (bool
 
 // MintingStopped is a free data retrieval call binding the contract method 0xf339292f.
 //
-// Solidity: function mintingStopped() constant returns(bool)
+// Solidity: function mintingStopped() constant returns(out bool)
 func (_MarketToken *MarketTokenSession) MintingStopped() (bool, error) {
 	return _MarketToken.Contract.MintingStopped(&_MarketToken.CallOpts)
 }
 
 // MintingStopped is a free data retrieval call binding the contract method 0xf339292f.
 //
-// Solidity: function mintingStopped() constant returns(bool)
+// Solidity: function mintingStopped() constant returns(out bool)
 func (_MarketToken *MarketTokenCallerSession) MintingStopped() (bool, error) {
 	return _MarketToken.Contract.MintingStopped(&_MarketToken.CallOpts)
 }
 
 // TotalSupply is a free data retrieval call binding the contract method 0x18160ddd.
 //
-// Solidity: function totalSupply() constant returns(uint256)
+// Solidity: function totalSupply() constant returns(out uint256)
 func (_MarketToken *MarketTokenCaller) TotalSupply(opts *bind.CallOpts) (*big.Int, error) {
 	var (
 		ret0 = new(*big.Int)
@@ -880,35 +320,35 @@ func (_MarketToken *MarketTokenCaller) TotalSupply(opts *bind.CallOpts) (*big.In
 
 // TotalSupply is a free data retrieval call binding the contract method 0x18160ddd.
 //
-// Solidity: function totalSupply() constant returns(uint256)
+// Solidity: function totalSupply() constant returns(out uint256)
 func (_MarketToken *MarketTokenSession) TotalSupply() (*big.Int, error) {
 	return _MarketToken.Contract.TotalSupply(&_MarketToken.CallOpts)
 }
 
 // TotalSupply is a free data retrieval call binding the contract method 0x18160ddd.
 //
-// Solidity: function totalSupply() constant returns(uint256)
+// Solidity: function totalSupply() constant returns(out uint256)
 func (_MarketToken *MarketTokenCallerSession) TotalSupply() (*big.Int, error) {
 	return _MarketToken.Contract.TotalSupply(&_MarketToken.CallOpts)
 }
 
 // Approve is a paid mutator transaction binding the contract method 0x095ea7b3.
 //
-// Solidity: function approve(spender address, amount uint256) returns(bool)
+// Solidity: function approve(spender address, amount uint256) returns(out bool)
 func (_MarketToken *MarketTokenTransactor) Approve(opts *bind.TransactOpts, spender common.Address, amount *big.Int) (*types.Transaction, error) {
 	return _MarketToken.contract.Transact(opts, "approve", spender, amount)
 }
 
 // Approve is a paid mutator transaction binding the contract method 0x095ea7b3.
 //
-// Solidity: function approve(spender address, amount uint256) returns(bool)
+// Solidity: function approve(spender address, amount uint256) returns(out bool)
 func (_MarketToken *MarketTokenSession) Approve(spender common.Address, amount *big.Int) (*types.Transaction, error) {
 	return _MarketToken.Contract.Approve(&_MarketToken.TransactOpts, spender, amount)
 }
 
 // Approve is a paid mutator transaction binding the contract method 0x095ea7b3.
 //
-// Solidity: function approve(spender address, amount uint256) returns(bool)
+// Solidity: function approve(spender address, amount uint256) returns(out bool)
 func (_MarketToken *MarketTokenTransactorSession) Approve(spender common.Address, amount *big.Int) (*types.Transaction, error) {
 	return _MarketToken.Contract.Approve(&_MarketToken.TransactOpts, spender, amount)
 }
@@ -936,23 +376,23 @@ func (_MarketToken *MarketTokenTransactorSession) Burn(amount *big.Int) (*types.
 
 // BurnAll is a paid mutator transaction binding the contract method 0x7e9d2ac1.
 //
-// Solidity: function burnAll(holder address) returns()
-func (_MarketToken *MarketTokenTransactor) BurnAll(opts *bind.TransactOpts, holder common.Address) (*types.Transaction, error) {
-	return _MarketToken.contract.Transact(opts, "burnAll", holder)
+// Solidity: function burnAll(owner address) returns()
+func (_MarketToken *MarketTokenTransactor) BurnAll(opts *bind.TransactOpts, owner common.Address) (*types.Transaction, error) {
+	return _MarketToken.contract.Transact(opts, "burnAll", owner)
 }
 
 // BurnAll is a paid mutator transaction binding the contract method 0x7e9d2ac1.
 //
-// Solidity: function burnAll(holder address) returns()
-func (_MarketToken *MarketTokenSession) BurnAll(holder common.Address) (*types.Transaction, error) {
-	return _MarketToken.Contract.BurnAll(&_MarketToken.TransactOpts, holder)
+// Solidity: function burnAll(owner address) returns()
+func (_MarketToken *MarketTokenSession) BurnAll(owner common.Address) (*types.Transaction, error) {
+	return _MarketToken.Contract.BurnAll(&_MarketToken.TransactOpts, owner)
 }
 
 // BurnAll is a paid mutator transaction binding the contract method 0x7e9d2ac1.
 //
-// Solidity: function burnAll(holder address) returns()
-func (_MarketToken *MarketTokenTransactorSession) BurnAll(holder common.Address) (*types.Transaction, error) {
-	return _MarketToken.Contract.BurnAll(&_MarketToken.TransactOpts, holder)
+// Solidity: function burnAll(owner address) returns()
+func (_MarketToken *MarketTokenTransactorSession) BurnAll(owner common.Address) (*types.Transaction, error) {
+	return _MarketToken.Contract.BurnAll(&_MarketToken.TransactOpts, owner)
 }
 
 // DecreaseApproval is a paid mutator transaction binding the contract method 0x66188463.
@@ -1062,49 +502,49 @@ func (_MarketToken *MarketTokenTransactorSession) StopMinting() (*types.Transact
 
 // Transfer is a paid mutator transaction binding the contract method 0xa9059cbb.
 //
-// Solidity: function transfer(to address, amount uint256) returns(bool)
+// Solidity: function transfer(to address, amount uint256) returns(out bool)
 func (_MarketToken *MarketTokenTransactor) Transfer(opts *bind.TransactOpts, to common.Address, amount *big.Int) (*types.Transaction, error) {
 	return _MarketToken.contract.Transact(opts, "transfer", to, amount)
 }
 
 // Transfer is a paid mutator transaction binding the contract method 0xa9059cbb.
 //
-// Solidity: function transfer(to address, amount uint256) returns(bool)
+// Solidity: function transfer(to address, amount uint256) returns(out bool)
 func (_MarketToken *MarketTokenSession) Transfer(to common.Address, amount *big.Int) (*types.Transaction, error) {
 	return _MarketToken.Contract.Transfer(&_MarketToken.TransactOpts, to, amount)
 }
 
 // Transfer is a paid mutator transaction binding the contract method 0xa9059cbb.
 //
-// Solidity: function transfer(to address, amount uint256) returns(bool)
+// Solidity: function transfer(to address, amount uint256) returns(out bool)
 func (_MarketToken *MarketTokenTransactorSession) Transfer(to common.Address, amount *big.Int) (*types.Transaction, error) {
 	return _MarketToken.Contract.Transfer(&_MarketToken.TransactOpts, to, amount)
 }
 
 // TransferFrom is a paid mutator transaction binding the contract method 0x23b872dd.
 //
-// Solidity: function transferFrom(from address, to address, amount uint256) returns(bool)
-func (_MarketToken *MarketTokenTransactor) TransferFrom(opts *bind.TransactOpts, from common.Address, to common.Address, amount *big.Int) (*types.Transaction, error) {
-	return _MarketToken.contract.Transact(opts, "transferFrom", from, to, amount)
+// Solidity: function transferFrom(source address, to address, amount uint256) returns(out bool)
+func (_MarketToken *MarketTokenTransactor) TransferFrom(opts *bind.TransactOpts, source common.Address, to common.Address, amount *big.Int) (*types.Transaction, error) {
+	return _MarketToken.contract.Transact(opts, "transferFrom", source, to, amount)
 }
 
 // TransferFrom is a paid mutator transaction binding the contract method 0x23b872dd.
 //
-// Solidity: function transferFrom(from address, to address, amount uint256) returns(bool)
-func (_MarketToken *MarketTokenSession) TransferFrom(from common.Address, to common.Address, amount *big.Int) (*types.Transaction, error) {
-	return _MarketToken.Contract.TransferFrom(&_MarketToken.TransactOpts, from, to, amount)
+// Solidity: function transferFrom(source address, to address, amount uint256) returns(out bool)
+func (_MarketToken *MarketTokenSession) TransferFrom(source common.Address, to common.Address, amount *big.Int) (*types.Transaction, error) {
+	return _MarketToken.Contract.TransferFrom(&_MarketToken.TransactOpts, source, to, amount)
 }
 
 // TransferFrom is a paid mutator transaction binding the contract method 0x23b872dd.
 //
-// Solidity: function transferFrom(from address, to address, amount uint256) returns(bool)
-func (_MarketToken *MarketTokenTransactorSession) TransferFrom(from common.Address, to common.Address, amount *big.Int) (*types.Transaction, error) {
-	return _MarketToken.Contract.TransferFrom(&_MarketToken.TransactOpts, from, to, amount)
+// Solidity: function transferFrom(source address, to address, amount uint256) returns(out bool)
+func (_MarketToken *MarketTokenTransactorSession) TransferFrom(source common.Address, to common.Address, amount *big.Int) (*types.Transaction, error) {
+	return _MarketToken.Contract.TransferFrom(&_MarketToken.TransactOpts, source, to, amount)
 }
 
-// MarketTokenApprovalEventIterator is returned from FilterApprovalEvent and is used to iterate over the raw logs and unpacked data for ApprovalEvent events raised by the MarketToken contract.
-type MarketTokenApprovalEventIterator struct {
-	Event *MarketTokenApprovalEvent // Event containing the contract specifics and raw log
+// MarketTokenApprovalIterator is returned from FilterApproval and is used to iterate over the raw logs and unpacked data for Approval events raised by the MarketToken contract.
+type MarketTokenApprovalIterator struct {
+	Event *MarketTokenApproval // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -1118,7 +558,7 @@ type MarketTokenApprovalEventIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *MarketTokenApprovalEventIterator) Next() bool {
+func (it *MarketTokenApprovalIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -1127,7 +567,7 @@ func (it *MarketTokenApprovalEventIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(MarketTokenApprovalEvent)
+			it.Event = new(MarketTokenApproval)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -1142,7 +582,7 @@ func (it *MarketTokenApprovalEventIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(MarketTokenApprovalEvent)
+		it.Event = new(MarketTokenApproval)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -1158,61 +598,61 @@ func (it *MarketTokenApprovalEventIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *MarketTokenApprovalEventIterator) Error() error {
+func (it *MarketTokenApprovalIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *MarketTokenApprovalEventIterator) Close() error {
+func (it *MarketTokenApprovalIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// MarketTokenApprovalEvent represents a ApprovalEvent event raised by the MarketToken contract.
-type MarketTokenApprovalEvent struct {
-	Holder  common.Address
+// MarketTokenApproval represents a Approval event raised by the MarketToken contract.
+type MarketTokenApproval struct {
+	Owner   common.Address
 	Spender common.Address
 	Amount  *big.Int
 	Raw     types.Log // Blockchain specific contextual infos
 }
 
-// FilterApprovalEvent is a free log retrieval operation binding the contract event 0x08245b82180b1f5e514e503c113ab0197093b2cb542145037c0a31b54b1d998e.
+// FilterApproval is a free log retrieval operation binding the contract event 0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925.
 //
-// Solidity: e ApprovalEvent(holder indexed address, spender indexed address, amount uint256)
-func (_MarketToken *MarketTokenFilterer) FilterApprovalEvent(opts *bind.FilterOpts, holder []common.Address, spender []common.Address) (*MarketTokenApprovalEventIterator, error) {
+// Solidity: e Approval(owner indexed address, spender indexed address, amount uint256)
+func (_MarketToken *MarketTokenFilterer) FilterApproval(opts *bind.FilterOpts, owner []common.Address, spender []common.Address) (*MarketTokenApprovalIterator, error) {
 
-	var holderRule []interface{}
-	for _, holderItem := range holder {
-		holderRule = append(holderRule, holderItem)
+	var ownerRule []interface{}
+	for _, ownerItem := range owner {
+		ownerRule = append(ownerRule, ownerItem)
 	}
 	var spenderRule []interface{}
 	for _, spenderItem := range spender {
 		spenderRule = append(spenderRule, spenderItem)
 	}
 
-	logs, sub, err := _MarketToken.contract.FilterLogs(opts, "ApprovalEvent", holderRule, spenderRule)
+	logs, sub, err := _MarketToken.contract.FilterLogs(opts, "Approval", ownerRule, spenderRule)
 	if err != nil {
 		return nil, err
 	}
-	return &MarketTokenApprovalEventIterator{contract: _MarketToken.contract, event: "ApprovalEvent", logs: logs, sub: sub}, nil
+	return &MarketTokenApprovalIterator{contract: _MarketToken.contract, event: "Approval", logs: logs, sub: sub}, nil
 }
 
-// WatchApprovalEvent is a free log subscription operation binding the contract event 0x08245b82180b1f5e514e503c113ab0197093b2cb542145037c0a31b54b1d998e.
+// WatchApproval is a free log subscription operation binding the contract event 0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925.
 //
-// Solidity: e ApprovalEvent(holder indexed address, spender indexed address, amount uint256)
-func (_MarketToken *MarketTokenFilterer) WatchApprovalEvent(opts *bind.WatchOpts, sink chan<- *MarketTokenApprovalEvent, holder []common.Address, spender []common.Address) (event.Subscription, error) {
+// Solidity: e Approval(owner indexed address, spender indexed address, amount uint256)
+func (_MarketToken *MarketTokenFilterer) WatchApproval(opts *bind.WatchOpts, sink chan<- *MarketTokenApproval, owner []common.Address, spender []common.Address) (event.Subscription, error) {
 
-	var holderRule []interface{}
-	for _, holderItem := range holder {
-		holderRule = append(holderRule, holderItem)
+	var ownerRule []interface{}
+	for _, ownerItem := range owner {
+		ownerRule = append(ownerRule, ownerItem)
 	}
 	var spenderRule []interface{}
 	for _, spenderItem := range spender {
 		spenderRule = append(spenderRule, spenderItem)
 	}
 
-	logs, sub, err := _MarketToken.contract.WatchLogs(opts, "ApprovalEvent", holderRule, spenderRule)
+	logs, sub, err := _MarketToken.contract.WatchLogs(opts, "Approval", ownerRule, spenderRule)
 	if err != nil {
 		return nil, err
 	}
@@ -1222,8 +662,8 @@ func (_MarketToken *MarketTokenFilterer) WatchApprovalEvent(opts *bind.WatchOpts
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(MarketTokenApprovalEvent)
-				if err := _MarketToken.contract.UnpackLog(event, "ApprovalEvent", log); err != nil {
+				event := new(MarketTokenApproval)
+				if err := _MarketToken.contract.UnpackLog(event, "Approval", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -1244,9 +684,9 @@ func (_MarketToken *MarketTokenFilterer) WatchApprovalEvent(opts *bind.WatchOpts
 	}), nil
 }
 
-// MarketTokenBurnEventIterator is returned from FilterBurnEvent and is used to iterate over the raw logs and unpacked data for BurnEvent events raised by the MarketToken contract.
-type MarketTokenBurnEventIterator struct {
-	Event *MarketTokenBurnEvent // Event containing the contract specifics and raw log
+// MarketTokenBurnIterator is returned from FilterBurn and is used to iterate over the raw logs and unpacked data for Burn events raised by the MarketToken contract.
+type MarketTokenBurnIterator struct {
+	Event *MarketTokenBurn // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -1260,7 +700,7 @@ type MarketTokenBurnEventIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *MarketTokenBurnEventIterator) Next() bool {
+func (it *MarketTokenBurnIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -1269,7 +709,7 @@ func (it *MarketTokenBurnEventIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(MarketTokenBurnEvent)
+			it.Event = new(MarketTokenBurn)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -1284,7 +724,7 @@ func (it *MarketTokenBurnEventIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(MarketTokenBurnEvent)
+		it.Event = new(MarketTokenBurn)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -1300,52 +740,52 @@ func (it *MarketTokenBurnEventIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *MarketTokenBurnEventIterator) Error() error {
+func (it *MarketTokenBurnIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *MarketTokenBurnEventIterator) Close() error {
+func (it *MarketTokenBurnIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// MarketTokenBurnEvent represents a BurnEvent event raised by the MarketToken contract.
-type MarketTokenBurnEvent struct {
+// MarketTokenBurn represents a Burn event raised by the MarketToken contract.
+type MarketTokenBurn struct {
 	Burner common.Address
 	Amount *big.Int
 	Raw    types.Log // Blockchain specific contextual infos
 }
 
-// FilterBurnEvent is a free log retrieval operation binding the contract event 0x512586160ebd4dc6945ba9ec5d21a1f723f26f3c7aa36cdffb6818d4e7b88030.
+// FilterBurn is a free log retrieval operation binding the contract event 0xcc16f5dbb4873280815c1ee09dbd06736cffcc184412cf7a71a0fdb75d397ca5.
 //
-// Solidity: e BurnEvent(burner indexed address, amount uint256)
-func (_MarketToken *MarketTokenFilterer) FilterBurnEvent(opts *bind.FilterOpts, burner []common.Address) (*MarketTokenBurnEventIterator, error) {
+// Solidity: e Burn(burner indexed address, amount uint256)
+func (_MarketToken *MarketTokenFilterer) FilterBurn(opts *bind.FilterOpts, burner []common.Address) (*MarketTokenBurnIterator, error) {
 
 	var burnerRule []interface{}
 	for _, burnerItem := range burner {
 		burnerRule = append(burnerRule, burnerItem)
 	}
 
-	logs, sub, err := _MarketToken.contract.FilterLogs(opts, "BurnEvent", burnerRule)
+	logs, sub, err := _MarketToken.contract.FilterLogs(opts, "Burn", burnerRule)
 	if err != nil {
 		return nil, err
 	}
-	return &MarketTokenBurnEventIterator{contract: _MarketToken.contract, event: "BurnEvent", logs: logs, sub: sub}, nil
+	return &MarketTokenBurnIterator{contract: _MarketToken.contract, event: "Burn", logs: logs, sub: sub}, nil
 }
 
-// WatchBurnEvent is a free log subscription operation binding the contract event 0x512586160ebd4dc6945ba9ec5d21a1f723f26f3c7aa36cdffb6818d4e7b88030.
+// WatchBurn is a free log subscription operation binding the contract event 0xcc16f5dbb4873280815c1ee09dbd06736cffcc184412cf7a71a0fdb75d397ca5.
 //
-// Solidity: e BurnEvent(burner indexed address, amount uint256)
-func (_MarketToken *MarketTokenFilterer) WatchBurnEvent(opts *bind.WatchOpts, sink chan<- *MarketTokenBurnEvent, burner []common.Address) (event.Subscription, error) {
+// Solidity: e Burn(burner indexed address, amount uint256)
+func (_MarketToken *MarketTokenFilterer) WatchBurn(opts *bind.WatchOpts, sink chan<- *MarketTokenBurn, burner []common.Address) (event.Subscription, error) {
 
 	var burnerRule []interface{}
 	for _, burnerItem := range burner {
 		burnerRule = append(burnerRule, burnerItem)
 	}
 
-	logs, sub, err := _MarketToken.contract.WatchLogs(opts, "BurnEvent", burnerRule)
+	logs, sub, err := _MarketToken.contract.WatchLogs(opts, "Burn", burnerRule)
 	if err != nil {
 		return nil, err
 	}
@@ -1355,8 +795,8 @@ func (_MarketToken *MarketTokenFilterer) WatchBurnEvent(opts *bind.WatchOpts, si
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(MarketTokenBurnEvent)
-				if err := _MarketToken.contract.UnpackLog(event, "BurnEvent", log); err != nil {
+				event := new(MarketTokenBurn)
+				if err := _MarketToken.contract.UnpackLog(event, "Burn", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -1377,9 +817,9 @@ func (_MarketToken *MarketTokenFilterer) WatchBurnEvent(opts *bind.WatchOpts, si
 	}), nil
 }
 
-// MarketTokenMintEventIterator is returned from FilterMintEvent and is used to iterate over the raw logs and unpacked data for MintEvent events raised by the MarketToken contract.
-type MarketTokenMintEventIterator struct {
-	Event *MarketTokenMintEvent // Event containing the contract specifics and raw log
+// MarketTokenMintIterator is returned from FilterMint and is used to iterate over the raw logs and unpacked data for Mint events raised by the MarketToken contract.
+type MarketTokenMintIterator struct {
+	Event *MarketTokenMint // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -1393,7 +833,7 @@ type MarketTokenMintEventIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *MarketTokenMintEventIterator) Next() bool {
+func (it *MarketTokenMintIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -1402,7 +842,7 @@ func (it *MarketTokenMintEventIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(MarketTokenMintEvent)
+			it.Event = new(MarketTokenMint)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -1417,7 +857,7 @@ func (it *MarketTokenMintEventIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(MarketTokenMintEvent)
+		it.Event = new(MarketTokenMint)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -1433,52 +873,52 @@ func (it *MarketTokenMintEventIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *MarketTokenMintEventIterator) Error() error {
+func (it *MarketTokenMintIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *MarketTokenMintEventIterator) Close() error {
+func (it *MarketTokenMintIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// MarketTokenMintEvent represents a MintEvent event raised by the MarketToken contract.
-type MarketTokenMintEvent struct {
+// MarketTokenMint represents a Mint event raised by the MarketToken contract.
+type MarketTokenMint struct {
 	To     common.Address
 	Amount *big.Int
 	Raw    types.Log // Blockchain specific contextual infos
 }
 
-// FilterMintEvent is a free log retrieval operation binding the contract event 0x3fffaa5804a26fcec0d70b1d0fb0a2d0031df3a5f9c8af2127c2f4360e97b463.
+// FilterMint is a free log retrieval operation binding the contract event 0x0f6798a560793a54c3bcfe86a93cde1e73087d944c0ea20544137d4121396885.
 //
-// Solidity: e MintEvent(to indexed address, amount uint256)
-func (_MarketToken *MarketTokenFilterer) FilterMintEvent(opts *bind.FilterOpts, to []common.Address) (*MarketTokenMintEventIterator, error) {
+// Solidity: e Mint(to indexed address, amount uint256)
+func (_MarketToken *MarketTokenFilterer) FilterMint(opts *bind.FilterOpts, to []common.Address) (*MarketTokenMintIterator, error) {
 
 	var toRule []interface{}
 	for _, toItem := range to {
 		toRule = append(toRule, toItem)
 	}
 
-	logs, sub, err := _MarketToken.contract.FilterLogs(opts, "MintEvent", toRule)
+	logs, sub, err := _MarketToken.contract.FilterLogs(opts, "Mint", toRule)
 	if err != nil {
 		return nil, err
 	}
-	return &MarketTokenMintEventIterator{contract: _MarketToken.contract, event: "MintEvent", logs: logs, sub: sub}, nil
+	return &MarketTokenMintIterator{contract: _MarketToken.contract, event: "Mint", logs: logs, sub: sub}, nil
 }
 
-// WatchMintEvent is a free log subscription operation binding the contract event 0x3fffaa5804a26fcec0d70b1d0fb0a2d0031df3a5f9c8af2127c2f4360e97b463.
+// WatchMint is a free log subscription operation binding the contract event 0x0f6798a560793a54c3bcfe86a93cde1e73087d944c0ea20544137d4121396885.
 //
-// Solidity: e MintEvent(to indexed address, amount uint256)
-func (_MarketToken *MarketTokenFilterer) WatchMintEvent(opts *bind.WatchOpts, sink chan<- *MarketTokenMintEvent, to []common.Address) (event.Subscription, error) {
+// Solidity: e Mint(to indexed address, amount uint256)
+func (_MarketToken *MarketTokenFilterer) WatchMint(opts *bind.WatchOpts, sink chan<- *MarketTokenMint, to []common.Address) (event.Subscription, error) {
 
 	var toRule []interface{}
 	for _, toItem := range to {
 		toRule = append(toRule, toItem)
 	}
 
-	logs, sub, err := _MarketToken.contract.WatchLogs(opts, "MintEvent", toRule)
+	logs, sub, err := _MarketToken.contract.WatchLogs(opts, "Mint", toRule)
 	if err != nil {
 		return nil, err
 	}
@@ -1488,8 +928,8 @@ func (_MarketToken *MarketTokenFilterer) WatchMintEvent(opts *bind.WatchOpts, si
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(MarketTokenMintEvent)
-				if err := _MarketToken.contract.UnpackLog(event, "MintEvent", log); err != nil {
+				event := new(MarketTokenMint)
+				if err := _MarketToken.contract.UnpackLog(event, "Mint", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -1510,9 +950,9 @@ func (_MarketToken *MarketTokenFilterer) WatchMintEvent(opts *bind.WatchOpts, si
 	}), nil
 }
 
-// MarketTokenMintStoppedEventIterator is returned from FilterMintStoppedEvent and is used to iterate over the raw logs and unpacked data for MintStoppedEvent events raised by the MarketToken contract.
-type MarketTokenMintStoppedEventIterator struct {
-	Event *MarketTokenMintStoppedEvent // Event containing the contract specifics and raw log
+// MarketTokenMintStoppedIterator is returned from FilterMintStopped and is used to iterate over the raw logs and unpacked data for MintStopped events raised by the MarketToken contract.
+type MarketTokenMintStoppedIterator struct {
+	Event *MarketTokenMintStopped // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -1526,7 +966,7 @@ type MarketTokenMintStoppedEventIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *MarketTokenMintStoppedEventIterator) Next() bool {
+func (it *MarketTokenMintStoppedIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -1535,7 +975,7 @@ func (it *MarketTokenMintStoppedEventIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(MarketTokenMintStoppedEvent)
+			it.Event = new(MarketTokenMintStopped)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -1550,7 +990,7 @@ func (it *MarketTokenMintStoppedEventIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(MarketTokenMintStoppedEvent)
+		it.Event = new(MarketTokenMintStopped)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -1566,40 +1006,40 @@ func (it *MarketTokenMintStoppedEventIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *MarketTokenMintStoppedEventIterator) Error() error {
+func (it *MarketTokenMintStoppedIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *MarketTokenMintStoppedEventIterator) Close() error {
+func (it *MarketTokenMintStoppedIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// MarketTokenMintStoppedEvent represents a MintStoppedEvent event raised by the MarketToken contract.
-type MarketTokenMintStoppedEvent struct {
+// MarketTokenMintStopped represents a MintStopped event raised by the MarketToken contract.
+type MarketTokenMintStopped struct {
 	Raw types.Log // Blockchain specific contextual infos
 }
 
-// FilterMintStoppedEvent is a free log retrieval operation binding the contract event 0x6ae65cb1ae147362b8906c28687a17e1712ca926bea50710ba279849cec33471.
+// FilterMintStopped is a free log retrieval operation binding the contract event 0x58e0e1f03176dfa647922b700f27e00bfa7f939db5a6fb7dd47cc6dcd3cf619c.
 //
-// Solidity: e MintStoppedEvent()
-func (_MarketToken *MarketTokenFilterer) FilterMintStoppedEvent(opts *bind.FilterOpts) (*MarketTokenMintStoppedEventIterator, error) {
+// Solidity: e MintStopped()
+func (_MarketToken *MarketTokenFilterer) FilterMintStopped(opts *bind.FilterOpts) (*MarketTokenMintStoppedIterator, error) {
 
-	logs, sub, err := _MarketToken.contract.FilterLogs(opts, "MintStoppedEvent")
+	logs, sub, err := _MarketToken.contract.FilterLogs(opts, "MintStopped")
 	if err != nil {
 		return nil, err
 	}
-	return &MarketTokenMintStoppedEventIterator{contract: _MarketToken.contract, event: "MintStoppedEvent", logs: logs, sub: sub}, nil
+	return &MarketTokenMintStoppedIterator{contract: _MarketToken.contract, event: "MintStopped", logs: logs, sub: sub}, nil
 }
 
-// WatchMintStoppedEvent is a free log subscription operation binding the contract event 0x6ae65cb1ae147362b8906c28687a17e1712ca926bea50710ba279849cec33471.
+// WatchMintStopped is a free log subscription operation binding the contract event 0x58e0e1f03176dfa647922b700f27e00bfa7f939db5a6fb7dd47cc6dcd3cf619c.
 //
-// Solidity: e MintStoppedEvent()
-func (_MarketToken *MarketTokenFilterer) WatchMintStoppedEvent(opts *bind.WatchOpts, sink chan<- *MarketTokenMintStoppedEvent) (event.Subscription, error) {
+// Solidity: e MintStopped()
+func (_MarketToken *MarketTokenFilterer) WatchMintStopped(opts *bind.WatchOpts, sink chan<- *MarketTokenMintStopped) (event.Subscription, error) {
 
-	logs, sub, err := _MarketToken.contract.WatchLogs(opts, "MintStoppedEvent")
+	logs, sub, err := _MarketToken.contract.WatchLogs(opts, "MintStopped")
 	if err != nil {
 		return nil, err
 	}
@@ -1609,8 +1049,8 @@ func (_MarketToken *MarketTokenFilterer) WatchMintStoppedEvent(opts *bind.WatchO
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(MarketTokenMintStoppedEvent)
-				if err := _MarketToken.contract.UnpackLog(event, "MintStoppedEvent", log); err != nil {
+				event := new(MarketTokenMintStopped)
+				if err := _MarketToken.contract.UnpackLog(event, "MintStopped", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -1631,9 +1071,9 @@ func (_MarketToken *MarketTokenFilterer) WatchMintStoppedEvent(opts *bind.WatchO
 	}), nil
 }
 
-// MarketTokenTransferEventIterator is returned from FilterTransferEvent and is used to iterate over the raw logs and unpacked data for TransferEvent events raised by the MarketToken contract.
-type MarketTokenTransferEventIterator struct {
-	Event *MarketTokenTransferEvent // Event containing the contract specifics and raw log
+// MarketTokenTransferIterator is returned from FilterTransfer and is used to iterate over the raw logs and unpacked data for Transfer events raised by the MarketToken contract.
+type MarketTokenTransferIterator struct {
+	Event *MarketTokenTransfer // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -1647,7 +1087,7 @@ type MarketTokenTransferEventIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *MarketTokenTransferEventIterator) Next() bool {
+func (it *MarketTokenTransferIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -1656,7 +1096,7 @@ func (it *MarketTokenTransferEventIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(MarketTokenTransferEvent)
+			it.Event = new(MarketTokenTransfer)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -1671,7 +1111,7 @@ func (it *MarketTokenTransferEventIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(MarketTokenTransferEvent)
+		it.Event = new(MarketTokenTransfer)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -1687,61 +1127,61 @@ func (it *MarketTokenTransferEventIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *MarketTokenTransferEventIterator) Error() error {
+func (it *MarketTokenTransferIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *MarketTokenTransferEventIterator) Close() error {
+func (it *MarketTokenTransferIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// MarketTokenTransferEvent represents a TransferEvent event raised by the MarketToken contract.
-type MarketTokenTransferEvent struct {
-	From   common.Address
+// MarketTokenTransfer represents a Transfer event raised by the MarketToken contract.
+type MarketTokenTransfer struct {
+	Source common.Address
 	To     common.Address
 	Amount *big.Int
 	Raw    types.Log // Blockchain specific contextual infos
 }
 
-// FilterTransferEvent is a free log retrieval operation binding the contract event 0xeaf1c4b3ce0f4f62a2bae7eb3e68225c75f7e6ff4422073b7437b9a78d25f170.
+// FilterTransfer is a free log retrieval operation binding the contract event 0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef.
 //
-// Solidity: e TransferEvent(from indexed address, to indexed address, amount uint256)
-func (_MarketToken *MarketTokenFilterer) FilterTransferEvent(opts *bind.FilterOpts, from []common.Address, to []common.Address) (*MarketTokenTransferEventIterator, error) {
+// Solidity: e Transfer(source indexed address, to indexed address, amount uint256)
+func (_MarketToken *MarketTokenFilterer) FilterTransfer(opts *bind.FilterOpts, source []common.Address, to []common.Address) (*MarketTokenTransferIterator, error) {
 
-	var fromRule []interface{}
-	for _, fromItem := range from {
-		fromRule = append(fromRule, fromItem)
+	var sourceRule []interface{}
+	for _, sourceItem := range source {
+		sourceRule = append(sourceRule, sourceItem)
 	}
 	var toRule []interface{}
 	for _, toItem := range to {
 		toRule = append(toRule, toItem)
 	}
 
-	logs, sub, err := _MarketToken.contract.FilterLogs(opts, "TransferEvent", fromRule, toRule)
+	logs, sub, err := _MarketToken.contract.FilterLogs(opts, "Transfer", sourceRule, toRule)
 	if err != nil {
 		return nil, err
 	}
-	return &MarketTokenTransferEventIterator{contract: _MarketToken.contract, event: "TransferEvent", logs: logs, sub: sub}, nil
+	return &MarketTokenTransferIterator{contract: _MarketToken.contract, event: "Transfer", logs: logs, sub: sub}, nil
 }
 
-// WatchTransferEvent is a free log subscription operation binding the contract event 0xeaf1c4b3ce0f4f62a2bae7eb3e68225c75f7e6ff4422073b7437b9a78d25f170.
+// WatchTransfer is a free log subscription operation binding the contract event 0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef.
 //
-// Solidity: e TransferEvent(from indexed address, to indexed address, amount uint256)
-func (_MarketToken *MarketTokenFilterer) WatchTransferEvent(opts *bind.WatchOpts, sink chan<- *MarketTokenTransferEvent, from []common.Address, to []common.Address) (event.Subscription, error) {
+// Solidity: e Transfer(source indexed address, to indexed address, amount uint256)
+func (_MarketToken *MarketTokenFilterer) WatchTransfer(opts *bind.WatchOpts, sink chan<- *MarketTokenTransfer, source []common.Address, to []common.Address) (event.Subscription, error) {
 
-	var fromRule []interface{}
-	for _, fromItem := range from {
-		fromRule = append(fromRule, fromItem)
+	var sourceRule []interface{}
+	for _, sourceItem := range source {
+		sourceRule = append(sourceRule, sourceItem)
 	}
 	var toRule []interface{}
 	for _, toItem := range to {
 		toRule = append(toRule, toItem)
 	}
 
-	logs, sub, err := _MarketToken.contract.WatchLogs(opts, "TransferEvent", fromRule, toRule)
+	logs, sub, err := _MarketToken.contract.WatchLogs(opts, "Transfer", sourceRule, toRule)
 	if err != nil {
 		return nil, err
 	}
@@ -1751,8 +1191,8 @@ func (_MarketToken *MarketTokenFilterer) WatchTransferEvent(opts *bind.WatchOpts
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(MarketTokenTransferEvent)
-				if err := _MarketToken.contract.UnpackLog(event, "TransferEvent", log); err != nil {
+				event := new(MarketTokenTransfer)
+				if err := _MarketToken.contract.UnpackLog(event, "Transfer", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -1771,165 +1211,4 @@ func (_MarketToken *MarketTokenFilterer) WatchTransferEvent(opts *bind.WatchOpts
 			}
 		}
 	}), nil
-}
-
-// SafeMathABI is the input ABI used to generate the binding from.
-const SafeMathABI = "[]"
-
-// SafeMathBin is the compiled bytecode used for deploying new contracts.
-const SafeMathBin = `0x604c602c600b82828239805160001a60731460008114601c57601e565bfe5b5030600052607381538281f3fe73000000000000000000000000000000000000000030146080604052600080fdfea165627a7a72305820d864a81554d5dcee11d396cd7287901c09ccc4ee4795cc188a40fb3b6c0977140029`
-
-// DeploySafeMath deploys a new Ethereum contract, binding an instance of SafeMath to it.
-func DeploySafeMath(auth *bind.TransactOpts, backend bind.ContractBackend) (common.Address, *types.Transaction, *SafeMath, error) {
-	parsed, err := abi.JSON(strings.NewReader(SafeMathABI))
-	if err != nil {
-		return common.Address{}, nil, nil, err
-	}
-	address, tx, contract, err := bind.DeployContract(auth, parsed, common.FromHex(SafeMathBin), backend)
-	if err != nil {
-		return common.Address{}, nil, nil, err
-	}
-	return address, tx, &SafeMath{SafeMathCaller: SafeMathCaller{contract: contract}, SafeMathTransactor: SafeMathTransactor{contract: contract}, SafeMathFilterer: SafeMathFilterer{contract: contract}}, nil
-}
-
-// SafeMath is an auto generated Go binding around an Ethereum contract.
-type SafeMath struct {
-	SafeMathCaller     // Read-only binding to the contract
-	SafeMathTransactor // Write-only binding to the contract
-	SafeMathFilterer   // Log filterer for contract events
-}
-
-// SafeMathCaller is an auto generated read-only Go binding around an Ethereum contract.
-type SafeMathCaller struct {
-	contract *bind.BoundContract // Generic contract wrapper for the low level calls
-}
-
-// SafeMathTransactor is an auto generated write-only Go binding around an Ethereum contract.
-type SafeMathTransactor struct {
-	contract *bind.BoundContract // Generic contract wrapper for the low level calls
-}
-
-// SafeMathFilterer is an auto generated log filtering Go binding around an Ethereum contract events.
-type SafeMathFilterer struct {
-	contract *bind.BoundContract // Generic contract wrapper for the low level calls
-}
-
-// SafeMathSession is an auto generated Go binding around an Ethereum contract,
-// with pre-set call and transact options.
-type SafeMathSession struct {
-	Contract     *SafeMath         // Generic contract binding to set the session for
-	CallOpts     bind.CallOpts     // Call options to use throughout this session
-	TransactOpts bind.TransactOpts // Transaction auth options to use throughout this session
-}
-
-// SafeMathCallerSession is an auto generated read-only Go binding around an Ethereum contract,
-// with pre-set call options.
-type SafeMathCallerSession struct {
-	Contract *SafeMathCaller // Generic contract caller binding to set the session for
-	CallOpts bind.CallOpts   // Call options to use throughout this session
-}
-
-// SafeMathTransactorSession is an auto generated write-only Go binding around an Ethereum contract,
-// with pre-set transact options.
-type SafeMathTransactorSession struct {
-	Contract     *SafeMathTransactor // Generic contract transactor binding to set the session for
-	TransactOpts bind.TransactOpts   // Transaction auth options to use throughout this session
-}
-
-// SafeMathRaw is an auto generated low-level Go binding around an Ethereum contract.
-type SafeMathRaw struct {
-	Contract *SafeMath // Generic contract binding to access the raw methods on
-}
-
-// SafeMathCallerRaw is an auto generated low-level read-only Go binding around an Ethereum contract.
-type SafeMathCallerRaw struct {
-	Contract *SafeMathCaller // Generic read-only contract binding to access the raw methods on
-}
-
-// SafeMathTransactorRaw is an auto generated low-level write-only Go binding around an Ethereum contract.
-type SafeMathTransactorRaw struct {
-	Contract *SafeMathTransactor // Generic write-only contract binding to access the raw methods on
-}
-
-// NewSafeMath creates a new instance of SafeMath, bound to a specific deployed contract.
-func NewSafeMath(address common.Address, backend bind.ContractBackend) (*SafeMath, error) {
-	contract, err := bindSafeMath(address, backend, backend, backend)
-	if err != nil {
-		return nil, err
-	}
-	return &SafeMath{SafeMathCaller: SafeMathCaller{contract: contract}, SafeMathTransactor: SafeMathTransactor{contract: contract}, SafeMathFilterer: SafeMathFilterer{contract: contract}}, nil
-}
-
-// NewSafeMathCaller creates a new read-only instance of SafeMath, bound to a specific deployed contract.
-func NewSafeMathCaller(address common.Address, caller bind.ContractCaller) (*SafeMathCaller, error) {
-	contract, err := bindSafeMath(address, caller, nil, nil)
-	if err != nil {
-		return nil, err
-	}
-	return &SafeMathCaller{contract: contract}, nil
-}
-
-// NewSafeMathTransactor creates a new write-only instance of SafeMath, bound to a specific deployed contract.
-func NewSafeMathTransactor(address common.Address, transactor bind.ContractTransactor) (*SafeMathTransactor, error) {
-	contract, err := bindSafeMath(address, nil, transactor, nil)
-	if err != nil {
-		return nil, err
-	}
-	return &SafeMathTransactor{contract: contract}, nil
-}
-
-// NewSafeMathFilterer creates a new log filterer instance of SafeMath, bound to a specific deployed contract.
-func NewSafeMathFilterer(address common.Address, filterer bind.ContractFilterer) (*SafeMathFilterer, error) {
-	contract, err := bindSafeMath(address, nil, nil, filterer)
-	if err != nil {
-		return nil, err
-	}
-	return &SafeMathFilterer{contract: contract}, nil
-}
-
-// bindSafeMath binds a generic wrapper to an already deployed contract.
-func bindSafeMath(address common.Address, caller bind.ContractCaller, transactor bind.ContractTransactor, filterer bind.ContractFilterer) (*bind.BoundContract, error) {
-	parsed, err := abi.JSON(strings.NewReader(SafeMathABI))
-	if err != nil {
-		return nil, err
-	}
-	return bind.NewBoundContract(address, parsed, caller, transactor, filterer), nil
-}
-
-// Call invokes the (constant) contract method with params as input values and
-// sets the output to result. The result type might be a single field for simple
-// returns, a slice of interfaces for anonymous returns and a struct for named
-// returns.
-func (_SafeMath *SafeMathRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
-	return _SafeMath.Contract.SafeMathCaller.contract.Call(opts, result, method, params...)
-}
-
-// Transfer initiates a plain transaction to move funds to the contract, calling
-// its default method if one is available.
-func (_SafeMath *SafeMathRaw) Transfer(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _SafeMath.Contract.SafeMathTransactor.contract.Transfer(opts)
-}
-
-// Transact invokes the (paid) contract method with params as input values.
-func (_SafeMath *SafeMathRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*types.Transaction, error) {
-	return _SafeMath.Contract.SafeMathTransactor.contract.Transact(opts, method, params...)
-}
-
-// Call invokes the (constant) contract method with params as input values and
-// sets the output to result. The result type might be a single field for simple
-// returns, a slice of interfaces for anonymous returns and a struct for named
-// returns.
-func (_SafeMath *SafeMathCallerRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
-	return _SafeMath.Contract.contract.Call(opts, result, method, params...)
-}
-
-// Transfer initiates a plain transaction to move funds to the contract, calling
-// its default method if one is available.
-func (_SafeMath *SafeMathTransactorRaw) Transfer(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _SafeMath.Contract.contract.Transfer(opts)
-}
-
-// Transact invokes the (paid) contract method with params as input values.
-func (_SafeMath *SafeMathTransactorRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*types.Transaction, error) {
-	return _SafeMath.Contract.contract.Transact(opts, method, params...)
 }
