@@ -23,14 +23,22 @@ func TestAddCandidate(t *testing.T) {
 	context.Blockchain.Commit()
 }
 
-func TestGetCandidates(t *testing.T) {
-	// we should have at least one candidate now, fetch the array
-	candidates, _ := deployed.VotingContract.GetCandidates(nil)
-	// it's an array of the bytes32s
-	length := len(candidates)
+func TestIsCandidate(t *testing.T) {
+	bytes := GenBytes32("iCanHazListing")
 
-	if !(length > 0) {
-		t.Fatalf("Expected candidates length to be > 0, got: %v", length)
+	isCandidate, _ := deployed.VotingContract.IsCandidate(nil, bytes)
+
+	if isCandidate != true {
+		t.Fatalf("Expected isCandidate be true, got: %v", isCandidate)
+	}
+}
+
+func TestGetCandidateCount(t *testing.T) {
+	// we should have at least one candidate now, fetch the number
+	count, _ := deployed.VotingContract.GetCandidateCount(nil)
+
+	if count.Cmp(UNDEFINED) != 1 {
+		t.Fatalf("Expected candidates count to be > 0, got: %v", count)
 	}
 }
 
@@ -43,7 +51,7 @@ func TestGetCandidate(t *testing.T) {
 		t.Fatalf("Error getting candidate: %v", err)
 	}
 
-	if kind != APPLICATION {
+	if kind.Cmp(APPLICATION) != 0 {
 		t.Fatalf("Expected kind to be application, got: %v", kind)
 	}
 
@@ -74,7 +82,7 @@ func TestCandidateIs(t *testing.T) {
 	}
 
 	// test the case where the option does not exist
-	alsoBeFalse, _ := deployed.VotingContract.CandidateIs(nil, bytes, 4)
+	alsoBeFalse, _ := deployed.VotingContract.CandidateIs(nil, bytes, big.NewInt(4))
 
 	if alsoBeFalse != false {
 		t.Fatalf("Expected kind == 4 to be false, got: %v", alsoBeFalse)
@@ -82,12 +90,10 @@ func TestCandidateIs(t *testing.T) {
 }
 
 func TestRemoveCandidate(t *testing.T) {
-	candidates, _ := deployed.VotingContract.GetCandidates(nil)
-	// it's an array of the bytes32s
-	length := len(candidates)
+	count, _ := deployed.VotingContract.GetCandidateCount(nil)
 
-	if !(length > 0) {
-		t.Fatalf("Expected candidate length to be > 0, got : %v", length)
+	if count.Cmp(big.NewInt(0)) != 1 {
+		t.Fatalf("Expected candidates count to be > 0, got : %v", count)
 	}
 
 	bytes := GenBytes32("iCanHazListing")
@@ -106,11 +112,15 @@ func TestRemoveCandidate(t *testing.T) {
 	context.Blockchain.Commit()
 
 	// length should now be one less than it was
-	noCandidates, _ := deployed.VotingContract.GetCandidates(nil)
-	// it's an array of the bytes32s
-	noLength := len(noCandidates)
+	newCount, _ := deployed.VotingContract.GetCandidateCount(nil)
 
-	if noLength >= length {
-		t.Fatalf("Expected candidates length of %v to be 1 less than %v", noLength, length)
+	notCandidate, _ := deployed.VotingContract.IsCandidate(nil, bytes)
+
+	if notCandidate != false {
+		t.Fatalf("Expected isCandidate be false, got: %v", notCandidate)
+	}
+
+	if newCount.Cmp(count) != -1 {
+		t.Fatalf("Expected candidates count of %v to be 1 less than %v", newCount, count)
 	}
 }

@@ -65,7 +65,7 @@ def decreaseApproval(spender: address, amount: wei_value):
   @param spender The spender of the funds
   @param amount The amount to decrease a previous allowance by
   """
-  if (amount > self.allowances[msg.sender][spender]):
+  if amount > self.allowances[msg.sender][spender]:
     # TODO we _could_ assert here
     self.allowances[msg.sender][spender] = 0
   else:

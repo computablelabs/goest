@@ -13,12 +13,10 @@ import (
 const ONE_WEI = 1000000000000000000
 const ONE_GWEI = 1000000000
 
-const (
-	UNDEFINED uint8 = iota
-	APPLICATION
-	CHALLENGE
-	REPARAM
-)
+var UNDEFINED = big.NewInt(0)
+var APPLICATION = big.NewInt(1)
+var CHALLENGE = big.NewInt(2)
+var REPARAM = big.NewInt(3)
 
 type ctx struct {
 	AuthMarket        *bind.TransactOpts

@@ -24,8 +24,12 @@ func TestDeployVoting(t *testing.T) {
 }
 
 // NOTE: actual setting done in Main, as it must be, but tested here similar to deploy
-func TestSetPrivilegedContracts(t *testing.T) {
-	market, p11r, _ := deployed.VotingContract.GetPrivilegedAddresses(nil)
+func TestSetPrivileged(t *testing.T) {
+	factory, market, p11r, _ := deployed.VotingContract.GetPrivileged(nil)
+
+	if factory != context.AuthFactory.From {
+		t.Fatalf("Expected factory address of %v but got %v", context.AuthFactory.From, factory)
+	}
 
 	if market != context.AuthMarket.From {
 		t.Fatalf("Expected market address of %v but got %v", context.AuthMarket.From, market)
@@ -46,7 +50,7 @@ func TestMain(m *testing.M) {
 	deployed, deployedError = Deploy(context)
 
 	// the voting contract must have its privileged addresses set or shit won't work, NOTE this is done, IRL, by the factory
-	_, err := deployed.VotingContract.SetPrivilegedContracts(&bind.TransactOpts{
+	_, err := deployed.VotingContract.SetPrivileged(&bind.TransactOpts{
 		From:     context.AuthFactory.From,
 		Signer:   context.AuthFactory.Signer,
 		GasPrice: big.NewInt(ONE_GWEI * 2),
