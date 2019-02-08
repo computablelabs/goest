@@ -17,7 +17,7 @@
     "compile:voting:vyper": "~/go/bin/abigen -abi contracts/voting/voting.abi -pkg voting -out contracts/voting/voting.go -bin contracts/voting/voting.bin",
     "compile:parameterizer": "~/go/bin/abigen -sol contracts/Parameterizer.sol -pkg parameterizer -out contracts/parameterizer/parameterizer.go",
     "compile:market": "~/go/bin/abigen -sol contracts/Market.sol -pkg market -out contracts/market/market.go",
-    "test": "go test -v ./..."
+    "test": "go test -v ./contracts/voting ./contracts/markettoken ./contracts/ethertoken"
   },
   "repository": {
     "type": "git",
