@@ -24,11 +24,11 @@ func TestAddToCouncil(t *testing.T) {
 	context.Blockchain.Commit()
 }
 
-func TestGetCouncil(t *testing.T) {
-	council, _ := deployed.VotingContract.GetCouncil(nil)
+func TestGetCouncilCount(t *testing.T) {
+	count, _ := deployed.VotingContract.GetCouncilCount(nil)
 
-	if !(len(council) > 0) {
-		t.Fatalf("Expected length of council array to be > 0, got: %v", len(council))
+	if count.Cmp(big.NewInt(0)) != 1 {
+		t.Fatalf("Expected council count to be > 0, got: %v", count)
 	}
 }
 
@@ -42,10 +42,8 @@ func TestInCouncil(t *testing.T) {
 }
 
 func TestRemoveFromCouncil(t *testing.T) {
-	// what is the array length right now?
-	council, _ := deployed.VotingContract.GetCouncil(nil)
-	length := len(council)
-
+	// what is the count right now?
+	count, _ := deployed.VotingContract.GetCouncilCount(nil)
 	member := common.HexToAddress("0xfgh")
 
 	_, err := deployed.VotingContract.RemoveFromCouncil(&bind.TransactOpts{
@@ -62,11 +60,10 @@ func TestRemoveFromCouncil(t *testing.T) {
 	context.Blockchain.Commit()
 
 	// array should be empty now
-	councilNow, _ := deployed.VotingContract.GetCouncil(nil)
-	lengthNow := len(councilNow)
+	countNow, _ := deployed.VotingContract.GetCouncilCount(nil)
 
-	if !(length > lengthNow) {
-		t.Fatalf("Expected length of council array, %v, to be less than it was, %v", lengthNow, length)
+	if count.Cmp(countNow) != 1 {
+		t.Fatalf("Expected council count, %v, to be less than it was, %v", countNow, count)
 	}
 
 	// member is not detected as council

@@ -15,172 +15,11 @@ import (
 	"github.com/ethereum/go-ethereum/event"
 )
 
-// SafeMathABI is the input ABI used to generate the binding from.
-const SafeMathABI = "[]"
-
-// SafeMathBin is the compiled bytecode used for deploying new contracts.
-const SafeMathBin = `0x604c602c600b82828239805160001a60731460008114601c57601e565bfe5b5030600052607381538281f3fe73000000000000000000000000000000000000000030146080604052600080fdfea165627a7a72305820d864a81554d5dcee11d396cd7287901c09ccc4ee4795cc188a40fb3b6c0977140029`
-
-// DeploySafeMath deploys a new Ethereum contract, binding an instance of SafeMath to it.
-func DeploySafeMath(auth *bind.TransactOpts, backend bind.ContractBackend) (common.Address, *types.Transaction, *SafeMath, error) {
-	parsed, err := abi.JSON(strings.NewReader(SafeMathABI))
-	if err != nil {
-		return common.Address{}, nil, nil, err
-	}
-	address, tx, contract, err := bind.DeployContract(auth, parsed, common.FromHex(SafeMathBin), backend)
-	if err != nil {
-		return common.Address{}, nil, nil, err
-	}
-	return address, tx, &SafeMath{SafeMathCaller: SafeMathCaller{contract: contract}, SafeMathTransactor: SafeMathTransactor{contract: contract}, SafeMathFilterer: SafeMathFilterer{contract: contract}}, nil
-}
-
-// SafeMath is an auto generated Go binding around an Ethereum contract.
-type SafeMath struct {
-	SafeMathCaller     // Read-only binding to the contract
-	SafeMathTransactor // Write-only binding to the contract
-	SafeMathFilterer   // Log filterer for contract events
-}
-
-// SafeMathCaller is an auto generated read-only Go binding around an Ethereum contract.
-type SafeMathCaller struct {
-	contract *bind.BoundContract // Generic contract wrapper for the low level calls
-}
-
-// SafeMathTransactor is an auto generated write-only Go binding around an Ethereum contract.
-type SafeMathTransactor struct {
-	contract *bind.BoundContract // Generic contract wrapper for the low level calls
-}
-
-// SafeMathFilterer is an auto generated log filtering Go binding around an Ethereum contract events.
-type SafeMathFilterer struct {
-	contract *bind.BoundContract // Generic contract wrapper for the low level calls
-}
-
-// SafeMathSession is an auto generated Go binding around an Ethereum contract,
-// with pre-set call and transact options.
-type SafeMathSession struct {
-	Contract     *SafeMath         // Generic contract binding to set the session for
-	CallOpts     bind.CallOpts     // Call options to use throughout this session
-	TransactOpts bind.TransactOpts // Transaction auth options to use throughout this session
-}
-
-// SafeMathCallerSession is an auto generated read-only Go binding around an Ethereum contract,
-// with pre-set call options.
-type SafeMathCallerSession struct {
-	Contract *SafeMathCaller // Generic contract caller binding to set the session for
-	CallOpts bind.CallOpts   // Call options to use throughout this session
-}
-
-// SafeMathTransactorSession is an auto generated write-only Go binding around an Ethereum contract,
-// with pre-set transact options.
-type SafeMathTransactorSession struct {
-	Contract     *SafeMathTransactor // Generic contract transactor binding to set the session for
-	TransactOpts bind.TransactOpts   // Transaction auth options to use throughout this session
-}
-
-// SafeMathRaw is an auto generated low-level Go binding around an Ethereum contract.
-type SafeMathRaw struct {
-	Contract *SafeMath // Generic contract binding to access the raw methods on
-}
-
-// SafeMathCallerRaw is an auto generated low-level read-only Go binding around an Ethereum contract.
-type SafeMathCallerRaw struct {
-	Contract *SafeMathCaller // Generic read-only contract binding to access the raw methods on
-}
-
-// SafeMathTransactorRaw is an auto generated low-level write-only Go binding around an Ethereum contract.
-type SafeMathTransactorRaw struct {
-	Contract *SafeMathTransactor // Generic write-only contract binding to access the raw methods on
-}
-
-// NewSafeMath creates a new instance of SafeMath, bound to a specific deployed contract.
-func NewSafeMath(address common.Address, backend bind.ContractBackend) (*SafeMath, error) {
-	contract, err := bindSafeMath(address, backend, backend, backend)
-	if err != nil {
-		return nil, err
-	}
-	return &SafeMath{SafeMathCaller: SafeMathCaller{contract: contract}, SafeMathTransactor: SafeMathTransactor{contract: contract}, SafeMathFilterer: SafeMathFilterer{contract: contract}}, nil
-}
-
-// NewSafeMathCaller creates a new read-only instance of SafeMath, bound to a specific deployed contract.
-func NewSafeMathCaller(address common.Address, caller bind.ContractCaller) (*SafeMathCaller, error) {
-	contract, err := bindSafeMath(address, caller, nil, nil)
-	if err != nil {
-		return nil, err
-	}
-	return &SafeMathCaller{contract: contract}, nil
-}
-
-// NewSafeMathTransactor creates a new write-only instance of SafeMath, bound to a specific deployed contract.
-func NewSafeMathTransactor(address common.Address, transactor bind.ContractTransactor) (*SafeMathTransactor, error) {
-	contract, err := bindSafeMath(address, nil, transactor, nil)
-	if err != nil {
-		return nil, err
-	}
-	return &SafeMathTransactor{contract: contract}, nil
-}
-
-// NewSafeMathFilterer creates a new log filterer instance of SafeMath, bound to a specific deployed contract.
-func NewSafeMathFilterer(address common.Address, filterer bind.ContractFilterer) (*SafeMathFilterer, error) {
-	contract, err := bindSafeMath(address, nil, nil, filterer)
-	if err != nil {
-		return nil, err
-	}
-	return &SafeMathFilterer{contract: contract}, nil
-}
-
-// bindSafeMath binds a generic wrapper to an already deployed contract.
-func bindSafeMath(address common.Address, caller bind.ContractCaller, transactor bind.ContractTransactor, filterer bind.ContractFilterer) (*bind.BoundContract, error) {
-	parsed, err := abi.JSON(strings.NewReader(SafeMathABI))
-	if err != nil {
-		return nil, err
-	}
-	return bind.NewBoundContract(address, parsed, caller, transactor, filterer), nil
-}
-
-// Call invokes the (constant) contract method with params as input values and
-// sets the output to result. The result type might be a single field for simple
-// returns, a slice of interfaces for anonymous returns and a struct for named
-// returns.
-func (_SafeMath *SafeMathRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
-	return _SafeMath.Contract.SafeMathCaller.contract.Call(opts, result, method, params...)
-}
-
-// Transfer initiates a plain transaction to move funds to the contract, calling
-// its default method if one is available.
-func (_SafeMath *SafeMathRaw) Transfer(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _SafeMath.Contract.SafeMathTransactor.contract.Transfer(opts)
-}
-
-// Transact invokes the (paid) contract method with params as input values.
-func (_SafeMath *SafeMathRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*types.Transaction, error) {
-	return _SafeMath.Contract.SafeMathTransactor.contract.Transact(opts, method, params...)
-}
-
-// Call invokes the (constant) contract method with params as input values and
-// sets the output to result. The result type might be a single field for simple
-// returns, a slice of interfaces for anonymous returns and a struct for named
-// returns.
-func (_SafeMath *SafeMathCallerRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
-	return _SafeMath.Contract.contract.Call(opts, result, method, params...)
-}
-
-// Transfer initiates a plain transaction to move funds to the contract, calling
-// its default method if one is available.
-func (_SafeMath *SafeMathTransactorRaw) Transfer(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _SafeMath.Contract.contract.Transfer(opts)
-}
-
-// Transact invokes the (paid) contract method with params as input values.
-func (_SafeMath *SafeMathTransactorRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*types.Transaction, error) {
-	return _SafeMath.Contract.contract.Transact(opts, method, params...)
-}
-
 // VotingABI is the input ABI used to generate the binding from.
-const VotingABI = "[{\"constant\":true,\"inputs\":[],\"name\":\"getCandidates\",\"outputs\":[{\"name\":\"\",\"type\":\"bytes32[]\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"hash\",\"type\":\"bytes32\"},{\"name\":\"kind\",\"type\":\"uint8\"}],\"name\":\"candidateIs\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"hash\",\"type\":\"bytes32\"},{\"name\":\"member\",\"type\":\"address\"}],\"name\":\"didVote\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"hash\",\"type\":\"bytes32\"}],\"name\":\"pollClosed\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"member\",\"type\":\"address\"}],\"name\":\"removeFromCouncil\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"member\",\"type\":\"address\"}],\"name\":\"addToCouncil\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"member\",\"type\":\"address\"}],\"name\":\"inCouncil\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"hash\",\"type\":\"bytes32\"},{\"name\":\"kind\",\"type\":\"uint8\"},{\"name\":\"voteBy\",\"type\":\"uint256\"}],\"name\":\"addCandidate\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"hash\",\"type\":\"bytes32\"}],\"name\":\"removeCandidate\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"hash\",\"type\":\"bytes32\"},{\"name\":\"quorum\",\"type\":\"uint256\"}],\"name\":\"didPass\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"hash\",\"type\":\"bytes32\"}],\"name\":\"vote\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"market\",\"type\":\"address\"},{\"name\":\"parameterizer\",\"type\":\"address\"}],\"name\":\"setPrivilegedContracts\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"getCouncil\",\"outputs\":[{\"name\":\"\",\"type\":\"address[]\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"getPrivilegedAddresses\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"},{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"hash\",\"type\":\"bytes32\"}],\"name\":\"isCandidate\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"hash\",\"type\":\"bytes32\"}],\"name\":\"getCandidate\",\"outputs\":[{\"name\":\"\",\"type\":\"uint8\"},{\"name\":\"\",\"type\":\"uint256\"},{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"voter\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"hash\",\"type\":\"bytes32\"}],\"name\":\"VotedEvent\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"hash\",\"type\":\"bytes32\"},{\"indexed\":true,\"name\":\"kind\",\"type\":\"uint8\"},{\"indexed\":true,\"name\":\"voteBy\",\"type\":\"uint256\"}],\"name\":\"CandidateAddedEvent\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"hash\",\"type\":\"bytes32\"}],\"name\":\"CandidateRemovedEvent\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"member\",\"type\":\"address\"}],\"name\":\"CouncilMemberAddedEvent\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"member\",\"type\":\"address\"}],\"name\":\"CouncilMemberRemovedEvent\",\"type\":\"event\"}]"
+const VotingABI = "[{\"name\":\"CandidateAdded\",\"inputs\":[{\"type\":\"bytes32\",\"name\":\"hash\",\"indexed\":true},{\"type\":\"uint256\",\"name\":\"kind\",\"indexed\":true},{\"type\":\"uint256\",\"name\":\"voteBy\",\"indexed\":true,\"unit\":\"sec\"}],\"anonymous\":false,\"type\":\"event\"},{\"name\":\"CandidateRemoved\",\"inputs\":[{\"type\":\"bytes32\",\"name\":\"hash\",\"indexed\":true}],\"anonymous\":false,\"type\":\"event\"},{\"name\":\"CouncilMemberAdded\",\"inputs\":[{\"type\":\"address\",\"name\":\"member\",\"indexed\":true}],\"anonymous\":false,\"type\":\"event\"},{\"name\":\"CouncilMemberRemoved\",\"inputs\":[{\"type\":\"address\",\"name\":\"member\",\"indexed\":true}],\"anonymous\":false,\"type\":\"event\"},{\"name\":\"Voted\",\"inputs\":[{\"type\":\"bytes32\",\"name\":\"hash\",\"indexed\":true},{\"type\":\"address\",\"name\":\"voter\",\"indexed\":true}],\"anonymous\":false,\"type\":\"event\"},{\"name\":\"__init__\",\"outputs\":[],\"inputs\":[],\"constant\":false,\"payable\":false,\"type\":\"constructor\"},{\"name\":\"getPrivileged\",\"outputs\":[{\"type\":\"address\",\"name\":\"out\"},{\"type\":\"address\",\"name\":\"out\"},{\"type\":\"address\",\"name\":\"out\"}],\"inputs\":[],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":976},{\"name\":\"setPrivileged\",\"outputs\":[],\"inputs\":[{\"type\":\"address\",\"name\":\"market\"},{\"type\":\"address\",\"name\":\"parameterizer\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":70711},{\"name\":\"inCouncil\",\"outputs\":[{\"type\":\"bool\",\"name\":\"out\"}],\"inputs\":[{\"type\":\"address\",\"name\":\"member\"}],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":1330},{\"name\":\"getCouncilCount\",\"outputs\":[{\"type\":\"int128\",\"name\":\"out\"}],\"inputs\":[],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":603},{\"name\":\"addToCouncil\",\"outputs\":[],\"inputs\":[{\"type\":\"address\",\"name\":\"member\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":111546},{\"name\":\"removeFromCouncil\",\"outputs\":[],\"inputs\":[{\"type\":\"address\",\"name\":\"member\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":167405},{\"name\":\"candidateIs\",\"outputs\":[{\"type\":\"bool\",\"name\":\"out\"}],\"inputs\":[{\"type\":\"bytes32\",\"name\":\"hash\"},{\"type\":\"uint256\",\"name\":\"kind\"}],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":919},{\"name\":\"isCandidate\",\"outputs\":[{\"type\":\"bool\",\"name\":\"out\"}],\"inputs\":[{\"type\":\"bytes32\",\"name\":\"hash\"}],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":1513},{\"name\":\"wasCandidate\",\"outputs\":[{\"type\":\"bool\",\"name\":\"out\"}],\"inputs\":[{\"type\":\"bytes32\",\"name\":\"hash\"}],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":964},{\"name\":\"getCandidateCount\",\"outputs\":[{\"type\":\"int128\",\"name\":\"out\"}],\"inputs\":[],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":783},{\"name\":\"getCandidateKey\",\"outputs\":[{\"type\":\"bytes32\",\"name\":\"out\"}],\"inputs\":[{\"type\":\"int128\",\"name\":\"index\"}],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":1030},{\"name\":\"getCandidate\",\"outputs\":[{\"type\":\"uint256\",\"name\":\"out\"},{\"type\":\"uint256\",\"name\":\"out\",\"unit\":\"sec\"},{\"type\":\"uint256\",\"name\":\"out\"}],\"inputs\":[{\"type\":\"bytes32\",\"name\":\"hash\"}],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":1933},{\"name\":\"addCandidate\",\"outputs\":[],\"inputs\":[{\"type\":\"bytes32\",\"name\":\"hash\"},{\"type\":\"uint256\",\"name\":\"kind\"},{\"type\":\"uint256\",\"name\":\"voteBy\",\"unit\":\"sec\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":185357},{\"name\":\"removeCandidate\",\"outputs\":[],\"inputs\":[{\"type\":\"bytes32\",\"name\":\"hash\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":168005},{\"name\":\"didPass\",\"outputs\":[{\"type\":\"bool\",\"name\":\"out\"}],\"inputs\":[{\"type\":\"bytes32\",\"name\":\"hash\"},{\"type\":\"uint256\",\"name\":\"quorum\"}],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":6171},{\"name\":\"didVote\",\"outputs\":[{\"type\":\"bool\",\"name\":\"out\"}],\"inputs\":[{\"type\":\"bytes32\",\"name\":\"hash\"},{\"type\":\"address\",\"name\":\"member\"}],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":3913},{\"name\":\"pollClosed\",\"outputs\":[{\"type\":\"bool\",\"name\":\"out\"}],\"inputs\":[{\"type\":\"bytes32\",\"name\":\"hash\"}],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":3782},{\"name\":\"vote\",\"outputs\":[],\"inputs\":[{\"type\":\"bytes32\",\"name\":\"hash\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":84075}]"
 
 // VotingBin is the compiled bytecode used for deploying new contracts.
-const VotingBin = `0x608060405234801561001057600080fd5b5060068054600160a060020a0319163317905561144c806100326000396000f3fe608060405234801561001057600080fd5b506004361061011d576000357c01000000000000000000000000000000000000000000000000000000009004806389bb617c116100b4578063b181369511610083578063b181369514610328578063b6896e5f14610330578063b89694c61461035e578063dfb6419f1461037b5761011d565b806389bb617c1461029d5780638f354b79146102ba578063a69beaba146102dd578063a7e44790146102fa5761011d565b8063335d8080116100f0578063335d8080146101fd578063471bb3091461022557806362f9a55d1461024b57806364b34e7d146102715761011d565b806306a49fce1461012257806306db12981461017a578063187a9c07146101b4578063327322c8146101e0575b600080fd5b61012a6103ba565b60408051602080825283518183015283519192839290830191858101910280838360005b8381101561016657818101518382015260200161014e565b505050509050019250505060405180910390f35b6101a06004803603604081101561019057600080fd5b508035906020013560ff16610413565b604080519115158252519081900360200190f35b6101a0600480360360408110156101ca57600080fd5b5080359060200135600160a060020a0316610434565b6101a0600480360360208110156101f657600080fd5b50356104fb565b6102236004803603602081101561021357600080fd5b5035600160a060020a0316610561565b005b6102236004803603602081101561023b57600080fd5b5035600160a060020a03166106dd565b6101a06004803603602081101561026157600080fd5b5035600160a060020a031661080c565b6102236004803603606081101561028757600080fd5b5080359060ff6020820135169060400135610864565b610223600480360360208110156102b357600080fd5b50356109cc565b6101a0600480360360408110156102d057600080fd5b5080359060200135610b62565b610223600480360360208110156102f357600080fd5b5035610c92565b6102236004803603604081101561031057600080fd5b50600160a060020a0381358116916020013516610e61565b61012a610f7e565b610338610fdf565b60408051600160a060020a03938416815291909216602082015281519081900390910190f35b6101a06004803603602081101561037457600080fd5b5035610ff6565b6103986004803603602081101561039157600080fd5b503561103b565b6040805160ff9094168452602084019290925282820152519081900360600190f35b6060600180548060200260200160405190810160405280929190818152602001828054801561040857602002820191906000526020600020905b8154815260200190600101908083116103f4575b505050505090505b90565b60008281526020819052604090206001015460ff8281169116145b92915050565b600061043f83610ff6565b151561047f5760405160e560020a62461bcd02815260040180806020018281038252602f815260200180611326602f913960400191505060405180910390fd5b60005b6000848152602081905260409020600401548110156104f15760008481526020819052604090206004018054600160a060020a0385169190839081106104c457fe5b600091825260209091200154600160a060020a031614156104e957600191505061042e565b600101610482565b5060009392505050565b600061050682610ff6565b15156105465760405160e560020a62461bcd0281526004018080602001828103825260328152602001806112c96032913960400191505060405180910390fd5b5060008181526020819052604090206002015442115b919050565b600654600160a060020a03163314806105845750600454600160a060020a031633145b806105995750600554600160a060020a031633145b15156105d95760405160e560020a62461bcd0281526004018080602001828103825260408152602001806112006040913960400191505060405180910390fd5b6105e28161080c565b156106da57600160a060020a03811660009081526002602052604081205460038054919291600019810190811061061557fe5b60009182526020909120015460038054600160a060020a03909216925082918490811061063e57fe5b6000918252602090912001805473ffffffffffffffffffffffffffffffffffffffff1916600160a060020a03929092169190911790556003805490610687906000198301611077565b50600160a060020a0380821660009081526002602052604080822085905591851680825282822082905591517f564e70d59b50a6b32776c3d4a1e4e378a77dc9e24c3e2fbfa04a79166a67489b9190a250505b50565b600654600160a060020a03163314806107005750600454600160a060020a031633145b806107155750600554600160a060020a031633145b15156107555760405160e560020a62461bcd0281526004018080602001828103825260408152602001806112006040913960400191505060405180910390fd5b61075e8161080c565b1515600114156107a25760405160e560020a62461bcd0281526004018080602001828103825260348152602001806113926034913960400191505060405180910390fd5b60038054600181019091557fc2575a0e9e593c00f959f8c92f12db2869c3395a3b0502d05e2516446f71f85b81018054600160a060020a0390931673ffffffffffffffffffffffffffffffffffffffff199093168317905560009182526002602052604090912055565b60035460009015156108205750600061055c565b600160a060020a03821660008181526002602052604090205460038054909190811061084857fe5b600091825260209091200154600160a060020a03161492915050565b600654600160a060020a03163314806108875750600454600160a060020a031633145b8061089c5750600554600160a060020a031633145b15156108dc5760405160e560020a62461bcd0281526004018080602001828103825260408152602001806112006040913960400191505060405180910390fd5b6108e583610ff6565b1515600114156109295760405160e560020a62461bcd0281526004018080602001828103825260348152602001806112956034913960400191505060405180910390fd5b600061093b428363ffffffff61106116565b6000858152602081905260408082206001805480820182558185527fb10e2d527612073b26eecdfd717e6a320cf44b4afac2b0732d9fcbe2b7fa0cf681018a905582558101805460ff191660ff891690811790915560028201859055915193945092859288917fb7fdb794d49b8471a97fc8b1f90d1af97e75e0afc5f56d3b12b696e6d80f01869190a45050505050565b600654600160a060020a03163314806109ef5750600454600160a060020a031633145b80610a045750600554600160a060020a031633145b1515610a445760405160e560020a62461bcd0281526004018080602001828103825260408152602001806112006040913960400191505060405180910390fd5b610a4d81610ff6565b1515610a8d5760405160e560020a62461bcd0281526004018080602001828103825260378152602001806111c96037913960400191505060405180910390fd5b600081815260208190526040812054600180549192916000198101908110610ab157fe5b9060005260206000200154905080600183815481101515610ace57fe5b6000918252602090912001556001805490610aed906000198301611077565b50600081815260208190526040808220849055848252812081815560018101805460ff19169055600281018290556003810182905590610b3060048301826110a0565b505060405183907f53ce6706735b5cd3034bf68c2a532801c1efb4ba72410b5af2167a8462f15b7d90600090a2505050565b6000610b6d83610ff6565b1515610bad5760405160e560020a62461bcd02815260040180806020018281038252602f8152602001806113c6602f913960400191505060405180910390fd5b6000838152602081905260409020600201544211610bff5760405160e560020a62461bcd02815260040180806020018281038252603d815260200180611355603d913960400191505060405180910390fd5b600354600010610c435760405160e560020a62461bcd02815260040180806020018281038252602981526020018061126c6029913960400191505060405180910390fd5b6000838152602081905260409020600301541515610c635750801561042e565b60038054600085815260208190526040902090910154839190606402811515610c8857fe5b041015905061042e565b610c9b3361080c565b1515610cdb5760405160e560020a62461bcd0281526004018080602001828103825260318152602001806111586031913960400191505060405180910390fd5b610ce481610ff6565b1515610d245760405160e560020a62461bcd02815260040180806020018281038252602c815260200180611240602c913960400191505060405180910390fd5b6000818152602081905260409020600201544210610d765760405160e560020a62461bcd0281526004018080602001828103825260388152602001806110d96038913960400191505060405180910390fd5b610d808133610434565b151560011415610dc45760405160e560020a62461bcd02815260040180806020018281038252602c8152602001806113f5602c913960400191505060405180910390fd5b600081815260208181526040822060048101805460018181018355918552928420909201805473ffffffffffffffffffffffffffffffffffffffff19163317905591839052600390910154610e1e9163ffffffff61106116565b600082815260208190526040808220600301929092559051829133917f81681507a95428bb04c5f5ac127e404caf6422d0dcf2ff77612b9201c3aa33bf9190a350565b600654600160a060020a03163314610ead5760405160e560020a62461bcd02815260040180806020018281038252602b8152602001806112fb602b913960400191505060405180910390fd5b600454600160a060020a031615610ef85760405160e560020a62461bcd0281526004018080602001828103825260408152602001806111896040913960400191505060405180910390fd5b600554600160a060020a031615610f435760405160e560020a62461bcd0281526004018080602001828103825260478152602001806111116047913960600191505060405180910390fd5b60048054600160a060020a0393841673ffffffffffffffffffffffffffffffffffffffff199182161790915560058054929093169116179055565b6060600380548060200260200160405190810160405280929190818152602001828054801561040857602002820191906000526020600020905b8154600160a060020a03168152600190910190602001808311610fb8575050505050905090565b600454600554600160a060020a0391821691169091565b600154600090151561100a5750600061055c565b60008281526020819052604090205460018054849290811061102857fe5b9060005260206000200154149050919050565b60009081526020819052604090206001810154600282015460039092015460ff90911692565b60008282018381101561107057fe5b9392505050565b81548183558181111561109b5760008381526020902061109b9181019083016110ba565b505050565b50805460008255906000526020600020908101906106da91905b61041091905b808211156110d457600081556001016110c0565b509056fe4572726f723a566f74696e672e766f7465202d20506f6c6c696e6720697320636c6f73656420666f7220746869732063616e6469646174654572726f723a566f74696e672e73657450726976696c65676564436f6e747261637473202d20506172616d65746572697a6572206164647265737320616c7265616479207365744572726f723a566f74696e672e766f7465202d2053656e646572206d75737420626520636f756e63696c206d656d6265724572726f723a566f74696e672e73657450726976696c65676564436f6e747261637473202d204d61726b6574206164647265737320616c7265616479207365744572726f723a566f74696e672e72656d6f766543616e646964617465202d2043616e64696461746520646f6573206e6f742065786973744572726f723a566f74696e672e68617350726976696c656765202d2053656e646572206d75737420626520612070726976696c6567656420636f6e74726163744572726f723a566f74696e672e766f7465202d2043616e64696461746520646f6573206e6f742065786973744572726f723a566f74696e672e64696450617373202d204e6f20636f756e63696c206d656d626572734572726f723a566f74696e672e61646443616e646964617465202d2043616e64696461746520616c7265616479206578697374734572726f723a566f74696e672e706f6c6c436c6f736564202d2043616e64696461746520646f6573206e6f742065786973744572726f723a566f74696e672e69734f776e6572202d2053656e646572206d757374206265206f776e65724572726f723a566f74696e672e646964566f7465202d2043616e64696461746520646f6573206e6f742065786973744572726f723a566f74696e672e70617373202d20506f6c6c696e67206d75737420626520636c6f73656420666f7220746869732063616e6469646174654572726f723a566f74696e672e616464546f436f756e63696c202d20416c7265616479206120636f756e63696c206d656d6265724572726f723a566f74696e672e64696450617373202d2043616e64696461746520646f6573206e6f742065786973744572726f723a566f74696e672e766f7465202d2053656e6465722068617320616c726561647920766f746564a165627a7a7230582090e4e3a6c60dcb80e6f1c779d468ad71d3eb1825a92302e2b49e37348f58be290029`
+const VotingBin = `0x600035601c52740100000000000000000000000000000000000000006020526f7fffffffffffffffffffffffffffffff6040527fffffffffffffffffffffffffffffffff8000000000000000000000000000000060605274012a05f1fffffffffffffffffffffffffdabf41c006080527ffffffffffffffffffffffffed5fa0e000000000000000000000000000000000060a052341561009e57600080fd5b33600855610fd856600035601c52740100000000000000000000000000000000000000006020526f7fffffffffffffffffffffffffffffff6040527fffffffffffffffffffffffffffffffff8000000000000000000000000000000060605274012a05f1fffffffffffffffffffffffffdabf41c006080527ffffffffffffffffffffffffed5fa0e000000000000000000000000000000000060a05263d4c1753960005114156100d55734156100ac57600080fd5b6060610140526101606008548152600654816020015260075481604001525061014051610160f3005b63b01e369f600051141561013857604060046101403734156100f657600080fd5b600435602051811061010757600080fd5b50602435602051811061011957600080fd5b50600854331461012857600080fd5b6101405160065561016051600755005b600015610170575b61016052610140526006546101405114600854610140511417600754610140511417600052600051610160515650005b6362f9a55d60005114156101f2576020600461014037341561019157600080fd5b60043560205181106101a257600080fd5b5060045415156101b757600060005260206000f35b6101405160036101405160e05260c052604060c020546103e881106101db57600080fd5b600560c052602060c02001541460005260206000f3005b634627da50600051141561021857341561020b57600080fd5b60045460005260206000f3005b63471bb3096000511415610353576020600461014037341561023957600080fd5b600435602051811061024a57600080fd5b5061014051636a395d236101605233610180526101805160065801610140565b6101e052610140526101e05161027f57600080fd5b6103e86004541061028f57600080fd5b602061028060246362f9a55d61020052610140516102205261021c6000305af16102b857600080fd5b61028051156102c657600080fd5b60045460036101405160e05260c052604060c02055610140516004546103e881106102f057600080fd5b600560c052602060c0200155600460605160018254018060405190131561031657600080fd5b809190121561032457600080fd5b815550610140517fdcb46b4634af6065fbbeab63938d70a7cc803a67bc6a5bb9f28fb8d9a5c4ce1460006000a2005b63335d80806000511415610527576020600461014037341561037457600080fd5b600435602051811061038557600080fd5b5061014051636a395d236101605233610180526101805160065801610140565b6101e052610140526101e0516103ba57600080fd5b602061028060246362f9a55d61020052610140516102205261021c6000305af16103e357600080fd5b610280516103f057600080fd5b600460605160018254038060405190131561040a57600080fd5b809190121561041857600080fd5b81555060045415156104395760006000600560c052602060c02001556104c8565b60036101405160e05260c052604060c020546102a0526004546103e8811061046057600080fd5b600560c052602060c02001546102c0526102c0516102a0516103e8811061048657600080fd5b600560c052602060c020015560006004546103e881106104a557600080fd5b600560c052602060c02001556102a05160036102c05160e05260c052604060c020555b7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff60036101405160e05260c052604060c02055610140517fce6ed85c24e62fbd23486204879240944c169dfcde2952b0c15f12bf1202966960006000a2005b63af61f7606000511415610574576040600461014037341561054857600080fd5b61016051600160006101405160e05260c052604060c02060c052602060c02001541460005260206000f3005b63b89694c660005114156105ec576020600461014037341561059557600080fd5b60015415156105a957600060005260206000f35b6101405160006101405160e05260c052604060c02060c052602060c020546103e881106105d557600080fd5b600260c052602060c02001541460005260206000f3005b63803381426000511415610653576020600461014037341561060d57600080fd5b7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff60006101405160e05260c052604060c02060c052602060c020541460005260206000f3005b6330a56347600051141561067957341561066c57600080fd5b60015460005260206000f3005b6379b7392460005114156106e7576020600461014037341561069a57600080fd5b606051600435806040519013156106b057600080fd5b80919012156106be57600080fd5b50610140516103e881106106d157600080fd5b600260c052602060c020015460005260206000f3005b63dfb6419f600051141561077f576020600461014037341561070857600080fd5b606061016052610180600160006101405160e05260c052604060c02060c052602060c02001548152600260006101405160e05260c052604060c02060c052602060c02001548160200152600460006101405160e05260c052604060c02060c052602060c020015481604001525061016051610180f3005b637ff45d8b600051141561095d57606060046101403734156107a057600080fd5b610140516101605161018051636a395d236101a052336101c0526101c05160065801610140565b61022052610180526101605261014052610220516107e457600080fd5b6103e8600154106107f457600080fd5b60206102c0602463b89694c661024052610140516102605261025c6000305af161081d57600080fd5b6102c0511561082b57600080fd5b6020610360602463803381426102e05261014051610300526102fc6000305af161085457600080fd5b610360511561086257600080fd5b42610180514201101561087457600080fd5b6101805142016103805260015460006101405160e05260c052604060c02060c052602060c0205561016051600160006101405160e05260c052604060c02060c052602060c020015561038051600260006101405160e05260c052604060c02060c052602060c0200155610140516001546103e881106108f257600080fd5b600260c052602060c0200155600160605160018254018060405190131561091857600080fd5b809190121561092657600080fd5b8155506103805161016051610140517f4566e4146679483436367293d719cef8eb5d21b6b774ec4cec37b82f224db16160006000a4005b6389bb617c6000511415610b37576020600461014037341561097e57600080fd5b61014051636a395d236101605233610180526101805160065801610140565b6101e052610140526101e0516109b257600080fd5b6020610280602463b89694c661020052610140516102205261021c6000305af16109db57600080fd5b610280516109e857600080fd5b6001606051600182540380604051901315610a0257600080fd5b8091901215610a1057600080fd5b8155506001541515610a315760006000600260c052602060c0200155610ad0565b60006101405160e05260c052604060c02060c052602060c020546102a0526001546103e88110610a6057600080fd5b600260c052602060c02001546102c0526102c0516102a0516103e88110610a8657600080fd5b600260c052602060c020015560006001546103e88110610aa557600080fd5b600260c052602060c02001556102a05160006102c05160e05260c052604060c02060c052602060c020555b7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff60006101405160e05260c052604060c02060c052602060c02055610140517fb314642ce4aa3156c1090458cfccabff50f32bc85d110d7799c369e1a660bcf460006000a2005b638f354b796000511415610cb85760406004610140373415610b5857600080fd5b6020610200602463b89694c661018052610140516101a05261019c6000305af1610b8157600080fd5b61020051610b8e57600080fd5b42600260006101405160e05260c052604060c02060c052602060c020015410610bb657600080fd5b600460006101405160e05260c052604060c02060c052602060c02001541515610beb57610160511560005260206000f3610cb6565b610160516004546000811215610c0057600080fd5b6102205261022051610c1157600080fd5b61022051600460006101405160e05260c052604060c02060c052602060c02001541515610c3f576000610caa565b6064600460006101405160e05260c052604060c02060c052602060c02001546064600460006101405160e05260c052604060c02060c052602060c0200154020414610c8957600080fd5b6064600460006101405160e05260c052604060c02060c052602060c0200154025b04101560005260206000f35b005b63187a9c076000511415610d5a5760406004610140373415610cd957600080fd5b6024356020518110610cea57600080fd5b506020610200602463b89694c661018052610140516101a05261019c6000305af1610d1457600080fd5b61020051610d2157600080fd5b6001600360006101405160e05260c052604060c02060c052602060c020016101605160e05260c052604060c020541460005260206000f3005b63327322c86000511415610dda5760206004610140373415610d7b57600080fd5b60206101e0602463b89694c661016052610140516101805261017c6000305af1610da457600080fd5b6101e051610db157600080fd5b42600260006101405160e05260c052604060c02060c052602060c02001541060005260206000f3005b63a69beaba6000511415610f2b5760206004610140373415610dfb57600080fd5b60206101e060246362f9a55d61016052336101805261017c6000305af1610e2157600080fd5b6101e051610e2e57600080fd5b6020610280602463b89694c661020052610140516102205261021c6000305af1610e5757600080fd5b61028051610e6457600080fd5b42600260006101405160e05260c052604060c02060c052602060c020015411610e8c57600080fd5b6020610340604463187a9c076102a052610140516102c052336102e0526102bc6000305af1610eba57600080fd5b6103405115610ec857600080fd5b6001600360006101405160e05260c052604060c02060c052602060c020013360e05260c052604060c02055600460006101405160e05260c052604060c02060c052602060c02001805460018254011015610f2157600080fd5b6001815401815550005b60006000fd5b6100a7610fd8036100a76000396100a7610fd8036000f3`
 
 // DeployVoting deploys a new Ethereum contract, binding an instance of Voting to it.
 func DeployVoting(auth *bind.TransactOpts, backend bind.ContractBackend) (common.Address, *types.Transaction, *Voting, error) {
@@ -337,10 +176,10 @@ func (_Voting *VotingTransactorRaw) Transact(opts *bind.TransactOpts, method str
 	return _Voting.Contract.contract.Transact(opts, method, params...)
 }
 
-// CandidateIs is a free data retrieval call binding the contract method 0x06db1298.
+// CandidateIs is a free data retrieval call binding the contract method 0xaf61f760.
 //
-// Solidity: function candidateIs(hash bytes32, kind uint8) constant returns(bool)
-func (_Voting *VotingCaller) CandidateIs(opts *bind.CallOpts, hash [32]byte, kind uint8) (bool, error) {
+// Solidity: function candidateIs(hash bytes32, kind uint256) constant returns(out bool)
+func (_Voting *VotingCaller) CandidateIs(opts *bind.CallOpts, hash [32]byte, kind *big.Int) (bool, error) {
 	var (
 		ret0 = new(bool)
 	)
@@ -349,23 +188,23 @@ func (_Voting *VotingCaller) CandidateIs(opts *bind.CallOpts, hash [32]byte, kin
 	return *ret0, err
 }
 
-// CandidateIs is a free data retrieval call binding the contract method 0x06db1298.
+// CandidateIs is a free data retrieval call binding the contract method 0xaf61f760.
 //
-// Solidity: function candidateIs(hash bytes32, kind uint8) constant returns(bool)
-func (_Voting *VotingSession) CandidateIs(hash [32]byte, kind uint8) (bool, error) {
+// Solidity: function candidateIs(hash bytes32, kind uint256) constant returns(out bool)
+func (_Voting *VotingSession) CandidateIs(hash [32]byte, kind *big.Int) (bool, error) {
 	return _Voting.Contract.CandidateIs(&_Voting.CallOpts, hash, kind)
 }
 
-// CandidateIs is a free data retrieval call binding the contract method 0x06db1298.
+// CandidateIs is a free data retrieval call binding the contract method 0xaf61f760.
 //
-// Solidity: function candidateIs(hash bytes32, kind uint8) constant returns(bool)
-func (_Voting *VotingCallerSession) CandidateIs(hash [32]byte, kind uint8) (bool, error) {
+// Solidity: function candidateIs(hash bytes32, kind uint256) constant returns(out bool)
+func (_Voting *VotingCallerSession) CandidateIs(hash [32]byte, kind *big.Int) (bool, error) {
 	return _Voting.Contract.CandidateIs(&_Voting.CallOpts, hash, kind)
 }
 
 // DidPass is a free data retrieval call binding the contract method 0x8f354b79.
 //
-// Solidity: function didPass(hash bytes32, quorum uint256) constant returns(bool)
+// Solidity: function didPass(hash bytes32, quorum uint256) constant returns(out bool)
 func (_Voting *VotingCaller) DidPass(opts *bind.CallOpts, hash [32]byte, quorum *big.Int) (bool, error) {
 	var (
 		ret0 = new(bool)
@@ -377,21 +216,21 @@ func (_Voting *VotingCaller) DidPass(opts *bind.CallOpts, hash [32]byte, quorum 
 
 // DidPass is a free data retrieval call binding the contract method 0x8f354b79.
 //
-// Solidity: function didPass(hash bytes32, quorum uint256) constant returns(bool)
+// Solidity: function didPass(hash bytes32, quorum uint256) constant returns(out bool)
 func (_Voting *VotingSession) DidPass(hash [32]byte, quorum *big.Int) (bool, error) {
 	return _Voting.Contract.DidPass(&_Voting.CallOpts, hash, quorum)
 }
 
 // DidPass is a free data retrieval call binding the contract method 0x8f354b79.
 //
-// Solidity: function didPass(hash bytes32, quorum uint256) constant returns(bool)
+// Solidity: function didPass(hash bytes32, quorum uint256) constant returns(out bool)
 func (_Voting *VotingCallerSession) DidPass(hash [32]byte, quorum *big.Int) (bool, error) {
 	return _Voting.Contract.DidPass(&_Voting.CallOpts, hash, quorum)
 }
 
 // DidVote is a free data retrieval call binding the contract method 0x187a9c07.
 //
-// Solidity: function didVote(hash bytes32, member address) constant returns(bool)
+// Solidity: function didVote(hash bytes32, member address) constant returns(out bool)
 func (_Voting *VotingCaller) DidVote(opts *bind.CallOpts, hash [32]byte, member common.Address) (bool, error) {
 	var (
 		ret0 = new(bool)
@@ -403,24 +242,24 @@ func (_Voting *VotingCaller) DidVote(opts *bind.CallOpts, hash [32]byte, member 
 
 // DidVote is a free data retrieval call binding the contract method 0x187a9c07.
 //
-// Solidity: function didVote(hash bytes32, member address) constant returns(bool)
+// Solidity: function didVote(hash bytes32, member address) constant returns(out bool)
 func (_Voting *VotingSession) DidVote(hash [32]byte, member common.Address) (bool, error) {
 	return _Voting.Contract.DidVote(&_Voting.CallOpts, hash, member)
 }
 
 // DidVote is a free data retrieval call binding the contract method 0x187a9c07.
 //
-// Solidity: function didVote(hash bytes32, member address) constant returns(bool)
+// Solidity: function didVote(hash bytes32, member address) constant returns(out bool)
 func (_Voting *VotingCallerSession) DidVote(hash [32]byte, member common.Address) (bool, error) {
 	return _Voting.Contract.DidVote(&_Voting.CallOpts, hash, member)
 }
 
 // GetCandidate is a free data retrieval call binding the contract method 0xdfb6419f.
 //
-// Solidity: function getCandidate(hash bytes32) constant returns(uint8, uint256, uint256)
-func (_Voting *VotingCaller) GetCandidate(opts *bind.CallOpts, hash [32]byte) (uint8, *big.Int, *big.Int, error) {
+// Solidity: function getCandidate(hash bytes32) constant returns(out uint256, out uint256, out uint256)
+func (_Voting *VotingCaller) GetCandidate(opts *bind.CallOpts, hash [32]byte) (*big.Int, *big.Int, *big.Int, error) {
 	var (
-		ret0 = new(uint8)
+		ret0 = new(*big.Int)
 		ret1 = new(*big.Int)
 		ret2 = new(*big.Int)
 	)
@@ -435,103 +274,131 @@ func (_Voting *VotingCaller) GetCandidate(opts *bind.CallOpts, hash [32]byte) (u
 
 // GetCandidate is a free data retrieval call binding the contract method 0xdfb6419f.
 //
-// Solidity: function getCandidate(hash bytes32) constant returns(uint8, uint256, uint256)
-func (_Voting *VotingSession) GetCandidate(hash [32]byte) (uint8, *big.Int, *big.Int, error) {
+// Solidity: function getCandidate(hash bytes32) constant returns(out uint256, out uint256, out uint256)
+func (_Voting *VotingSession) GetCandidate(hash [32]byte) (*big.Int, *big.Int, *big.Int, error) {
 	return _Voting.Contract.GetCandidate(&_Voting.CallOpts, hash)
 }
 
 // GetCandidate is a free data retrieval call binding the contract method 0xdfb6419f.
 //
-// Solidity: function getCandidate(hash bytes32) constant returns(uint8, uint256, uint256)
-func (_Voting *VotingCallerSession) GetCandidate(hash [32]byte) (uint8, *big.Int, *big.Int, error) {
+// Solidity: function getCandidate(hash bytes32) constant returns(out uint256, out uint256, out uint256)
+func (_Voting *VotingCallerSession) GetCandidate(hash [32]byte) (*big.Int, *big.Int, *big.Int, error) {
 	return _Voting.Contract.GetCandidate(&_Voting.CallOpts, hash)
 }
 
-// GetCandidates is a free data retrieval call binding the contract method 0x06a49fce.
+// GetCandidateCount is a free data retrieval call binding the contract method 0x30a56347.
 //
-// Solidity: function getCandidates() constant returns(bytes32[])
-func (_Voting *VotingCaller) GetCandidates(opts *bind.CallOpts) ([][32]byte, error) {
+// Solidity: function getCandidateCount() constant returns(out int128)
+func (_Voting *VotingCaller) GetCandidateCount(opts *bind.CallOpts) (*big.Int, error) {
 	var (
-		ret0 = new([][32]byte)
+		ret0 = new(*big.Int)
 	)
 	out := ret0
-	err := _Voting.contract.Call(opts, out, "getCandidates")
+	err := _Voting.contract.Call(opts, out, "getCandidateCount")
 	return *ret0, err
 }
 
-// GetCandidates is a free data retrieval call binding the contract method 0x06a49fce.
+// GetCandidateCount is a free data retrieval call binding the contract method 0x30a56347.
 //
-// Solidity: function getCandidates() constant returns(bytes32[])
-func (_Voting *VotingSession) GetCandidates() ([][32]byte, error) {
-	return _Voting.Contract.GetCandidates(&_Voting.CallOpts)
+// Solidity: function getCandidateCount() constant returns(out int128)
+func (_Voting *VotingSession) GetCandidateCount() (*big.Int, error) {
+	return _Voting.Contract.GetCandidateCount(&_Voting.CallOpts)
 }
 
-// GetCandidates is a free data retrieval call binding the contract method 0x06a49fce.
+// GetCandidateCount is a free data retrieval call binding the contract method 0x30a56347.
 //
-// Solidity: function getCandidates() constant returns(bytes32[])
-func (_Voting *VotingCallerSession) GetCandidates() ([][32]byte, error) {
-	return _Voting.Contract.GetCandidates(&_Voting.CallOpts)
+// Solidity: function getCandidateCount() constant returns(out int128)
+func (_Voting *VotingCallerSession) GetCandidateCount() (*big.Int, error) {
+	return _Voting.Contract.GetCandidateCount(&_Voting.CallOpts)
 }
 
-// GetCouncil is a free data retrieval call binding the contract method 0xb1813695.
+// GetCandidateKey is a free data retrieval call binding the contract method 0x79b73924.
 //
-// Solidity: function getCouncil() constant returns(address[])
-func (_Voting *VotingCaller) GetCouncil(opts *bind.CallOpts) ([]common.Address, error) {
+// Solidity: function getCandidateKey(index int128) constant returns(out bytes32)
+func (_Voting *VotingCaller) GetCandidateKey(opts *bind.CallOpts, index *big.Int) ([32]byte, error) {
 	var (
-		ret0 = new([]common.Address)
+		ret0 = new([32]byte)
 	)
 	out := ret0
-	err := _Voting.contract.Call(opts, out, "getCouncil")
+	err := _Voting.contract.Call(opts, out, "getCandidateKey", index)
 	return *ret0, err
 }
 
-// GetCouncil is a free data retrieval call binding the contract method 0xb1813695.
+// GetCandidateKey is a free data retrieval call binding the contract method 0x79b73924.
 //
-// Solidity: function getCouncil() constant returns(address[])
-func (_Voting *VotingSession) GetCouncil() ([]common.Address, error) {
-	return _Voting.Contract.GetCouncil(&_Voting.CallOpts)
+// Solidity: function getCandidateKey(index int128) constant returns(out bytes32)
+func (_Voting *VotingSession) GetCandidateKey(index *big.Int) ([32]byte, error) {
+	return _Voting.Contract.GetCandidateKey(&_Voting.CallOpts, index)
 }
 
-// GetCouncil is a free data retrieval call binding the contract method 0xb1813695.
+// GetCandidateKey is a free data retrieval call binding the contract method 0x79b73924.
 //
-// Solidity: function getCouncil() constant returns(address[])
-func (_Voting *VotingCallerSession) GetCouncil() ([]common.Address, error) {
-	return _Voting.Contract.GetCouncil(&_Voting.CallOpts)
+// Solidity: function getCandidateKey(index int128) constant returns(out bytes32)
+func (_Voting *VotingCallerSession) GetCandidateKey(index *big.Int) ([32]byte, error) {
+	return _Voting.Contract.GetCandidateKey(&_Voting.CallOpts, index)
 }
 
-// GetPrivilegedAddresses is a free data retrieval call binding the contract method 0xb6896e5f.
+// GetCouncilCount is a free data retrieval call binding the contract method 0x4627da50.
 //
-// Solidity: function getPrivilegedAddresses() constant returns(address, address)
-func (_Voting *VotingCaller) GetPrivilegedAddresses(opts *bind.CallOpts) (common.Address, common.Address, error) {
+// Solidity: function getCouncilCount() constant returns(out int128)
+func (_Voting *VotingCaller) GetCouncilCount(opts *bind.CallOpts) (*big.Int, error) {
+	var (
+		ret0 = new(*big.Int)
+	)
+	out := ret0
+	err := _Voting.contract.Call(opts, out, "getCouncilCount")
+	return *ret0, err
+}
+
+// GetCouncilCount is a free data retrieval call binding the contract method 0x4627da50.
+//
+// Solidity: function getCouncilCount() constant returns(out int128)
+func (_Voting *VotingSession) GetCouncilCount() (*big.Int, error) {
+	return _Voting.Contract.GetCouncilCount(&_Voting.CallOpts)
+}
+
+// GetCouncilCount is a free data retrieval call binding the contract method 0x4627da50.
+//
+// Solidity: function getCouncilCount() constant returns(out int128)
+func (_Voting *VotingCallerSession) GetCouncilCount() (*big.Int, error) {
+	return _Voting.Contract.GetCouncilCount(&_Voting.CallOpts)
+}
+
+// GetPrivileged is a free data retrieval call binding the contract method 0xd4c17539.
+//
+// Solidity: function getPrivileged() constant returns(out address, out address, out address)
+func (_Voting *VotingCaller) GetPrivileged(opts *bind.CallOpts) (common.Address, common.Address, common.Address, error) {
 	var (
 		ret0 = new(common.Address)
 		ret1 = new(common.Address)
+		ret2 = new(common.Address)
 	)
 	out := &[]interface{}{
 		ret0,
 		ret1,
+		ret2,
 	}
-	err := _Voting.contract.Call(opts, out, "getPrivilegedAddresses")
-	return *ret0, *ret1, err
+	err := _Voting.contract.Call(opts, out, "getPrivileged")
+	return *ret0, *ret1, *ret2, err
 }
 
-// GetPrivilegedAddresses is a free data retrieval call binding the contract method 0xb6896e5f.
+// GetPrivileged is a free data retrieval call binding the contract method 0xd4c17539.
 //
-// Solidity: function getPrivilegedAddresses() constant returns(address, address)
-func (_Voting *VotingSession) GetPrivilegedAddresses() (common.Address, common.Address, error) {
-	return _Voting.Contract.GetPrivilegedAddresses(&_Voting.CallOpts)
+// Solidity: function getPrivileged() constant returns(out address, out address, out address)
+func (_Voting *VotingSession) GetPrivileged() (common.Address, common.Address, common.Address, error) {
+	return _Voting.Contract.GetPrivileged(&_Voting.CallOpts)
 }
 
-// GetPrivilegedAddresses is a free data retrieval call binding the contract method 0xb6896e5f.
+// GetPrivileged is a free data retrieval call binding the contract method 0xd4c17539.
 //
-// Solidity: function getPrivilegedAddresses() constant returns(address, address)
-func (_Voting *VotingCallerSession) GetPrivilegedAddresses() (common.Address, common.Address, error) {
-	return _Voting.Contract.GetPrivilegedAddresses(&_Voting.CallOpts)
+// Solidity: function getPrivileged() constant returns(out address, out address, out address)
+func (_Voting *VotingCallerSession) GetPrivileged() (common.Address, common.Address, common.Address, error) {
+	return _Voting.Contract.GetPrivileged(&_Voting.CallOpts)
 }
 
 // InCouncil is a free data retrieval call binding the contract method 0x62f9a55d.
 //
-// Solidity: function inCouncil(member address) constant returns(bool)
+// Solidity: function inCouncil(member address) constant returns(out bool)
 func (_Voting *VotingCaller) InCouncil(opts *bind.CallOpts, member common.Address) (bool, error) {
 	var (
 		ret0 = new(bool)
@@ -543,21 +410,21 @@ func (_Voting *VotingCaller) InCouncil(opts *bind.CallOpts, member common.Addres
 
 // InCouncil is a free data retrieval call binding the contract method 0x62f9a55d.
 //
-// Solidity: function inCouncil(member address) constant returns(bool)
+// Solidity: function inCouncil(member address) constant returns(out bool)
 func (_Voting *VotingSession) InCouncil(member common.Address) (bool, error) {
 	return _Voting.Contract.InCouncil(&_Voting.CallOpts, member)
 }
 
 // InCouncil is a free data retrieval call binding the contract method 0x62f9a55d.
 //
-// Solidity: function inCouncil(member address) constant returns(bool)
+// Solidity: function inCouncil(member address) constant returns(out bool)
 func (_Voting *VotingCallerSession) InCouncil(member common.Address) (bool, error) {
 	return _Voting.Contract.InCouncil(&_Voting.CallOpts, member)
 }
 
 // IsCandidate is a free data retrieval call binding the contract method 0xb89694c6.
 //
-// Solidity: function isCandidate(hash bytes32) constant returns(bool)
+// Solidity: function isCandidate(hash bytes32) constant returns(out bool)
 func (_Voting *VotingCaller) IsCandidate(opts *bind.CallOpts, hash [32]byte) (bool, error) {
 	var (
 		ret0 = new(bool)
@@ -569,21 +436,21 @@ func (_Voting *VotingCaller) IsCandidate(opts *bind.CallOpts, hash [32]byte) (bo
 
 // IsCandidate is a free data retrieval call binding the contract method 0xb89694c6.
 //
-// Solidity: function isCandidate(hash bytes32) constant returns(bool)
+// Solidity: function isCandidate(hash bytes32) constant returns(out bool)
 func (_Voting *VotingSession) IsCandidate(hash [32]byte) (bool, error) {
 	return _Voting.Contract.IsCandidate(&_Voting.CallOpts, hash)
 }
 
 // IsCandidate is a free data retrieval call binding the contract method 0xb89694c6.
 //
-// Solidity: function isCandidate(hash bytes32) constant returns(bool)
+// Solidity: function isCandidate(hash bytes32) constant returns(out bool)
 func (_Voting *VotingCallerSession) IsCandidate(hash [32]byte) (bool, error) {
 	return _Voting.Contract.IsCandidate(&_Voting.CallOpts, hash)
 }
 
 // PollClosed is a free data retrieval call binding the contract method 0x327322c8.
 //
-// Solidity: function pollClosed(hash bytes32) constant returns(bool)
+// Solidity: function pollClosed(hash bytes32) constant returns(out bool)
 func (_Voting *VotingCaller) PollClosed(opts *bind.CallOpts, hash [32]byte) (bool, error) {
 	var (
 		ret0 = new(bool)
@@ -595,36 +462,62 @@ func (_Voting *VotingCaller) PollClosed(opts *bind.CallOpts, hash [32]byte) (boo
 
 // PollClosed is a free data retrieval call binding the contract method 0x327322c8.
 //
-// Solidity: function pollClosed(hash bytes32) constant returns(bool)
+// Solidity: function pollClosed(hash bytes32) constant returns(out bool)
 func (_Voting *VotingSession) PollClosed(hash [32]byte) (bool, error) {
 	return _Voting.Contract.PollClosed(&_Voting.CallOpts, hash)
 }
 
 // PollClosed is a free data retrieval call binding the contract method 0x327322c8.
 //
-// Solidity: function pollClosed(hash bytes32) constant returns(bool)
+// Solidity: function pollClosed(hash bytes32) constant returns(out bool)
 func (_Voting *VotingCallerSession) PollClosed(hash [32]byte) (bool, error) {
 	return _Voting.Contract.PollClosed(&_Voting.CallOpts, hash)
 }
 
-// AddCandidate is a paid mutator transaction binding the contract method 0x64b34e7d.
+// WasCandidate is a free data retrieval call binding the contract method 0x80338142.
 //
-// Solidity: function addCandidate(hash bytes32, kind uint8, voteBy uint256) returns()
-func (_Voting *VotingTransactor) AddCandidate(opts *bind.TransactOpts, hash [32]byte, kind uint8, voteBy *big.Int) (*types.Transaction, error) {
+// Solidity: function wasCandidate(hash bytes32) constant returns(out bool)
+func (_Voting *VotingCaller) WasCandidate(opts *bind.CallOpts, hash [32]byte) (bool, error) {
+	var (
+		ret0 = new(bool)
+	)
+	out := ret0
+	err := _Voting.contract.Call(opts, out, "wasCandidate", hash)
+	return *ret0, err
+}
+
+// WasCandidate is a free data retrieval call binding the contract method 0x80338142.
+//
+// Solidity: function wasCandidate(hash bytes32) constant returns(out bool)
+func (_Voting *VotingSession) WasCandidate(hash [32]byte) (bool, error) {
+	return _Voting.Contract.WasCandidate(&_Voting.CallOpts, hash)
+}
+
+// WasCandidate is a free data retrieval call binding the contract method 0x80338142.
+//
+// Solidity: function wasCandidate(hash bytes32) constant returns(out bool)
+func (_Voting *VotingCallerSession) WasCandidate(hash [32]byte) (bool, error) {
+	return _Voting.Contract.WasCandidate(&_Voting.CallOpts, hash)
+}
+
+// AddCandidate is a paid mutator transaction binding the contract method 0x7ff45d8b.
+//
+// Solidity: function addCandidate(hash bytes32, kind uint256, voteBy uint256) returns()
+func (_Voting *VotingTransactor) AddCandidate(opts *bind.TransactOpts, hash [32]byte, kind *big.Int, voteBy *big.Int) (*types.Transaction, error) {
 	return _Voting.contract.Transact(opts, "addCandidate", hash, kind, voteBy)
 }
 
-// AddCandidate is a paid mutator transaction binding the contract method 0x64b34e7d.
+// AddCandidate is a paid mutator transaction binding the contract method 0x7ff45d8b.
 //
-// Solidity: function addCandidate(hash bytes32, kind uint8, voteBy uint256) returns()
-func (_Voting *VotingSession) AddCandidate(hash [32]byte, kind uint8, voteBy *big.Int) (*types.Transaction, error) {
+// Solidity: function addCandidate(hash bytes32, kind uint256, voteBy uint256) returns()
+func (_Voting *VotingSession) AddCandidate(hash [32]byte, kind *big.Int, voteBy *big.Int) (*types.Transaction, error) {
 	return _Voting.Contract.AddCandidate(&_Voting.TransactOpts, hash, kind, voteBy)
 }
 
-// AddCandidate is a paid mutator transaction binding the contract method 0x64b34e7d.
+// AddCandidate is a paid mutator transaction binding the contract method 0x7ff45d8b.
 //
-// Solidity: function addCandidate(hash bytes32, kind uint8, voteBy uint256) returns()
-func (_Voting *VotingTransactorSession) AddCandidate(hash [32]byte, kind uint8, voteBy *big.Int) (*types.Transaction, error) {
+// Solidity: function addCandidate(hash bytes32, kind uint256, voteBy uint256) returns()
+func (_Voting *VotingTransactorSession) AddCandidate(hash [32]byte, kind *big.Int, voteBy *big.Int) (*types.Transaction, error) {
 	return _Voting.Contract.AddCandidate(&_Voting.TransactOpts, hash, kind, voteBy)
 }
 
@@ -691,25 +584,25 @@ func (_Voting *VotingTransactorSession) RemoveFromCouncil(member common.Address)
 	return _Voting.Contract.RemoveFromCouncil(&_Voting.TransactOpts, member)
 }
 
-// SetPrivilegedContracts is a paid mutator transaction binding the contract method 0xa7e44790.
+// SetPrivileged is a paid mutator transaction binding the contract method 0xb01e369f.
 //
-// Solidity: function setPrivilegedContracts(market address, parameterizer address) returns()
-func (_Voting *VotingTransactor) SetPrivilegedContracts(opts *bind.TransactOpts, market common.Address, parameterizer common.Address) (*types.Transaction, error) {
-	return _Voting.contract.Transact(opts, "setPrivilegedContracts", market, parameterizer)
+// Solidity: function setPrivileged(market address, parameterizer address) returns()
+func (_Voting *VotingTransactor) SetPrivileged(opts *bind.TransactOpts, market common.Address, parameterizer common.Address) (*types.Transaction, error) {
+	return _Voting.contract.Transact(opts, "setPrivileged", market, parameterizer)
 }
 
-// SetPrivilegedContracts is a paid mutator transaction binding the contract method 0xa7e44790.
+// SetPrivileged is a paid mutator transaction binding the contract method 0xb01e369f.
 //
-// Solidity: function setPrivilegedContracts(market address, parameterizer address) returns()
-func (_Voting *VotingSession) SetPrivilegedContracts(market common.Address, parameterizer common.Address) (*types.Transaction, error) {
-	return _Voting.Contract.SetPrivilegedContracts(&_Voting.TransactOpts, market, parameterizer)
+// Solidity: function setPrivileged(market address, parameterizer address) returns()
+func (_Voting *VotingSession) SetPrivileged(market common.Address, parameterizer common.Address) (*types.Transaction, error) {
+	return _Voting.Contract.SetPrivileged(&_Voting.TransactOpts, market, parameterizer)
 }
 
-// SetPrivilegedContracts is a paid mutator transaction binding the contract method 0xa7e44790.
+// SetPrivileged is a paid mutator transaction binding the contract method 0xb01e369f.
 //
-// Solidity: function setPrivilegedContracts(market address, parameterizer address) returns()
-func (_Voting *VotingTransactorSession) SetPrivilegedContracts(market common.Address, parameterizer common.Address) (*types.Transaction, error) {
-	return _Voting.Contract.SetPrivilegedContracts(&_Voting.TransactOpts, market, parameterizer)
+// Solidity: function setPrivileged(market address, parameterizer address) returns()
+func (_Voting *VotingTransactorSession) SetPrivileged(market common.Address, parameterizer common.Address) (*types.Transaction, error) {
+	return _Voting.Contract.SetPrivileged(&_Voting.TransactOpts, market, parameterizer)
 }
 
 // Vote is a paid mutator transaction binding the contract method 0xa69beaba.
@@ -733,9 +626,9 @@ func (_Voting *VotingTransactorSession) Vote(hash [32]byte) (*types.Transaction,
 	return _Voting.Contract.Vote(&_Voting.TransactOpts, hash)
 }
 
-// VotingCandidateAddedEventIterator is returned from FilterCandidateAddedEvent and is used to iterate over the raw logs and unpacked data for CandidateAddedEvent events raised by the Voting contract.
-type VotingCandidateAddedEventIterator struct {
-	Event *VotingCandidateAddedEvent // Event containing the contract specifics and raw log
+// VotingCandidateAddedIterator is returned from FilterCandidateAdded and is used to iterate over the raw logs and unpacked data for CandidateAdded events raised by the Voting contract.
+type VotingCandidateAddedIterator struct {
+	Event *VotingCandidateAdded // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -749,7 +642,7 @@ type VotingCandidateAddedEventIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *VotingCandidateAddedEventIterator) Next() bool {
+func (it *VotingCandidateAddedIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -758,7 +651,7 @@ func (it *VotingCandidateAddedEventIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(VotingCandidateAddedEvent)
+			it.Event = new(VotingCandidateAdded)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -773,7 +666,7 @@ func (it *VotingCandidateAddedEventIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(VotingCandidateAddedEvent)
+		it.Event = new(VotingCandidateAdded)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -789,29 +682,29 @@ func (it *VotingCandidateAddedEventIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *VotingCandidateAddedEventIterator) Error() error {
+func (it *VotingCandidateAddedIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *VotingCandidateAddedEventIterator) Close() error {
+func (it *VotingCandidateAddedIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// VotingCandidateAddedEvent represents a CandidateAddedEvent event raised by the Voting contract.
-type VotingCandidateAddedEvent struct {
+// VotingCandidateAdded represents a CandidateAdded event raised by the Voting contract.
+type VotingCandidateAdded struct {
 	Hash   [32]byte
-	Kind   uint8
+	Kind   *big.Int
 	VoteBy *big.Int
 	Raw    types.Log // Blockchain specific contextual infos
 }
 
-// FilterCandidateAddedEvent is a free log retrieval operation binding the contract event 0xb7fdb794d49b8471a97fc8b1f90d1af97e75e0afc5f56d3b12b696e6d80f0186.
+// FilterCandidateAdded is a free log retrieval operation binding the contract event 0x4566e4146679483436367293d719cef8eb5d21b6b774ec4cec37b82f224db161.
 //
-// Solidity: e CandidateAddedEvent(hash indexed bytes32, kind indexed uint8, voteBy indexed uint256)
-func (_Voting *VotingFilterer) FilterCandidateAddedEvent(opts *bind.FilterOpts, hash [][32]byte, kind []uint8, voteBy []*big.Int) (*VotingCandidateAddedEventIterator, error) {
+// Solidity: e CandidateAdded(hash indexed bytes32, kind indexed uint256, voteBy indexed uint256)
+func (_Voting *VotingFilterer) FilterCandidateAdded(opts *bind.FilterOpts, hash [][32]byte, kind []*big.Int, voteBy []*big.Int) (*VotingCandidateAddedIterator, error) {
 
 	var hashRule []interface{}
 	for _, hashItem := range hash {
@@ -826,17 +719,17 @@ func (_Voting *VotingFilterer) FilterCandidateAddedEvent(opts *bind.FilterOpts, 
 		voteByRule = append(voteByRule, voteByItem)
 	}
 
-	logs, sub, err := _Voting.contract.FilterLogs(opts, "CandidateAddedEvent", hashRule, kindRule, voteByRule)
+	logs, sub, err := _Voting.contract.FilterLogs(opts, "CandidateAdded", hashRule, kindRule, voteByRule)
 	if err != nil {
 		return nil, err
 	}
-	return &VotingCandidateAddedEventIterator{contract: _Voting.contract, event: "CandidateAddedEvent", logs: logs, sub: sub}, nil
+	return &VotingCandidateAddedIterator{contract: _Voting.contract, event: "CandidateAdded", logs: logs, sub: sub}, nil
 }
 
-// WatchCandidateAddedEvent is a free log subscription operation binding the contract event 0xb7fdb794d49b8471a97fc8b1f90d1af97e75e0afc5f56d3b12b696e6d80f0186.
+// WatchCandidateAdded is a free log subscription operation binding the contract event 0x4566e4146679483436367293d719cef8eb5d21b6b774ec4cec37b82f224db161.
 //
-// Solidity: e CandidateAddedEvent(hash indexed bytes32, kind indexed uint8, voteBy indexed uint256)
-func (_Voting *VotingFilterer) WatchCandidateAddedEvent(opts *bind.WatchOpts, sink chan<- *VotingCandidateAddedEvent, hash [][32]byte, kind []uint8, voteBy []*big.Int) (event.Subscription, error) {
+// Solidity: e CandidateAdded(hash indexed bytes32, kind indexed uint256, voteBy indexed uint256)
+func (_Voting *VotingFilterer) WatchCandidateAdded(opts *bind.WatchOpts, sink chan<- *VotingCandidateAdded, hash [][32]byte, kind []*big.Int, voteBy []*big.Int) (event.Subscription, error) {
 
 	var hashRule []interface{}
 	for _, hashItem := range hash {
@@ -851,7 +744,7 @@ func (_Voting *VotingFilterer) WatchCandidateAddedEvent(opts *bind.WatchOpts, si
 		voteByRule = append(voteByRule, voteByItem)
 	}
 
-	logs, sub, err := _Voting.contract.WatchLogs(opts, "CandidateAddedEvent", hashRule, kindRule, voteByRule)
+	logs, sub, err := _Voting.contract.WatchLogs(opts, "CandidateAdded", hashRule, kindRule, voteByRule)
 	if err != nil {
 		return nil, err
 	}
@@ -861,8 +754,8 @@ func (_Voting *VotingFilterer) WatchCandidateAddedEvent(opts *bind.WatchOpts, si
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(VotingCandidateAddedEvent)
-				if err := _Voting.contract.UnpackLog(event, "CandidateAddedEvent", log); err != nil {
+				event := new(VotingCandidateAdded)
+				if err := _Voting.contract.UnpackLog(event, "CandidateAdded", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -883,9 +776,9 @@ func (_Voting *VotingFilterer) WatchCandidateAddedEvent(opts *bind.WatchOpts, si
 	}), nil
 }
 
-// VotingCandidateRemovedEventIterator is returned from FilterCandidateRemovedEvent and is used to iterate over the raw logs and unpacked data for CandidateRemovedEvent events raised by the Voting contract.
-type VotingCandidateRemovedEventIterator struct {
-	Event *VotingCandidateRemovedEvent // Event containing the contract specifics and raw log
+// VotingCandidateRemovedIterator is returned from FilterCandidateRemoved and is used to iterate over the raw logs and unpacked data for CandidateRemoved events raised by the Voting contract.
+type VotingCandidateRemovedIterator struct {
+	Event *VotingCandidateRemoved // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -899,7 +792,7 @@ type VotingCandidateRemovedEventIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *VotingCandidateRemovedEventIterator) Next() bool {
+func (it *VotingCandidateRemovedIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -908,7 +801,7 @@ func (it *VotingCandidateRemovedEventIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(VotingCandidateRemovedEvent)
+			it.Event = new(VotingCandidateRemoved)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -923,7 +816,7 @@ func (it *VotingCandidateRemovedEventIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(VotingCandidateRemovedEvent)
+		it.Event = new(VotingCandidateRemoved)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -939,51 +832,51 @@ func (it *VotingCandidateRemovedEventIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *VotingCandidateRemovedEventIterator) Error() error {
+func (it *VotingCandidateRemovedIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *VotingCandidateRemovedEventIterator) Close() error {
+func (it *VotingCandidateRemovedIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// VotingCandidateRemovedEvent represents a CandidateRemovedEvent event raised by the Voting contract.
-type VotingCandidateRemovedEvent struct {
+// VotingCandidateRemoved represents a CandidateRemoved event raised by the Voting contract.
+type VotingCandidateRemoved struct {
 	Hash [32]byte
 	Raw  types.Log // Blockchain specific contextual infos
 }
 
-// FilterCandidateRemovedEvent is a free log retrieval operation binding the contract event 0x53ce6706735b5cd3034bf68c2a532801c1efb4ba72410b5af2167a8462f15b7d.
+// FilterCandidateRemoved is a free log retrieval operation binding the contract event 0xb314642ce4aa3156c1090458cfccabff50f32bc85d110d7799c369e1a660bcf4.
 //
-// Solidity: e CandidateRemovedEvent(hash indexed bytes32)
-func (_Voting *VotingFilterer) FilterCandidateRemovedEvent(opts *bind.FilterOpts, hash [][32]byte) (*VotingCandidateRemovedEventIterator, error) {
+// Solidity: e CandidateRemoved(hash indexed bytes32)
+func (_Voting *VotingFilterer) FilterCandidateRemoved(opts *bind.FilterOpts, hash [][32]byte) (*VotingCandidateRemovedIterator, error) {
 
 	var hashRule []interface{}
 	for _, hashItem := range hash {
 		hashRule = append(hashRule, hashItem)
 	}
 
-	logs, sub, err := _Voting.contract.FilterLogs(opts, "CandidateRemovedEvent", hashRule)
+	logs, sub, err := _Voting.contract.FilterLogs(opts, "CandidateRemoved", hashRule)
 	if err != nil {
 		return nil, err
 	}
-	return &VotingCandidateRemovedEventIterator{contract: _Voting.contract, event: "CandidateRemovedEvent", logs: logs, sub: sub}, nil
+	return &VotingCandidateRemovedIterator{contract: _Voting.contract, event: "CandidateRemoved", logs: logs, sub: sub}, nil
 }
 
-// WatchCandidateRemovedEvent is a free log subscription operation binding the contract event 0x53ce6706735b5cd3034bf68c2a532801c1efb4ba72410b5af2167a8462f15b7d.
+// WatchCandidateRemoved is a free log subscription operation binding the contract event 0xb314642ce4aa3156c1090458cfccabff50f32bc85d110d7799c369e1a660bcf4.
 //
-// Solidity: e CandidateRemovedEvent(hash indexed bytes32)
-func (_Voting *VotingFilterer) WatchCandidateRemovedEvent(opts *bind.WatchOpts, sink chan<- *VotingCandidateRemovedEvent, hash [][32]byte) (event.Subscription, error) {
+// Solidity: e CandidateRemoved(hash indexed bytes32)
+func (_Voting *VotingFilterer) WatchCandidateRemoved(opts *bind.WatchOpts, sink chan<- *VotingCandidateRemoved, hash [][32]byte) (event.Subscription, error) {
 
 	var hashRule []interface{}
 	for _, hashItem := range hash {
 		hashRule = append(hashRule, hashItem)
 	}
 
-	logs, sub, err := _Voting.contract.WatchLogs(opts, "CandidateRemovedEvent", hashRule)
+	logs, sub, err := _Voting.contract.WatchLogs(opts, "CandidateRemoved", hashRule)
 	if err != nil {
 		return nil, err
 	}
@@ -993,8 +886,8 @@ func (_Voting *VotingFilterer) WatchCandidateRemovedEvent(opts *bind.WatchOpts, 
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(VotingCandidateRemovedEvent)
-				if err := _Voting.contract.UnpackLog(event, "CandidateRemovedEvent", log); err != nil {
+				event := new(VotingCandidateRemoved)
+				if err := _Voting.contract.UnpackLog(event, "CandidateRemoved", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -1015,9 +908,9 @@ func (_Voting *VotingFilterer) WatchCandidateRemovedEvent(opts *bind.WatchOpts, 
 	}), nil
 }
 
-// VotingCouncilMemberAddedEventIterator is returned from FilterCouncilMemberAddedEvent and is used to iterate over the raw logs and unpacked data for CouncilMemberAddedEvent events raised by the Voting contract.
-type VotingCouncilMemberAddedEventIterator struct {
-	Event *VotingCouncilMemberAddedEvent // Event containing the contract specifics and raw log
+// VotingCouncilMemberAddedIterator is returned from FilterCouncilMemberAdded and is used to iterate over the raw logs and unpacked data for CouncilMemberAdded events raised by the Voting contract.
+type VotingCouncilMemberAddedIterator struct {
+	Event *VotingCouncilMemberAdded // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -1031,7 +924,7 @@ type VotingCouncilMemberAddedEventIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *VotingCouncilMemberAddedEventIterator) Next() bool {
+func (it *VotingCouncilMemberAddedIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -1040,7 +933,7 @@ func (it *VotingCouncilMemberAddedEventIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(VotingCouncilMemberAddedEvent)
+			it.Event = new(VotingCouncilMemberAdded)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -1055,7 +948,7 @@ func (it *VotingCouncilMemberAddedEventIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(VotingCouncilMemberAddedEvent)
+		it.Event = new(VotingCouncilMemberAdded)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -1071,51 +964,51 @@ func (it *VotingCouncilMemberAddedEventIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *VotingCouncilMemberAddedEventIterator) Error() error {
+func (it *VotingCouncilMemberAddedIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *VotingCouncilMemberAddedEventIterator) Close() error {
+func (it *VotingCouncilMemberAddedIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// VotingCouncilMemberAddedEvent represents a CouncilMemberAddedEvent event raised by the Voting contract.
-type VotingCouncilMemberAddedEvent struct {
+// VotingCouncilMemberAdded represents a CouncilMemberAdded event raised by the Voting contract.
+type VotingCouncilMemberAdded struct {
 	Member common.Address
 	Raw    types.Log // Blockchain specific contextual infos
 }
 
-// FilterCouncilMemberAddedEvent is a free log retrieval operation binding the contract event 0xf8897212eda7751d264aa9bac4715cbefe140b3124d688b928373f4c910cb829.
+// FilterCouncilMemberAdded is a free log retrieval operation binding the contract event 0xdcb46b4634af6065fbbeab63938d70a7cc803a67bc6a5bb9f28fb8d9a5c4ce14.
 //
-// Solidity: e CouncilMemberAddedEvent(member indexed address)
-func (_Voting *VotingFilterer) FilterCouncilMemberAddedEvent(opts *bind.FilterOpts, member []common.Address) (*VotingCouncilMemberAddedEventIterator, error) {
+// Solidity: e CouncilMemberAdded(member indexed address)
+func (_Voting *VotingFilterer) FilterCouncilMemberAdded(opts *bind.FilterOpts, member []common.Address) (*VotingCouncilMemberAddedIterator, error) {
 
 	var memberRule []interface{}
 	for _, memberItem := range member {
 		memberRule = append(memberRule, memberItem)
 	}
 
-	logs, sub, err := _Voting.contract.FilterLogs(opts, "CouncilMemberAddedEvent", memberRule)
+	logs, sub, err := _Voting.contract.FilterLogs(opts, "CouncilMemberAdded", memberRule)
 	if err != nil {
 		return nil, err
 	}
-	return &VotingCouncilMemberAddedEventIterator{contract: _Voting.contract, event: "CouncilMemberAddedEvent", logs: logs, sub: sub}, nil
+	return &VotingCouncilMemberAddedIterator{contract: _Voting.contract, event: "CouncilMemberAdded", logs: logs, sub: sub}, nil
 }
 
-// WatchCouncilMemberAddedEvent is a free log subscription operation binding the contract event 0xf8897212eda7751d264aa9bac4715cbefe140b3124d688b928373f4c910cb829.
+// WatchCouncilMemberAdded is a free log subscription operation binding the contract event 0xdcb46b4634af6065fbbeab63938d70a7cc803a67bc6a5bb9f28fb8d9a5c4ce14.
 //
-// Solidity: e CouncilMemberAddedEvent(member indexed address)
-func (_Voting *VotingFilterer) WatchCouncilMemberAddedEvent(opts *bind.WatchOpts, sink chan<- *VotingCouncilMemberAddedEvent, member []common.Address) (event.Subscription, error) {
+// Solidity: e CouncilMemberAdded(member indexed address)
+func (_Voting *VotingFilterer) WatchCouncilMemberAdded(opts *bind.WatchOpts, sink chan<- *VotingCouncilMemberAdded, member []common.Address) (event.Subscription, error) {
 
 	var memberRule []interface{}
 	for _, memberItem := range member {
 		memberRule = append(memberRule, memberItem)
 	}
 
-	logs, sub, err := _Voting.contract.WatchLogs(opts, "CouncilMemberAddedEvent", memberRule)
+	logs, sub, err := _Voting.contract.WatchLogs(opts, "CouncilMemberAdded", memberRule)
 	if err != nil {
 		return nil, err
 	}
@@ -1125,8 +1018,8 @@ func (_Voting *VotingFilterer) WatchCouncilMemberAddedEvent(opts *bind.WatchOpts
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(VotingCouncilMemberAddedEvent)
-				if err := _Voting.contract.UnpackLog(event, "CouncilMemberAddedEvent", log); err != nil {
+				event := new(VotingCouncilMemberAdded)
+				if err := _Voting.contract.UnpackLog(event, "CouncilMemberAdded", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -1147,9 +1040,9 @@ func (_Voting *VotingFilterer) WatchCouncilMemberAddedEvent(opts *bind.WatchOpts
 	}), nil
 }
 
-// VotingCouncilMemberRemovedEventIterator is returned from FilterCouncilMemberRemovedEvent and is used to iterate over the raw logs and unpacked data for CouncilMemberRemovedEvent events raised by the Voting contract.
-type VotingCouncilMemberRemovedEventIterator struct {
-	Event *VotingCouncilMemberRemovedEvent // Event containing the contract specifics and raw log
+// VotingCouncilMemberRemovedIterator is returned from FilterCouncilMemberRemoved and is used to iterate over the raw logs and unpacked data for CouncilMemberRemoved events raised by the Voting contract.
+type VotingCouncilMemberRemovedIterator struct {
+	Event *VotingCouncilMemberRemoved // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -1163,7 +1056,7 @@ type VotingCouncilMemberRemovedEventIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *VotingCouncilMemberRemovedEventIterator) Next() bool {
+func (it *VotingCouncilMemberRemovedIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -1172,7 +1065,7 @@ func (it *VotingCouncilMemberRemovedEventIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(VotingCouncilMemberRemovedEvent)
+			it.Event = new(VotingCouncilMemberRemoved)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -1187,7 +1080,7 @@ func (it *VotingCouncilMemberRemovedEventIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(VotingCouncilMemberRemovedEvent)
+		it.Event = new(VotingCouncilMemberRemoved)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -1203,51 +1096,51 @@ func (it *VotingCouncilMemberRemovedEventIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *VotingCouncilMemberRemovedEventIterator) Error() error {
+func (it *VotingCouncilMemberRemovedIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *VotingCouncilMemberRemovedEventIterator) Close() error {
+func (it *VotingCouncilMemberRemovedIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// VotingCouncilMemberRemovedEvent represents a CouncilMemberRemovedEvent event raised by the Voting contract.
-type VotingCouncilMemberRemovedEvent struct {
+// VotingCouncilMemberRemoved represents a CouncilMemberRemoved event raised by the Voting contract.
+type VotingCouncilMemberRemoved struct {
 	Member common.Address
 	Raw    types.Log // Blockchain specific contextual infos
 }
 
-// FilterCouncilMemberRemovedEvent is a free log retrieval operation binding the contract event 0x564e70d59b50a6b32776c3d4a1e4e378a77dc9e24c3e2fbfa04a79166a67489b.
+// FilterCouncilMemberRemoved is a free log retrieval operation binding the contract event 0xce6ed85c24e62fbd23486204879240944c169dfcde2952b0c15f12bf12029669.
 //
-// Solidity: e CouncilMemberRemovedEvent(member indexed address)
-func (_Voting *VotingFilterer) FilterCouncilMemberRemovedEvent(opts *bind.FilterOpts, member []common.Address) (*VotingCouncilMemberRemovedEventIterator, error) {
+// Solidity: e CouncilMemberRemoved(member indexed address)
+func (_Voting *VotingFilterer) FilterCouncilMemberRemoved(opts *bind.FilterOpts, member []common.Address) (*VotingCouncilMemberRemovedIterator, error) {
 
 	var memberRule []interface{}
 	for _, memberItem := range member {
 		memberRule = append(memberRule, memberItem)
 	}
 
-	logs, sub, err := _Voting.contract.FilterLogs(opts, "CouncilMemberRemovedEvent", memberRule)
+	logs, sub, err := _Voting.contract.FilterLogs(opts, "CouncilMemberRemoved", memberRule)
 	if err != nil {
 		return nil, err
 	}
-	return &VotingCouncilMemberRemovedEventIterator{contract: _Voting.contract, event: "CouncilMemberRemovedEvent", logs: logs, sub: sub}, nil
+	return &VotingCouncilMemberRemovedIterator{contract: _Voting.contract, event: "CouncilMemberRemoved", logs: logs, sub: sub}, nil
 }
 
-// WatchCouncilMemberRemovedEvent is a free log subscription operation binding the contract event 0x564e70d59b50a6b32776c3d4a1e4e378a77dc9e24c3e2fbfa04a79166a67489b.
+// WatchCouncilMemberRemoved is a free log subscription operation binding the contract event 0xce6ed85c24e62fbd23486204879240944c169dfcde2952b0c15f12bf12029669.
 //
-// Solidity: e CouncilMemberRemovedEvent(member indexed address)
-func (_Voting *VotingFilterer) WatchCouncilMemberRemovedEvent(opts *bind.WatchOpts, sink chan<- *VotingCouncilMemberRemovedEvent, member []common.Address) (event.Subscription, error) {
+// Solidity: e CouncilMemberRemoved(member indexed address)
+func (_Voting *VotingFilterer) WatchCouncilMemberRemoved(opts *bind.WatchOpts, sink chan<- *VotingCouncilMemberRemoved, member []common.Address) (event.Subscription, error) {
 
 	var memberRule []interface{}
 	for _, memberItem := range member {
 		memberRule = append(memberRule, memberItem)
 	}
 
-	logs, sub, err := _Voting.contract.WatchLogs(opts, "CouncilMemberRemovedEvent", memberRule)
+	logs, sub, err := _Voting.contract.WatchLogs(opts, "CouncilMemberRemoved", memberRule)
 	if err != nil {
 		return nil, err
 	}
@@ -1257,8 +1150,8 @@ func (_Voting *VotingFilterer) WatchCouncilMemberRemovedEvent(opts *bind.WatchOp
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(VotingCouncilMemberRemovedEvent)
-				if err := _Voting.contract.UnpackLog(event, "CouncilMemberRemovedEvent", log); err != nil {
+				event := new(VotingCouncilMemberRemoved)
+				if err := _Voting.contract.UnpackLog(event, "CouncilMemberRemoved", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -1279,9 +1172,9 @@ func (_Voting *VotingFilterer) WatchCouncilMemberRemovedEvent(opts *bind.WatchOp
 	}), nil
 }
 
-// VotingVotedEventIterator is returned from FilterVotedEvent and is used to iterate over the raw logs and unpacked data for VotedEvent events raised by the Voting contract.
-type VotingVotedEventIterator struct {
-	Event *VotingVotedEvent // Event containing the contract specifics and raw log
+// VotingVotedIterator is returned from FilterVoted and is used to iterate over the raw logs and unpacked data for Voted events raised by the Voting contract.
+type VotingVotedIterator struct {
+	Event *VotingVoted // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -1295,7 +1188,7 @@ type VotingVotedEventIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *VotingVotedEventIterator) Next() bool {
+func (it *VotingVotedIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -1304,7 +1197,7 @@ func (it *VotingVotedEventIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(VotingVotedEvent)
+			it.Event = new(VotingVoted)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -1319,7 +1212,7 @@ func (it *VotingVotedEventIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(VotingVotedEvent)
+		it.Event = new(VotingVoted)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -1335,60 +1228,60 @@ func (it *VotingVotedEventIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *VotingVotedEventIterator) Error() error {
+func (it *VotingVotedIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *VotingVotedEventIterator) Close() error {
+func (it *VotingVotedIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// VotingVotedEvent represents a VotedEvent event raised by the Voting contract.
-type VotingVotedEvent struct {
-	Voter common.Address
+// VotingVoted represents a Voted event raised by the Voting contract.
+type VotingVoted struct {
 	Hash  [32]byte
+	Voter common.Address
 	Raw   types.Log // Blockchain specific contextual infos
 }
 
-// FilterVotedEvent is a free log retrieval operation binding the contract event 0x81681507a95428bb04c5f5ac127e404caf6422d0dcf2ff77612b9201c3aa33bf.
+// FilterVoted is a free log retrieval operation binding the contract event 0x0b2f654b7e608ce51a82ce8157e79c350ed670605e8985266ad89fc85060e749.
 //
-// Solidity: e VotedEvent(voter indexed address, hash indexed bytes32)
-func (_Voting *VotingFilterer) FilterVotedEvent(opts *bind.FilterOpts, voter []common.Address, hash [][32]byte) (*VotingVotedEventIterator, error) {
+// Solidity: e Voted(hash indexed bytes32, voter indexed address)
+func (_Voting *VotingFilterer) FilterVoted(opts *bind.FilterOpts, hash [][32]byte, voter []common.Address) (*VotingVotedIterator, error) {
 
-	var voterRule []interface{}
-	for _, voterItem := range voter {
-		voterRule = append(voterRule, voterItem)
-	}
 	var hashRule []interface{}
 	for _, hashItem := range hash {
 		hashRule = append(hashRule, hashItem)
 	}
+	var voterRule []interface{}
+	for _, voterItem := range voter {
+		voterRule = append(voterRule, voterItem)
+	}
 
-	logs, sub, err := _Voting.contract.FilterLogs(opts, "VotedEvent", voterRule, hashRule)
+	logs, sub, err := _Voting.contract.FilterLogs(opts, "Voted", hashRule, voterRule)
 	if err != nil {
 		return nil, err
 	}
-	return &VotingVotedEventIterator{contract: _Voting.contract, event: "VotedEvent", logs: logs, sub: sub}, nil
+	return &VotingVotedIterator{contract: _Voting.contract, event: "Voted", logs: logs, sub: sub}, nil
 }
 
-// WatchVotedEvent is a free log subscription operation binding the contract event 0x81681507a95428bb04c5f5ac127e404caf6422d0dcf2ff77612b9201c3aa33bf.
+// WatchVoted is a free log subscription operation binding the contract event 0x0b2f654b7e608ce51a82ce8157e79c350ed670605e8985266ad89fc85060e749.
 //
-// Solidity: e VotedEvent(voter indexed address, hash indexed bytes32)
-func (_Voting *VotingFilterer) WatchVotedEvent(opts *bind.WatchOpts, sink chan<- *VotingVotedEvent, voter []common.Address, hash [][32]byte) (event.Subscription, error) {
+// Solidity: e Voted(hash indexed bytes32, voter indexed address)
+func (_Voting *VotingFilterer) WatchVoted(opts *bind.WatchOpts, sink chan<- *VotingVoted, hash [][32]byte, voter []common.Address) (event.Subscription, error) {
 
-	var voterRule []interface{}
-	for _, voterItem := range voter {
-		voterRule = append(voterRule, voterItem)
-	}
 	var hashRule []interface{}
 	for _, hashItem := range hash {
 		hashRule = append(hashRule, hashItem)
 	}
+	var voterRule []interface{}
+	for _, voterItem := range voter {
+		voterRule = append(voterRule, voterItem)
+	}
 
-	logs, sub, err := _Voting.contract.WatchLogs(opts, "VotedEvent", voterRule, hashRule)
+	logs, sub, err := _Voting.contract.WatchLogs(opts, "Voted", hashRule, voterRule)
 	if err != nil {
 		return nil, err
 	}
@@ -1398,8 +1291,8 @@ func (_Voting *VotingFilterer) WatchVotedEvent(opts *bind.WatchOpts, sink chan<-
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(VotingVotedEvent)
-				if err := _Voting.contract.UnpackLog(event, "VotedEvent", log); err != nil {
+				event := new(VotingVoted)
+				if err := _Voting.contract.UnpackLog(event, "Voted", log); err != nil {
 					return err
 				}
 				event.Raw = log

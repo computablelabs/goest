@@ -13,9 +13,11 @@
     "precompile:token:ether:vyper": "vyper -f abi contracts/EtherToken.vy > contracts/ethertoken/ethertoken.abi && vyper -f bytecode contracts/EtherToken.vy > contracts/ethertoken/ethertoken.bin",
     "compile:token:ether:vyper": "~/go/bin/abigen -abi contracts/ethertoken/ethertoken.abi -pkg ethertoken -type EtherToken -out contracts/ethertoken/ethertoken.go -bin contracts/ethertoken/ethertoken.bin",
     "compile:voting": "~/go/bin/abigen -sol contracts/Voting.sol -pkg voting -out contracts/voting/voting.go",
+    "precompile:voting:vyper": "vyper -f abi contracts/Voting.vy > contracts/voting/voting.abi && vyper -f bytecode contracts/Voting.vy > contracts/voting/voting.bin",
+    "compile:voting:vyper": "~/go/bin/abigen -abi contracts/voting/voting.abi -pkg voting -out contracts/voting/voting.go -bin contracts/voting/voting.bin",
     "compile:parameterizer": "~/go/bin/abigen -sol contracts/Parameterizer.sol -pkg parameterizer -out contracts/parameterizer/parameterizer.go",
     "compile:market": "~/go/bin/abigen -sol contracts/Market.sol -pkg market -out contracts/market/market.go",
-    "test": "go test -v ./..."
+    "test": "go test -v ./contracts/voting ./contracts/markettoken ./contracts/ethertoken"
   },
   "repository": {
     "type": "git",
