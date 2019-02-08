@@ -29,7 +29,11 @@ func TestDeployParameterizer(t *testing.T) {
 }
 
 func TestVotingSetPrivilegedContracts(t *testing.T) {
-	market, p11r, _ := deployed.VotingContract.GetPrivilegedAddresses(nil)
+	factory, market, p11r, _ := deployed.VotingContract.GetPrivileged(nil)
+
+	if factory != context.AuthFactory.From {
+		t.Fatalf("Expected factory address of %v but got %v", context.AuthFactory.From, factory)
+	}
 
 	if market != context.AuthMarket.From {
 		t.Fatalf("Expected market address of %v but got %v", context.AuthMarket.From, market)
@@ -53,7 +57,7 @@ func TestMain(m *testing.M) {
 	// context.Alloc[deployed.ParameterizerAddress] = core.GenesisAccount{Balance: big.NewInt(1000000000000000000)}
 
 	// the voting contract must have its privileged addresk, NOTE this is done, IRL, by the factory
-	_, err := deployed.VotingContract.SetPrivilegedContracts(&bind.TransactOpts{
+	_, err := deployed.VotingContract.SetPrivileged(&bind.TransactOpts{
 		From:     context.AuthFactory.From,
 		Signer:   context.AuthFactory.Signer,
 		GasPrice: big.NewInt(ONE_GWEI * 2),
