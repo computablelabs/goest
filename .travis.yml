@@ -2,3 +2,7 @@ language: go
 
 go:
   - "1.10"
+
+# As I make breaking changes to the API, prevent legacy packages from breaking the specs
+script:
+  - go test -v ./contracts/voting ./contracts/markettoken ./contracts/ethertoken
