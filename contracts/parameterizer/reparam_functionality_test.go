@@ -37,10 +37,10 @@ func TestParameterize(t *testing.T) {
 	context.Blockchain.Commit()
 
 	// we should see a candidate now
-	candidates, _ := deployed.VotingContract.GetCandidates(nil)
+	count, _ := deployed.VotingContract.GetCandidateCount(nil)
 
-	if len(candidates) < 1 {
-		t.Fatalf("Expected number of candidates to be >= 1, got: %v", len(candidates))
+	if count.Cmp(big.NewInt(0)) != 1 {
+		t.Fatalf("Expected number of candidates to be >= 1, got: %v", count)
 	}
 }
 
@@ -52,7 +52,7 @@ func TestGetReparam(t *testing.T) {
 		t.Fatalf("Expected proposer to be %v, got: %v", context.AuthMember1.From, proposer)
 	}
 
-	if name != VOTE_BY {
+	if name.Cmp(VOTE_BY) != 0 {
 		t.Fatalf("Expected name to be 'voteBy', got: %v", name)
 	}
 
@@ -119,10 +119,10 @@ func TestResolveReparam(t *testing.T) {
 	}
 
 	// should have cleaned up the voting candidate
-	candidates, _ := deployed.VotingContract.GetCandidates(nil)
+	newCount, _ := deployed.VotingContract.GetCandidateCount(nil)
 
-	if len(candidates) != 0 {
-		t.Fatalf("Expected no candidates, got: %v", len(candidates))
+	if newCount.Cmp(big.NewInt(0)) != 0 {
+		t.Fatalf("Expected no candidates, got: %v", newCount)
 	}
 
 	// should have cleaned up the proposal
@@ -132,7 +132,7 @@ func TestResolveReparam(t *testing.T) {
 		t.Fatalf("Expected proposer to be falsy, got: %v", proposer)
 	}
 
-	if name != UNDEFINED {
+	if name.Cmp(big.NewInt(0)) != 0 {
 		t.Fatalf("Expected name to be falsy, got: %v", name)
 	}
 

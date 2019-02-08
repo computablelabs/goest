@@ -5,4 +5,4 @@ go:
 
 # As I make breaking changes to the API, prevent legacy packages from breaking the specs
 script:
-  - go test -v ./contracts/voting ./contracts/markettoken ./contracts/ethertoken
+  - go test -v ./contracts/parameterizer ./contracts/voting ./contracts/markettoken ./contracts/ethertoken

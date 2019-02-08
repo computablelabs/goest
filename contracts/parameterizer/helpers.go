@@ -14,17 +14,14 @@ import (
 const ONE_WEI = 1000000000000000000
 const ONE_GWEI = 1000000000
 
-// to match the p11r's internal params enum
-const (
-	UNDEFINED uint8 = iota
-	CHALLENGE_STAKE
-	CONVERSION_RATE
-	CONVERSION_SLOPE_D
-	CONVERSION_SLOPE_N
-	LIST_REWARD
-	QUORUM
-	VOTE_BY
-)
+// to match the p11r's internal params
+var CHALLENGE_STAKE = big.NewInt(1)
+var CONVERSION_RATE = big.NewInt(2)
+var CONVERSION_SLOPE_D = big.NewInt(3)
+var CONVERSION_SLOPE_N = big.NewInt(4)
+var LIST_REWARD = big.NewInt(5)
+var QUORUM = big.NewInt(6)
+var VOTE_BY = big.NewInt(7)
 
 type ctx struct {
 	// 	Alloc          core.GenesisAlloc
