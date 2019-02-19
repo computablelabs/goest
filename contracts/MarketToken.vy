@@ -1,6 +1,8 @@
 # @title Computable MarketToken
 # @notice Implementation of an ERC20 compatible token which is both burnable and mintable
 # @author Computable
+from vyper.interfaces import ERC20
+implements: ERC20
 
 Approval: event({owner: indexed(address), spender: indexed(address), amount: wei_value})
 Burn: event({burner: indexed(address), amount: wei_value})
@@ -110,13 +112,12 @@ def decreaseApproval(spender: address, amount: wei_value):
 
 @public
 @constant
-def getPrivilegedContracts() -> address:
+def getPrivileged() -> (address, address):
   """
-  @notice return the address(es) of contracts that are recognized as being privileged
-  @dev For the Market Token, this is only the Market contract currently
+  @notice return the address(es) of contracts that are recognizmd as being privileged
   @return The address(es)
   """
-  return self.market_address
+  return (self.factory_address, self.market_address)
 
 
 @public
@@ -144,7 +145,7 @@ def mint(amount: wei_value):
 
 
 @public
-def setPrivilegedContracts(market: address):
+def setPrivileged(market: address):
   """
   @notice We restrict some activities to only the Market Contract
   @dev We only allow the factory to set the privileged address(es)

@@ -20,14 +20,15 @@ struct Reparam:
   value: uint256
 
 # Parameterizer has access to the Voting contract, being recognized by it as privileged
-contract Voting():
+contract Voting:
   def inCouncil(member: address) -> bool: constant
-  def isCandidate(hash: bytes32) -> bool: constant
   def candidateIs(hash: bytes32, kind: uint256) -> bool: constant
-  def pollClosed(hash: bytes32) -> bool: constant
-  def didPass(hash: bytes32, quorum: uint256) -> bool: constant
-  def addCandidate(hash: bytes32, kind: uint256, voteBy: timedelta): modifying
+  def isCandidate(hash: bytes32) -> bool: constant
+  def addCandidate(hash: bytes32, kind: uint256, vote_by: uint256(sec)): modifying
   def removeCandidate(hash: bytes32): modifying
+  def didPass(hash: bytes32, quorum: uint256) -> bool: constant
+  def pollClosed(hash: bytes32) -> bool: constant
+  def willAddCandidate(hash: bytes32) -> bool: constant
 
 ReparamProposed: event({proposer: indexed(address), hash: indexed(bytes32), param: indexed(uint256), value: uint256})
 ReparamFailed: event({hash: indexed(bytes32), param: indexed(uint256), value: uint256})
@@ -121,15 +122,14 @@ def getVoteBy() -> timedelta:
 
 @public
 @constant
-def getParamHash(param: uint256, value: uint256) -> bytes32:
+def getParamHash(reparam: string[64]) -> bytes32:
   """
-  @notice Given an integer representing a parameterizer parameter and a value, generate a hash
-  @dev Used as a key in the voting candidates mapping
-  @param param The Parametizer attribute to change
-  @param value What to change the attributes value to
+  @notice Given a string of max-length 64 chars, generate a hash
+  @dev Used as a key in the voting candidates mapping. Must be unique
+  @param reparam A string name supplied by the user / client
   @return The generated hash
   """
-  return keccak256(concat(convert(param, bytes32), convert(value, bytes32)))
+  return keccak256(reparam)
 
 
 @public
@@ -179,16 +179,17 @@ def resolveReparam(hash: bytes32):
 
 
 @public
-def reparameterize(param: uint256, value: uint256):
+def reparameterize(reparam: string[64], param: uint256, value: uint256):
   """
   @notice Suggest a change to a Parameterizer attribute, creating a candidate for it
   @dev Sender must be in council, and there must not be a matching candidate already open
+  @param reparam A string used to generate the reparam hash, which must be unique
   @param param The attribute to change
   @param value What to change it to
   """
   assert self.voting.inCouncil(msg.sender)
-  hash: bytes32 = self.getParamHash(param, value)
-  assert not self.voting.isCandidate(hash)
+  hash: bytes32 = keccak256(reparam)
+  assert self.voting.willAddCandidate(hash)
   self.reparams[hash] = Reparam({proposer: msg.sender, param: param, value:value})
   self.voting.addCandidate(hash, REPARAM, self.vote_by)
   log.ReparamProposed(msg.sender, hash, param, value)
