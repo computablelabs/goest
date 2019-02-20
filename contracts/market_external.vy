@@ -11,7 +11,6 @@ contract Market:
     def list(listing: string[64], data_hash: bytes32, amount: uint256(wei)): modifying
     def getListingCount() -> int128: constant
     def getListingKey(index: int128) -> bytes32: constant
-    def getListingHash(listing: string[64]) -> bytes32: constant
     def getListing(hash: bytes32) -> (bool, address, bytes32, uint256(wei), uint256(wei)): constant
     def resolveApplication(hash: bytes32): modifying
     def challenge(chall: string[64], hash: bytes32): modifying

@@ -58,8 +58,8 @@ contract Voting:
 contract Parameterizer:
   def getChallengeStake() -> uint256(wei): constant
   def getConversionRate() -> uint256(wei): constant
-  def getConversionSlopeDenominator() -> uint256: constant
-  def getConversionSlopeNumerator() -> uint256: constant
+  def getInvestDenominator() -> uint256: constant
+  def getInvestNumerator() -> uint256: constant
   def getListReward() -> uint256(wei): constant
   def getQuorum() -> uint256: constant
   def getVoteBy() -> uint256(sec): constant
@@ -225,15 +225,6 @@ def getListingKey(index: int128) -> bytes32:
   @notice Fetch the hashed listing identifier for a given inhex in our listing unordered list
   """
   return self.listing_keys[index]
-
-
-@public
-@constant
-def getListingHash(listing: string[64]) -> bytes32:
-  """
-  @notice Return the same hashed identifier produced from a given string that we use internally
-  """
-  return keccak256(listing)
 
 
 @public
@@ -420,10 +411,14 @@ def getInvestmentPrice() -> wei_value:
   @dev WIP
   """
   rate: wei_value = self.parameterizer.getConversionRate()
-  slope_d: uint256 = self.parameterizer.getConversionSlopeDenominator()
-  slope_n: uint256 = self.parameterizer.getConversionSlopeNumerator()
+  invest_d: uint256 = self.parameterizer.getInvestDenominator()
+  invest_n: uint256 = self.parameterizer.getInvestNumerator()
   reserve: wei_value = self.ether_token.balanceOf(self)
-  return rate + (slope_n * reserve / (slope_d * 1000000000))
+  total: wei_value = self.market_token.totalSupply()
+  if total < 1000000000: # that is, is total supply less than one-billionth token
+    return rate + invest_n * reserve / invest_d
+  else:
+    return rate + (invest_n * reserve) / (invest_d * total)
 
 
 @public

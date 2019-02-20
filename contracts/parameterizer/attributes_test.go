@@ -21,19 +21,19 @@ func TestGetConversionRate(t *testing.T) {
 	}
 }
 
-func TestGetConversionSlopeDenominator(t *testing.T) {
-	d, _ := deployed.ParameterizerContract.GetConversionSlopeDenominator(nil)
+func TestGetInvestDenominator(t *testing.T) {
+	d, _ := deployed.ParameterizerContract.GetInvestDenominator(nil)
 
-	if d.Cmp(big.NewInt(101)) != 0 {
-		t.Fatalf("Expected conversionSlopeDenominator to be 101, got: %v", d)
+	if d.Cmp(big.NewInt(100)) != 0 {
+		t.Fatalf("Expected Invest Denominator to be %v, got: %v", 100, d)
 	}
 }
 
-func TestGetConversionSlopeNumerator(t *testing.T) {
-	n, _ := deployed.ParameterizerContract.GetConversionSlopeNumerator(nil)
+func TestGetInvestNumerator(t *testing.T) {
+	n, _ := deployed.ParameterizerContract.GetInvestNumerator(nil)
 
-	if n.Cmp(big.NewInt(100)) != 0 {
-		t.Fatalf("Expected conversionSlopeDenominator to be 100, got: %v", n)
+	if n.Cmp(big.NewInt(110)) != 0 {
+		t.Fatalf("Expected Invest Numerator to be %v, got: %v", 110, n)
 	}
 }
 

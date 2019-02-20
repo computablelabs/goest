@@ -45,7 +45,7 @@ func TestParameterize(t *testing.T) {
 }
 
 func TestGetReparam(t *testing.T) {
-	paramHash, _ := deployed.ParameterizerContract.GetParamHash(nil, "reparam-vote-by-25")
+	paramHash, _ := deployed.ParameterizerContract.GetHash(nil, "reparam-vote-by-25")
 	proposer, name, val, _ := deployed.ParameterizerContract.GetReparam(nil, paramHash)
 
 	if proposer != context.AuthMember1.From {
@@ -70,7 +70,7 @@ func TestResolveReparam(t *testing.T) {
 	}
 
 	// how we will fetch this proposal
-	paramHash, _ := deployed.ParameterizerContract.GetParamHash(nil, "reparam-vote-by-25")
+	paramHash, _ := deployed.ParameterizerContract.GetHash(nil, "reparam-vote-by-25")
 
 	// cast a vote, one will suffice as we only have one council member here
 	_, voteErr := deployed.VotingContract.Vote(&bind.TransactOpts{
