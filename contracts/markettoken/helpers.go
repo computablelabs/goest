@@ -44,7 +44,7 @@ func Deploy(initialBalance *big.Int, c *ctx) (*dep, error) {
 	// c.Blockchain.Commit()
 
 	// the market token must have an address for the market contract
-	_, setErr := cont.SetPrivilegedContracts(&bind.TransactOpts{
+	_, setErr := cont.SetPrivileged(&bind.TransactOpts{
 		From:     c.AuthFactory.From,
 		Signer:   c.AuthFactory.Signer,
 		GasPrice: big.NewInt(ONE_GWEI * 2), // 2 Gwei

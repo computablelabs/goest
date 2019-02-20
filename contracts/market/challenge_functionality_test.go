@@ -119,7 +119,7 @@ func TestChallenge(t *testing.T) {
 		Signer:   context.AuthMember2.Signer,
 		GasPrice: big.NewInt(ONE_GWEI * 2),
 		GasLimit: 1000000,
-	}, listingHash)
+	}, "oh-hell-no", listingHash)
 
 	if challengeErr != nil {
 		t.Fatalf("Error challenging listing: %v", challengeErr)
@@ -159,7 +159,7 @@ func TestGetChallenge(t *testing.T) {
 	// should be a candidate for this challenge as well
 	kind, _, _, _ := deployed.VotingContract.GetCandidate(nil, listingHash)
 
-	if kind != 2 {
+	if kind.Cmp(big.NewInt(2)) != 0 {
 		t.Fatalf("Expected kind to be challenge (2), got: %v", kind)
 	}
 }

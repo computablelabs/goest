@@ -57,7 +57,7 @@ func TestDeployMarket(t *testing.T) {
 }
 
 func TestMarketTokenSetPrivilegedContracts(t *testing.T) {
-	market, _ := deployed.MarketTokenContract.GetPrivilegedAddresses(nil)
+	_, market, _ := deployed.MarketTokenContract.GetPrivileged(nil)
 
 	if market != deployed.MarketAddress {
 		t.Fatalf("Expected market address of %v but got %v", deployed.MarketAddress, market)
@@ -65,7 +65,7 @@ func TestMarketTokenSetPrivilegedContracts(t *testing.T) {
 }
 
 func TestVotingSetPrivilegedContracts(t *testing.T) {
-	market, p11r, _ := deployed.VotingContract.GetPrivilegedAddresses(nil)
+	_, market, p11r, _ := deployed.VotingContract.GetPrivileged(nil)
 
 	if market != deployed.MarketAddress {
 		t.Fatalf("Expected market address of %v but got %v", deployed.MarketAddress, market)
@@ -86,7 +86,7 @@ func TestMain(m *testing.M) {
 	deployed, deployedError = Deploy(big.NewInt(ONE_WEI*6), context) // 6 tokens in wei
 
 	// the markettoken must have its privileges set
-	_, marketErr := deployed.MarketTokenContract.SetPrivilegedContracts(&bind.TransactOpts{
+	_, marketErr := deployed.MarketTokenContract.SetPrivileged(&bind.TransactOpts{
 		From:     context.AuthFactory.From,
 		Signer:   context.AuthFactory.Signer,
 		GasPrice: big.NewInt(ONE_GWEI * 2),
@@ -97,7 +97,7 @@ func TestMain(m *testing.M) {
 		log.Fatalf("Error setting privileged contract address: %v", marketErr)
 	}
 
-	_, votingErr := deployed.VotingContract.SetPrivilegedContracts(&bind.TransactOpts{
+	_, votingErr := deployed.VotingContract.SetPrivileged(&bind.TransactOpts{
 		From:     context.AuthFactory.From,
 		Signer:   context.AuthFactory.Signer,
 		GasPrice: big.NewInt(ONE_GWEI * 2),

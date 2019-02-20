@@ -111,10 +111,10 @@ func Deploy(initialBalance *big.Int, c *ctx) (*dep, error) {
 	marketAddr, marketTrans, marketCont, marketErr := DeployMarket(
 		c.AuthFactory,
 		c.Blockchain,
-		marketTokenAddr,
 		etherTokenAddr,
-		paramAddr,
+		marketTokenAddr,
 		votingAddr,
+		paramAddr,
 	)
 
 	if marketErr != nil {
