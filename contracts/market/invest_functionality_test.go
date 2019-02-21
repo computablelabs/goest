@@ -8,16 +8,23 @@ import (
 	// "time"
 )
 
-func buyPrice() *big.Int {
+func buyPrice() uint64 {
 	rate, _ := deployed.ParameterizerContract.GetConversionRate(nil)
-	slopeD, _ := deployed.ParameterizerContract.GetConversionSlopeDenominator(nil)
-	slopeN, _ := deployed.ParameterizerContract.GetConversionSlopeNumerator(nil)
+	rate64 := rate.Uint64()
+	investD, _ := deployed.ParameterizerContract.GetInvestDenominator(nil)
+	investD64 := investD.Uint64()
+	investN, _ := deployed.ParameterizerContract.GetInvestNumerator(nil)
+	investN64 := investN.Uint64()
 	reserve, _ := deployed.MarketTokenContract.BalanceOf(nil, deployed.MarketTokenAddress)
-	// cuz golang big int math...
-	var x big.Int
-	y := x.Mul(slopeN, reserve)
-	z := x.Add(rate, x.Div(y, slopeD))
-	return z
+	reserve64 := reserve.Uint64()
+	tot, _ := deployed.MarketTokenContract.TotalSupply(nil)
+	tot64 := tot.Uint64()
+
+	if tot64 < 1000000000000000000 {
+		return rate64 + investN64*reserve64/investD64
+	} else {
+		return rate64 + (investN64*reserve64*1000000000000000000)/(investD64*tot64)
+	}
 }
 
 func sellPrice(addr common.Address) *big.Int {
@@ -32,10 +39,11 @@ func sellPrice(addr common.Address) *big.Int {
 
 func TestGetInvestmentPrice(t *testing.T) {
 	price, _ := deployed.MarketContract.GetInvestmentPrice(nil)
+	price64 := price.Uint64()
 	calc := buyPrice()
 
-	if price.Cmp(calc) != 0 {
-		t.Fatalf("Expected investment price to be %v, got: %v", calc, price)
+	if price64 != calc {
+		t.Fatalf("Expected investment price to be %v, got: %v", calc, price64)
 	}
 }
 

@@ -17,8 +17,8 @@ const ONE_GWEI = 1000000000
 // to match the p11r's internal params
 var CHALLENGE_STAKE = big.NewInt(1)
 var CONVERSION_RATE = big.NewInt(2)
-var CONVERSION_SLOPE_D = big.NewInt(3)
-var CONVERSION_SLOPE_N = big.NewInt(4)
+var INVEST_D = big.NewInt(3)
+var INVEST_N = big.NewInt(4)
 var LIST_REWARD = big.NewInt(5)
 var QUORUM = big.NewInt(6)
 var VOTE_BY = big.NewInt(7)
@@ -60,8 +60,8 @@ func Deploy(c *ctx) (*dep, error) {
 		votingAddr,
 		big.NewInt(ONE_WEI),  // challengeStake
 		big.NewInt(ONE_GWEI), // conversionRate of 1e9
-		big.NewInt(101),      // conversionSlopeDenominator, a scaling factor
-		big.NewInt(100),      // conversionSlopeNumerator, a scaling factor
+		big.NewInt(100),      // InvestDenominator, a scaling factor
+		big.NewInt(110),      // InvestNumerator, a scaling factor
 		big.NewInt(ONE_WEI),  // listReward
 		big.NewInt(50),       // quorum
 		big.NewInt(20),       // voteBy of 20 seconds for specs

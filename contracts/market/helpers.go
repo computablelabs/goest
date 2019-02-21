@@ -94,8 +94,8 @@ func Deploy(initialBalance *big.Int, c *ctx) (*dep, error) {
 		votingAddr,
 		big.NewInt(ONE_WEI),  // challengeStake
 		big.NewInt(ONE_GWEI), // conversionRate: stipulation is that market token should be, at least, as val as eth
-		big.NewInt(101),      // conversionSlopeDenominator, a scaling factor
-		big.NewInt(100),      // conversionSlopeNumerator, a scaling factor
+		big.NewInt(101),      // investDenominator, a scaling factor
+		big.NewInt(100),      // investNumerator, a scaling factor
 		big.NewInt(ONE_WEI),  // listReward (one token)
 		big.NewInt(50),       // quorum
 		big.NewInt(100),      // voteBy

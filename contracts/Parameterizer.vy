@@ -5,8 +5,8 @@
 # We refer to any 'params' as integers to avoid conversions to and from strings
 CHALLENGE_STAKE: constant(uint256) = 1
 CONVERSION_RATE: constant(uint256) = 2
-CONVERSION_SLOPE_DENOMINATOR: constant(uint256) = 3
-CONVERSION_SLOPE_NUMERATOR: constant(uint256) = 4
+INVEST_DENOMINATOR: constant(uint256) = 3
+INVEST_NUMERATOR: constant(uint256) = 4
 LIST_REWARD: constant(uint256) = 5
 QUORUM: constant(uint256) = 6
 VOTE_BY: constant(uint256) = 7
@@ -37,8 +37,8 @@ ReparamSucceeded: event({hash: indexed(bytes32), param: indexed(uint256), value:
 reparams: map(bytes32, Reparam)
 challenge_stake: wei_value
 conversion_rate: wei_value
-conversion_slope_denominator: uint256
-conversion_slope_numerator: uint256
+invest_denominator: uint256
+invest_numerator: uint256
 list_reward: wei_value
 quorum: uint256
 vote_by: timedelta
@@ -50,8 +50,8 @@ def __init__(voting_addr: address, stake: wei_value, rate: wei_value, denominato
     self.voting = voting_addr
     self.challenge_stake = stake
     self.conversion_rate = rate
-    self.conversion_slope_denominator = denominator
-    self.conversion_slope_numerator = numerator
+    self.invest_denominator = denominator
+    self.invest_numerator = numerator
     self.list_reward = reward
     self.quorum = quorum_pct
     self.vote_by = vote_by_delta
@@ -77,20 +77,32 @@ def getConversionRate() -> wei_value:
 
 @public
 @constant
-def getConversionSlopeDenominator() -> uint256:
+def getHash(str: string[64]) -> bytes32:
   """
-  @notice Return the current conversion_slope_denominator scaling factor
+  @notice Given a string of max-length 64 chars, generate a hash
+  @dev Returns the same value we use internally for constructing mapping keys
+  @param reparam A string name supplied by the user / client
+  @return The generated hash
   """
-  return self.conversion_slope_denominator
+  return keccak256(str)
 
 
 @public
 @constant
-def getConversionSlopeNumerator() -> uint256:
+def getInvestDenominator() -> uint256:
+  """
+  @notice Return the current conversion_slope_denominator scaling factor
+  """
+  return self.invest_denominator
+
+
+@public
+@constant
+def getInvestNumerator() -> uint256:
   """
   @notice Return the current conversion_slope_numerator scaling factor
   """
-  return self.conversion_slope_numerator
+  return self.invest_numerator
 
 
 @public
@@ -113,6 +125,16 @@ def getQuorum() -> uint256:
 
 @public
 @constant
+def getReparam(hash: bytes32) -> (address, uint256, uint256):
+  """
+  @notice Return the data about the given Reparam
+  @param hash The Reparam identifier
+  """
+  return (self.reparams[hash].proposer, self.reparams[hash].param, self.reparams[hash].value)
+
+
+@public
+@constant
 def getVoteBy() -> timedelta:
   """
   @notice Return the number of seconds, from when begun, that a candidate poll should close
@@ -121,25 +143,20 @@ def getVoteBy() -> timedelta:
 
 
 @public
-@constant
-def getParamHash(reparam: string[64]) -> bytes32:
+def reparameterize(reparam: string[64], param: uint256, value: uint256):
   """
-  @notice Given a string of max-length 64 chars, generate a hash
-  @dev Used as a key in the voting candidates mapping. Must be unique
-  @param reparam A string name supplied by the user / client
-  @return The generated hash
+  @notice Suggest a change to a Parameterizer attribute, creating a candidate for it
+  @dev Sender must be in council, and there must not be a matching candidate already open
+  @param reparam A string used to generate the reparam hash, which must be unique
+  @param param The attribute to change
+  @param value What to change it to
   """
-  return keccak256(reparam)
-
-
-@public
-@constant
-def getReparam(hash: bytes32) -> (address, uint256, uint256):
-  """
-  @notice Return the data about the given Reparam
-  @param hash The Reparam identifier
-  """
-  return (self.reparams[hash].proposer, self.reparams[hash].param, self.reparams[hash].value)
+  assert self.voting.inCouncil(msg.sender)
+  hash: bytes32 = keccak256(reparam)
+  assert self.voting.willAddCandidate(hash)
+  self.reparams[hash] = Reparam({proposer: msg.sender, param: param, value:value})
+  self.voting.addCandidate(hash, REPARAM, self.vote_by)
+  log.ReparamProposed(msg.sender, hash, param, value)
 
 
 @public
@@ -160,10 +177,10 @@ def resolveReparam(hash: bytes32):
       self.challenge_stake = value
     elif param == CONVERSION_RATE:
       self.conversion_rate = value
-    elif param == CONVERSION_SLOPE_DENOMINATOR:
-      self.conversion_slope_denominator = value
-    elif param == CONVERSION_SLOPE_NUMERATOR:
-      self.conversion_slope_numerator = value
+    elif param == INVEST_DENOMINATOR:
+      self.invest_denominator = value
+    elif param == INVEST_NUMERATOR:
+      self.invest_numerator = value
     elif param == LIST_REWARD:
       self.list_reward = value
     elif param == QUORUM:
@@ -176,20 +193,3 @@ def resolveReparam(hash: bytes32):
   # regardless, cleanup the reparam and candidate
   self.voting.removeCandidate(hash)
   clear(self.reparams[hash])
-
-
-@public
-def reparameterize(reparam: string[64], param: uint256, value: uint256):
-  """
-  @notice Suggest a change to a Parameterizer attribute, creating a candidate for it
-  @dev Sender must be in council, and there must not be a matching candidate already open
-  @param reparam A string used to generate the reparam hash, which must be unique
-  @param param The attribute to change
-  @param value What to change it to
-  """
-  assert self.voting.inCouncil(msg.sender)
-  hash: bytes32 = keccak256(reparam)
-  assert self.voting.willAddCandidate(hash)
-  self.reparams[hash] = Reparam({proposer: msg.sender, param: param, value:value})
-  self.voting.addCandidate(hash, REPARAM, self.vote_by)
-  log.ReparamProposed(msg.sender, hash, param, value)
