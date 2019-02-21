@@ -20,10 +20,10 @@ func buyPrice() uint64 {
 	tot, _ := deployed.MarketTokenContract.TotalSupply(nil)
 	tot64 := tot.Uint64()
 
-	if tot64 < 1000000000 {
+	if tot64 < 1000000000000000000 {
 		return rate64 + investN64*reserve64/investD64
 	} else {
-		return rate64 + (investN64*reserve64)/(investD64*tot64)
+		return rate64 + (investN64*reserve64*1000000000000000000)/(investD64*tot64)
 	}
 }
 

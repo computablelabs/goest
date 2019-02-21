@@ -415,10 +415,10 @@ def getInvestmentPrice() -> wei_value:
   invest_n: uint256 = self.parameterizer.getInvestNumerator()
   reserve: wei_value = self.ether_token.balanceOf(self)
   total: wei_value = self.market_token.totalSupply()
-  if total < 1000000000: # that is, is total supply less than one-billionth token
+  if total < 1000000000000000000: # that is, is total supply less than one token in wei
     return rate + invest_n * reserve / invest_d
   else:
-    return rate + (invest_n * reserve) / (invest_d * total)
+    return rate + (invest_n * reserve * 1000000000000000000) / (invest_d * total)
 
 
 @public
