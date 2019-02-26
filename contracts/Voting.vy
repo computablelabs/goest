@@ -305,6 +305,7 @@ def willAddCandidate(hash: bytes32) -> bool:
   @notice Return a bool indicating if a possible candidate would be added
   @param hash Identifier for a (suppsosedly) currently non-existant candidate
   """
+  # TODO possible don't call the internal methods and just do the comparisons here
   return self.candidates_length < MAX_LENGTH and not self.isCandidate(hash) and not self.wasCandidate(hash)
 
 
@@ -312,5 +313,8 @@ def willAddCandidate(hash: bytes32) -> bool:
 @constant
 def willAddToCouncil(addr: address) -> bool:
   """
+  @notice Return a bool indicating if a possible council member would be added
+  @pram addr Address of the proposed council member
   """
+  # TODO possible don't call the internal methods and just do the comparisons here
   return self.council_length < MAX_LENGTH and not self.inCouncil(addr)

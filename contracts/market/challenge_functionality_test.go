@@ -142,18 +142,10 @@ func TestChallenge(t *testing.T) {
 func TestGetChallenge(t *testing.T) {
 	listingHash, _ := deployed.ParameterizerContract.GetHash(nil, "BarMarket12345")
 
-	challenger, fromSupply, fromRewards, _ := deployed.MarketContract.GetChallenge(nil, listingHash)
+	challenger, _ := deployed.MarketContract.GetChallenge(nil, listingHash)
 
 	if challenger != context.AuthMember2.From {
 		t.Fatalf("Expected challenger to be %v, got: %v", context.AuthMember2.From, challenger)
-	}
-
-	if fromSupply.Cmp(big.NewInt(0)) != 0 {
-		t.Fatalf("Expected amount to be 0, got: %v", fromSupply)
-	}
-
-	if fromRewards.Cmp(big.NewInt(ONE_WEI)) != 0 {
-		t.Fatalf("Expected amount to be 1 tokenWei, got: %v", fromRewards)
 	}
 
 	// should be a candidate for this challenge as well

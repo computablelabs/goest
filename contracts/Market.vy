@@ -16,11 +16,6 @@ struct Listing:
   supply: wei_value
   rewards: wei_value
 
-struct Challenge:
-  challenger: address
-  from_challengee_supply: wei_value
-  from_challengee_rewards: wei_value
-
 struct Investor:
   index: int128
   invested: wei_value
@@ -86,7 +81,7 @@ investors: map(address, Investor)
 investors_length: int128 # the actual number of investors
 investor_keys: address[MAX_LENGTH] # perhaps a bit optimistic, but :shrug...
 invested: wei_value # running total of all EtherToken invested in this Market
-challenges: map(bytes32, Challenge)
+challenges: map(bytes32, address) # maps listing identifier to challenger
 factory_address: address
 ether_token: EtherToken
 market_token: MarketToken
@@ -304,74 +299,89 @@ def resolveApplication(hash: bytes32):
 def challenge(chall: string[64], hash: bytes32):
   """
   @notice Challenge a current listing, creating a candidate for voting if it should remain
-  @dev Must actually be listed, and not already challenged. Also note that the challengee must
-  have enough funds to pay the challenge stake (in supply or rewards or both)
+  @dev Must actually be listed, and not already challenged.
   @param chall A string, max-length 64 chars, used to generate a hash which must be unique
   @param hash The listing identifier
   """
   assert self.listings[hash].listed
   stake: wei_value = self.parameterizer.getChallengeStake()
   # if a listing does not have the combined funds to survive a challenge, remove it.
-  if (self.listings[hash].supply + self.listings[hash].rewards) < stake:
-    self.removeListing(hash)
-  else:
-    hashed: bytes32 = keccak256(chall)
-    assert self.voting.willAddCandidate(hashed)
-    # TODO make it possible to stake from a listing?
-    self.market_token.transferFrom(msg.sender, self, stake)
-    from_supply: wei_value
-    from_rewards: wei_value
-    # if possible we'll lock only supply
-    if self.listings[hash].supply >= stake:
-      self.listings[hash].supply -= stake
-      from_supply = stake
-    else: # lock supply and rewards if we must
-      from_supply = self.listings[hash].supply
-      remainder: wei_value = stake - self.listings[hash].supply
-      self.listings[hash].supply = 0
-      self.listings[hash].rewards -= remainder
-      from_rewards = remainder
-    self.challenges[hash] = Challenge({challenger: msg.sender,
-      from_challengee_supply: from_supply, from_challengee_rewards: from_rewards})
-    self.voting.addCandidate(hash, CHALLENGE, self.parameterizer.getVoteBy())
-    log.Challenged(hash, msg.sender)
+  # if (self.listings[hash].supply + self.listings[hash].rewards) < stake:
+    # self.removeListing(hash)
+  # else:
+  hashed: bytes32 = keccak256(chall)
+  assert self.voting.willAddCandidate(hashed)
+  # TODO make it possible to stake from a listing?
+  self.market_token.transferFrom(msg.sender, self, stake)
+  # from_supply: wei_value
+  # from_rewards: wei_value
+  # if possible we'll lock only supply
+  # if self.listings[hash].supply >= stake:
+    # self.listings[hash].supply -= stake
+    # from_supply = stake
+  # else: # lock supply and rewards if we must
+    # from_supply = self.listings[hash].supply
+    # remainder: wei_value = stake - self.listings[hash].supply
+    # self.listings[hash].supply = 0
+    # self.listings[hash].rewards -= remainder
+    # from_rewards = remainder
+  self.challenges[hash] = msg.sender
+  self.voting.addCandidate(hash, CHALLENGE, self.parameterizer.getVoteBy())
+  log.Challenged(hash, msg.sender)
 
 
 @public
 @constant
-def getChallenge(hash: bytes32) -> (address, wei_value, wei_value):
+def getChallenge(hash: bytes32) -> address:
   """
-  @notice Return pertinent information about a given challenge
+  @notice Returns the address who challenged the given listing hash
   @param hash The Challenge in question
   """
-  return (self.challenges[hash].challenger, self.challenges[hash].from_challengee_supply,
-    self.challenges[hash].from_challengee_rewards)
+  return self.challenges[hash]
 
 
 @public
 def resolveChallenge(hash: bytes32):
   """
   @notice Determines the winner for a given Challenge. Rewards winner, possibly removing a listing (if appropriate)
-  @dev Challenge stakes are unlocked, replinished and rewarded accordingly.
+  @dev Challenge stakes are unlocked, replinished and rewarded accordingly. Note that the ability to fund the stake
+  takes precedence over voting
   @param hash The identifier for a Given challenge
   """
   assert self.voting.inCouncil(msg.sender)
   assert self.voting.candidateIs(hash, CHALLENGE)
   assert self.voting.pollClosed(hash)
   stake: wei_value = self.parameterizer.getChallengeStake()
-  # case: challenge won
-  if self.voting.didPass(hash, self.parameterizer.getQuorum()):
+  # before we tally votes, we check that the challengee has the funds to stake with
+  supply: wei_value = self.listings[hash].supply
+  rewards: wei_value = self.listings[hash].rewards
+  if (supply + rewards) < stake:
+    # we allow a challenger to recieve whatever balances a listing may have had, if present
+    if (supply + rewards) > 0:
+      self.listings[hash].supply = 0
+      self.listings[hash].rewards = 0
+      self.market_token.transfer(self.challenges[hash], (supply + rewards))
+      pass # TODO remove once the compiler valency issue is fixed
     self.removeListing(hash)
-    # x2 as challenger gets back their own stake + the listing's
-    self.market_token.transfer(self.challenges[hash].challenger, stake*2)
-    log.ChallengeSucceeded(hash, self.challenges[hash].challenger, stake)
-  else: # listing won
-    self.listings[hash].supply += self.challenges[hash].from_challengee_supply
-    self.listings[hash].rewards += (self.challenges[hash].from_challengee_rewards + stake)
-    log.ChallengeFailed(hash, self.challenges[hash].challenger, stake)
-  # regardless, clean up the challenge and candidate
-  clear(self.challenges[hash])
-  self.voting.removeCandidate(hash)
+  else:
+    # Now we can check voting. Case: challenge won
+    if self.voting.didPass(hash, self.parameterizer.getQuorum()):
+      # adjust the supply and rewards depending on where we were able to assemble the stake from
+      if supply >= stake:
+        self.listings[hash].supply -= stake
+      else:
+        self.listings[hash].supply = 0
+        self.listings[hash].rewards -= (stake - supply)
+      # x2 as challenger gets back their own stake + the listing's
+      self.market_token.transfer(self.challenges[hash], stake*2)
+      self.removeListing(hash)
+      log.ChallengeSucceeded(hash, self.challenges[hash], stake)
+    else: # Case: listing won
+      self.listings[hash].rewards += stake
+      log.ChallengeFailed(hash, self.challenges[hash], stake)
+    # regardless, clean up the challenge and candidate
+    clear(self.challenges[hash])
+    self.voting.removeCandidate(hash)
 
 
 @public
@@ -475,7 +485,7 @@ def divest():
     k: bytes32 = self.voting.getCandidateKey(i)
     if i == candidates: # don't exceed the actual number of candidates
       break
-    elif self.challenges[k].challenger == msg.sender:
+    elif self.challenges[k] == msg.sender:
       is_challenger = True
       break
   assert is_challenger == False
