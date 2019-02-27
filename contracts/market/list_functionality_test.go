@@ -81,7 +81,7 @@ func TestGetListing(t *testing.T) {
 	}
 }
 
-func TestGetListings(t *testing.T) {
+func TestGetListingCount(t *testing.T) {
 	listings, _ := deployed.MarketContract.GetListingCount(nil)
 
 	// we should have at least our one...
@@ -415,5 +415,109 @@ func TestExit(t *testing.T) {
 	updatedMarketBal, _ := deployed.MarketTokenContract.BalanceOf(nil, deployed.MarketAddress)
 	if updatedMarketBal.Cmp(marketBal) != -1 {
 		t.Fatalf("Expected %v to be > %v", marketBal, updatedMarketBal)
+	}
+}
+
+func TestConvertListing(t *testing.T) {
+	dataHash, _ := deployed.ParameterizerContract.GetHash(nil, "SpamData")
+
+	_, listErr := deployed.MarketContract.List(&bind.TransactOpts{
+		From:     context.AuthMember1.From,
+		Signer:   context.AuthMember1.Signer,
+		GasPrice: big.NewInt(ONE_GWEI * 2),
+		GasLimit: 250000,
+	}, "SpamMarket, AZ.", dataHash, big.NewInt(0))
+
+	if listErr != nil {
+		t.Fatalf("Error applying for list status: %v", listErr)
+	}
+
+	context.Blockchain.Commit()
+
+	listingHash, _ := deployed.ParameterizerContract.GetHash(nil, "SpamMarket, AZ.")
+	// cast a vote for (we know member2 is a council member at this point)
+	_, voteErr := deployed.VotingContract.Vote(&bind.TransactOpts{
+		From:     context.AuthMember2.From,
+		Signer:   context.AuthMember2.Signer,
+		GasPrice: big.NewInt(ONE_GWEI * 2),
+		GasLimit: 100000,
+	}, listingHash)
+
+	if voteErr != nil {
+		t.Fatalf("Error voting for candidate: %v", voteErr)
+	}
+
+	context.Blockchain.Commit()
+
+	// move past the voteBy
+	context.Blockchain.AdjustTime(100 * time.Second)
+	context.Blockchain.Commit()
+
+	// any council member can call for resolution
+	_, resolveErr := deployed.MarketContract.ResolveApplication(&bind.TransactOpts{
+		From:     context.AuthMember2.From,
+		Signer:   context.AuthMember2.Signer,
+		GasPrice: big.NewInt(ONE_GWEI * 2),
+		GasLimit: 1000000,
+	}, listingHash)
+
+	if resolveErr != nil {
+		t.Fatalf("Error resolving application: %v", resolveErr)
+	}
+
+	context.Blockchain.Commit()
+
+	// should be listed now, with a reward
+	listed, _, _, _, rewards, _ := deployed.MarketContract.GetListing(nil, listingHash)
+
+	if listed != true {
+		t.Fatalf("Exepected .listed to be true, got: %v", listed)
+	}
+
+	// list reward here is 1 token (tokenWei)
+	if rewards.Cmp(big.NewInt(ONE_WEI)) != 0 {
+		t.Fatalf("Exepected rewards to be 1 (in tokenWei), got: %v", rewards)
+	}
+
+	// get the owner's market token bal as it should increase on conversion
+	userBal, _ := deployed.MarketTokenContract.BalanceOf(nil, context.AuthMember1.From)
+	// same for the market, but should go down
+	marketBal, _ := deployed.MarketTokenContract.BalanceOf(nil, deployed.MarketAddress)
+	t.Log(userBal)
+	t.Log(marketBal)
+
+	// if true != false {
+	// t.Fatal("ack")
+	// }
+
+	_, convertErr := deployed.MarketContract.ConvertListing(&bind.TransactOpts{
+		From:     context.AuthMember1.From,
+		Signer:   context.AuthMember1.Signer,
+		GasPrice: big.NewInt(ONE_GWEI * 2),
+		GasLimit: 1000000,
+	}, listingHash)
+
+	if convertErr != nil {
+		t.Fatalf("Error converting listing: %v", convertErr)
+	}
+
+	context.Blockchain.Commit()
+
+	reward, _ := deployed.ParameterizerContract.GetListReward(nil)
+	// user's market bal should have gone up by the reward now
+	newUserBal, _ := deployed.MarketTokenContract.BalanceOf(nil, context.AuthMember1.From)
+	expectedUserBal := userBal.Add(userBal, reward)
+	// same for the market, but should go down
+	newMarketBal, _ := deployed.MarketTokenContract.BalanceOf(nil, deployed.MarketAddress)
+	expectedMarketBal := marketBal.Sub(marketBal, reward)
+	t.Log(newUserBal)
+	t.Log(newMarketBal)
+
+	if newUserBal.Cmp(expectedUserBal) != 0 {
+		t.Fatalf("expected user market token balance of %v, got: %v", expectedUserBal, newUserBal)
+	}
+
+	if newMarketBal.Cmp(expectedMarketBal) != 0 {
+		t.Fatalf("expected market token balance of %v, got: %v", expectedMarketBal, newMarketBal)
 	}
 }

@@ -47,7 +47,7 @@ voting: Voting
 @public
 def __init__(voting_addr: address, stake: wei_value, rate: wei_value, denominator: uint256, numerator: uint256,
   reward: wei_value, quorum_pct: uint256, vote_by_delta: timedelta):
-    self.voting = voting_addr
+    self.voting = Voting(voting_addr)
     self.challenge_stake = stake
     self.conversion_rate = rate
     self.invest_denominator = denominator
