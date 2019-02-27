@@ -68,6 +68,7 @@ ChallengeSucceeded: event({hash: indexed(bytes32), challenger: indexed(address),
 Divested: event({investor: indexed(address), transferred: wei_value})
 Invested: event({investor: indexed(address), offered: wei_value, minted: wei_value})
 Listed: event({hash: indexed(bytes32), owner: indexed(address), reward: wei_value})
+ListingConverted: event({ hash: indexed(bytes32)})
 ListingDeposit: event({hash: indexed(bytes32), owner: indexed(address), deposited: wei_value})
 ListingRemoved: event({hash: indexed(bytes32)})
 ListingWithdraw: event({hash: indexed(bytes32), owner: indexed(address), withdrawn: wei_value})
@@ -92,10 +93,10 @@ parameterizer: Parameterizer
 def __init__(ether_token_address: address, market_token_address: address,
   voting_address: address, parameterizer_address: address):
     self.factory_address = msg.sender
-    self.ether_token = ether_token_address
-    self.market_token = market_token_address
-    self.voting = voting_address
-    self.parameterizer = parameterizer_address
+    self.ether_token = EtherToken(ether_token_address)
+    self.market_token = MarketToken(market_token_address)
+    self.voting = Voting(voting_address)
+    self.parameterizer = Parameterizer(parameterizer_address)
 
 
 @public
@@ -233,6 +234,23 @@ def getListing(hash: bytes32) -> (bool, address, bytes32, wei_value, wei_value):
     self.listings[hash].supply, self.listings[hash].rewards)
 
 
+@public
+def convertListing(hash:bytes32):
+  """
+  @notice Allow a Listing owner to claim their rewards (and any supply present) by turning over ownership to the Market
+  @param hash The listing identifier
+  """
+  assert self.listings[hash].listed == True
+  assert self.listings[hash].owner == msg.sender
+  funds: wei_value = self.listings[hash].supply + self.listings[hash].rewards
+  if funds > 0:
+    self.listings[hash].supply = 0
+    self.listings[hash].rewards = 0
+    self.market_token.transfer(self.listings[hash].owner, funds)
+  self.listings[hash].owner = self
+  log.ListingConverted(hash)
+
+
 @private
 def removeListing(hash: bytes32):
   """
@@ -361,7 +379,6 @@ def resolveChallenge(hash: bytes32):
       self.listings[hash].supply = 0
       self.listings[hash].rewards = 0
       self.market_token.transfer(self.challenges[hash], (supply + rewards))
-      pass # TODO remove once the compiler valency issue is fixed
     self.removeListing(hash)
   else:
     # Now we can check voting. Case: challenge won

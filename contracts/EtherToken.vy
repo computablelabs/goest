@@ -1,8 +1,7 @@
 # @title Computable EtherToken
 # @notice Implementation of an ERC20 compatible token which is purchased with ETH at a 1:1 ratio
 # @author Computable
-from vyper.interfaces import ERC20
-implements: ERC20
+# @dev Implements ERC20 interface
 
 Approval: event({owner: indexed(address), spender: indexed(address), amount: wei_value})
 Deposit: event({source: indexed(address), amount: wei_value})

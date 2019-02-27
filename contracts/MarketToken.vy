@@ -1,8 +1,7 @@
 # @title Computable MarketToken
 # @notice Implementation of an ERC20 compatible token which is both burnable and mintable
 # @author Computable
-from vyper.interfaces import ERC20
-implements: ERC20
+# @dev Implements the ERC20 interface
 
 Approval: event({owner: indexed(address), spender: indexed(address), amount: wei_value})
 Burn: event({burner: indexed(address), amount: wei_value})
