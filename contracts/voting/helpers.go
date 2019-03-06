@@ -19,9 +19,10 @@ var CHALLENGE = big.NewInt(2)
 var REPARAM = big.NewInt(3)
 
 type ctx struct {
-	AuthMarket        *bind.TransactOpts
 	AuthFactory       *bind.TransactOpts
 	AuthParameterizer *bind.TransactOpts
+	AuthListing       *bind.TransactOpts
+	AuthInvesting     *bind.TransactOpts
 	AuthMember1       *bind.TransactOpts
 	AuthMember2       *bind.TransactOpts
 	Blockchain        *backends.SimulatedBackend
@@ -61,18 +62,21 @@ func GenBytes32(name string) [32]byte {
 
 func SetupBlockchain(accountBalance *big.Int) *ctx {
 	// generate a new key, toss the error for now as it shouldnt happen
-	keyMark, _ := crypto.GenerateKey()
+	keyList, _ := crypto.GenerateKey()
+	keyInv, _ := crypto.GenerateKey()
 	keyFac, _ := crypto.GenerateKey()
 	keyParam, _ := crypto.GenerateKey()
 	keyMem1, _ := crypto.GenerateKey()
 	keyMem2, _ := crypto.GenerateKey()
-	authMark := bind.NewKeyedTransactor(keyMark)
+	authList := bind.NewKeyedTransactor(keyList)
+	authInv := bind.NewKeyedTransactor(keyInv)
 	authFac := bind.NewKeyedTransactor(keyFac)
 	authParam := bind.NewKeyedTransactor(keyParam)
 	authMem1 := bind.NewKeyedTransactor(keyMem1)
 	authMem2 := bind.NewKeyedTransactor(keyMem2)
 	alloc := make(core.GenesisAlloc)
-	alloc[authMark.From] = core.GenesisAccount{Balance: accountBalance}
+	alloc[authList.From] = core.GenesisAccount{Balance: accountBalance}
+	alloc[authInv.From] = core.GenesisAccount{Balance: accountBalance}
 	alloc[authFac.From] = core.GenesisAccount{Balance: accountBalance}
 	alloc[authParam.From] = core.GenesisAccount{Balance: accountBalance}
 	alloc[authMem1.From] = core.GenesisAccount{Balance: accountBalance}
@@ -81,7 +85,8 @@ func SetupBlockchain(accountBalance *big.Int) *ctx {
 	bc := backends.NewSimulatedBackend(alloc, 4700000)
 
 	return &ctx{
-		AuthMarket:        authMark,
+		AuthListing:       authList,
+		AuthInvesting:     authInv,
 		AuthFactory:       authFac,
 		AuthParameterizer: authParam,
 		AuthMember1:       authMem1,

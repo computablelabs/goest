@@ -10,8 +10,8 @@ import (
 func TestVote(t *testing.T) {
 	// we need a council member
 	_, councilErr := deployed.VotingContract.AddToCouncil(&bind.TransactOpts{
-		From:     context.AuthMarket.From,
-		Signer:   context.AuthMarket.Signer,
+		From:     context.AuthInvesting.From,
+		Signer:   context.AuthInvesting.Signer,
 		GasPrice: big.NewInt(ONE_GWEI * 2),
 		GasLimit: 100000,
 	}, context.AuthMember1.From)
@@ -24,8 +24,8 @@ func TestVote(t *testing.T) {
 	bytes := GenBytes32("iLoveListing.com")
 
 	_, candidateErr := deployed.VotingContract.AddCandidate(&bind.TransactOpts{
-		From:     context.AuthMarket.From,
-		Signer:   context.AuthMarket.Signer,
+		From:     context.AuthParameterizer.From,
+		Signer:   context.AuthParameterizer.Signer,
 		GasPrice: big.NewInt(ONE_GWEI * 2),
 		GasLimit: 150000,
 	}, bytes, APPLICATION, big.NewInt(20)) // numbers smaller that 10 can be erratic?

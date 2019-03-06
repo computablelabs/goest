@@ -22,10 +22,12 @@
     "precompile:parameterizer:vyper": "vyper -f abi contracts/Parameterizer.vy > contracts/parameterizer/parameterizer.abi && vyper -f bytecode contracts/Parameterizer.vy > contracts/parameterizer/parameterizer.bin",
     "compile:parameterizer:vyper": "~/go/bin/abigen -abi contracts/parameterizer/parameterizer.abi -pkg parameterizer -out contracts/parameterizer/parameterizer.go -bin contracts/parameterizer/parameterizer.bin",
     "compile:parameterizer:vyper:external":"vyper -f external_interface contracts/Parameterizer.vy > contracts/parameterizer_external.vy",
-    "compile:market": "~/go/bin/abigen -sol contracts/Market.sol -pkg market -out contracts/market/market.go",
-    "precompile:market:vyper": "vyper -f abi contracts/Market.vy > contracts/market/market.abi && vyper -f bytecode contracts/Market.vy > contracts/market/market.bin",
-    "compile:market:vyper": "~/go/bin/abigen -abi contracts/market/market.abi -pkg market -out contracts/market/market.go -bin contracts/market/market.bin",
-    "compile:market:vyper:external":"vyper -f external_interface contracts/Market.vy > contracts/market_external.vy",
+    "precompile:listing:vyper": "vyper -f abi contracts/Listing.vy > contracts/listing/listing.abi && vyper -f bytecode contracts/Listing.vy > contracts/listing/listing.bin",
+    "compile:listing:vyper": "~/go/bin/abigen -abi contracts/listing/listing.abi -pkg listing -out contracts/listing/listing.go -bin contracts/listing/listing.bin",
+    "compile:listing:vyper:external":"vyper -f external_interface contracts/Listing.vy > contracts/listing_external.vy",
+    "precompile:investing:vyper": "vyper -f abi contracts/Investing.vy > contracts/investing/investing.abi && vyper -f bytecode contracts/Investing.vy > contracts/investing/investing.bin",
+    "compile:investing:vyper": "~/go/bin/abigen -abi contracts/investing/investing.abi -pkg investing -out contracts/investing/investing.go -bin contracts/investing/investing.bin",
+    "compile:investing:vyper:external":"vyper -f external_interface contracts/Investing.vy > contracts/investing_external.vy",
     "test": "go test -v ./..."
   },
   "repository": {
@@ -36,6 +38,7 @@
     "Go",
     "golang",
     "Solidity",
+    "Vyper",
     "Computable",
     "Badass"
   ],

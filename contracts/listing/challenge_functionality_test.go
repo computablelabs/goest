@@ -1,4 +1,4 @@
-package market
+package listing
 
 import (
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
@@ -13,7 +13,7 @@ func TestChallenge(t *testing.T) {
 	// create a applicant
 	dataHash, _ := deployed.ParameterizerContract.GetHash(nil, "BazData")
 
-	_, listErr := deployed.MarketContract.List(&bind.TransactOpts{
+	_, listErr := deployed.ListingContract.List(&bind.TransactOpts{
 		From:     context.AuthMember1.From,
 		Signer:   context.AuthMember1.Signer,
 		GasPrice: big.NewInt(ONE_GWEI * 2),
@@ -63,7 +63,7 @@ func TestChallenge(t *testing.T) {
 	context.Blockchain.Commit()
 
 	// any council member can call for resolution
-	_, resolveErr := deployed.MarketContract.ResolveApplication(&bind.TransactOpts{
+	_, resolveErr := deployed.ListingContract.ResolveApplication(&bind.TransactOpts{
 		From:     context.AuthMember2.From,
 		Signer:   context.AuthMember2.Signer,
 		GasPrice: big.NewInt(ONE_GWEI * 2),
@@ -77,7 +77,7 @@ func TestChallenge(t *testing.T) {
 	context.Blockchain.Commit()
 
 	// should be listed now, with a reward
-	listed, _, _, _, _, _ := deployed.MarketContract.GetListing(nil, listingHash)
+	listed, _, _, _, _, _ := deployed.ListingContract.GetListing(nil, listingHash)
 
 	if listed != true {
 		t.Fatalf("Exepected .listed to be true, got: %v", listed)
@@ -102,7 +102,7 @@ func TestChallenge(t *testing.T) {
 		Signer:   context.AuthMember2.Signer,
 		GasPrice: big.NewInt(ONE_GWEI * 2),
 		GasLimit: 1000000,
-	}, deployed.MarketAddress, big.NewInt(ONE_WEI*2)) // up to 2 tokenWei
+	}, deployed.ListingAddress, big.NewInt(ONE_WEI*2)) // up to 2 tokenWei
 
 	if approveErr != nil {
 		t.Fatalf("Error approving market contract to spend: %v", approveErr)
@@ -112,9 +112,9 @@ func TestChallenge(t *testing.T) {
 
 	// note our balances right now as challenging will change them
 	memberBal, _ := deployed.MarketTokenContract.BalanceOf(nil, context.AuthMember2.From)
-	marketBal, _ := deployed.MarketTokenContract.BalanceOf(nil, deployed.MarketAddress)
+	marketBal, _ := deployed.MarketTokenContract.BalanceOf(nil, deployed.ListingAddress)
 
-	_, challengeErr := deployed.MarketContract.Challenge(&bind.TransactOpts{
+	_, challengeErr := deployed.ListingContract.Challenge(&bind.TransactOpts{
 		From:     context.AuthMember2.From,
 		Signer:   context.AuthMember2.Signer,
 		GasPrice: big.NewInt(ONE_GWEI * 2),
@@ -133,7 +133,7 @@ func TestChallenge(t *testing.T) {
 		t.Fatalf("Expected %v to be > %v", memberBal, newMemberBal)
 	}
 	// market then goes up as it banks that amount...
-	newMarketBal, _ := deployed.MarketTokenContract.BalanceOf(nil, deployed.MarketAddress)
+	newMarketBal, _ := deployed.MarketTokenContract.BalanceOf(nil, deployed.ListingAddress)
 	if newMarketBal.Cmp(marketBal) != 1 {
 		t.Fatalf("Expected %v to be > %v", newMarketBal, marketBal)
 	}
@@ -142,7 +142,7 @@ func TestChallenge(t *testing.T) {
 func TestGetChallenge(t *testing.T) {
 	listingHash, _ := deployed.ParameterizerContract.GetHash(nil, "BarMarket12345")
 
-	challenger, _ := deployed.MarketContract.GetChallenge(nil, listingHash)
+	challenger, _ := deployed.ListingContract.GetChallenge(nil, listingHash)
 
 	if challenger != context.AuthMember2.From {
 		t.Fatalf("Expected challenger to be %v, got: %v", context.AuthMember2.From, challenger)
@@ -194,7 +194,7 @@ func TestResolveChallenge(t *testing.T) {
 	context.Blockchain.Commit()
 
 	// either member could call for this as both are council members here, NOTE this will change in future iteration
-	_, resolveErr := deployed.MarketContract.ResolveChallenge(&bind.TransactOpts{
+	_, resolveErr := deployed.ListingContract.ResolveChallenge(&bind.TransactOpts{
 		From:     context.AuthMember1.From,
 		Signer:   context.AuthMember1.Signer,
 		GasPrice: big.NewInt(ONE_GWEI * 2),
@@ -208,7 +208,7 @@ func TestResolveChallenge(t *testing.T) {
 	context.Blockchain.Commit()
 
 	// should no longer be a listing
-	listed, _ := deployed.MarketContract.IsListing(nil, listingHash)
+	listed, _ := deployed.ListingContract.IsListing(nil, listingHash)
 
 	if listed == true {
 		t.Fatalf("Expected .listed to be false, got")

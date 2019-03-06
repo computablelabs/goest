@@ -1,7 +1,6 @@
-package market
+package listing
 
 import (
-	"github.com/computablelabs/goest/contracts/ethertoken"
 	"github.com/computablelabs/goest/contracts/markettoken"
 	"github.com/computablelabs/goest/contracts/parameterizer"
 	"github.com/computablelabs/goest/contracts/voting"
@@ -26,27 +25,25 @@ const (
 )
 
 type ctx struct {
-	AuthFactory *bind.TransactOpts
-	AuthMember1 *bind.TransactOpts
-	AuthMember2 *bind.TransactOpts
-	AuthMember3 *bind.TransactOpts
-	Blockchain  *backends.SimulatedBackend
+	InvestingAddress common.Address
+	AuthFactory      *bind.TransactOpts
+	AuthMember1      *bind.TransactOpts
+	AuthMember2      *bind.TransactOpts
+	AuthMember3      *bind.TransactOpts
+	Blockchain       *backends.SimulatedBackend
 }
 
 type dep struct {
-	MarketAddress            common.Address
+	ListingAddress           common.Address
 	MarketTokenAddress       common.Address
-	EtherTokenAddress        common.Address
 	ParameterizerAddress     common.Address
 	VotingAddress            common.Address
-	MarketContract           *Market
+	ListingContract          *Listing
 	MarketTokenContract      *markettoken.MarketToken
-	EtherTokenContract       *ethertoken.EtherToken
 	ParameterizerContract    *parameterizer.Parameterizer
 	VotingContract           *voting.Voting
-	MarketTransaction        *types.Transaction
+	ListingTransaction       *types.Transaction
 	MarketTokenTransaction   *types.Transaction
-	EtherTokenTransaction    *types.Transaction
 	ParameterizerTransaction *types.Transaction
 	VotingTransaction        *types.Transaction
 }
@@ -61,17 +58,6 @@ func Deploy(initialBalance *big.Int, c *ctx) (*dep, error) {
 
 	if marketTokenErr != nil {
 		return nil, marketTokenErr
-	}
-
-	etherTokenAddr, etherTokenTrans, etherTokenCont, etherTokenErr := ethertoken.DeployEtherToken(
-		c.AuthFactory,
-		c.Blockchain,
-		c.AuthFactory.From,
-		initialBalance,
-	)
-
-	if etherTokenErr != nil {
-		return nil, etherTokenErr
 	}
 
 	// commit the deploy before deploying voting
@@ -107,32 +93,28 @@ func Deploy(initialBalance *big.Int, c *ctx) (*dep, error) {
 
 	c.Blockchain.Commit()
 
-	// finally the market...
-	marketAddr, marketTrans, marketCont, marketErr := DeployMarket(
+	// finally the listing...
+	listingAddr, listingTrans, listingCont, listingErr := DeployListing(
 		c.AuthFactory,
 		c.Blockchain,
-		etherTokenAddr,
 		marketTokenAddr,
 		votingAddr,
 		paramAddr,
 	)
 
-	if marketErr != nil {
-		return nil, marketErr
+	if listingErr != nil {
+		return nil, listingErr
 	}
 
 	c.Blockchain.Commit()
 
 	return &dep{
-		MarketAddress:            marketAddr,
-		MarketContract:           marketCont,
-		MarketTransaction:        marketTrans,
+		ListingAddress:           listingAddr,
+		ListingContract:          listingCont,
+		ListingTransaction:       listingTrans,
 		MarketTokenAddress:       marketTokenAddr,
 		MarketTokenContract:      marketTokenCont,
 		MarketTokenTransaction:   marketTokenTrans,
-		EtherTokenAddress:        etherTokenAddr,
-		EtherTokenTransaction:    etherTokenTrans,
-		EtherTokenContract:       etherTokenCont,
 		ParameterizerAddress:     paramAddr,
 		ParameterizerContract:    paramCont,
 		ParameterizerTransaction: paramTrans,
@@ -156,7 +138,6 @@ func SetupBlockchain(accountBalance *big.Int) *ctx {
 	// members 1 and 2 used in list_functionality
 	authMem1 := bind.NewKeyedTransactor(keyMem1)
 	authMem2 := bind.NewKeyedTransactor(keyMem2)
-	// member 3 used in invest_functionality
 	authMem3 := bind.NewKeyedTransactor(keyMem3)
 
 	alloc := make(core.GenesisAlloc)
@@ -168,10 +149,11 @@ func SetupBlockchain(accountBalance *big.Int) *ctx {
 	bc := backends.NewSimulatedBackend(alloc, 4700000)
 
 	return &ctx{
-		AuthFactory: authFac,
-		AuthMember1: authMem1,
-		AuthMember2: authMem2,
-		AuthMember3: authMem3,
-		Blockchain:  bc,
+		InvestingAddress: common.HexToAddress("0xaoeu"),
+		AuthFactory:      authFac,
+		AuthMember1:      authMem1,
+		AuthMember2:      authMem2,
+		AuthMember3:      authMem3,
+		Blockchain:       bc,
 	}
 }

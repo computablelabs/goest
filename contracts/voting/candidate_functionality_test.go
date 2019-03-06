@@ -10,8 +10,8 @@ func TestAddCandidate(t *testing.T) {
 	bytes := GenBytes32("iCanHazListing")
 
 	_, err := deployed.VotingContract.AddCandidate(&bind.TransactOpts{
-		From:     context.AuthMarket.From,
-		Signer:   context.AuthMarket.Signer,
+		From:     context.AuthListing.From,
+		Signer:   context.AuthListing.Signer,
 		GasPrice: big.NewInt(ONE_GWEI * 2),
 		GasLimit: 150000,
 	}, bytes, APPLICATION, big.NewInt(2))
@@ -99,8 +99,8 @@ func TestRemoveCandidate(t *testing.T) {
 	bytes := GenBytes32("iCanHazListing")
 
 	_, err := deployed.VotingContract.RemoveCandidate(&bind.TransactOpts{
-		From:     context.AuthMarket.From,
-		Signer:   context.AuthMarket.Signer,
+		From:     context.AuthListing.From,
+		Signer:   context.AuthListing.Signer,
 		GasPrice: big.NewInt(ONE_GWEI * 2),
 		GasLimit: 150000,
 	}, bytes)

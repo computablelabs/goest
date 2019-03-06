@@ -25,14 +25,18 @@ func TestDeployVoting(t *testing.T) {
 
 // NOTE: actual setting done in Main, as it must be, but tested here similar to deploy
 func TestSetPrivileged(t *testing.T) {
-	factory, market, p11r, _ := deployed.VotingContract.GetPrivileged(nil)
+	factory, p11r, list, invest, _ := deployed.VotingContract.GetPrivileged(nil)
 
 	if factory != context.AuthFactory.From {
 		t.Fatalf("Expected factory address of %v but got %v", context.AuthFactory.From, factory)
 	}
 
-	if market != context.AuthMarket.From {
-		t.Fatalf("Expected market address of %v but got %v", context.AuthMarket.From, market)
+	if list != context.AuthListing.From {
+		t.Fatalf("Expected Listing address of %v but got %v", context.AuthListing.From, list)
+	}
+
+	if invest != context.AuthInvesting.From {
+		t.Fatalf("Expected Investing address of %v but got %v", context.AuthInvesting.From, invest)
 	}
 
 	if p11r != context.AuthParameterizer.From {
@@ -55,7 +59,7 @@ func TestMain(m *testing.M) {
 		Signer:   context.AuthFactory.Signer,
 		GasPrice: big.NewInt(ONE_GWEI * 2),
 		GasLimit: 1000000,
-	}, context.AuthMarket.From, context.AuthParameterizer.From)
+	}, context.AuthParameterizer.From, context.AuthListing.From, context.AuthInvesting.From)
 
 	if err != nil {
 		// no T pointer here...

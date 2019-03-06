@@ -1,4 +1,4 @@
-package market
+package listing
 
 import (
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
@@ -11,7 +11,7 @@ func TestList(t *testing.T) {
 	// use the getListingHash func to make a faux dataHash
 	dataHash, _ := deployed.ParameterizerContract.GetHash(nil, "FooData")
 
-	_, listErr := deployed.MarketContract.List(&bind.TransactOpts{
+	_, listErr := deployed.ListingContract.List(&bind.TransactOpts{
 		From:     context.AuthMember1.From,
 		Signer:   context.AuthMember1.Signer,
 		GasPrice: big.NewInt(ONE_GWEI * 2),
@@ -36,7 +36,7 @@ func TestIsListing(t *testing.T) {
 	// we'll need to gen the listingHash to match
 	listingHash, _ := deployed.ParameterizerContract.GetHash(nil, "FooMarket, AZ.")
 
-	isListing, _ := deployed.MarketContract.IsListing(nil, listingHash)
+	isListing, _ := deployed.ListingContract.IsListing(nil, listingHash)
 	if isListing != true {
 		t.Fatalf("Expected isListing to be true, got: %v", isListing)
 	}
@@ -46,7 +46,7 @@ func TestIsListed(t *testing.T) {
 	// we'll need to gen the listingHash to match
 	listingHash, _ := deployed.ParameterizerContract.GetHash(nil, "FooMarket, AZ.")
 
-	isListed, _ := deployed.MarketContract.IsListed(nil, listingHash)
+	isListed, _ := deployed.ListingContract.IsListed(nil, listingHash)
 	if isListed == true {
 		t.Fatalf("Expected isListed to be false, got: %v", isListed)
 	}
@@ -55,7 +55,7 @@ func TestIsListed(t *testing.T) {
 func TestGetListing(t *testing.T) {
 	listingHash, _ := deployed.ParameterizerContract.GetHash(nil, "FooMarket, AZ.")
 
-	listed, owner, dataHash, supply, rewards, _ := deployed.MarketContract.GetListing(nil, listingHash)
+	listed, owner, dataHash, supply, rewards, _ := deployed.ListingContract.GetListing(nil, listingHash)
 
 	if listed != false {
 		t.Fatalf("Exepected .listed to be false, got: %v", listed)
@@ -82,7 +82,7 @@ func TestGetListing(t *testing.T) {
 }
 
 func TestGetListingCount(t *testing.T) {
-	listings, _ := deployed.MarketContract.GetListingCount(nil)
+	listings, _ := deployed.ListingContract.GetListingCount(nil)
 
 	// we should have at least our one...
 	if listings.Cmp(big.NewInt(0)) != 1 {
@@ -91,7 +91,7 @@ func TestGetListingCount(t *testing.T) {
 }
 
 func TestIsListingOwner(t *testing.T) {
-	isOwner, _ := deployed.MarketContract.IsListingOwner(nil, context.AuthMember1.From)
+	isOwner, _ := deployed.ListingContract.IsListingOwner(nil, context.AuthMember1.From)
 
 	if isOwner != true {
 		t.Fatalf("Exepected isOwner to be true, got: %v", isOwner)
@@ -100,7 +100,7 @@ func TestIsListingOwner(t *testing.T) {
 
 func TestResolveApplication(t *testing.T) {
 	// check the market's balance as the mint operation should increment it after successful listing
-	marketBal, _ := deployed.MarketTokenContract.BalanceOf(nil, deployed.MarketAddress)
+	marketBal, _ := deployed.MarketTokenContract.BalanceOf(nil, deployed.ListingAddress)
 	// our listing
 	listingHash, _ := deployed.ParameterizerContract.GetHash(nil, "FooMarket, AZ.")
 
@@ -140,7 +140,7 @@ func TestResolveApplication(t *testing.T) {
 	context.Blockchain.Commit()
 
 	// any council member can call for resolution
-	_, resolveErr := deployed.MarketContract.ResolveApplication(&bind.TransactOpts{
+	_, resolveErr := deployed.ListingContract.ResolveApplication(&bind.TransactOpts{
 		From:     context.AuthMember2.From,
 		Signer:   context.AuthMember2.Signer,
 		GasPrice: big.NewInt(ONE_GWEI * 2),
@@ -154,7 +154,7 @@ func TestResolveApplication(t *testing.T) {
 	context.Blockchain.Commit()
 
 	// should be listed now, with a reward
-	listed, _, _, supply, rewards, _ := deployed.MarketContract.GetListing(nil, listingHash)
+	listed, _, _, supply, rewards, _ := deployed.ListingContract.GetListing(nil, listingHash)
 
 	if listed != true {
 		t.Fatalf("Exepected .listed to be true, got: %v", listed)
@@ -171,7 +171,7 @@ func TestResolveApplication(t *testing.T) {
 	}
 
 	// marketToken should be banking the minted amount
-	newMarketBal, _ := deployed.MarketTokenContract.BalanceOf(nil, deployed.MarketAddress)
+	newMarketBal, _ := deployed.MarketTokenContract.BalanceOf(nil, deployed.ListingAddress)
 	// we should see new bal being > old one
 	if newMarketBal.Cmp(marketBal) != 1 {
 		t.Fatalf("Expected %v to be > %v", newMarketBal, marketBal)
@@ -207,7 +207,7 @@ func TestResolveApplicationThatFails(t *testing.T) {
 		Signer:   context.AuthMember1.Signer,
 		GasPrice: big.NewInt(ONE_GWEI * 2),
 		GasLimit: 1000000,
-	}, deployed.MarketAddress, big.NewInt(ONE_WEI*2)) // up to 2 tokenWei
+	}, deployed.ListingAddress, big.NewInt(ONE_WEI*2)) // up to 2 tokenWei
 
 	if approveErr != nil {
 		t.Fatalf("Error approving market contract to spend: %v", approveErr)
@@ -222,9 +222,9 @@ func TestResolveApplicationThatFails(t *testing.T) {
 	}
 
 	// check the market's balance as the list operation, with supply, should increase it
-	marketBal, _ := deployed.MarketTokenContract.BalanceOf(nil, deployed.MarketAddress)
+	marketBal, _ := deployed.MarketTokenContract.BalanceOf(nil, deployed.ListingAddress)
 
-	_, listErr := deployed.MarketContract.List(&bind.TransactOpts{
+	_, listErr := deployed.ListingContract.List(&bind.TransactOpts{
 		From:     context.AuthMember1.From,
 		Signer:   context.AuthMember1.Signer,
 		GasPrice: big.NewInt(ONE_GWEI * 2),
@@ -237,7 +237,7 @@ func TestResolveApplicationThatFails(t *testing.T) {
 
 	context.Blockchain.Commit()
 
-	newMarketBal, _ := deployed.MarketTokenContract.BalanceOf(nil, deployed.MarketAddress)
+	newMarketBal, _ := deployed.MarketTokenContract.BalanceOf(nil, deployed.ListingAddress)
 
 	// list should have transferred the listAmount over
 	if newMarketBal.Cmp(marketBal) != 1 {
@@ -248,7 +248,7 @@ func TestResolveApplicationThatFails(t *testing.T) {
 	listingHash, _ := deployed.ParameterizerContract.GetHash(nil, "BarMarket, CA.")
 
 	// we should see a listing with a supply in place
-	_, _, _, supply, _, _ := deployed.MarketContract.GetListing(nil, listingHash)
+	_, _, _, supply, _, _ := deployed.ListingContract.GetListing(nil, listingHash)
 
 	if supply.Cmp(big.NewInt(ONE_WEI)) != 0 {
 		t.Fatalf("Expected listing supply to be 1 token in wei, got: %v", supply)
@@ -259,7 +259,7 @@ func TestResolveApplicationThatFails(t *testing.T) {
 	context.Blockchain.Commit()
 
 	// any council member can call for resolution
-	_, resolveErr := deployed.MarketContract.ResolveApplication(&bind.TransactOpts{
+	_, resolveErr := deployed.ListingContract.ResolveApplication(&bind.TransactOpts{
 		From:     context.AuthMember2.From,
 		Signer:   context.AuthMember2.Signer,
 		GasPrice: big.NewInt(ONE_GWEI * 2),
@@ -273,7 +273,7 @@ func TestResolveApplicationThatFails(t *testing.T) {
 	context.Blockchain.Commit()
 
 	// the de-listing should transfer any amount back to owner
-	// updatedMarketBal, _ := deployed.MarketTokenContract.BalanceOf(nil, deployed.MarketAddress)
+	// updatedMarketBal, _ := deployed.MarketTokenContract.BalanceOf(nil, deployed.ListingAddress)
 
 	// list should have transferred the listAmount over, going back to the original amt
 	// if updatedMarketBal.Cmp(marketBal) != 0 {
@@ -281,7 +281,7 @@ func TestResolveApplicationThatFails(t *testing.T) {
 	// }
 
 	// should not be listed now, and no reward
-	listed, _, _, supply, rewards, _ := deployed.MarketContract.GetListing(nil, listingHash)
+	listed, _, _, supply, rewards, _ := deployed.ListingContract.GetListing(nil, listingHash)
 
 	if listed == true {
 		t.Fatalf("Exepected .listed to be false, got: %v", listed)
@@ -307,13 +307,13 @@ func TestDepositToListing(t *testing.T) {
 	// the user's balance should decrease after they deposit
 	userBal, _ := deployed.MarketTokenContract.BalanceOf(nil, context.AuthMember1.From)
 	// check the market's balance as it should be banking FooMarket's reward
-	marketBal, _ := deployed.MarketTokenContract.BalanceOf(nil, deployed.MarketAddress)
+	marketBal, _ := deployed.MarketTokenContract.BalanceOf(nil, deployed.ListingAddress)
 	// foomarket itself
 	listingHash, _ := deployed.ParameterizerContract.GetHash(nil, "FooMarket, AZ.")
 	// the current state of foo market
-	_, _, _, supply, _, _ := deployed.MarketContract.GetListing(nil, listingHash)
+	_, _, _, supply, _, _ := deployed.ListingContract.GetListing(nil, listingHash)
 	// add some amount
-	_, depErr := deployed.MarketContract.DepositToListing(&bind.TransactOpts{
+	_, depErr := deployed.ListingContract.DepositToListing(&bind.TransactOpts{
 		From:     context.AuthMember1.From,
 		Signer:   context.AuthMember1.Signer,
 		GasPrice: big.NewInt(ONE_GWEI * 2),
@@ -327,12 +327,12 @@ func TestDepositToListing(t *testing.T) {
 	context.Blockchain.Commit()
 
 	// marketBal should have increased
-	newMarketBal, _ := deployed.MarketTokenContract.BalanceOf(nil, deployed.MarketAddress)
+	newMarketBal, _ := deployed.MarketTokenContract.BalanceOf(nil, deployed.ListingAddress)
 	if newMarketBal.Cmp(marketBal) != 1 {
 		t.Fatalf("Expected %v to be > %v", newMarketBal, marketBal)
 	}
 
-	_, _, _, newSupply, _, _ := deployed.MarketContract.GetListing(nil, listingHash)
+	_, _, _, newSupply, _, _ := deployed.ListingContract.GetListing(nil, listingHash)
 	if newSupply.Cmp(supply) != 1 {
 		t.Fatalf("Expected %v to be > %v", newSupply, supply)
 	}
@@ -347,13 +347,13 @@ func TestWithdrawFromListing(t *testing.T) {
 	// the user's balance should increase after a withdrawal
 	userBal, _ := deployed.MarketTokenContract.BalanceOf(nil, context.AuthMember1.From)
 	// check the market's balance...
-	marketBal, _ := deployed.MarketTokenContract.BalanceOf(nil, deployed.MarketAddress)
+	marketBal, _ := deployed.MarketTokenContract.BalanceOf(nil, deployed.ListingAddress)
 	// foomarket itself
 	listingHash, _ := deployed.ParameterizerContract.GetHash(nil, "FooMarket, AZ.")
 	// the current state of foo market
-	_, _, _, supply, _, _ := deployed.MarketContract.GetListing(nil, listingHash)
+	_, _, _, supply, _, _ := deployed.ListingContract.GetListing(nil, listingHash)
 	// withdraw that same amt
-	_, withErr := deployed.MarketContract.WithdrawFromListing(&bind.TransactOpts{
+	_, withErr := deployed.ListingContract.WithdrawFromListing(&bind.TransactOpts{
 		From:     context.AuthMember1.From,
 		Signer:   context.AuthMember1.Signer,
 		GasPrice: big.NewInt(ONE_GWEI * 2),
@@ -367,12 +367,12 @@ func TestWithdrawFromListing(t *testing.T) {
 	context.Blockchain.Commit()
 
 	// marketBal should have decreased
-	newMarketBal, _ := deployed.MarketTokenContract.BalanceOf(nil, deployed.MarketAddress)
+	newMarketBal, _ := deployed.MarketTokenContract.BalanceOf(nil, deployed.ListingAddress)
 	if newMarketBal.Cmp(marketBal) != -1 {
 		t.Fatalf("Expected %v to be > %v", marketBal, newMarketBal)
 	}
 
-	_, _, _, newSupply, _, _ := deployed.MarketContract.GetListing(nil, listingHash)
+	_, _, _, newSupply, _, _ := deployed.ListingContract.GetListing(nil, listingHash)
 	if newSupply.Cmp(supply) != -1 {
 		t.Fatalf("Expected %v to be > %v", supply, newSupply)
 	}
@@ -385,15 +385,15 @@ func TestWithdrawFromListing(t *testing.T) {
 
 func TestExit(t *testing.T) {
 	// note the number of listings atm
-	count, _ := deployed.MarketContract.GetListingCount(nil)
+	count, _ := deployed.ListingContract.GetListingCount(nil)
 
 	// going to remove this one
 	listingHash, _ := deployed.ParameterizerContract.GetHash(nil, "FooMarket, AZ.")
 
 	// we know that the market's bank will decrease here by the listReward
-	marketBal, _ := deployed.MarketTokenContract.BalanceOf(nil, deployed.MarketAddress)
+	marketBal, _ := deployed.MarketTokenContract.BalanceOf(nil, deployed.ListingAddress)
 
-	_, exitErr := deployed.MarketContract.Exit(&bind.TransactOpts{
+	_, exitErr := deployed.ListingContract.Exit(&bind.TransactOpts{
 		From:     context.AuthMember1.From,
 		Signer:   context.AuthMember1.Signer,
 		GasPrice: big.NewInt(ONE_GWEI * 2),
@@ -406,13 +406,13 @@ func TestExit(t *testing.T) {
 
 	context.Blockchain.Commit()
 
-	updatedCount, _ := deployed.MarketContract.GetListingCount(nil)
+	updatedCount, _ := deployed.ListingContract.GetListingCount(nil)
 
 	if updatedCount.Cmp(count) != -1 {
 		t.Fatalf("Expected %v to be > %v", count, updatedCount)
 	}
 
-	updatedMarketBal, _ := deployed.MarketTokenContract.BalanceOf(nil, deployed.MarketAddress)
+	updatedMarketBal, _ := deployed.MarketTokenContract.BalanceOf(nil, deployed.ListingAddress)
 	if updatedMarketBal.Cmp(marketBal) != -1 {
 		t.Fatalf("Expected %v to be > %v", marketBal, updatedMarketBal)
 	}
@@ -421,7 +421,7 @@ func TestExit(t *testing.T) {
 func TestConvertListing(t *testing.T) {
 	dataHash, _ := deployed.ParameterizerContract.GetHash(nil, "SpamData")
 
-	_, listErr := deployed.MarketContract.List(&bind.TransactOpts{
+	_, listErr := deployed.ListingContract.List(&bind.TransactOpts{
 		From:     context.AuthMember1.From,
 		Signer:   context.AuthMember1.Signer,
 		GasPrice: big.NewInt(ONE_GWEI * 2),
@@ -454,7 +454,7 @@ func TestConvertListing(t *testing.T) {
 	context.Blockchain.Commit()
 
 	// any council member can call for resolution
-	_, resolveErr := deployed.MarketContract.ResolveApplication(&bind.TransactOpts{
+	_, resolveErr := deployed.ListingContract.ResolveApplication(&bind.TransactOpts{
 		From:     context.AuthMember2.From,
 		Signer:   context.AuthMember2.Signer,
 		GasPrice: big.NewInt(ONE_GWEI * 2),
@@ -468,7 +468,7 @@ func TestConvertListing(t *testing.T) {
 	context.Blockchain.Commit()
 
 	// should be listed now, with a reward
-	listed, _, _, _, rewards, _ := deployed.MarketContract.GetListing(nil, listingHash)
+	listed, _, _, _, rewards, _ := deployed.ListingContract.GetListing(nil, listingHash)
 
 	if listed != true {
 		t.Fatalf("Exepected .listed to be true, got: %v", listed)
@@ -482,7 +482,7 @@ func TestConvertListing(t *testing.T) {
 	// get the owner's market token bal as it should increase on conversion
 	userBal, _ := deployed.MarketTokenContract.BalanceOf(nil, context.AuthMember1.From)
 	// same for the market, but should go down
-	marketBal, _ := deployed.MarketTokenContract.BalanceOf(nil, deployed.MarketAddress)
+	marketBal, _ := deployed.MarketTokenContract.BalanceOf(nil, deployed.ListingAddress)
 	t.Log(userBal)
 	t.Log(marketBal)
 
@@ -490,7 +490,7 @@ func TestConvertListing(t *testing.T) {
 	// t.Fatal("ack")
 	// }
 
-	_, convertErr := deployed.MarketContract.ConvertListing(&bind.TransactOpts{
+	_, convertErr := deployed.ListingContract.ConvertListing(&bind.TransactOpts{
 		From:     context.AuthMember1.From,
 		Signer:   context.AuthMember1.Signer,
 		GasPrice: big.NewInt(ONE_GWEI * 2),
@@ -508,7 +508,7 @@ func TestConvertListing(t *testing.T) {
 	newUserBal, _ := deployed.MarketTokenContract.BalanceOf(nil, context.AuthMember1.From)
 	expectedUserBal := userBal.Add(userBal, reward)
 	// same for the market, but should go down
-	newMarketBal, _ := deployed.MarketTokenContract.BalanceOf(nil, deployed.MarketAddress)
+	newMarketBal, _ := deployed.MarketTokenContract.BalanceOf(nil, deployed.ListingAddress)
 	expectedMarketBal := marketBal.Sub(marketBal, reward)
 	t.Log(newUserBal)
 	t.Log(newMarketBal)

@@ -39,12 +39,12 @@ func TestMint(t *testing.T) {
 	supply, _ := deployed.Contract.TotalSupply(nil)
 	// owner's current token holdings TODO this check may change?
 	ownerBal, _ := deployed.Contract.BalanceOf(&bind.CallOpts{From: context.AuthFactory.From}, context.AuthFactory.From)
-	marketBal, _ := deployed.Contract.BalanceOf(&bind.CallOpts{From: context.AuthMarket.From}, context.AuthMarket.From)
+	marketBal, _ := deployed.Contract.BalanceOf(&bind.CallOpts{From: context.AuthListing.From}, context.AuthListing.From)
 
 	// minting will give market the minted amount and add to the total supply
 	_, err := deployed.Contract.Mint(&bind.TransactOpts{
-		From:     context.AuthMarket.From, // only the market can call for mint
-		Signer:   context.AuthMarket.Signer,
+		From:     context.AuthListing.From, // only the market can call for mint
+		Signer:   context.AuthListing.Signer,
 		GasPrice: big.NewInt(ONE_GWEI * 2),
 		GasLimit: 100000,
 	}, big.NewInt(ONE_WEI*2))
@@ -55,7 +55,7 @@ func TestMint(t *testing.T) {
 
 	context.Blockchain.Commit()
 
-	newMarketBal, _ := deployed.Contract.BalanceOf(&bind.CallOpts{From: context.AuthMarket.From}, context.AuthMarket.From)
+	newMarketBal, _ := deployed.Contract.BalanceOf(&bind.CallOpts{From: context.AuthListing.From}, context.AuthListing.From)
 	expectedMarketBal := marketBal.Add(marketBal, big.NewInt(ONE_WEI*2)) // we just minted 2...
 
 	if newMarketBal.Cmp(expectedMarketBal) != 0 {
@@ -81,13 +81,13 @@ func TestStopMinting(t *testing.T) {
 	supply, _ := deployed.Contract.TotalSupply(nil)
 
 	// minting stopped is false by default
-	if stopped, _ := deployed.Contract.MintingStopped(&bind.CallOpts{From: context.AuthMarket.From}); stopped != false {
+	if stopped, _ := deployed.Contract.MintingStopped(&bind.CallOpts{From: context.AuthListing.From}); stopped != false {
 		t.Errorf("Expected minting stopped to be false, got %v", stopped)
 	}
 	// stop and (re)check
 	_, err := deployed.Contract.StopMinting(&bind.TransactOpts{
-		From:     context.AuthMarket.From,
-		Signer:   context.AuthMarket.Signer,
+		From:     context.AuthListing.From,
+		Signer:   context.AuthListing.Signer,
 		GasPrice: big.NewInt(ONE_GWEI * 2),
 		GasLimit: 100000,
 	})
@@ -104,8 +104,8 @@ func TestStopMinting(t *testing.T) {
 
 	// no more minting can be done
 	_, noMint := deployed.Contract.Mint(&bind.TransactOpts{
-		From:     context.AuthMarket.From,
-		Signer:   context.AuthMarket.Signer,
+		From:     context.AuthListing.From,
+		Signer:   context.AuthListing.Signer,
 		GasPrice: big.NewInt(ONE_GWEI * 2),
 		GasLimit: 100000,
 	}, big.NewInt(ONE_WEI))
