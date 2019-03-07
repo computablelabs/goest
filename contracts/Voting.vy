@@ -8,6 +8,7 @@ MAX_LENGTH: constant(uint256) = 1000
 struct Candidate:
   index: int128
   kind: uint256 # one of [1,2,3] representing an application, challenge or reparam respectively
+  owner: address
   vote_by: timestamp
   voted: map(address, bool)
   votes: uint256
@@ -188,17 +189,28 @@ def getCandidateKey(index: int128) -> bytes32:
 
 @public
 @constant
-def getCandidate(hash: bytes32) -> (uint256, timestamp, uint256):
+def getCandidate(hash: bytes32) -> (uint256, address, timestamp, uint256):
   """
   @notice Return information about the given candidate identified by the given hash
   @dev Hash argument keys a candidate struct in the candidates mapping
   @return The type, vote_by timestamp and number of votes recieved
   """
-  return (self.candidates[hash].kind, self.candidates[hash].vote_by, self.candidates[hash].votes)
+  return (self.candidates[hash].kind, self.candidates[hash].owner, self.candidates[hash].vote_by, self.candidates[hash].votes)
 
 
 @public
-def addCandidate(hash: bytes32, kind: uint256, vote_by: timedelta):
+@constant
+def getCandidateOwner(hash: bytes32) -> address:
+  """
+  @notice Return the owner of a given candidate identifier
+  @dev As this is a common operation where the others are not needed, provide this to save on storage
+  @param hash The identifier
+  """
+  return self.candidates[hash].owner
+
+
+@public
+def addCandidate(hash: bytes32, kind: uint256, owner: address, vote_by: timedelta):
   """
   @notice Given a listing or parameter hash, create a new voting candidate
   @dev The priveliged contracts which call this method perform `willAddCandidate()` check first
@@ -210,6 +222,7 @@ def addCandidate(hash: bytes32, kind: uint256, vote_by: timedelta):
   # place candidate into the mapping with unordered list index pointer along with kind and vote-by
   self.candidates[hash].index = self.candidates_length
   self.candidates[hash].kind = kind
+  self.candidates[hash].owner = owner
   self.candidates[hash].vote_by = end
   # "push" the new candidate into the unordered list
   self.candidate_keys[self.candidates_length] = hash
@@ -224,7 +237,6 @@ def removeCandidate(hash: bytes32):
   @notice Remove a candidate from the current list
   @dev Simply overwrite the target with the latest candidate, then update bookkeeping.
   NOTE: this does mean that all candidate hashes must be unique
-  Note that candidates are never fully removed from the mapping, but are set to `index: -1` to indicate status
   """
   assert self.has_privilege(msg.sender)
   assert self.isCandidate(hash)
@@ -241,8 +253,12 @@ def removeCandidate(hash: bytes32):
     self.candidates[moved].index = deleted
   # zero out the latest entry (now a dupe)
   self.candidate_keys[self.candidates_length] = EMPTY_BYTES32
-  # regardless, we denote this mapping entry as removed with a negative index
+  # regardless, we denote this mapping entry as non-active with a negative index
   self.candidates[hash].index = -1
+  clear(self.candidates[hash].kind)
+  clear(self.candidates[hash].owner)
+  clear(self.candidates[hash].vote_by)
+  clear(self.candidates[hash].votes)
   log.CandidateRemoved(hash)
 
 
@@ -295,7 +311,6 @@ def vote(hash: bytes32):
   assert self.isCandidate(hash)
   assert self.candidates[hash].vote_by > block.timestamp
   assert not self.didVote(hash, msg.sender)
-  # here we use the number of votes as an index
   self.candidates[hash].voted[msg.sender] = True
   self.candidates[hash].votes += 1
 

@@ -15,7 +15,6 @@ VOTE_BY: constant(uint256) = 7
 REPARAM: constant(uint256) = 3
 
 struct Reparam:
-  proposer: address
   param: uint256
   value: uint256
 
@@ -24,13 +23,13 @@ contract Voting:
   def inCouncil(member: address) -> bool: constant
   def candidateIs(hash: bytes32, kind: uint256) -> bool: constant
   def isCandidate(hash: bytes32) -> bool: constant
-  def addCandidate(hash: bytes32, kind: uint256, vote_by: uint256(sec)): modifying
+  def addCandidate(hash: bytes32, kind: uint256, owner: address, vote_by: uint256(sec)): modifying
   def removeCandidate(hash: bytes32): modifying
   def didPass(hash: bytes32, quorum: uint256) -> bool: constant
   def pollClosed(hash: bytes32) -> bool: constant
   def willAddCandidate(hash: bytes32) -> bool: constant
 
-ReparamProposed: event({proposer: indexed(address), hash: indexed(bytes32), param: indexed(uint256), value: uint256})
+ReparamProposed: event({owner: indexed(address), hash: indexed(bytes32), param: indexed(uint256), value: uint256})
 ReparamFailed: event({hash: indexed(bytes32), param: indexed(uint256), value: uint256})
 ReparamSucceeded: event({hash: indexed(bytes32), param: indexed(uint256), value: uint256})
 
@@ -125,12 +124,13 @@ def getQuorum() -> uint256:
 
 @public
 @constant
-def getReparam(hash: bytes32) -> (address, uint256, uint256):
+def getReparam(hash: bytes32) -> (uint256, uint256):
   """
   @notice Return the data about the given Reparam
+  @dev The owner of the reparam proposal can be gotten via the corresponding candidate
   @param hash The Reparam identifier
   """
-  return (self.reparams[hash].proposer, self.reparams[hash].param, self.reparams[hash].value)
+  return (self.reparams[hash].param, self.reparams[hash].value)
 
 
 @public
@@ -154,8 +154,8 @@ def reparameterize(reparam: string[64], param: uint256, value: uint256):
   assert self.voting.inCouncil(msg.sender)
   hash: bytes32 = keccak256(reparam)
   assert self.voting.willAddCandidate(hash)
-  self.reparams[hash] = Reparam({proposer: msg.sender, param: param, value:value})
-  self.voting.addCandidate(hash, REPARAM, self.vote_by)
+  self.reparams[hash] = Reparam({param: param, value:value})
+  self.voting.addCandidate(hash, REPARAM, msg.sender, self.vote_by)
   log.ReparamProposed(msg.sender, hash, param, value)
 
 

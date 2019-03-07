@@ -14,7 +14,7 @@ func TestAddCandidate(t *testing.T) {
 		Signer:   context.AuthListing.Signer,
 		GasPrice: big.NewInt(ONE_GWEI * 2),
 		GasLimit: 150000,
-	}, bytes, APPLICATION, big.NewInt(2))
+	}, bytes, APPLICATION, context.AuthListing.From, big.NewInt(2))
 
 	if err != nil {
 		t.Fatalf("Error adding candidate: %v", err)
@@ -45,7 +45,7 @@ func TestGetCandidateCount(t *testing.T) {
 func TestGetCandidate(t *testing.T) {
 	bytes := GenBytes32("iCanHazListing")
 
-	kind, voteBy, votes, err := deployed.VotingContract.GetCandidate(nil, bytes)
+	kind, _, voteBy, votes, err := deployed.VotingContract.GetCandidate(nil, bytes)
 
 	if err != nil {
 		t.Fatalf("Error getting candidate: %v", err)

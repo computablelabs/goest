@@ -10,7 +10,6 @@ CHALLENGE: constant(uint256) = 2 # market also knows this candidate.kind
 # structs
 struct Listing:
   index: int128
-  listed: bool
   owner: address
   data_hash: bytes32
   supply: wei_value
@@ -28,7 +27,8 @@ contract Voting:
   def removeFromCouncil(member: address): modifying
   def candidateIs(hash: bytes32, kind: uint256) -> bool: constant
   def isCandidate(hash: bytes32) -> bool: constant
-  def addCandidate(hash: bytes32, kind: uint256, vote_by: uint256(sec)): modifying
+  def getCandidateOwner(hash: bytes32) -> address: constant
+  def addCandidate(hash: bytes32, kind: uint256, owner: address, vote_by: uint256(sec)): modifying
   def removeCandidate(hash: bytes32): modifying
   def didPass(hash: bytes32, quorum: uint256) -> bool: constant
   def pollClosed(hash: bytes32) -> bool: constant
@@ -58,7 +58,6 @@ listings: map(bytes32, Listing)
 listings_length: int128 # the actual number of active listings
 listing_keys: bytes32[MAX_LENGTH]
 listing_owners: map(address, uint256) # maps makers to number of listings owned
-challenges: map(bytes32, address) # maps listing identifier to challenger
 factory_address: address
 market_token: MarketToken
 voting: Voting
@@ -77,8 +76,9 @@ def __init__(market_token_addr: address, voting_addr: address, p11r_addr: addres
 def isListed(hash: bytes32) -> bool:
   """
   @notice Return a boolean representing whether a Listing has been listed
+  @dev We don't store the owner until an applicatication passes voting (if it does)
   """
-  return self.listings[hash].listed == True
+  return self.listings[hash].owner != ZERO_ADDRESS
 
 
 @public
@@ -142,17 +142,17 @@ def withdrawFromListing(hash: bytes32, amount: wei_value):
 def list(listing: string[64], data_hash: bytes32, amount: wei_value):
   """
   @notice Allows a maker to propose a new listing to a Market, creating a candidate for voting
-  @dev Listing cannot already exist, nor be or have ever been a candidate
+  @dev We cannot already be at listings MAX_LENGTH. Listing cannot already exist, nor be or have ever been a candidate
   @param listing A string (max length of 64 chars) serving as a unique identifier for this Listing when hashed
   @param data_hash Magical construct which flies across the sky pooping out unicorns which, in turn, poop rainbows
   @param amount Optional funding to be deposited to the listing's supply
   """
+  assert self.listings_length < MAX_LENGTH
   hash: bytes32 = keccak256(listing) # not calling self method so as not to pass string around...
   # NOTE we do not need to check if hash is a current or past listing as the candidacy check disallows dupes
   # TODO implement one for sheer redundancy if desired
   assert self.voting.willAddCandidate(hash)
-  self.voting.addCandidate(hash, APPLICATION, self.parameterizer.getVoteBy())
-  self.listings[hash].owner = msg.sender
+  self.voting.addCandidate(hash, APPLICATION, msg.sender, self.parameterizer.getVoteBy())
   self.listings[hash].data_hash = data_hash
   self.listings[hash].index = self.listings_length
   # "push" the new listing into the unordered list
@@ -188,12 +188,12 @@ def getListingKey(index: int128) -> bytes32:
 
 @public
 @constant
-def getListing(hash: bytes32) -> (bool, address, bytes32, wei_value, wei_value):
+def getListing(hash: bytes32) -> (address, bytes32, wei_value, wei_value):
   """
   @notice Return pertinent information about a listing
   @param hash The listing identifier
   """
-  return (self.listings[hash].listed, self.listings[hash].owner, self.listings[hash].data_hash,
+  return (self.listings[hash].owner, self.listings[hash].data_hash,
     self.listings[hash].supply, self.listings[hash].rewards)
 
 
@@ -203,7 +203,6 @@ def convertListing(hash:bytes32):
   @notice Allow a Listing owner to claim their rewards (and any supply present) by turning over ownership to the Market
   @param hash The listing identifier
   """
-  assert self.listings[hash].listed == True
   assert self.listings[hash].owner == msg.sender
   funds: wei_value = self.listings[hash].supply + self.listings[hash].rewards
   if funds > 0:
@@ -218,7 +217,7 @@ def convertListing(hash:bytes32):
 def removeListing(hash: bytes32):
   """
   @notice Used internally to remove both listings and failed applications
-  @dev listings are never fully removed from the mapping, only indicated as removed by `index: -1` and `listed: False` (if it were ever True)
+  @dev listings are never fully removed from the mapping, only indicated as removed by `index: -1` (other fields are cleared)
   @param hash The listing to remove
   """
   assert self.listing_keys[self.listings[hash].index] == hash # isListing
@@ -243,8 +242,8 @@ def removeListing(hash: bytes32):
     self.voting.removeFromCouncil(self.listings[hash].owner)
   # finally indicate the removed listing's status
   self.listings[hash].index = -1
-  if self.listings[hash].listed == True: # a failed application will not be True here
-    self.listings[hash].listed = False # technically not necessary, but, seems the correct thing TODO
+  clear(self.listings[hash].owner) # inactive listings are not listed
+  clear(self.listings[hash].data_hash) # meaningless on an inactive listing
   log.ListingRemoved(hash)
 
 
@@ -257,19 +256,20 @@ def resolveApplication(hash: bytes32):
   """
   assert self.voting.inCouncil(msg.sender)
   assert self.voting.candidateIs(hash, APPLICATION)
-  assert self.listings[hash].listed != True
+  assert self.listings[hash].owner == ZERO_ADDRESS # not yet listed
   assert self.voting.pollClosed(hash)
   # case: listing accepted
   if self.voting.didPass(hash, self.parameterizer.getQuorum()):
-    self.listings[hash].listed = True
+    owner: address = self.voting.getCandidateOwner(hash)
+    self.listings[hash].owner = owner
     # how much minted token is awarded (banked by the Market on the listing's behalf)
     amount: wei_value = self.parameterizer.getListReward()
     self.market_token.mint(amount)
     self.listings[hash].rewards = amount
     # currently any new listing owner becomes a council member TODO revisit when we change threshold rules
-    if self.voting.willAddToCouncil(self.listings[hash].owner):
-      self.voting.addToCouncil(self.listings[hash].owner)
-    log.Listed(hash, self.listings[hash].owner, amount)
+    if self.voting.willAddToCouncil(owner):
+      self.voting.addToCouncil(owner)
+    log.Listed(hash, owner, amount)
   else: # application did not pass vote
     self.removeListing(hash)
   # regardless, the candidate is pruned
@@ -284,25 +284,14 @@ def challenge(chall: string[64], hash: bytes32):
   @param chall A string, max-length 64 chars, used to generate a hash which must be unique
   @param hash The listing identifier
   """
-  assert self.listings[hash].listed
+  assert self.listings[hash].owner != ZERO_ADDRESS
   stake: wei_value = self.parameterizer.getChallengeStake()
   hashed: bytes32 = keccak256(chall)
   assert self.voting.willAddCandidate(hashed)
   # TODO make it possible to stake from a listing?
   self.market_token.transferFrom(msg.sender, self, stake)
-  self.challenges[hash] = msg.sender
-  self.voting.addCandidate(hash, CHALLENGE, self.parameterizer.getVoteBy())
+  self.voting.addCandidate(hash, CHALLENGE, msg.sender, self.parameterizer.getVoteBy())
   log.Challenged(hash, msg.sender)
-
-
-@public
-@constant
-def getChallenge(hash: bytes32) -> address:
-  """
-  @notice Returns the address who challenged the given listing hash
-  @param hash The Challenge in question
-  """
-  return self.challenges[hash]
 
 
 @public
@@ -316,6 +305,7 @@ def resolveChallenge(hash: bytes32):
   assert self.voting.inCouncil(msg.sender)
   assert self.voting.candidateIs(hash, CHALLENGE)
   assert self.voting.pollClosed(hash)
+  owner: address = self.voting.getCandidateOwner(hash)
   stake: wei_value = self.parameterizer.getChallengeStake()
   # before we tally votes, we check that the challengee has the funds to stake with
   supply: wei_value = self.listings[hash].supply
@@ -325,7 +315,7 @@ def resolveChallenge(hash: bytes32):
     if (supply + rewards) > 0:
       self.listings[hash].supply = 0
       self.listings[hash].rewards = 0
-      self.market_token.transfer(self.challenges[hash], (supply + rewards))
+      self.market_token.transfer(owner, (supply + rewards))
     self.removeListing(hash)
   else:
     # Now we can check voting. Case: challenge won
@@ -337,14 +327,13 @@ def resolveChallenge(hash: bytes32):
         self.listings[hash].supply = 0
         self.listings[hash].rewards -= (stake - supply)
       # x2 as challenger gets back their own stake + the listing's
-      self.market_token.transfer(self.challenges[hash], stake*2)
+      self.market_token.transfer(owner, stake*2)
       self.removeListing(hash)
-      log.ChallengeSucceeded(hash, self.challenges[hash], stake)
+      log.ChallengeSucceeded(hash, owner, stake)
     else: # Case: listing won
       self.listings[hash].rewards += stake
-      log.ChallengeFailed(hash, self.challenges[hash], stake)
-    # regardless, clean up the challenge and candidate
-    clear(self.challenges[hash])
+      log.ChallengeFailed(hash, owner, stake)
+    # regardless, clean up the candidate
     self.voting.removeCandidate(hash)
 
 
@@ -357,6 +346,5 @@ def exit(hash: bytes32):
   @param hash Listing identifier
   """
   assert self.listings[hash].owner == msg.sender
-  assert self.listings[hash].listed == True
-  assert not self.voting.isCandidate(hash)
+  assert not self.voting.isCandidate(hash) # not challenged
   self.removeListing(hash)

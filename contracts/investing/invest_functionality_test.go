@@ -49,11 +49,6 @@ func TestGetInvestmentPrice(t *testing.T) {
 
 func TestInvest(t *testing.T) {
 	var x big.Int
-	// member3 is not a listing owner
-	isOwner, _ := deployed.ListingContract.IsListingOwner(nil, context.AuthMember3.From)
-	if isOwner != false {
-		t.Fatalf("Expected isOwner to be false, got: %v", isOwner)
-	}
 
 	// member 3 will need to deposit funds into the ether token
 	_, depErr := deployed.EtherTokenContract.Deposit(&bind.TransactOpts{
