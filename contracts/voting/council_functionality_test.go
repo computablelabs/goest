@@ -11,8 +11,8 @@ func TestAddToCouncil(t *testing.T) {
 	member := common.HexToAddress("0xfgh")
 
 	_, err := deployed.VotingContract.AddToCouncil(&bind.TransactOpts{
-		From:     context.AuthMarket.From,
-		Signer:   context.AuthMarket.Signer,
+		From:     context.AuthInvesting.From,
+		Signer:   context.AuthInvesting.Signer,
 		GasPrice: big.NewInt(ONE_GWEI * 2),
 		GasLimit: 100000,
 	}, member)
@@ -47,8 +47,8 @@ func TestRemoveFromCouncil(t *testing.T) {
 	member := common.HexToAddress("0xfgh")
 
 	_, err := deployed.VotingContract.RemoveFromCouncil(&bind.TransactOpts{
-		From:     context.AuthMarket.From,
-		Signer:   context.AuthMarket.Signer,
+		From:     context.AuthInvesting.From,
+		Signer:   context.AuthInvesting.Signer,
 		GasPrice: big.NewInt(ONE_GWEI * 2),
 		GasLimit: 100000,
 	}, member)

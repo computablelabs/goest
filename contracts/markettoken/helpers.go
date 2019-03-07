@@ -14,11 +14,12 @@ const ONE_WEI = 1000000000000000000
 const ONE_GWEI = 1000000000
 
 type ctx struct {
-	AuthFactory *bind.TransactOpts
-	AuthMember1 *bind.TransactOpts
-	AuthMember2 *bind.TransactOpts
-	AuthMarket  *bind.TransactOpts
-	Blockchain  *backends.SimulatedBackend
+	AuthFactory   *bind.TransactOpts
+	AuthMember1   *bind.TransactOpts
+	AuthMember2   *bind.TransactOpts
+	AuthListing   *bind.TransactOpts
+	AuthInvesting *bind.TransactOpts
+	Blockchain    *backends.SimulatedBackend
 }
 
 type dep struct {
@@ -49,7 +50,7 @@ func Deploy(initialBalance *big.Int, c *ctx) (*dep, error) {
 		Signer:   c.AuthFactory.Signer,
 		GasPrice: big.NewInt(ONE_GWEI * 2), // 2 Gwei
 		GasLimit: 100000,
-	}, c.AuthMarket.From)
+	}, c.AuthListing.From, c.AuthInvesting.From)
 
 	if setErr != nil {
 		return nil, setErr
@@ -65,24 +66,28 @@ func SetupBlockchain(accountBalance *big.Int) *ctx {
 	keyFac, _ := crypto.GenerateKey()
 	keyMem1, _ := crypto.GenerateKey()
 	keyMem2, _ := crypto.GenerateKey()
-	keyMark, _ := crypto.GenerateKey()
+	keyList, _ := crypto.GenerateKey()
+	keyInv, _ := crypto.GenerateKey()
 	authFac := bind.NewKeyedTransactor(keyFac)
 	authMem1 := bind.NewKeyedTransactor(keyMem1)
 	authMem2 := bind.NewKeyedTransactor(keyMem2)
-	authMark := bind.NewKeyedTransactor(keyMark)
+	authList := bind.NewKeyedTransactor(keyList)
+	authInv := bind.NewKeyedTransactor(keyInv)
 	alloc := make(core.GenesisAlloc)
 	alloc[authFac.From] = core.GenesisAccount{Balance: accountBalance}
 	alloc[authMem1.From] = core.GenesisAccount{Balance: accountBalance}
 	alloc[authMem2.From] = core.GenesisAccount{Balance: accountBalance}
-	alloc[authMark.From] = core.GenesisAccount{Balance: accountBalance}
+	alloc[authList.From] = core.GenesisAccount{Balance: accountBalance}
+	alloc[authInv.From] = core.GenesisAccount{Balance: accountBalance}
 	// 2nd arg is a gas limit, a uint64. we'll use 4.7 million
 	bc := backends.NewSimulatedBackend(alloc, 4700000)
 
 	return &ctx{
-		AuthFactory: authFac,
-		AuthMember1: authMem1,
-		AuthMember2: authMem2,
-		AuthMarket:  authMark,
-		Blockchain:  bc,
+		AuthFactory:   authFac,
+		AuthMember1:   authMem1,
+		AuthMember2:   authMem2,
+		AuthListing:   authList,
+		AuthInvesting: authInv,
+		Blockchain:    bc,
 	}
 }

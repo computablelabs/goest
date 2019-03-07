@@ -1,9 +1,9 @@
-# @title Computable Market
-# @notice The Computable Market Contract
+# @title Computable Listing
+# @notice Handle the details pertaining to a Listing in a Computable Market
 # @author Computable
 
 # constants
-MAX_LENGTH: constant(uint256) = 1000000000 # no market may have more than 1B active listings
+MAX_LENGTH: constant(uint256) = 1000000 # no market may have more than 1M active listings
 APPLICATION: constant(uint256) = 1 # market understands this candidate.kind
 CHALLENGE: constant(uint256) = 2 # market also knows this candidate.kind
 
@@ -16,22 +16,9 @@ struct Listing:
   supply: wei_value
   rewards: wei_value
 
-struct Investor:
-  index: int128
-  invested: wei_value
-
-# external contracts
-contract EtherToken:
-  def balanceOf(owner: address) -> uint256(wei): constant
-  def transfer(to: address, amount: uint256(wei)) -> bool: modifying
-  def transferFrom(source: address, to: address, amount: uint256(wei)) -> bool: modifying
-
 contract MarketToken:
-  def balanceOf(owner: address) -> uint256(wei): constant
   def burn(amount: uint256(wei)): modifying
-  def burnAll(owner: address): modifying
   def mint(amount: uint256(wei)): modifying
-  def totalSupply() -> uint256(wei): constant
   def transfer(to: address, amount: uint256(wei)) -> bool: modifying
   def transferFrom(source: address, to: address, amount: uint256(wei)) -> bool: modifying
 
@@ -41,8 +28,6 @@ contract Voting:
   def removeFromCouncil(member: address): modifying
   def candidateIs(hash: bytes32, kind: uint256) -> bool: constant
   def isCandidate(hash: bytes32) -> bool: constant
-  def getCandidateCount() -> int128: constant
-  def getCandidateKey(index: int128) -> bytes32: constant
   def addCandidate(hash: bytes32, kind: uint256, vote_by: uint256(sec)): modifying
   def removeCandidate(hash: bytes32): modifying
   def didPass(hash: bytes32, quorum: uint256) -> bool: constant
@@ -52,9 +37,6 @@ contract Voting:
 
 contract Parameterizer:
   def getChallengeStake() -> uint256(wei): constant
-  def getConversionRate() -> uint256(wei): constant
-  def getInvestDenominator() -> uint256: constant
-  def getInvestNumerator() -> uint256: constant
   def getListReward() -> uint256(wei): constant
   def getQuorum() -> uint256: constant
   def getVoteBy() -> uint256(sec): constant
@@ -65,8 +47,6 @@ Applied: event({hash: indexed(bytes32), applicant: indexed(address), dataHash: b
 Challenged: event({hash: indexed(bytes32), challenger: indexed(address)})
 ChallengeFailed: event({hash: indexed(bytes32), challenger: indexed(address), reward: wei_value})
 ChallengeSucceeded: event({hash: indexed(bytes32), challenger: indexed(address), reward: wei_value})
-Divested: event({investor: indexed(address), transferred: wei_value})
-Invested: event({investor: indexed(address), offered: wei_value, minted: wei_value})
 Listed: event({hash: indexed(bytes32), owner: indexed(address), reward: wei_value})
 ListingConverted: event({ hash: indexed(bytes32)})
 ListingDeposit: event({hash: indexed(bytes32), owner: indexed(address), deposited: wei_value})
@@ -78,25 +58,18 @@ listings: map(bytes32, Listing)
 listings_length: int128 # the actual number of active listings
 listing_keys: bytes32[MAX_LENGTH]
 listing_owners: map(address, uint256) # maps makers to number of listings owned
-investors: map(address, Investor)
-investors_length: int128 # the actual number of investors
-investor_keys: address[MAX_LENGTH] # perhaps a bit optimistic, but :shrug...
-invested: wei_value # running total of all EtherToken invested in this Market
 challenges: map(bytes32, address) # maps listing identifier to challenger
 factory_address: address
-ether_token: EtherToken
 market_token: MarketToken
 voting: Voting
 parameterizer: Parameterizer
 
 @public
-def __init__(ether_token_address: address, market_token_address: address,
-  voting_address: address, parameterizer_address: address):
+def __init__(market_token_addr: address, voting_addr: address, p11r_addr: address):
     self.factory_address = msg.sender
-    self.ether_token = EtherToken(ether_token_address)
-    self.market_token = MarketToken(market_token_address)
-    self.voting = Voting(voting_address)
-    self.parameterizer = Parameterizer(parameterizer_address)
+    self.market_token = MarketToken(market_token_addr)
+    self.voting = Voting(voting_addr)
+    self.parameterizer = Parameterizer(p11r_addr)
 
 
 @public
@@ -138,22 +111,13 @@ def isListingOwner(addr: address) -> bool:
 
 
 @public
-@constant
-def isInvestor(addr: address) -> bool:
-  """
-  @notice Return a bool indicating if the given address has invested in this market
-  """
-  return self.investor_keys[self.investors[addr].index] == addr
-
-
-@public
 def depositToListing(hash: bytes32, amount: wei_value):
   """
   @notice Allow the supply of a listing to be increased
   @param hash Identifier of the listing to deposit supply to
   @param amount How much to deposit
   """
-  assert self.isListing(hash)
+  assert self.listing_keys[self.listings[hash].index] == hash # isListing
   self.market_token.transferFrom(msg.sender, self, amount)
   self.listings[hash].supply += amount
   log.ListingDeposit(hash, msg.sender, amount)
@@ -167,7 +131,7 @@ def withdrawFromListing(hash: bytes32, amount: wei_value):
   @param hash The listing identifier
   @param amount The funds to withdraw
   """
-  assert self.isListing(hash)
+  assert self.listing_keys[self.listings[hash].index] == hash # isListing
   assert self.listings[hash].owner == msg.sender
   self.listings[hash].supply -= amount
   self.market_token.transfer(msg.sender, amount)
@@ -178,12 +142,11 @@ def withdrawFromListing(hash: bytes32, amount: wei_value):
 def list(listing: string[64], data_hash: bytes32, amount: wei_value):
   """
   @notice Allows a maker to propose a new listing to a Market, creating a candidate for voting
-  @dev Sender cannot be an investor, nor can the listing already exist, nor be or have ever been a candidate
+  @dev Listing cannot already exist, nor be or have ever been a candidate
   @param listing A string (max length of 64 chars) serving as a unique identifier for this Listing when hashed
   @param data_hash Magical construct which flies across the sky pooping out unicorns which, in turn, poop rainbows
   @param amount Optional funding to be deposited to the listing's supply
   """
-  assert not self.isInvestor(msg.sender)
   hash: bytes32 = keccak256(listing) # not calling self method so as not to pass string around...
   # NOTE we do not need to check if hash is a current or past listing as the candidacy check disallows dupes
   # TODO implement one for sheer redundancy if desired
@@ -258,7 +221,7 @@ def removeListing(hash: bytes32):
   @dev listings are never fully removed from the mapping, only indicated as removed by `index: -1` and `listed: False` (if it were ever True)
   @param hash The listing to remove
   """
-  assert self.isListing(hash)
+  assert self.listing_keys[self.listings[hash].index] == hash # isListing
   if self.listings[hash].supply > 0:
     self.market_token.transfer(self.listings[hash].owner, self.listings[hash].supply)
     clear(self.listings[hash].supply)
@@ -323,26 +286,10 @@ def challenge(chall: string[64], hash: bytes32):
   """
   assert self.listings[hash].listed
   stake: wei_value = self.parameterizer.getChallengeStake()
-  # if a listing does not have the combined funds to survive a challenge, remove it.
-  # if (self.listings[hash].supply + self.listings[hash].rewards) < stake:
-    # self.removeListing(hash)
-  # else:
   hashed: bytes32 = keccak256(chall)
   assert self.voting.willAddCandidate(hashed)
   # TODO make it possible to stake from a listing?
   self.market_token.transferFrom(msg.sender, self, stake)
-  # from_supply: wei_value
-  # from_rewards: wei_value
-  # if possible we'll lock only supply
-  # if self.listings[hash].supply >= stake:
-    # self.listings[hash].supply -= stake
-    # from_supply = stake
-  # else: # lock supply and rewards if we must
-    # from_supply = self.listings[hash].supply
-    # remainder: wei_value = stake - self.listings[hash].supply
-    # self.listings[hash].supply = 0
-    # self.listings[hash].rewards -= remainder
-    # from_rewards = remainder
   self.challenges[hash] = msg.sender
   self.voting.addCandidate(hash, CHALLENGE, self.parameterizer.getVoteBy())
   log.Challenged(hash, msg.sender)
@@ -399,130 +346,6 @@ def resolveChallenge(hash: bytes32):
     # regardless, clean up the challenge and candidate
     clear(self.challenges[hash])
     self.voting.removeCandidate(hash)
-
-
-@public
-@constant
-def getInvested() -> wei_value:
-  """
-  @notice Return the total amount of Ether Token invested in this Market
-  """
-  return self.invested
-
-
-@public
-@constant
-def getInvestorCount() -> int128:
-  """
-  @notice Return the current number of investors
-  @dev returning the actual number of addresses in the investor_keys unordered list
-  @return The count
-  """
-  return self.investors_length
-
-
-@public
-@constant
-def getInvestment(addr: address) -> wei_value:
-  """
-  @notice Return the amount of EtherToken a given investor has invested in this market
-  """
-  return self.investors[addr].invested
-
-
-@public
-@constant
-def getInvestmentPrice() -> wei_value:
-  """
-  @notice Return the amount of Ether token (in wei) needed to purchase one billionth of a Market token
-  @dev WIP
-  """
-  rate: wei_value = self.parameterizer.getConversionRate()
-  invest_d: uint256 = self.parameterizer.getInvestDenominator()
-  invest_n: uint256 = self.parameterizer.getInvestNumerator()
-  reserve: wei_value = self.ether_token.balanceOf(self)
-  total: wei_value = self.market_token.totalSupply()
-  if total < 1000000000000000000: # that is, is total supply less than one token in wei
-    return rate + invest_n * reserve / invest_d
-  else:
-    return rate + (invest_n * reserve * 1000000000000000000) / (invest_d * total)
-
-
-@public
-def invest(offer: wei_value):
-  """
-  @notice Allow an investor to purchase MarketToken with EtherToken priced according to the "buy-curve"
-  @dev WIP
-  @param offer An amount of Ether Token in Wei
-  """
-  assert not self.isListingOwner(msg.sender)
-  price: wei_value = self.getInvestmentPrice()
-  assert offer >= price # you cannot buy less than one billionth of a market token
-  self.ether_token.transferFrom(msg.sender, self, offer)
-  minted: uint256 = (offer / price) * 1000000000 # NOTE using wei_value here throws TypeMismatch
-  self.market_token.mint(minted)
-  self.market_token.transfer(msg.sender, minted)
-  if not self.isInvestor(msg.sender):
-    self.investors[msg.sender].index = self.investors_length
-    self.investor_keys[self.investors_length] = msg.sender # push new investor into the unordered list
-    self.investors_length += 1 # move the pointer
-    # currently any investor is made a council member TODO revisit when we implement threshold rules
-    if self.voting.willAddToCouncil(msg.sender):
-      self.voting.addToCouncil(msg.sender)
-  self.investors[msg.sender].invested += offer
-  self.invested += offer
-  log.Invested(msg.sender, offer, minted)
-
-
-@public
-@constant
-def getDivestmentProceeds(addr: address) -> wei_value:
-  """
-  @notice Return the amount of Ether Token funds an investor would recieve for divestment
-  @dev TBD
-  @return Amount in Ether Token Wei
-  """
-  assert addr != ZERO_ADDRESS
-  bal: wei_value = self.market_token.balanceOf(addr)
-  reserve: wei_value = self.ether_token.balanceOf(self)
-  total: wei_value = self.market_token.totalSupply()
-  return bal * reserve / total
-
-
-@public
-def divest():
-  """
-  @notice Allows a stakeholder to exit the market. Burning any market token owned and
-  withdrawing their share of the reserve.
-  @dev Stakeholder may not be engaged in any current challenge.
-  """
-  is_challenger: bool = False
-  candidates: int128 = self.voting.getCandidateCount()
-  for i in range(1000): # NOTE vyper will not let us use candidates here, use Voting MAX_LENGTH instead
-    k: bytes32 = self.voting.getCandidateKey(i)
-    if i == candidates: # don't exceed the actual number of candidates
-      break
-    elif self.challenges[k] == msg.sender:
-      is_challenger = True
-      break
-  assert is_challenger == False
-  divested: wei_value = self.getDivestmentProceeds(msg.sender)
-  # before any transfer, burn their market tokens and remove if an investor
-  self.market_token.burnAll(msg.sender)
-  if self.isInvestor(msg.sender):
-    self.investors_length -=1 # move the pointer back to latest entry
-    if self.investors_length > 0:
-      deleted: int128 = self.investors[msg.sender].index
-      moved: address = self.investor_keys[self.investors_length]
-      self.investor_keys[deleted] = moved
-      self.investors[moved].index = deleted
-      clear(self.investors[msg.sender])
-      # ATM all investors are council members TODO edit when threshold rules implemented
-      self.voting.removeFromCouncil(msg.sender)
-    # in either case, we zero out the latest entry
-    clear(self.investor_keys[self.investors_length])
-  self.ether_token.transfer(msg.sender, divested)
-  log.Divested(msg.sender, divested)
 
 
 @public

@@ -29,18 +29,22 @@ func TestDeployParameterizer(t *testing.T) {
 }
 
 func TestVotingSetPrivilegedContracts(t *testing.T) {
-	factory, market, p11r, _ := deployed.VotingContract.GetPrivileged(nil)
+	factory, p11r, list, invest, _ := deployed.VotingContract.GetPrivileged(nil)
 
 	if factory != context.AuthFactory.From {
 		t.Fatalf("Expected factory address of %v but got %v", context.AuthFactory.From, factory)
 	}
 
-	if market != context.AuthMarket.From {
-		t.Fatalf("Expected market address of %v but got %v", context.AuthMarket.From, market)
-	}
-
 	if p11r != deployed.ParameterizerAddress {
 		t.Fatalf("Expected p11r address of %v but got %v", deployed.ParameterizerAddress, p11r)
+	}
+
+	if list != context.AuthListing.From {
+		t.Fatalf("Expected Listing address of %v but got %v", context.AuthListing.From, list)
+	}
+
+	if invest != context.AuthInvesting.From {
+		t.Fatalf("Expected Investing address of %v but got %v", context.AuthInvesting.From, invest)
 	}
 }
 
@@ -62,7 +66,7 @@ func TestMain(m *testing.M) {
 		Signer:   context.AuthFactory.Signer,
 		GasPrice: big.NewInt(ONE_GWEI * 2),
 		GasLimit: 1000000,
-	}, context.AuthMarket.From, deployed.ParameterizerAddress)
+	}, deployed.ParameterizerAddress, context.AuthListing.From, context.AuthInvesting.From)
 
 	if err != nil {
 		// no T pointer here...

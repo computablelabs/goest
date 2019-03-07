@@ -1,4 +1,4 @@
-package market
+package investing
 
 import (
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
@@ -29,7 +29,7 @@ func buyPrice() uint64 {
 
 func sellPrice(addr common.Address) *big.Int {
 	bal, _ := deployed.MarketTokenContract.BalanceOf(nil, addr)
-	res, _ := deployed.EtherTokenContract.BalanceOf(nil, deployed.MarketAddress)
+	res, _ := deployed.EtherTokenContract.BalanceOf(nil, deployed.InvestingAddress)
 	tot, _ := deployed.MarketTokenContract.TotalSupply(nil)
 	var x big.Int
 	y := x.Mul(bal, res)
@@ -38,7 +38,7 @@ func sellPrice(addr common.Address) *big.Int {
 }
 
 func TestGetInvestmentPrice(t *testing.T) {
-	price, _ := deployed.MarketContract.GetInvestmentPrice(nil)
+	price, _ := deployed.InvestingContract.GetInvestmentPrice(nil)
 	price64 := price.Uint64()
 	calc := buyPrice()
 
@@ -50,7 +50,7 @@ func TestGetInvestmentPrice(t *testing.T) {
 func TestInvest(t *testing.T) {
 	var x big.Int
 	// member3 is not a listing owner
-	isOwner, _ := deployed.MarketContract.IsListingOwner(nil, context.AuthMember3.From)
+	isOwner, _ := deployed.ListingContract.IsListingOwner(nil, context.AuthMember3.From)
 	if isOwner != false {
 		t.Fatalf("Expected isOwner to be false, got: %v", isOwner)
 	}
@@ -76,7 +76,7 @@ func TestInvest(t *testing.T) {
 		Signer:   context.AuthMember3.Signer,
 		GasPrice: big.NewInt(ONE_GWEI * 2),
 		GasLimit: 1000000,
-	}, deployed.MarketAddress, big.NewInt(ONE_WEI*2)) // up to 2 tokens
+	}, deployed.InvestingAddress, big.NewInt(ONE_WEI*2)) // up to 2 tokens
 
 	if approveErr != nil {
 		t.Fatalf("Error approving market contract to spend: %v", approveErr)
@@ -92,7 +92,7 @@ func TestInvest(t *testing.T) {
 	}
 
 	// member 3 also not an investor yet
-	isInvestor, _ := deployed.MarketContract.IsInvestor(nil, context.AuthMember3.From)
+	isInvestor, _ := deployed.InvestingContract.IsInvestor(nil, context.AuthMember3.From)
 
 	if isInvestor != false {
 		t.Fatalf("Expected isInvestor to be false, got: %v", isInvestor)
@@ -101,11 +101,11 @@ func TestInvest(t *testing.T) {
 	// snapshot this user's market token bal as investing will increase by what was minted
 	bal, _ := deployed.MarketTokenContract.BalanceOf(nil, context.AuthMember3.From)
 	// here we will just offer the suggested price
-	price, _ := deployed.MarketContract.GetInvestmentPrice(nil)
+	price, _ := deployed.InvestingContract.GetInvestmentPrice(nil)
 	// t.Logf("Investment price: %v", price)
 
 	// investing the asking price will always yield one market token gwei
-	_, investErr := deployed.MarketContract.Invest(&bind.TransactOpts{
+	_, investErr := deployed.InvestingContract.Invest(&bind.TransactOpts{
 		From:     context.AuthMember3.From,
 		Signer:   context.AuthMember3.Signer,
 		GasPrice: big.NewInt(ONE_GWEI * 2),
@@ -119,7 +119,7 @@ func TestInvest(t *testing.T) {
 	context.Blockchain.Commit()
 
 	// should be an investor now
-	isInvestorNow, _ := deployed.MarketContract.IsInvestor(nil, context.AuthMember3.From)
+	isInvestorNow, _ := deployed.InvestingContract.IsInvestor(nil, context.AuthMember3.From)
 
 	if isInvestorNow != true {
 		t.Fatalf("Expected isInvestor to be true, got: %v", isInvestorNow)
@@ -133,7 +133,7 @@ func TestInvest(t *testing.T) {
 	}
 
 	// inspect the investment
-	invested, _ := deployed.MarketContract.GetInvestment(nil, context.AuthMember3.From)
+	invested, _ := deployed.InvestingContract.GetInvestment(nil, context.AuthMember3.From)
 
 	if invested.Cmp(big.NewInt(ONE_GWEI*10)) != 0 {
 		t.Fatalf("Expected %v to be %v", invested, price)
@@ -158,7 +158,7 @@ func TestGetDivestmentProceeds(t *testing.T) {
 
 	// generate a sale price and compare to the cantract method
 	expectedProceeds := sellPrice(context.AuthMember3.From)
-	proceeds, _ := deployed.MarketContract.GetDivestmentProceeds(nil, context.AuthMember3.From)
+	proceeds, _ := deployed.InvestingContract.GetDivestmentProceeds(nil, context.AuthMember3.From)
 
 	if proceeds.Cmp(expectedProceeds) != 0 {
 		t.Fatalf("Expected %v to be %v", proceeds, expectedProceeds)
@@ -174,7 +174,7 @@ func TestDivest(t *testing.T) {
 	etherBal, _ := deployed.EtherTokenContract.BalanceOf(nil, context.AuthMember3.From)
 	expectedProceeds := sellPrice(context.AuthMember3.From)
 
-	_, divestErr := deployed.MarketContract.Divest(&bind.TransactOpts{
+	_, divestErr := deployed.InvestingContract.Divest(&bind.TransactOpts{
 		From:     context.AuthMember3.From,
 		Signer:   context.AuthMember3.Signer,
 		GasPrice: big.NewInt(ONE_GWEI * 2),

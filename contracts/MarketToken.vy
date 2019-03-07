@@ -13,7 +13,8 @@ allowances: map(address, map(address, wei_value))
 balances: map(address, wei_value)
 decimals: public(uint256)
 factory_address: address
-market_address: address
+listing_address: address
+investing_address: address
 mintingStopped: public(bool)
 supply: wei_value
 
@@ -66,13 +67,33 @@ def balanceOf(owner: address) -> wei_value:
 
 
 @public
+@constant
+def getPrivileged() -> (address, address, address):
+  """
+  @notice return the address(es) of contracts that are recognized as being privileged
+  @return The address(es)
+  """
+  return (self.factory_address, self.listing_address, self.investing_address)
+
+
+@private
+@constant
+def has_privilege(sender: address) -> bool:
+  """
+  @notice Return a bool indicating whether the given address is a member of this contracts privileged group
+  @return bool
+  """
+  return (sender == self.factory_address or sender == self.listing_address or sender == self.investing_address)
+
+
+@public
 def burn(amount: wei_value):
   """
   @notice Burns the given amount of token wei
   @dev We only allow the market contract to call burn
   @param amount The amount to burn
   """
-  assert msg.sender == self.market_address
+  assert self.has_privilege(msg.sender)
   self.balances[msg.sender] -= amount
   self.supply -= amount
   log.Burn(msg.sender, amount)
@@ -85,7 +106,7 @@ def burnAll(owner: address):
   @dev We only allow the market contract to call burnAll
   @param address The owner of the tokens being burnt
   """
-  assert msg.sender == self.market_address
+  assert self.has_privilege(msg.sender)
   bal: wei_value = self.balances[owner]
   self.supply -= bal
   clear(self.balances[owner])
@@ -110,16 +131,6 @@ def decreaseApproval(spender: address, amount: wei_value):
 
 
 @public
-@constant
-def getPrivileged() -> (address, address):
-  """
-  @notice return the address(es) of contracts that are recognizmd as being privileged
-  @return The address(es)
-  """
-  return (self.factory_address, self.market_address)
-
-
-@public
 def increaseApproval(spender: address, amount: wei_value):
   """
   @notice Increase the amount a spender has allotted to them, by the owner, by the given amount
@@ -136,7 +147,7 @@ def mint(amount: wei_value):
   @notice Create new Market Token funds and add them to the Market Contract balance
   @dev We only allow the Market Contract to call for minting, and only when not stopped
   """
-  assert msg.sender == self.market_address
+  assert self.has_privilege(msg.sender)
   assert self.mintingStopped != True
   self.supply += amount
   self.balances[msg.sender] += amount
@@ -144,15 +155,17 @@ def mint(amount: wei_value):
 
 
 @public
-def setPrivileged(market: address):
+def setPrivileged(listing: address, investing: address):
   """
-  @notice We restrict some activities to only the Market Contract
+  @notice We restrict some activities to only privileged contracts
   @dev We only allow the factory to set the privileged address(es)
-  @param market The deployed address of the Market Contract
+  @param listing The deployed address of the Listing Contract
+  @param investing The deployed address of the Investing Contract
   """
   assert msg.sender == self.factory_address
   # TODO we _could_ also only allow this to occur once
-  self.market_address = market
+  self.listing_address = listing
+  self.investing_address = investing
 
 
 @public

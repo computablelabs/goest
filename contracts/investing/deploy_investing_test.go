@@ -1,4 +1,4 @@
-package market
+package investing
 
 import (
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
@@ -13,9 +13,9 @@ var context *ctx
 var deployed *dep
 var deployedError error
 
-func TestDeployMarket(t *testing.T) {
+func TestDeployInvesting(t *testing.T) {
 	if deployedError != nil {
-		t.Fatalf("Failed to deploy the Market contract or a dependency: %v", deployedError)
+		t.Fatalf("Failed to deploy the Investing contract or a dependency: %v", deployedError)
 	}
 
 	if len(deployed.EtherTokenAddress.Bytes()) == 0 {
@@ -34,8 +34,12 @@ func TestDeployMarket(t *testing.T) {
 		t.Error("Expected a valid parameterizer deployment address to be returned from deploy, got empty byte array instead")
 	}
 
-	if len(deployed.MarketAddress.Bytes()) == 0 {
-		t.Error("Expected a valid market deployment address to be returned from deploy, got empty byte array instead")
+	if len(deployed.ListingAddress.Bytes()) == 0 {
+		t.Error("Expected a valid Listing deployment address to be returned from deploy, got empty byte array instead")
+	}
+
+	if len(deployed.InvestingAddress.Bytes()) == 0 {
+		t.Error("Expected a valid Listing deployment address to be returned from deploy, got empty byte array instead")
 	}
 
 	// what does the hex string look like?
@@ -57,22 +61,30 @@ func TestDeployMarket(t *testing.T) {
 }
 
 func TestMarketTokenSetPrivilegedContracts(t *testing.T) {
-	_, market, _ := deployed.MarketTokenContract.GetPrivileged(nil)
+	_, list, invest, _ := deployed.MarketTokenContract.GetPrivileged(nil)
 
-	if market != deployed.MarketAddress {
-		t.Fatalf("Expected market address of %v but got %v", deployed.MarketAddress, market)
+	if list != deployed.ListingAddress {
+		t.Fatalf("Expected listing address of %v but got %v", deployed.ListingAddress, list)
+	}
+
+	if invest != deployed.InvestingAddress {
+		t.Fatalf("Expected investing address of %v but got %v", deployed.InvestingAddress, invest)
 	}
 }
 
 func TestVotingSetPrivilegedContracts(t *testing.T) {
-	_, market, p11r, _ := deployed.VotingContract.GetPrivileged(nil)
-
-	if market != deployed.MarketAddress {
-		t.Fatalf("Expected market address of %v but got %v", deployed.MarketAddress, market)
-	}
+	_, p11r, list, invest, _ := deployed.VotingContract.GetPrivileged(nil)
 
 	if p11r != deployed.ParameterizerAddress {
 		t.Fatalf("Expected p11r address of %v but got %v", deployed.ParameterizerAddress, p11r)
+	}
+
+	if list != deployed.ListingAddress {
+		t.Fatalf("Expected listing address of %v but got %v", deployed.ListingAddress, list)
+	}
+
+	if invest != deployed.InvestingAddress {
+		t.Fatalf("Expected investing address of %v but got %v", deployed.InvestingAddress, invest)
 	}
 }
 
@@ -91,7 +103,7 @@ func TestMain(m *testing.M) {
 		Signer:   context.AuthFactory.Signer,
 		GasPrice: big.NewInt(ONE_GWEI * 2),
 		GasLimit: 1000000,
-	}, deployed.MarketAddress)
+	}, deployed.ListingAddress, deployed.InvestingAddress)
 
 	if marketErr != nil {
 		log.Fatalf("Error setting privileged contract address: %v", marketErr)
@@ -102,7 +114,7 @@ func TestMain(m *testing.M) {
 		Signer:   context.AuthFactory.Signer,
 		GasPrice: big.NewInt(ONE_GWEI * 2),
 		GasLimit: 1000000,
-	}, deployed.MarketAddress, deployed.ParameterizerAddress)
+	}, deployed.ParameterizerAddress, deployed.ListingAddress, deployed.InvestingAddress)
 
 	if votingErr != nil {
 		// no T pointer here...
