@@ -3,7 +3,7 @@
 # @author Computable
 
 # constants
-MAX_LENGTH: constant(uint256) = 1000000 # no market may have more than 1M active investors
+MAX_LENGTH: constant(uint256) = 100000 # no market may have more than 100k active investors
 
 struct Investor:
   index: int128
