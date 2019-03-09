@@ -9,8 +9,8 @@ struct Candidate:
   index: int128
   kind: uint256 # one of [1,2,3] representing an application, challenge or reparam respectively
   vote_by: timestamp
-  voted: map(address, bool)
-  votes: uint256
+  votes: address[MAX_LENGTH]
+  votes_length: int128
 
 CandidateAdded: event({hash: indexed(bytes32), kind: indexed(uint256), voteBy: indexed(timestamp)})
 CandidateRemoved: event({hash: indexed(bytes32)})
@@ -155,17 +155,6 @@ def isCandidate(hash: bytes32) -> bool:
 
 @public
 @constant
-def wasCandidate(hash: bytes32) -> bool:
-  """
-  @notice Return true if a given hash points to a removed candidate
-  @dev An non-active "removed" candidate is one whose index is -1
-  @return bool
-  """
-  return self.candidates[hash].index == -1
-
-
-@public
-@constant
 def getCandidateCount() -> int128:
   """
   @notice Return the number of current candidates
@@ -188,13 +177,13 @@ def getCandidateKey(index: int128) -> bytes32:
 
 @public
 @constant
-def getCandidate(hash: bytes32) -> (uint256, timestamp, uint256):
+def getCandidate(hash: bytes32) -> (uint256, timestamp, int128):
   """
   @notice Return information about the given candidate identified by the given hash
   @dev Hash argument keys a candidate struct in the candidates mapping
   @return The type, vote_by timestamp and number of votes recieved
   """
-  return (self.candidates[hash].kind, self.candidates[hash].vote_by, self.candidates[hash].votes)
+  return (self.candidates[hash].kind, self.candidates[hash].vote_by, self.candidates[hash].votes_length)
 
 
 @public
@@ -240,9 +229,17 @@ def removeCandidate(hash: bytes32):
     # update the index of the moved candidate
     self.candidates[moved].index = deleted
   # zero out the latest entry (now a dupe)
-  self.candidate_keys[self.candidates_length] = EMPTY_BYTES32
-  # regardless, we denote this mapping entry as removed with a negative index
-  self.candidates[hash].index = -1
+  clear(self.candidate_keys[self.candidates_length])
+  clear(self.candidates[hash].index)
+  clear(self.candidates[hash].kind)
+  clear(self.candidates[hash].vote_by)
+  # we must clear individual votes that exist
+  for i in range(1000):
+    if i == self.candidates[hash].votes_length: # don't interate past the actual number of votes
+      break
+    else:
+      clear(self.candidates[hash].votes[i])
+  clear(self.candidates[hash].votes_length)
   log.CandidateRemoved(hash)
 
 
@@ -257,11 +254,11 @@ def didPass(hash: bytes32, quorum: uint256) -> bool:
   assert self.isCandidate(hash)
   assert self.candidates[hash].vote_by < block.timestamp
   # edge case that no one voted
-  if self.candidates[hash].votes == 0:
+  if self.candidates[hash].votes_length == 0:
     # theoretically a market could have a 0 quorum
     return quorum == 0
   else:
-    return (self.candidates[hash].votes * 100) / (convert(self.council_length, uint256)) >= quorum
+    return ((self.candidates[hash].votes_length * 100) / self.council_length) >= convert(quorum, int128)
 
 
 @public
@@ -271,8 +268,16 @@ def didVote(hash: bytes32, member: address) -> bool:
   @notice Check to see if a given member has voted for a given candidate
   @return bool
   """
-  assert self.isCandidate(hash)
-  return self.candidates[hash].voted[member] == True
+  voted: bool = False
+  # NOTE we must use a literal here as vyper won't allow the const as an upper bound
+  for i in range(1000):
+    if i == self.candidates[hash].votes_length: # don't interate past the actual number of votes
+      break
+    elif self.candidates[hash].votes[i] == member:
+      voted = True
+      break
+  return voted
+
 
 @public
 @constant
@@ -296,8 +301,8 @@ def vote(hash: bytes32):
   assert self.candidates[hash].vote_by > block.timestamp
   assert not self.didVote(hash, msg.sender)
   # here we use the number of votes as an index
-  self.candidates[hash].voted[msg.sender] = True
-  self.candidates[hash].votes += 1
+  self.candidates[hash].votes[self.candidates[hash].votes_length] = msg.sender
+  self.candidates[hash].votes_length += 1
 
 
 @public
@@ -308,7 +313,7 @@ def willAddCandidate(hash: bytes32) -> bool:
   @param hash Identifier for a (suppsosedly) currently non-existant candidate
   """
   # TODO possible don't call the internal methods and just do the comparisons here
-  return self.candidates_length < MAX_LENGTH and not self.isCandidate(hash) and not self.wasCandidate(hash)
+  return self.candidates_length < MAX_LENGTH and not self.isCandidate(hash)
 
 
 @public

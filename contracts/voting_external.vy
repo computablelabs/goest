@@ -9,10 +9,9 @@ contract Voting:
     def removeFromCouncil(member: address): modifying
     def candidateIs(hash: bytes32, kind: uint256) -> bool: constant
     def isCandidate(hash: bytes32) -> bool: constant
-    def wasCandidate(hash: bytes32) -> bool: constant
     def getCandidateCount() -> int128: constant
     def getCandidateKey(index: int128) -> bytes32: constant
-    def getCandidate(hash: bytes32) -> (uint256, uint256(sec, positional), uint256): constant
+    def getCandidate(hash: bytes32) -> (uint256, uint256(sec, positional), int128): constant
     def addCandidate(hash: bytes32, kind: uint256, vote_by: uint256(sec)): modifying
     def removeCandidate(hash: bytes32): modifying
     def didPass(hash: bytes32, quorum: uint256) -> bool: constant

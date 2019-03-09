@@ -11,7 +11,7 @@ import (
 
 func TestChallenge(t *testing.T) {
 	// create a applicant
-	dataHash, _ := deployed.ParameterizerContract.GetHash(nil, "BazData")
+	dataHash, _ := deployed.ListingContract.GetHash(nil, "BazData")
 
 	_, listErr := deployed.ListingContract.List(&bind.TransactOpts{
 		From:     context.AuthMember1.From,
@@ -27,7 +27,7 @@ func TestChallenge(t *testing.T) {
 	context.Blockchain.Commit()
 
 	// vote for it
-	listingHash, _ := deployed.ParameterizerContract.GetHash(nil, "BarMarket12345")
+	listingHash, _ := deployed.ListingContract.GetHash(nil, "BarMarket12345")
 	// must be a council member
 	isMember, _ := deployed.VotingContract.InCouncil(nil, context.AuthMember2.From)
 	if isMember != true {
@@ -119,7 +119,7 @@ func TestChallenge(t *testing.T) {
 		Signer:   context.AuthMember2.Signer,
 		GasPrice: big.NewInt(ONE_GWEI * 2),
 		GasLimit: 1000000,
-	}, "oh-hell-no", listingHash)
+	}, listingHash)
 
 	if challengeErr != nil {
 		t.Fatalf("Error challenging listing: %v", challengeErr)
@@ -140,7 +140,7 @@ func TestChallenge(t *testing.T) {
 }
 
 func TestGetChallenge(t *testing.T) {
-	listingHash, _ := deployed.ParameterizerContract.GetHash(nil, "BarMarket12345")
+	listingHash, _ := deployed.ListingContract.GetHash(nil, "BarMarket12345")
 
 	challenger, _ := deployed.ListingContract.GetChallenge(nil, listingHash)
 
@@ -157,7 +157,7 @@ func TestGetChallenge(t *testing.T) {
 }
 
 func TestResolveChallenge(t *testing.T) {
-	listingHash, _ := deployed.ParameterizerContract.GetHash(nil, "BarMarket12345")
+	listingHash, _ := deployed.ListingContract.GetHash(nil, "BarMarket12345")
 	// the marketBal will decrease as the challenger gets their stake + listings's stake
 	// marketBal, _ := deployed.MarketTokenContract.BalanceOf(nil, deployed.MarketAddress)
 	// memberBal, _ deployed.MarketTokenContract.BalanceOf(nil, context.AuthMember2)

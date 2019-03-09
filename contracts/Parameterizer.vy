@@ -77,14 +77,15 @@ def getConversionRate() -> wei_value:
 
 @public
 @constant
-def getHash(str: string[64]) -> bytes32:
+def getHash(param: uint256, value: uint256) -> bytes32:
   """
-  @notice Given a string of max-length 64 chars, generate a hash
+  @notice Given the param: value keypair - generate a hash
   @dev Returns the same value we use internally for constructing mapping keys
-  @param reparam A string name supplied by the user / client
+  @param param the integer representing a parameterizer member
+  @param value what to set it to
   @return The generated hash
   """
-  return keccak256(str)
+  return keccak256(convert((param + value), bytes32))
 
 
 @public
@@ -143,16 +144,16 @@ def getVoteBy() -> timedelta:
 
 
 @public
-def reparameterize(reparam: string[64], param: uint256, value: uint256):
+def reparameterize(param: uint256, value: uint256):
   """
   @notice Suggest a change to a Parameterizer attribute, creating a candidate for it
   @dev Sender must be in council, and there must not be a matching candidate already open
-  @param reparam A string used to generate the reparam hash, which must be unique
   @param param The attribute to change
   @param value What to change it to
   """
   assert self.voting.inCouncil(msg.sender)
-  hash: bytes32 = keccak256(reparam)
+  # hashed identifier made up of the prop and its proposed value
+  hash: bytes32 = keccak256(convert((param + value), bytes32)) # TODO may not need to SHA this
   assert self.voting.willAddCandidate(hash)
   self.reparams[hash] = Reparam({proposer: msg.sender, param: param, value:value})
   self.voting.addCandidate(hash, REPARAM, self.vote_by)
@@ -192,4 +193,5 @@ def resolveReparam(hash: bytes32):
   log.ReparamFailed(hash, param, value)
   # regardless, cleanup the reparam and candidate
   self.voting.removeCandidate(hash)
+  # TODO make sure this works as expected
   clear(self.reparams[hash])
