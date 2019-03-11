@@ -3,7 +3,7 @@
 # @author Computable
 
 # constants
-MAX_LENGTH: constant(uint256) = 1000000 # no market may have more than 1M active listings
+MAX_LENGTH: constant(uint256) = 100000 # no market may have more than 100k active listings
 APPLICATION: constant(uint256) = 1 # market understands this candidate.kind
 CHALLENGE: constant(uint256) = 2 # market also knows this candidate.kind
 
@@ -92,17 +92,6 @@ def isListing(hash: bytes32) -> bool:
 
 @public
 @constant
-def wasListing(hash: bytes32) -> bool:
-  """
-  @notice Return true if a given hash points to a removed listing
-  @dev An non-active "removed" listing is one whose index is -1
-  @return bool
-  """
-  return self.listings[hash].index == -1
-
-
-@public
-@constant
 def isListingOwner(addr: address) -> bool:
   """
   @notice Return a bool indicating if the given address owns any listings
@@ -168,6 +157,15 @@ def list(listing: string[64], data_hash: bytes32, amount: wei_value):
 
 @public
 @constant
+def getHash(str: string[64]) -> bytes32:
+  """
+  @notice Return the same hashed value, given a string (max length 64 chars), that we generate internally when listing
+  """
+  return keccak256(str)
+
+
+@public
+@constant
 def getListingCount() -> int128:
   """
   @notice Return the current number of Listings
@@ -228,23 +226,24 @@ def removeListing(hash: bytes32):
   if self.listings[hash].rewards > 0:
     self.market_token.burn(self.listings[hash].rewards)
     clear(self.listings[hash].rewards)
-  # move the pointer back to the latest entry
-  self.listings_length -= 1
+  # move the pointer back to the latest entry if there were any
+  if self.listings_length > 0:
+    self.listings_length -= 1
+  # do we still have listings after moving the pointer?
   if self.listings_length > 0:
     deleted: int128 = self.listings[hash].index # target being overwritten
     moved: bytes32 = self.listing_keys[self.listings_length] # target being used to overwrite with
     self.listing_keys[deleted] = moved
     self.listings[moved].index = deleted # update index of the moved target
   clear(self.listing_keys[self.listings_length]) # zero out what is now a dupe
-  # regardless, this owner has one less listing now
-  self.listing_owners[self.listings[hash].owner] -= 1
+  # regardless, this owner has one less listing now, given they had any
+  if self.listing_owners[self.listings[hash].owner] > 0:
+    self.listing_owners[self.listings[hash].owner] -= 1
   # possibly remove from council TODO revisit when we change council threshold rules
-  if self.listing_owners[self.listings[hash].owner] < 1:
+  if self.voting.inCouncil(self.listings[hash].owner) and self.listing_owners[self.listings[hash].owner] < 1:
     self.voting.removeFromCouncil(self.listings[hash].owner)
-  # finally indicate the removed listing's status
-  self.listings[hash].index = -1
-  if self.listings[hash].listed == True: # a failed application will not be True here
-    self.listings[hash].listed = False # technically not necessary, but, seems the correct thing TODO
+  # finally clear the removed listing...
+  clear(self.listings[hash]) # TODO assure we don't need to do this by hand
   log.ListingRemoved(hash)
 
 
@@ -271,23 +270,22 @@ def resolveApplication(hash: bytes32):
       self.voting.addToCouncil(self.listings[hash].owner)
     log.Listed(hash, self.listings[hash].owner, amount)
   else: # application did not pass vote
+    log.ApplicationFailed(hash)
     self.removeListing(hash)
   # regardless, the candidate is pruned
   self.voting.removeCandidate(hash)
 
 
 @public
-def challenge(chall: string[64], hash: bytes32):
+def challenge(hash: bytes32):
   """
   @notice Challenge a current listing, creating a candidate for voting if it should remain
   @dev Must actually be listed, and not already challenged.
-  @param chall A string, max-length 64 chars, used to generate a hash which must be unique
-  @param hash The listing identifier
+  @param hash The identifier for the listing being challenged
   """
   assert self.listings[hash].listed
   stake: wei_value = self.parameterizer.getChallengeStake()
-  hashed: bytes32 = keccak256(chall)
-  assert self.voting.willAddCandidate(hashed)
+  assert self.voting.willAddCandidate(hash) # assure not already challenged
   # TODO make it possible to stake from a listing?
   self.market_token.transferFrom(msg.sender, self, stake)
   self.challenges[hash] = msg.sender

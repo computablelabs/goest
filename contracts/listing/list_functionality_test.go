@@ -9,7 +9,7 @@ import (
 
 func TestList(t *testing.T) {
 	// use the getListingHash func to make a faux dataHash
-	dataHash, _ := deployed.ParameterizerContract.GetHash(nil, "FooData")
+	dataHash, _ := deployed.ListingContract.GetHash(nil, "FooData")
 
 	_, listErr := deployed.ListingContract.List(&bind.TransactOpts{
 		From:     context.AuthMember1.From,
@@ -34,7 +34,7 @@ func TestList(t *testing.T) {
 
 func TestIsListing(t *testing.T) {
 	// we'll need to gen the listingHash to match
-	listingHash, _ := deployed.ParameterizerContract.GetHash(nil, "FooMarket, AZ.")
+	listingHash, _ := deployed.ListingContract.GetHash(nil, "FooMarket, AZ.")
 
 	isListing, _ := deployed.ListingContract.IsListing(nil, listingHash)
 	if isListing != true {
@@ -44,7 +44,7 @@ func TestIsListing(t *testing.T) {
 
 func TestIsListed(t *testing.T) {
 	// we'll need to gen the listingHash to match
-	listingHash, _ := deployed.ParameterizerContract.GetHash(nil, "FooMarket, AZ.")
+	listingHash, _ := deployed.ListingContract.GetHash(nil, "FooMarket, AZ.")
 
 	isListed, _ := deployed.ListingContract.IsListed(nil, listingHash)
 	if isListed == true {
@@ -53,7 +53,7 @@ func TestIsListed(t *testing.T) {
 }
 
 func TestGetListing(t *testing.T) {
-	listingHash, _ := deployed.ParameterizerContract.GetHash(nil, "FooMarket, AZ.")
+	listingHash, _ := deployed.ListingContract.GetHash(nil, "FooMarket, AZ.")
 
 	listed, owner, dataHash, supply, rewards, _ := deployed.ListingContract.GetListing(nil, listingHash)
 
@@ -70,7 +70,7 @@ func TestGetListing(t *testing.T) {
 	}
 
 	// this is what we provided when list called...
-	hash, _ := deployed.ParameterizerContract.GetHash(nil, "FooData")
+	hash, _ := deployed.ListingContract.GetHash(nil, "FooData")
 
 	if dataHash != hash {
 		t.Fatalf("Exepected data hash to match the provided, got: %v", dataHash)
@@ -102,7 +102,7 @@ func TestResolveApplication(t *testing.T) {
 	// check the market's balance as the mint operation should increment it after successful listing
 	marketBal, _ := deployed.MarketTokenContract.BalanceOf(nil, deployed.ListingAddress)
 	// our listing
-	listingHash, _ := deployed.ParameterizerContract.GetHash(nil, "FooMarket, AZ.")
+	listingHash, _ := deployed.ListingContract.GetHash(nil, "FooMarket, AZ.")
 
 	// make member2 a council member (if not one). the owner (factory) can do this...
 	isMember, _ := deployed.VotingContract.InCouncil(nil, context.AuthMember2.From)
@@ -186,7 +186,7 @@ func TestResolveApplication(t *testing.T) {
 }
 
 func TestResolveApplicationThatFails(t *testing.T) {
-	dataHash, _ := deployed.ParameterizerContract.GetHash(nil, "BarData")
+	dataHash, _ := deployed.ListingContract.GetHash(nil, "BarData")
 	// member1 will need funds transferred to them
 	_, transErr := deployed.MarketTokenContract.Transfer(&bind.TransactOpts{
 		From:     context.AuthFactory.From,
@@ -245,7 +245,7 @@ func TestResolveApplicationThatFails(t *testing.T) {
 	}
 
 	// our listing
-	listingHash, _ := deployed.ParameterizerContract.GetHash(nil, "BarMarket, CA.")
+	listingHash, _ := deployed.ListingContract.GetHash(nil, "BarMarket, CA.")
 
 	// we should see a listing with a supply in place
 	_, _, _, supply, _, _ := deployed.ListingContract.GetListing(nil, listingHash)
@@ -309,7 +309,7 @@ func TestDepositToListing(t *testing.T) {
 	// check the market's balance as it should be banking FooMarket's reward
 	marketBal, _ := deployed.MarketTokenContract.BalanceOf(nil, deployed.ListingAddress)
 	// foomarket itself
-	listingHash, _ := deployed.ParameterizerContract.GetHash(nil, "FooMarket, AZ.")
+	listingHash, _ := deployed.ListingContract.GetHash(nil, "FooMarket, AZ.")
 	// the current state of foo market
 	_, _, _, supply, _, _ := deployed.ListingContract.GetListing(nil, listingHash)
 	// add some amount
@@ -349,7 +349,7 @@ func TestWithdrawFromListing(t *testing.T) {
 	// check the market's balance...
 	marketBal, _ := deployed.MarketTokenContract.BalanceOf(nil, deployed.ListingAddress)
 	// foomarket itself
-	listingHash, _ := deployed.ParameterizerContract.GetHash(nil, "FooMarket, AZ.")
+	listingHash, _ := deployed.ListingContract.GetHash(nil, "FooMarket, AZ.")
 	// the current state of foo market
 	_, _, _, supply, _, _ := deployed.ListingContract.GetListing(nil, listingHash)
 	// withdraw that same amt
@@ -388,7 +388,7 @@ func TestExit(t *testing.T) {
 	count, _ := deployed.ListingContract.GetListingCount(nil)
 
 	// going to remove this one
-	listingHash, _ := deployed.ParameterizerContract.GetHash(nil, "FooMarket, AZ.")
+	listingHash, _ := deployed.ListingContract.GetHash(nil, "FooMarket, AZ.")
 
 	// we know that the market's bank will decrease here by the listReward
 	marketBal, _ := deployed.MarketTokenContract.BalanceOf(nil, deployed.ListingAddress)
@@ -419,7 +419,7 @@ func TestExit(t *testing.T) {
 }
 
 func TestConvertListing(t *testing.T) {
-	dataHash, _ := deployed.ParameterizerContract.GetHash(nil, "SpamData")
+	dataHash, _ := deployed.ListingContract.GetHash(nil, "SpamData")
 
 	_, listErr := deployed.ListingContract.List(&bind.TransactOpts{
 		From:     context.AuthMember1.From,
@@ -434,7 +434,7 @@ func TestConvertListing(t *testing.T) {
 
 	context.Blockchain.Commit()
 
-	listingHash, _ := deployed.ParameterizerContract.GetHash(nil, "SpamMarket, AZ.")
+	listingHash, _ := deployed.ListingContract.GetHash(nil, "SpamMarket, AZ.")
 	// cast a vote for (we know member2 is a council member at this point)
 	_, voteErr := deployed.VotingContract.Vote(&bind.TransactOpts{
 		From:     context.AuthMember2.From,

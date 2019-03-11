@@ -3,7 +3,7 @@
 # @author Computable
 
 # constants
-MAX_LENGTH: constant(uint256) = 1000000 # no market may have more than 1M active investors
+MAX_LENGTH: constant(uint256) = 100000 # no market may have more than 100k active investors
 
 struct Investor:
   index: int128
@@ -35,7 +35,6 @@ contract Parameterizer:
   def getInvestNumerator() -> uint256: constant
 
 contract Listing:
-  def isListingOwner(addr: address) -> bool: constant
   def getChallenge(hash: bytes32) -> address: constant
 
 # events
@@ -128,7 +127,6 @@ def invest(offer: wei_value):
   @dev WIP
   @param offer An amount of Ether Token in Wei
   """
-  assert not self.listing.isListingOwner(msg.sender)
   price: wei_value = self.getInvestmentPrice()
   assert offer >= price # you cannot buy less than one billionth of a market token
   self.ether_token.transferFrom(msg.sender, self, offer)
