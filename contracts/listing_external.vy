@@ -10,11 +10,10 @@ contract Listing:
     def getHash(str: string[64]) -> bytes32: constant
     def getListingCount() -> int128: constant
     def getListingKey(index: int128) -> bytes32: constant
-    def getListing(hash: bytes32) -> (bool, address, bytes32, uint256(wei), uint256(wei)): constant
+    def getListing(hash: bytes32) -> (address, bytes32, uint256(wei), uint256(wei)): constant
     def convertListing(hash: bytes32): modifying
     def resolveApplication(hash: bytes32): modifying
     def challenge(hash: bytes32): modifying
-    def getChallenge(hash: bytes32) -> address: constant
     def resolveChallenge(hash: bytes32): modifying
     def exit(hash: bytes32): modifying
 

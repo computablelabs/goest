@@ -27,15 +27,13 @@ contract Voting:
   def removeFromCouncil(member: address): modifying
   def getCandidateCount() -> int128: constant
   def getCandidateKey(index: int128) -> bytes32: constant
+  def getCandidateOwner(hash: bytes32) -> address: constant
   def willAddToCouncil(addr: address) -> bool: constant
 
 contract Parameterizer:
   def getConversionRate() -> uint256(wei): constant
   def getInvestDenominator() -> uint256: constant
   def getInvestNumerator() -> uint256: constant
-
-contract Listing:
-  def getChallenge(hash: bytes32) -> address: constant
 
 # events
 Divested: event({investor: indexed(address), transferred: wei_value})
@@ -51,17 +49,15 @@ ether_token: EtherToken
 market_token: MarketToken
 voting: Voting
 parameterizer: Parameterizer
-listing: Listing
 
 @public
 def __init__(ether_token_addr: address, market_token_addr: address,
-  voting_addr: address, p11r_addr: address, listing_addr: address):
+  voting_addr: address, p11r_addr: address):
     self.factory_address = msg.sender
     self.ether_token = EtherToken(ether_token_addr)
     self.market_token = MarketToken(market_token_addr)
     self.voting = Voting(voting_addr)
     self.parameterizer = Parameterizer(p11r_addr)
-    self.listing = Listing(listing_addr)
 
 
 @public
@@ -165,21 +161,19 @@ def divest():
   """
   @notice Allows a stakeholder to exit the market. Burning any market token owned and
   withdrawing their share of the reserve.
-  @dev Stakeholder may not be engaged in any current challenge. Note that we do not
-  restrict due to any proposed Reparam as there is no stake involved there.
+  @dev Stakeholder may not be engaged in any currently active poll (cannot own a candidate)
   """
-  is_challenger: bool = False
+  in_poll: bool = False
   candidates: int128 = self.voting.getCandidateCount()
-  # TODO we could expose a method via Listing, something like `isChallenger`
   for i in range(1000): # NOTE vyper will not let us use candidates here, use Voting MAX_LENGTH instead
     hash: bytes32 = self.voting.getCandidateKey(i)
-    challenger: address = self.listing.getChallenge(hash)
+    owner: address = self.voting.getCandidateOwner(hash)
     if i == candidates: # don't exceed the actual number of candidates
       break
-    elif challenger == msg.sender:
-      is_challenger = True
+    elif owner == msg.sender:
+      in_poll = True
       break
-  assert is_challenger == False
+  assert in_poll == False
   divested: wei_value = self.getDivestmentProceeds(msg.sender)
   # before any transfer, burn their market tokens and remove if an investor
   self.market_token.burnAll(msg.sender)

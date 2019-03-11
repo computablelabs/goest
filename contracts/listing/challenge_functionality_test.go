@@ -77,10 +77,10 @@ func TestChallenge(t *testing.T) {
 	context.Blockchain.Commit()
 
 	// should be listed now, with a reward
-	listed, _, _, _, _, _ := deployed.ListingContract.GetListing(nil, listingHash)
+	owner, _, _, _, _ := deployed.ListingContract.GetListing(nil, listingHash)
 
-	if listed != true {
-		t.Fatalf("Exepected .listed to be true, got: %v", listed)
+	if owner != context.AuthMember1.From {
+		t.Fatalf("Exepected listing to be owned by member 1, got: %v", owner)
 	}
 
 	// now we can challenge. member2 will need funds approved && such
@@ -139,23 +139,6 @@ func TestChallenge(t *testing.T) {
 	}
 }
 
-func TestGetChallenge(t *testing.T) {
-	listingHash, _ := deployed.ListingContract.GetHash(nil, "BarMarket12345")
-
-	challenger, _ := deployed.ListingContract.GetChallenge(nil, listingHash)
-
-	if challenger != context.AuthMember2.From {
-		t.Fatalf("Expected challenger to be %v, got: %v", context.AuthMember2.From, challenger)
-	}
-
-	// should be a candidate for this challenge as well
-	kind, _, _, _ := deployed.VotingContract.GetCandidate(nil, listingHash)
-
-	if kind.Cmp(big.NewInt(2)) != 0 {
-		t.Fatalf("Expected kind to be challenge (2), got: %v", kind)
-	}
-}
-
 func TestResolveChallenge(t *testing.T) {
 	listingHash, _ := deployed.ListingContract.GetHash(nil, "BarMarket12345")
 	// the marketBal will decrease as the challenger gets their stake + listings's stake
@@ -183,7 +166,7 @@ func TestResolveChallenge(t *testing.T) {
 		t.Fatalf("Expected voted to be true, got: %v", voted)
 	}
 
-	_, _, votes, _ := deployed.VotingContract.GetCandidate(nil, listingHash)
+	_, _, _, votes, _ := deployed.VotingContract.GetCandidate(nil, listingHash)
 
 	if votes.Cmp(big.NewInt(0)) != 1 {
 		t.Fatalf("Expected at least one vote, got: %v", votes)

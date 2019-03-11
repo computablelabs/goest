@@ -55,13 +55,10 @@ func TestIsListed(t *testing.T) {
 func TestGetListing(t *testing.T) {
 	listingHash, _ := deployed.ListingContract.GetHash(nil, "FooMarket, AZ.")
 
-	listed, owner, dataHash, supply, rewards, _ := deployed.ListingContract.GetListing(nil, listingHash)
+	owner, dataHash, supply, rewards, _ := deployed.ListingContract.GetListing(nil, listingHash)
 
-	if listed != false {
-		t.Fatalf("Exepected .listed to be false, got: %v", listed)
-	}
-
-	if owner != context.AuthMember1.From {
+	// should not be owned yet
+	if owner == context.AuthMember1.From {
 		t.Fatalf("Exepected owner to be %v, got: %v", context.AuthMember1.From, owner)
 	}
 
@@ -154,10 +151,10 @@ func TestResolveApplication(t *testing.T) {
 	context.Blockchain.Commit()
 
 	// should be listed now, with a reward
-	listed, _, _, supply, rewards, _ := deployed.ListingContract.GetListing(nil, listingHash)
+	owner, _, supply, rewards, _ := deployed.ListingContract.GetListing(nil, listingHash)
 
-	if listed != true {
-		t.Fatalf("Exepected .listed to be true, got: %v", listed)
+	if owner != context.AuthMember1.From {
+		t.Fatalf("Expected owner to be %v, got: %v", context.AuthMember1.From, owner)
 	}
 
 	// supply should still be 0 as owner didn't put any funds in...
@@ -248,7 +245,7 @@ func TestResolveApplicationThatFails(t *testing.T) {
 	listingHash, _ := deployed.ListingContract.GetHash(nil, "BarMarket, CA.")
 
 	// we should see a listing with a supply in place
-	_, _, _, supply, _, _ := deployed.ListingContract.GetListing(nil, listingHash)
+	_, _, supply, _, _ := deployed.ListingContract.GetListing(nil, listingHash)
 
 	if supply.Cmp(big.NewInt(ONE_WEI)) != 0 {
 		t.Fatalf("Expected listing supply to be 1 token in wei, got: %v", supply)
@@ -281,10 +278,10 @@ func TestResolveApplicationThatFails(t *testing.T) {
 	// }
 
 	// should not be listed now, and no reward
-	listed, _, _, supply, rewards, _ := deployed.ListingContract.GetListing(nil, listingHash)
+	owner, _, supply, rewards, _ := deployed.ListingContract.GetListing(nil, listingHash)
 
-	if listed == true {
-		t.Fatalf("Exepected .listed to be false, got: %v", listed)
+	if owner == context.AuthMember1.From {
+		t.Fatalf("Exepected owner to be zero address, got: %v", owner)
 	}
 
 	if supply.Cmp(big.NewInt(0)) != 0 {
@@ -311,7 +308,7 @@ func TestDepositToListing(t *testing.T) {
 	// foomarket itself
 	listingHash, _ := deployed.ListingContract.GetHash(nil, "FooMarket, AZ.")
 	// the current state of foo market
-	_, _, _, supply, _, _ := deployed.ListingContract.GetListing(nil, listingHash)
+	_, _, supply, _, _ := deployed.ListingContract.GetListing(nil, listingHash)
 	// add some amount
 	_, depErr := deployed.ListingContract.DepositToListing(&bind.TransactOpts{
 		From:     context.AuthMember1.From,
@@ -332,7 +329,7 @@ func TestDepositToListing(t *testing.T) {
 		t.Fatalf("Expected %v to be > %v", newMarketBal, marketBal)
 	}
 
-	_, _, _, newSupply, _, _ := deployed.ListingContract.GetListing(nil, listingHash)
+	_, _, newSupply, _, _ := deployed.ListingContract.GetListing(nil, listingHash)
 	if newSupply.Cmp(supply) != 1 {
 		t.Fatalf("Expected %v to be > %v", newSupply, supply)
 	}
@@ -351,7 +348,7 @@ func TestWithdrawFromListing(t *testing.T) {
 	// foomarket itself
 	listingHash, _ := deployed.ListingContract.GetHash(nil, "FooMarket, AZ.")
 	// the current state of foo market
-	_, _, _, supply, _, _ := deployed.ListingContract.GetListing(nil, listingHash)
+	_, _, supply, _, _ := deployed.ListingContract.GetListing(nil, listingHash)
 	// withdraw that same amt
 	_, withErr := deployed.ListingContract.WithdrawFromListing(&bind.TransactOpts{
 		From:     context.AuthMember1.From,
@@ -372,7 +369,7 @@ func TestWithdrawFromListing(t *testing.T) {
 		t.Fatalf("Expected %v to be > %v", marketBal, newMarketBal)
 	}
 
-	_, _, _, newSupply, _, _ := deployed.ListingContract.GetListing(nil, listingHash)
+	_, _, newSupply, _, _ := deployed.ListingContract.GetListing(nil, listingHash)
 	if newSupply.Cmp(supply) != -1 {
 		t.Fatalf("Expected %v to be > %v", supply, newSupply)
 	}
@@ -468,10 +465,10 @@ func TestConvertListing(t *testing.T) {
 	context.Blockchain.Commit()
 
 	// should be listed now, with a reward
-	listed, _, _, _, rewards, _ := deployed.ListingContract.GetListing(nil, listingHash)
+	owner, _, _, rewards, _ := deployed.ListingContract.GetListing(nil, listingHash)
 
-	if listed != true {
-		t.Fatalf("Exepected .listed to be true, got: %v", listed)
+	if owner != context.AuthMember1.From {
+		t.Fatalf("Exepected %v to be %v", context.AuthMember1.From, owner)
 	}
 
 	// list reward here is 1 token (tokenWei)

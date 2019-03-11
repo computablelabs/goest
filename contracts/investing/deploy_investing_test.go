@@ -34,10 +34,6 @@ func TestDeployInvesting(t *testing.T) {
 		t.Error("Expected a valid parameterizer deployment address to be returned from deploy, got empty byte array instead")
 	}
 
-	if len(deployed.ListingAddress.Bytes()) == 0 {
-		t.Error("Expected a valid Listing deployment address to be returned from deploy, got empty byte array instead")
-	}
-
 	if len(deployed.InvestingAddress.Bytes()) == 0 {
 		t.Error("Expected a valid Listing deployment address to be returned from deploy, got empty byte array instead")
 	}
@@ -63,8 +59,8 @@ func TestDeployInvesting(t *testing.T) {
 func TestMarketTokenSetPrivilegedContracts(t *testing.T) {
 	_, list, invest, _ := deployed.MarketTokenContract.GetPrivileged(nil)
 
-	if list != deployed.ListingAddress {
-		t.Fatalf("Expected listing address of %v but got %v", deployed.ListingAddress, list)
+	if list != context.ListingAddress {
+		t.Fatalf("Expected listing address of %v but got %v", context.ListingAddress, list)
 	}
 
 	if invest != deployed.InvestingAddress {
@@ -79,8 +75,8 @@ func TestVotingSetPrivilegedContracts(t *testing.T) {
 		t.Fatalf("Expected p11r address of %v but got %v", deployed.ParameterizerAddress, p11r)
 	}
 
-	if list != deployed.ListingAddress {
-		t.Fatalf("Expected listing address of %v but got %v", deployed.ListingAddress, list)
+	if list != context.ListingAddress {
+		t.Fatalf("Expected listing address of %v but got %v", context.ListingAddress, list)
 	}
 
 	if invest != deployed.InvestingAddress {
@@ -103,7 +99,7 @@ func TestMain(m *testing.M) {
 		Signer:   context.AuthFactory.Signer,
 		GasPrice: big.NewInt(ONE_GWEI * 2),
 		GasLimit: 1000000,
-	}, deployed.ListingAddress, deployed.InvestingAddress)
+	}, context.ListingAddress, deployed.InvestingAddress)
 
 	if marketErr != nil {
 		log.Fatalf("Error setting privileged contract address: %v", marketErr)
@@ -114,7 +110,7 @@ func TestMain(m *testing.M) {
 		Signer:   context.AuthFactory.Signer,
 		GasPrice: big.NewInt(ONE_GWEI * 2),
 		GasLimit: 1000000,
-	}, deployed.ParameterizerAddress, deployed.ListingAddress, deployed.InvestingAddress)
+	}, deployed.ParameterizerAddress, context.ListingAddress, deployed.InvestingAddress)
 
 	if votingErr != nil {
 		// no T pointer here...
