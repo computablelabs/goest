@@ -2,7 +2,6 @@ package investing
 
 import (
 	"github.com/computablelabs/goest/contracts/ethertoken"
-	"github.com/computablelabs/goest/contracts/listing"
 	"github.com/computablelabs/goest/contracts/markettoken"
 	"github.com/computablelabs/goest/contracts/parameterizer"
 	"github.com/computablelabs/goest/contracts/voting"
@@ -27,27 +26,25 @@ const (
 )
 
 type ctx struct {
-	AuthFactory *bind.TransactOpts
-	AuthMember1 *bind.TransactOpts
-	AuthMember2 *bind.TransactOpts
-	AuthMember3 *bind.TransactOpts
-	Blockchain  *backends.SimulatedBackend
+	ListingAddress common.Address
+	AuthFactory    *bind.TransactOpts
+	AuthMember1    *bind.TransactOpts
+	AuthMember2    *bind.TransactOpts
+	AuthMember3    *bind.TransactOpts
+	Blockchain     *backends.SimulatedBackend
 }
 
 type dep struct {
-	ListingAddress           common.Address
 	InvestingAddress         common.Address
 	MarketTokenAddress       common.Address
 	EtherTokenAddress        common.Address
 	ParameterizerAddress     common.Address
 	VotingAddress            common.Address
-	ListingContract          *listing.Listing
 	InvestingContract        *Investing
 	MarketTokenContract      *markettoken.MarketToken
 	EtherTokenContract       *ethertoken.EtherToken
 	ParameterizerContract    *parameterizer.Parameterizer
 	VotingContract           *voting.Voting
-	ListingTransaction       *types.Transaction
 	InvestingTransaction     *types.Transaction
 	MarketTokenTransaction   *types.Transaction
 	EtherTokenTransaction    *types.Transaction
@@ -111,21 +108,6 @@ func Deploy(initialBalance *big.Int, c *ctx) (*dep, error) {
 
 	c.Blockchain.Commit()
 
-	// the listing...
-	listAddr, listTrans, listCont, listErr := listing.DeployListing(
-		c.AuthFactory,
-		c.Blockchain,
-		marketTokenAddr,
-		votingAddr,
-		paramAddr,
-	)
-
-	if listErr != nil {
-		return nil, listErr
-	}
-
-	c.Blockchain.Commit()
-
 	// and finally the investing
 	investAddr, investTrans, investCont, investErr := DeployInvesting(
 		c.AuthFactory,
@@ -134,7 +116,6 @@ func Deploy(initialBalance *big.Int, c *ctx) (*dep, error) {
 		marketTokenAddr,
 		votingAddr,
 		paramAddr,
-		listAddr,
 	)
 
 	if investErr != nil {
@@ -144,9 +125,6 @@ func Deploy(initialBalance *big.Int, c *ctx) (*dep, error) {
 	c.Blockchain.Commit()
 
 	return &dep{
-		ListingAddress:           listAddr,
-		ListingContract:          listCont,
-		ListingTransaction:       listTrans,
 		InvestingAddress:         investAddr,
 		InvestingContract:        investCont,
 		InvestingTransaction:     investTrans,
@@ -189,10 +167,11 @@ func SetupBlockchain(accountBalance *big.Int) *ctx {
 	bc := backends.NewSimulatedBackend(alloc, 4700000)
 
 	return &ctx{
-		AuthFactory: authFac,
-		AuthMember1: authMem1,
-		AuthMember2: authMem2,
-		AuthMember3: authMem3,
-		Blockchain:  bc,
+		ListingAddress: common.HexToAddress("0xlist"),
+		AuthFactory:    authFac,
+		AuthMember1:    authMem1,
+		AuthMember2:    authMem2,
+		AuthMember3:    authMem3,
+		Blockchain:     bc,
 	}
 }

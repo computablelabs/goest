@@ -2,7 +2,6 @@ package parameterizer
 
 import (
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
-	"github.com/ethereum/go-ethereum/common"
 	"math/big"
 	"testing"
 	"time"
@@ -46,11 +45,7 @@ func TestParameterize(t *testing.T) {
 
 func TestGetReparam(t *testing.T) {
 	paramHash, _ := deployed.ParameterizerContract.GetHash(nil, big.NewInt(7), big.NewInt(25))
-	proposer, name, val, _ := deployed.ParameterizerContract.GetReparam(nil, paramHash)
-
-	if proposer != context.AuthMember1.From {
-		t.Fatalf("Expected proposer to be %v, got: %v", context.AuthMember1.From, proposer)
-	}
+	name, val, _ := deployed.ParameterizerContract.GetReparam(nil, paramHash)
 
 	if name.Cmp(VOTE_BY) != 0 {
 		t.Fatalf("Expected name to be 'voteBy', got: %v", name)
@@ -126,11 +121,7 @@ func TestResolveReparam(t *testing.T) {
 	}
 
 	// should have cleaned up the proposal
-	proposer, name, val, _ := deployed.ParameterizerContract.GetReparam(nil, paramHash)
-
-	if proposer != common.HexToAddress("0x0") {
-		t.Fatalf("Expected proposer to be falsy, got: %v", proposer)
-	}
+	name, val, _ := deployed.ParameterizerContract.GetReparam(nil, paramHash)
 
 	if name.Cmp(big.NewInt(0)) != 0 {
 		t.Fatalf("Expected name to be falsy, got: %v", name)

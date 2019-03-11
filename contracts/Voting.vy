@@ -8,11 +8,12 @@ MAX_LENGTH: constant(uint256) = 1000
 struct Candidate:
   index: int128
   kind: uint256 # one of [1,2,3] representing an application, challenge or reparam respectively
+  owner: address
   vote_by: timestamp
   votes: address[MAX_LENGTH]
   votes_length: int128
 
-CandidateAdded: event({hash: indexed(bytes32), kind: indexed(uint256), voteBy: indexed(timestamp)})
+CandidateAdded: event({hash: indexed(bytes32), kind: indexed(uint256), owner: indexed(address), voteBy: timestamp})
 CandidateRemoved: event({hash: indexed(bytes32)})
 CouncilMemberAdded: event({member: indexed(address)})
 CouncilMemberRemoved: event({member: indexed(address)})
@@ -175,36 +176,50 @@ def getCandidateKey(index: int128) -> bytes32:
   return self.candidate_keys[index]
 
 
+
+
 @public
 @constant
-def getCandidate(hash: bytes32) -> (uint256, timestamp, int128):
+def getCandidate(hash: bytes32) -> (uint256, address, timestamp, int128):
   """
   @notice Return information about the given candidate identified by the given hash
   @dev Hash argument keys a candidate struct in the candidates mapping
   @return The type, vote_by timestamp and number of votes recieved
   """
-  return (self.candidates[hash].kind, self.candidates[hash].vote_by, self.candidates[hash].votes_length)
+  return (self.candidates[hash].kind, self.candidates[hash].owner, self.candidates[hash].vote_by, self.candidates[hash].votes_length)
 
 
 @public
-def addCandidate(hash: bytes32, kind: uint256, vote_by: timedelta):
+@constant
+def getCandidateOwner(hash: bytes32) -> address:
+  """
+  @notice return the owner address of a given Candidate.
+  """
+  return self.candidates[hash].owner
+
+
+@public
+def addCandidate(hash: bytes32, kind: uint256, owner: address, vote_by: timedelta):
   """
   @notice Given a listing or parameter hash, create a new voting candidate
   @dev The priveliged contracts which call this method perform `willAddCandidate()` check first
   @param hash The identifier for the listing or reparameterization candidate
   @param kind The type of candidate we are adding
+  @param owner The adress which owns this created candidate
+  @param vote_by How long into the future until polls for this candidate close
   """
   assert self.has_privilege(msg.sender)
   end: timestamp = block.timestamp + vote_by
   # place candidate into the mapping with unordered list index pointer along with kind and vote-by
   self.candidates[hash].index = self.candidates_length
   self.candidates[hash].kind = kind
+  self.candidates[hash].owner = owner
   self.candidates[hash].vote_by = end
   # "push" the new candidate into the unordered list
   self.candidate_keys[self.candidates_length] = hash
   # move the pointer to the next empty list location
   self.candidates_length += 1
-  log.CandidateAdded(hash, kind, end)
+  log.CandidateAdded(hash, kind, owner, end)
 
 
 @public
@@ -232,6 +247,7 @@ def removeCandidate(hash: bytes32):
   clear(self.candidate_keys[self.candidates_length])
   clear(self.candidates[hash].index)
   clear(self.candidates[hash].kind)
+  clear(self.candidates[hash].owner)
   clear(self.candidates[hash].vote_by)
   # we must clear individual votes that exist
   for i in range(1000):
