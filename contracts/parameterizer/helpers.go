@@ -27,6 +27,7 @@ type ctx struct {
 	// 	Alloc          core.GenesisAlloc
 	AuthInvesting *bind.TransactOpts
 	AuthListing   *bind.TransactOpts
+	AuthDatatrust *bind.TransactOpts
 	AuthFactory   *bind.TransactOpts
 	AuthMember1   *bind.TransactOpts
 	AuthMember2   *bind.TransactOpts
@@ -87,17 +88,20 @@ func Deploy(c *ctx) (*dep, error) {
 // parameterizer address is passed in
 func SetupBlockchain(accountBalance *big.Int) *ctx {
 	// generate a new key, toss the error for now as it shouldnt happen
+	keyData, _ := crypto.GenerateKey()
 	keyList, _ := crypto.GenerateKey()
 	keyInv, _ := crypto.GenerateKey()
 	keyFac, _ := crypto.GenerateKey()
 	keyMem1, _ := crypto.GenerateKey()
 	keyMem2, _ := crypto.GenerateKey()
+	authData := bind.NewKeyedTransactor(keyData)
 	authList := bind.NewKeyedTransactor(keyList)
 	authInv := bind.NewKeyedTransactor(keyInv)
 	authFac := bind.NewKeyedTransactor(keyFac)
 	authMem1 := bind.NewKeyedTransactor(keyMem1)
 	authMem2 := bind.NewKeyedTransactor(keyMem2)
 	alloc := make(core.GenesisAlloc)
+	alloc[authData.From] = core.GenesisAccount{Balance: accountBalance}
 	alloc[authList.From] = core.GenesisAccount{Balance: accountBalance}
 	alloc[authInv.From] = core.GenesisAccount{Balance: accountBalance}
 	alloc[authFac.From] = core.GenesisAccount{Balance: accountBalance}
@@ -110,6 +114,7 @@ func SetupBlockchain(accountBalance *big.Int) *ctx {
 		// 	Alloc:          alloc,
 		AuthInvesting: authInv,
 		AuthListing:   authList,
+		AuthDatatrust: authData,
 		AuthFactory:   authFac,
 		AuthMember1:   authMem1,
 		AuthMember2:   authMem2,

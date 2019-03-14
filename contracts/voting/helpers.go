@@ -21,6 +21,7 @@ var REPARAM = big.NewInt(3)
 type ctx struct {
 	AuthFactory       *bind.TransactOpts
 	AuthParameterizer *bind.TransactOpts
+	AuthDatatrust     *bind.TransactOpts
 	AuthListing       *bind.TransactOpts
 	AuthInvesting     *bind.TransactOpts
 	AuthMember1       *bind.TransactOpts
@@ -66,12 +67,14 @@ func SetupBlockchain(accountBalance *big.Int) *ctx {
 	keyInv, _ := crypto.GenerateKey()
 	keyFac, _ := crypto.GenerateKey()
 	keyParam, _ := crypto.GenerateKey()
+	keyData, _ := crypto.GenerateKey()
 	keyMem1, _ := crypto.GenerateKey()
 	keyMem2, _ := crypto.GenerateKey()
 	authList := bind.NewKeyedTransactor(keyList)
 	authInv := bind.NewKeyedTransactor(keyInv)
 	authFac := bind.NewKeyedTransactor(keyFac)
 	authParam := bind.NewKeyedTransactor(keyParam)
+	authData := bind.NewKeyedTransactor(keyData)
 	authMem1 := bind.NewKeyedTransactor(keyMem1)
 	authMem2 := bind.NewKeyedTransactor(keyMem2)
 	alloc := make(core.GenesisAlloc)
@@ -79,6 +82,7 @@ func SetupBlockchain(accountBalance *big.Int) *ctx {
 	alloc[authInv.From] = core.GenesisAccount{Balance: accountBalance}
 	alloc[authFac.From] = core.GenesisAccount{Balance: accountBalance}
 	alloc[authParam.From] = core.GenesisAccount{Balance: accountBalance}
+	alloc[authData.From] = core.GenesisAccount{Balance: accountBalance}
 	alloc[authMem1.From] = core.GenesisAccount{Balance: accountBalance}
 	alloc[authMem2.From] = core.GenesisAccount{Balance: accountBalance}
 	// 2nd arg is a gas limit, a uint64. we'll use 4.7 million
@@ -89,6 +93,7 @@ func SetupBlockchain(accountBalance *big.Int) *ctx {
 		AuthInvesting:     authInv,
 		AuthFactory:       authFac,
 		AuthParameterizer: authParam,
+		AuthDatatrust:     authData,
 		AuthMember1:       authMem1,
 		AuthMember2:       authMem2, // a councilmember
 		Blockchain:        bc,

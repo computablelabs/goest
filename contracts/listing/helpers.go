@@ -1,6 +1,7 @@
 package listing
 
 import (
+	"github.com/computablelabs/goest/contracts/datatrust"
 	"github.com/computablelabs/goest/contracts/markettoken"
 	"github.com/computablelabs/goest/contracts/parameterizer"
 	"github.com/computablelabs/goest/contracts/voting"
@@ -38,14 +39,17 @@ type dep struct {
 	MarketTokenAddress       common.Address
 	ParameterizerAddress     common.Address
 	VotingAddress            common.Address
+	DatatrustAddress         common.Address
 	ListingContract          *Listing
 	MarketTokenContract      *markettoken.MarketToken
 	ParameterizerContract    *parameterizer.Parameterizer
 	VotingContract           *voting.Voting
+	DatatrustContract        *datatrust.Datatrust
 	ListingTransaction       *types.Transaction
 	MarketTokenTransaction   *types.Transaction
 	ParameterizerTransaction *types.Transaction
 	VotingTransaction        *types.Transaction
+	DatatrustTransaction     *types.Transaction
 }
 
 func Deploy(initialBalance *big.Int, c *ctx) (*dep, error) {
@@ -80,8 +84,8 @@ func Deploy(initialBalance *big.Int, c *ctx) (*dep, error) {
 		votingAddr,
 		big.NewInt(ONE_WEI),  // challengeStake
 		big.NewInt(ONE_GWEI), // conversionRate: stipulation is that market token should be, at least, as val as eth
-		big.NewInt(101),      // investDenominator, a scaling factor
-		big.NewInt(100),      // investNumerator, a scaling factor
+		big.NewInt(100),      // investDenominator, a scaling factor
+		big.NewInt(110),      // investNumerator, a scaling factor
 		big.NewInt(ONE_WEI),  // listReward (one token)
 		big.NewInt(50),       // quorum
 		big.NewInt(100),      // voteBy
@@ -89,6 +93,20 @@ func Deploy(initialBalance *big.Int, c *ctx) (*dep, error) {
 
 	if paramErr != nil {
 		return nil, paramErr
+	}
+
+	c.Blockchain.Commit()
+
+	// the datatrust
+	dataAddr, dataTrans, dataCont, dataErr := datatrust.DeployDatatrust(
+		c.AuthFactory,
+		c.Blockchain,
+		votingAddr,
+		paramAddr,
+	)
+
+	if dataErr != nil {
+		return nil, dataErr
 	}
 
 	c.Blockchain.Commit()
@@ -121,6 +139,9 @@ func Deploy(initialBalance *big.Int, c *ctx) (*dep, error) {
 		VotingAddress:            votingAddr,
 		VotingContract:           votingCont,
 		VotingTransaction:        votingTrans,
+		DatatrustAddress:         dataAddr,
+		DatatrustContract:        dataCont,
+		DatatrustTransaction:     dataTrans,
 	}, nil
 }
 

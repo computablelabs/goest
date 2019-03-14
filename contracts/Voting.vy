@@ -25,9 +25,10 @@ candidate_keys: bytes32[MAX_LENGTH]
 council: map(address, int128)
 council_length: int128 # represents the actual number of council members
 council_keys: address[MAX_LENGTH]
+parameterizer_address: address
+datatrust_address: address
 listing_address: address
 investing_address: address
-parameterizer_address: address
 factory_address: address
 
 @public
@@ -37,21 +38,22 @@ def __init__():
 
 @public
 @constant
-def getPrivileged() -> (address, address, address, address):
+def getPrivileged() -> (address, address, address, address, address):
   """
   @notice Fetch a list of each privileged address recognized by this contract
   @return factory, market, and parameterizer addresses
   """
-  return (self.factory_address, self.parameterizer_address, self.listing_address, self.investing_address)
+  return (self.factory_address, self.parameterizer_address, self.datatrust_address, self.listing_address, self.investing_address)
 
 
 @public
-def setPrivileged(parameterizer: address, listing: address, investing: address):
+def setPrivileged(parameterizer: address, datatrust: address, listing: address, investing: address):
   """
   @notice Allow the Market Factory to set privileged contract addresses
   """
   assert msg.sender == self.factory_address
   self.parameterizer_address = parameterizer
+  self.datatrust_address = datatrust
   self.listing_address = listing
   self.investing_address = investing
 
@@ -63,7 +65,7 @@ def has_privilege(sender: address) -> bool:
   @notice Return a bool indicating whether the given address is a member of this contracts privileged group
   @return bool
   """
-  return (sender == self.factory_address or sender == self.parameterizer_address or sender == self.listing_address or sender == self.investing_address)
+  return (sender == self.factory_address or sender == self.parameterizer_address or sender == self.datatrust_address or sender == self.listing_address or sender == self.investing_address)
 
 
 @public
