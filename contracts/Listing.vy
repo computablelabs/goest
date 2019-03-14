@@ -4,14 +4,13 @@
 
 # constants
 MAX_LENGTH: constant(uint256) = 100000 # no market may have more than 100k active listings
-APPLICATION: constant(uint256) = 1 # market understands this candidate.kind
-CHALLENGE: constant(uint256) = 2 # market also knows this candidate.kind
+APPLICATION: constant(uint256) = 1 # candidate.kind
+CHALLENGE: constant(uint256) = 2 # candidate.kind
 
 # structs
 struct Listing:
   index: int128
   owner: address
-  data_hash: bytes32
   supply: wei_value
   rewards: wei_value
 
@@ -57,7 +56,7 @@ ListingWithdraw: event({hash: indexed(bytes32), owner: indexed(address), withdra
 listings: map(bytes32, Listing)
 listings_length: int128 # the actual number of active listings
 listing_keys: bytes32[MAX_LENGTH]
-listing_owners: map(address, uint256) # maps makers to number of listings owned
+listing_owners: map(address, uint256) # maps makers to number of listings owned. NOTE this goes away with correct council membership rules
 factory_address: address
 market_token: MarketToken
 voting: Voting
@@ -127,19 +126,17 @@ def withdrawFromListing(hash: bytes32, amount: wei_value):
 
 
 @public
-def list(listing: string[64], data_hash: bytes32, amount: wei_value):
+def list(listing: string[64], amount: wei_value):
   """
   @notice Allows a maker to propose a new listing to a Market, creating a candidate for voting
   @dev Listing cannot already exist, in any active form. Owner not set here as it's an application
   @param listing A string (max length of 64 chars) serving as a unique identifier for this Listing when hashed
-  @param data_hash Magical construct which flies across the sky pooping out unicorns which, in turn, poop rainbows
   @param amount Optional funding to be deposited to the listing's supply
   """
   hash: bytes32 = keccak256(listing) # not calling self method so as not to pass string around
   assert self.voting.willAddCandidate(hash) # not an applicant
   assert self.listing_keys[self.listings[hash].index] != hash # not an active listing
   self.voting.addCandidate(hash, APPLICATION, msg.sender, self.parameterizer.getVoteBy())
-  self.listings[hash].data_hash = data_hash
   self.listings[hash].index = self.listings_length
   # "push" the new listing into the unordered list
   self.listing_keys[self.listings_length] = hash
@@ -149,7 +146,7 @@ def list(listing: string[64], data_hash: bytes32, amount: wei_value):
   if amount > 0:
     self.market_token.transferFrom(msg.sender, self, amount)
     self.listings[hash].supply = amount
-  log.Applied(hash, msg.sender, data_hash, amount)
+  log.Applied(hash, msg.sender, amount)
 
 
 @public
@@ -183,13 +180,12 @@ def getListingKey(index: int128) -> bytes32:
 
 @public
 @constant
-def getListing(hash: bytes32) -> (address, bytes32, wei_value, wei_value):
+def getListing(hash: bytes32) -> (address, wei_value, wei_value):
   """
   @notice Return pertinent information about a listing
   @param hash The listing identifier
   """
-  return (self.listings[hash].owner, self.listings[hash].data_hash,
-    self.listings[hash].supply, self.listings[hash].rewards)
+  return (self.listings[hash].owner, self.listings[hash].supply, self.listings[hash].rewards)
 
 
 @public

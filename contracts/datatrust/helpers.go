@@ -1,8 +1,6 @@
-package investing
+package datatrust
 
 import (
-	"github.com/computablelabs/goest/contracts/ethertoken"
-	"github.com/computablelabs/goest/contracts/markettoken"
 	"github.com/computablelabs/goest/contracts/parameterizer"
 	"github.com/computablelabs/goest/contracts/voting"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
@@ -19,16 +17,14 @@ const ONE_GWEI = 1000000000
 
 // the candidate "kinds"
 const (
-	UNDEFINED uint8 = iota
-	APPLICATION
-	CHALLENGE
-	REPARAM
+	REGISTRATION = 4
 )
 
 type ctx struct {
 	ListingAddress   common.Address
-	DatatrustAddress common.Address
+	InvestingAddress common.Address
 	AuthFactory      *bind.TransactOpts
+	AuthBackend      *bind.TransactOpts
 	AuthMember1      *bind.TransactOpts
 	AuthMember2      *bind.TransactOpts
 	AuthMember3      *bind.TransactOpts
@@ -36,49 +32,18 @@ type ctx struct {
 }
 
 type dep struct {
-	InvestingAddress         common.Address
-	MarketTokenAddress       common.Address
-	EtherTokenAddress        common.Address
+	DatatrustAddress         common.Address
 	ParameterizerAddress     common.Address
 	VotingAddress            common.Address
-	InvestingContract        *Investing
-	MarketTokenContract      *markettoken.MarketToken
-	EtherTokenContract       *ethertoken.EtherToken
+	DatatrustContract        *Datatrust
 	ParameterizerContract    *parameterizer.Parameterizer
 	VotingContract           *voting.Voting
-	InvestingTransaction     *types.Transaction
-	MarketTokenTransaction   *types.Transaction
-	EtherTokenTransaction    *types.Transaction
+	DatatrustTransaction     *types.Transaction
 	ParameterizerTransaction *types.Transaction
 	VotingTransaction        *types.Transaction
 }
 
 func Deploy(initialBalance *big.Int, c *ctx) (*dep, error) {
-	marketTokenAddr, marketTokenTrans, marketTokenCont, marketTokenErr := markettoken.DeployMarketToken(
-		c.AuthFactory,
-		c.Blockchain,
-		c.AuthFactory.From,
-		initialBalance,
-	)
-
-	if marketTokenErr != nil {
-		return nil, marketTokenErr
-	}
-
-	etherTokenAddr, etherTokenTrans, etherTokenCont, etherTokenErr := ethertoken.DeployEtherToken(
-		c.AuthFactory,
-		c.Blockchain,
-		c.AuthFactory.From,
-		initialBalance,
-	)
-
-	if etherTokenErr != nil {
-		return nil, etherTokenErr
-	}
-
-	// commit the deploy before deploying voting
-	c.Blockchain.Commit()
-
 	votingAddr, votingTrans, votingCont, votingErr := voting.DeployVoting(
 		c.AuthFactory,
 		c.Blockchain,
@@ -109,32 +74,24 @@ func Deploy(initialBalance *big.Int, c *ctx) (*dep, error) {
 
 	c.Blockchain.Commit()
 
-	// and finally the investing
-	investAddr, investTrans, investCont, investErr := DeployInvesting(
+	// finally the datatrust...
+	dataAddr, dataTrans, dataCont, dataErr := DeployDatatrust(
 		c.AuthFactory,
 		c.Blockchain,
-		etherTokenAddr,
-		marketTokenAddr,
 		votingAddr,
 		paramAddr,
 	)
 
-	if investErr != nil {
-		return nil, investErr
+	if dataErr != nil {
+		return nil, dataErr
 	}
 
 	c.Blockchain.Commit()
 
 	return &dep{
-		InvestingAddress:         investAddr,
-		InvestingContract:        investCont,
-		InvestingTransaction:     investTrans,
-		MarketTokenAddress:       marketTokenAddr,
-		MarketTokenContract:      marketTokenCont,
-		MarketTokenTransaction:   marketTokenTrans,
-		EtherTokenAddress:        etherTokenAddr,
-		EtherTokenTransaction:    etherTokenTrans,
-		EtherTokenContract:       etherTokenCont,
+		DatatrustAddress:         dataAddr,
+		DatatrustContract:        dataCont,
+		DatatrustTransaction:     dataTrans,
 		ParameterizerAddress:     paramAddr,
 		ParameterizerContract:    paramCont,
 		ParameterizerTransaction: paramTrans,
@@ -147,11 +104,13 @@ func Deploy(initialBalance *big.Int, c *ctx) (*dep, error) {
 func SetupBlockchain(accountBalance *big.Int) *ctx {
 	// generate a new key, toss the error for now as it shouldnt happen
 	keyFac, _ := crypto.GenerateKey()
+	keyBac, _ := crypto.GenerateKey()
 	keyMem1, _ := crypto.GenerateKey()
 	keyMem2, _ := crypto.GenerateKey()
 	keyMem3, _ := crypto.GenerateKey()
 
 	authFac := bind.NewKeyedTransactor(keyFac)
+	authBac := bind.NewKeyedTransactor(keyBac)
 	authFac.GasPrice = big.NewInt(ONE_GWEI * 2)
 	// authFac.GasLimit = 4000000             // setting a gas limit here causes the "silent simulated backed fail"... TODO PR
 
@@ -161,6 +120,7 @@ func SetupBlockchain(accountBalance *big.Int) *ctx {
 
 	alloc := make(core.GenesisAlloc)
 	alloc[authFac.From] = core.GenesisAccount{Balance: accountBalance}
+	alloc[authBac.From] = core.GenesisAccount{Balance: accountBalance}
 	alloc[authMem1.From] = core.GenesisAccount{Balance: accountBalance}
 	alloc[authMem2.From] = core.GenesisAccount{Balance: accountBalance}
 	alloc[authMem3.From] = core.GenesisAccount{Balance: accountBalance}
@@ -169,8 +129,9 @@ func SetupBlockchain(accountBalance *big.Int) *ctx {
 
 	return &ctx{
 		ListingAddress:   common.HexToAddress("0xlist"),
-		DatatrustAddress: common.HexToAddress("0xdata"),
+		InvestingAddress: common.HexToAddress("0xinv"),
 		AuthFactory:      authFac,
+		AuthBackend:      authBac,
 		AuthMember1:      authMem1,
 		AuthMember2:      authMem2,
 		AuthMember3:      authMem3,

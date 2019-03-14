@@ -1,4 +1,4 @@
-package listing
+package datatrust
 
 import (
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
@@ -13,13 +13,9 @@ var context *ctx
 var deployed *dep
 var deployedError error
 
-func TestDeployListing(t *testing.T) {
+func TestDeployDatatrust(t *testing.T) {
 	if deployedError != nil {
-		t.Fatalf("Failed to deploy the Listing contract or a dependency: %v", deployedError)
-	}
-
-	if len(deployed.MarketTokenAddress.Bytes()) == 0 {
-		t.Error("Expected a valid market token deployment address to be returned from deploy, got empty byte array instead")
+		t.Fatalf("Failed to deploy the Datatrust contract or a dependency: %v", deployedError)
 	}
 
 	if len(deployed.VotingAddress.Bytes()) == 0 {
@@ -30,8 +26,8 @@ func TestDeployListing(t *testing.T) {
 		t.Error("Expected a valid parameterizer deployment address to be returned from deploy, got empty byte array instead")
 	}
 
-	if len(deployed.ListingAddress.Bytes()) == 0 {
-		t.Error("Expected a valid Listing deployment address to be returned from deploy, got empty byte array instead")
+	if len(deployed.DatatrustAddress.Bytes()) == 0 {
+		t.Error("Expected a valid Datatrust deployment address to be returned from deploy, got empty byte array instead")
 	}
 
 	// what does the hex string look like?
@@ -52,18 +48,6 @@ func TestDeployListing(t *testing.T) {
 	// t.Logf("Gas used to deploy Market %v", mr.GasUsed)
 }
 
-func TestMarketTokenSetPrivilegedContracts(t *testing.T) {
-	_, list, invest, _ := deployed.MarketTokenContract.GetPrivileged(nil)
-
-	if list != deployed.ListingAddress {
-		t.Fatalf("Expected listing address of %v but got %v", deployed.ListingAddress, list)
-	}
-
-	if invest != context.InvestingAddress {
-		t.Fatalf("Expected investing address of %v but got %v", context.InvestingAddress, invest)
-	}
-}
-
 func TestVotingSetPrivilegedContracts(t *testing.T) {
 	_, p11r, data, list, invest, _ := deployed.VotingContract.GetPrivileged(nil)
 
@@ -72,11 +56,11 @@ func TestVotingSetPrivilegedContracts(t *testing.T) {
 	}
 
 	if data != deployed.DatatrustAddress {
-		t.Fatalf("Expected datatrust address of %v but got %v", deployed.DatatrustAddress, data)
+		t.Fatalf("Expected Datatrust address of %v but got %v", deployed.DatatrustAddress, data)
 	}
 
-	if list != deployed.ListingAddress {
-		t.Fatalf("Expected listing address of %v but got %v", deployed.ListingAddress, list)
+	if list != context.ListingAddress {
+		t.Fatalf("Expected listing address of %v but got %v", context.ListingAddress, list)
 	}
 
 	if invest != context.InvestingAddress {
@@ -84,33 +68,18 @@ func TestVotingSetPrivilegedContracts(t *testing.T) {
 	}
 }
 
-// we'll locate our testmain in these deploy_foo_test files as a pattern.
-// NOTE the test main is run once per package, therefore
-// the ctx and dep vars will be avail to the other tests in the package
 func TestMain(m *testing.M) {
 	// see ./helpers#context
 	context = SetupBlockchain(big.NewInt(ONE_WEI * 3)) // users have 3 ETH
 	// see ./helpers#deployed
 	deployed, deployedError = Deploy(big.NewInt(ONE_WEI*6), context) // 6 tokens in wei
 
-	// the markettoken must have its privileges set
-	_, marketErr := deployed.MarketTokenContract.SetPrivileged(&bind.TransactOpts{
-		From:     context.AuthFactory.From,
-		Signer:   context.AuthFactory.Signer,
-		GasPrice: big.NewInt(ONE_GWEI * 2),
-		GasLimit: 1000000,
-	}, deployed.ListingAddress, context.InvestingAddress)
-
-	if marketErr != nil {
-		log.Fatalf("Error setting privileged contract address: %v", marketErr)
-	}
-
 	_, votingErr := deployed.VotingContract.SetPrivileged(&bind.TransactOpts{
 		From:     context.AuthFactory.From,
 		Signer:   context.AuthFactory.Signer,
 		GasPrice: big.NewInt(ONE_GWEI * 2),
 		GasLimit: 1000000,
-	}, deployed.ParameterizerAddress, deployed.DatatrustAddress, deployed.ListingAddress, context.InvestingAddress)
+	}, deployed.ParameterizerAddress, deployed.DatatrustAddress, context.ListingAddress, context.InvestingAddress)
 
 	if votingErr != nil {
 		// no T pointer here...

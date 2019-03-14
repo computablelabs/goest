@@ -69,10 +69,14 @@ func TestMarketTokenSetPrivilegedContracts(t *testing.T) {
 }
 
 func TestVotingSetPrivilegedContracts(t *testing.T) {
-	_, p11r, list, invest, _ := deployed.VotingContract.GetPrivileged(nil)
+	_, p11r, data, list, invest, _ := deployed.VotingContract.GetPrivileged(nil)
 
 	if p11r != deployed.ParameterizerAddress {
 		t.Fatalf("Expected p11r address of %v but got %v", deployed.ParameterizerAddress, p11r)
+	}
+
+	if data != context.DatatrustAddress {
+		t.Fatalf("Expected datatrust address of %v but got %v", context.DatatrustAddress, data)
 	}
 
 	if list != context.ListingAddress {
@@ -110,7 +114,7 @@ func TestMain(m *testing.M) {
 		Signer:   context.AuthFactory.Signer,
 		GasPrice: big.NewInt(ONE_GWEI * 2),
 		GasLimit: 1000000,
-	}, deployed.ParameterizerAddress, context.ListingAddress, deployed.InvestingAddress)
+	}, deployed.ParameterizerAddress, context.DatatrustAddress, context.ListingAddress, deployed.InvestingAddress)
 
 	if votingErr != nil {
 		// no T pointer here...
