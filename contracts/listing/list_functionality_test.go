@@ -60,10 +60,23 @@ func TestGetListing(t *testing.T) {
 }
 
 func TestResolveApplication(t *testing.T) {
-	// check the market's balance as the mint operation should increment it after successful listing
-	marketBal, _ := deployed.MarketTokenContract.BalanceOf(nil, deployed.ListingAddress)
 	// our listing
 	listingHash, _ := deployed.ListingContract.GetHash(nil, "FooMarket, AZ.")
+	// the datatrust must have a data_hash for this listing before it will pass
+	dataHash, _ := deployed.DatatrustContract.GetHash(nil, "thisissomedata")
+	_, dataErr := deployed.DatatrustContract.SetDataHash(&bind.TransactOpts{
+		From:     context.AuthBackend.From,
+		Signer:   context.AuthBackend.Signer,
+		GasPrice: big.NewInt(ONE_GWEI * 2),
+		GasLimit: 100000,
+	}, listingHash, dataHash)
+
+	if dataErr != nil {
+		t.Fatal("Error setting data hash for listing")
+	}
+
+	// check the market's balance as the mint operation should increment it after successful listing
+	marketBal, _ := deployed.MarketTokenContract.BalanceOf(nil, deployed.ListingAddress)
 
 	// make member2 a council member (if not one). the owner (factory) can do this...
 	isMember, _ := deployed.VotingContract.InCouncil(nil, context.AuthMember2.From)
@@ -380,6 +393,20 @@ func TestConvertListing(t *testing.T) {
 	context.Blockchain.Commit()
 
 	listingHash, _ := deployed.ListingContract.GetHash(nil, "SpamMarket, AZ.")
+
+	// data_trust must have the data_hash or the listing will fail
+	dataHash, _ := deployed.DatatrustContract.GetHash(nil, "all-the-data!")
+	_, dataErr := deployed.DatatrustContract.SetDataHash(&bind.TransactOpts{
+		From:     context.AuthBackend.From,
+		Signer:   context.AuthBackend.Signer,
+		GasPrice: big.NewInt(ONE_GWEI * 2),
+		GasLimit: 100000,
+	}, listingHash, dataHash)
+
+	if dataErr != nil {
+		t.Fatal("Error setting data hash for listing")
+	}
+
 	// cast a vote for (we know member2 is a council member at this point)
 	_, voteErr := deployed.VotingContract.Vote(&bind.TransactOpts{
 		From:     context.AuthMember2.From,

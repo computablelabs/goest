@@ -23,8 +23,20 @@ func TestChallenge(t *testing.T) {
 
 	context.Blockchain.Commit()
 
-	// vote for it
 	listingHash, _ := deployed.ListingContract.GetHash(nil, "BarMarket12345")
+
+	// data_hash needs to be set first
+	dataHash, _ := deployed.DatatrustContract.GetHash(nil, "thisissomemoardata")
+	_, dataErr := deployed.DatatrustContract.SetDataHash(&bind.TransactOpts{
+		From:     context.AuthBackend.From,
+		Signer:   context.AuthBackend.Signer,
+		GasPrice: big.NewInt(ONE_GWEI * 2),
+		GasLimit: 100000,
+	}, listingHash, dataHash)
+
+	if dataErr != nil {
+		t.Fatal("Error setting data hash for listing")
+	}
 	// must be a council member
 	isMember, _ := deployed.VotingContract.InCouncil(nil, context.AuthMember2.From)
 	if isMember != true {

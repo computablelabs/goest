@@ -36,6 +36,9 @@ contract Parameterizer:
   def getQuorum() -> uint256: constant
   def getVoteBy() -> uint256(sec): constant
 
+contract Datatrust:
+  def getDataHash(hash: bytes32) -> bytes32: constant
+
 # events
 ApplicationFailed: event({hash: indexed(bytes32), applicant: indexed(address)})
 Applied: event({hash: indexed(bytes32), applicant: indexed(address)})
@@ -55,13 +58,15 @@ factory_address: address
 market_token: MarketToken
 voting: Voting
 parameterizer: Parameterizer
+datatrust: Datatrust
 
 @public
-def __init__(market_token_addr: address, voting_addr: address, p11r_addr: address):
+def __init__(market_token_addr: address, voting_addr: address, p11r_addr: address, data_addr: address):
     self.factory_address = msg.sender
     self.market_token = MarketToken(market_token_addr)
     self.voting = Voting(voting_addr)
     self.parameterizer = Parameterizer(p11r_addr)
+    self.datatrust = Datatrust(data_addr)
 
 
 @public
@@ -189,15 +194,16 @@ def removeListing(hash: bytes32):
 def resolveApplication(hash: bytes32):
   """
   @notice Decide if an application becomes a listing.
-  @dev Added as a listing if passing vote. Candidate is cleared regardless
+  @dev Added as a listing if passing vote. Candidate is cleared regardless. Datatrust data_hash for this listing must be set.
   @param hash The identifier for said applicant
   """
   assert self.voting.inCouncil(msg.sender)
   assert self.voting.candidateIs(hash, APPLICATION)
   assert self.voting.pollClosed(hash)
+  data_hash: bytes32 = self.datatrust.getDataHash(hash)
   owner: address = self.voting.getCandidateOwner(hash)
   # case: listing accepted
-  if self.voting.didPass(hash, self.parameterizer.getQuorum()):
+  if data_hash != EMPTY_BYTES32 and self.voting.didPass(hash, self.parameterizer.getQuorum()):
     self.listings[hash].owner = owner # is now 'listed'
     amount: wei_value = self.parameterizer.getListReward()
     self.market_token.mint(amount)
