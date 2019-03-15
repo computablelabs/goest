@@ -36,10 +36,11 @@ func TestParameterize(t *testing.T) {
 	context.Blockchain.Commit()
 
 	// we should see a candidate now
-	count, _ := deployed.VotingContract.GetCandidateCount(nil)
+	paramHash, _ := deployed.ParameterizerContract.GetHash(nil, big.NewInt(7), big.NewInt(25))
+	isCan, _ := deployed.VotingContract.IsCandidate(nil, paramHash)
 
-	if count.Cmp(big.NewInt(0)) != 1 {
-		t.Fatalf("Expected number of candidates to be >= 1, got: %v", count)
+	if !isCan {
+		t.Fatalf("Expected isCandidate to be true, got: %v", isCan)
 	}
 }
 
@@ -114,10 +115,10 @@ func TestResolveReparam(t *testing.T) {
 	}
 
 	// should have cleaned up the voting candidate
-	newCount, _ := deployed.VotingContract.GetCandidateCount(nil)
+	isCanNow, _ := deployed.VotingContract.IsCandidate(nil, paramHash)
 
-	if newCount.Cmp(big.NewInt(0)) != 0 {
-		t.Fatalf("Expected no candidates, got: %v", newCount)
+	if isCanNow {
+		t.Fatalf("Expected isCandidate to be false, got: %v", isCanNow)
 	}
 
 	// should have cleaned up the proposal

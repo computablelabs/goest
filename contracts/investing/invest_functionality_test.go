@@ -86,10 +86,10 @@ func TestInvest(t *testing.T) {
 	}
 
 	// member 3 also not an investor yet
-	isInvestor, _ := deployed.InvestingContract.IsInvestor(nil, context.AuthMember3.From)
+	investment, _ := deployed.InvestingContract.GetInvestment(nil, context.AuthMember3.From)
 
-	if isInvestor != false {
-		t.Fatalf("Expected isInvestor to be false, got: %v", isInvestor)
+	if investment.Cmp(big.NewInt(0)) != 0 {
+		t.Fatalf("Expected no investment yet, got: %v", investment)
 	}
 
 	// snapshot this user's market token bal as investing will increase by what was minted
@@ -113,10 +113,10 @@ func TestInvest(t *testing.T) {
 	context.Blockchain.Commit()
 
 	// should be an investor now
-	isInvestorNow, _ := deployed.InvestingContract.IsInvestor(nil, context.AuthMember3.From)
+	investmentNow, _ := deployed.InvestingContract.GetInvestment(nil, context.AuthMember3.From)
 
-	if isInvestorNow != true {
-		t.Fatalf("Expected isInvestor to be true, got: %v", isInvestorNow)
+	if investmentNow.Cmp(investment) != 1 {
+		t.Fatalf("Expected investment to be > 0, got: %v", investmentNow)
 	}
 
 	// should be a council member now
