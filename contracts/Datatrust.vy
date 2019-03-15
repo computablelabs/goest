@@ -9,12 +9,12 @@ REGISTRATION: constant(uint256) = 4 # candidate.kind
 contract Voting:
   def inCouncil(member: address) -> bool: constant
   def candidateIs(hash: bytes32, kind: uint256) -> bool: constant
+  def isCandidate(hash: bytes32) -> bool: constant
   def addCandidate(hash: bytes32, kind: uint256, owner: address, vote_by: uint256(sec)): modifying
   def getCandidateOwner(hash: bytes32) -> address: constant
   def removeCandidate(hash: bytes32): modifying
   def didPass(hash: bytes32, quorum: uint256) -> bool: constant
   def pollClosed(hash: bytes32) -> bool: constant
-  def willAddCandidate(hash: bytes32) -> bool: constant
 
 contract Parameterizer:
   def getQuorum() -> uint256: constant
@@ -105,7 +105,7 @@ def register(url: string[128]):
   assert msg.sender != self.backend_address # don't register 2x
   self.backend_url = url # we'll clear this if the registration fails
   hash: bytes32 = keccak256(url)
-  assert self.voting.willAddCandidate(hash)
+  assert not self.voting.isCandidate(hash)
   self.voting.addCandidate(hash, REGISTRATION, msg.sender, self.parameterizer.getVoteBy())
   log.Registered(hash, msg.sender)
 

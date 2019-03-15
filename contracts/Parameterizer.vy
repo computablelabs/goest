@@ -27,7 +27,6 @@ contract Voting:
   def removeCandidate(hash: bytes32): modifying
   def didPass(hash: bytes32, quorum: uint256) -> bool: constant
   def pollClosed(hash: bytes32) -> bool: constant
-  def willAddCandidate(hash: bytes32) -> bool: constant
 
 ReparamProposed: event({owner: indexed(address), hash: indexed(bytes32), param: indexed(uint256), value: uint256})
 ReparamFailed: event({hash: indexed(bytes32), param: indexed(uint256), value: uint256})
@@ -153,7 +152,7 @@ def reparameterize(param: uint256, value: uint256):
   assert self.voting.inCouncil(msg.sender)
   # hashed identifier made up of the prop and its proposed value
   hash: bytes32 = keccak256(convert((param + value), bytes32)) # TODO may not need to SHA this
-  assert self.voting.willAddCandidate(hash)
+  assert not self.voting.isCandidate(hash)
   self.reparams[hash] = Reparam({param: param, value:value})
   self.voting.addCandidate(hash, REPARAM, msg.sender, self.vote_by)
   log.ReparamProposed(msg.sender, hash, param, value)
