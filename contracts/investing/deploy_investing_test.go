@@ -57,7 +57,7 @@ func TestDeployInvesting(t *testing.T) {
 }
 
 func TestMarketTokenSetPrivilegedContracts(t *testing.T) {
-	_, list, invest, _ := deployed.MarketTokenContract.GetPrivileged(nil)
+	list, invest, _ := deployed.MarketTokenContract.GetPrivileged(nil)
 
 	if list != context.ListingAddress {
 		t.Fatalf("Expected listing address of %v but got %v", context.ListingAddress, list)
@@ -69,7 +69,7 @@ func TestMarketTokenSetPrivilegedContracts(t *testing.T) {
 }
 
 func TestVotingSetPrivilegedContracts(t *testing.T) {
-	_, p11r, data, list, invest, _ := deployed.VotingContract.GetPrivileged(nil)
+	p11r, data, list, invest, _ := deployed.VotingContract.GetPrivileged(nil)
 
 	if p11r != deployed.ParameterizerAddress {
 		t.Fatalf("Expected p11r address of %v but got %v", deployed.ParameterizerAddress, p11r)

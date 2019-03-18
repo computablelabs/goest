@@ -36,6 +36,10 @@ contract Parameterizer:
   def getQuorum() -> uint256: constant
   def getVoteBy() -> uint256(sec): constant
 
+contract Datatrust:
+  def getDataHash(hash: bytes32) -> bytes32: constant
+  def removeDataHash(hash: bytes32): modifying
+
 # events
 ApplicationFailed: event({hash: indexed(bytes32), applicant: indexed(address)})
 Applied: event({hash: indexed(bytes32), applicant: indexed(address)})
@@ -51,17 +55,17 @@ ListingWithdraw: event({hash: indexed(bytes32), owner: indexed(address), withdra
 # state vars
 listings: map(bytes32, Listing)
 listing_owners: map(address, uint256) # maps makers to number of listings owned. NOTE this goes away with correct council membership rules
-factory_address: address
 market_token: MarketToken
 voting: Voting
 parameterizer: Parameterizer
+datatrust: Datatrust
 
 @public
-def __init__(market_token_addr: address, voting_addr: address, p11r_addr: address):
-    self.factory_address = msg.sender
+def __init__(market_token_addr: address, voting_addr: address, p11r_addr: address, data_addr: address):
     self.market_token = MarketToken(market_token_addr)
     self.voting = Voting(voting_addr)
     self.parameterizer = Parameterizer(p11r_addr)
+    self.datatrust = Datatrust(data_addr)
 
 
 @public
@@ -163,7 +167,7 @@ def convertListing(hash:bytes32):
 @private
 def removeListing(hash: bytes32):
   """
-  @notice Used internally to remove both listings and failed applications
+  @notice Used internally to remove listings
   @dev We clear the members of a struct pointed to by the listing hash (enabling re-use)
   @param hash The listing to remove
   """
@@ -182,6 +186,8 @@ def removeListing(hash: bytes32):
     self.voting.removeFromCouncil(self.listings[hash].owner)
   # finally clear the removed listing...
   clear(self.listings[hash]) # TODO assure we don't need to do this by hand
+  # datatrust now needs to clear the data hash
+  self.datatrust.removeDataHash(hash)
   log.ListingRemoved(hash)
 
 
@@ -189,25 +195,30 @@ def removeListing(hash: bytes32):
 def resolveApplication(hash: bytes32):
   """
   @notice Decide if an application becomes a listing.
-  @dev Added as a listing if passing vote. Candidate is cleared regardless
+  @dev Added as a listing if passing vote. Candidate is cleared regardless. Datatrust data_hash for this listing must be set.
   @param hash The identifier for said applicant
   """
   assert self.voting.inCouncil(msg.sender)
   assert self.voting.candidateIs(hash, APPLICATION)
   assert self.voting.pollClosed(hash)
+  data_hash: bytes32 = self.datatrust.getDataHash(hash)
   owner: address = self.voting.getCandidateOwner(hash)
   # case: listing accepted
-  if self.voting.didPass(hash, self.parameterizer.getQuorum()):
-    self.listings[hash].owner = owner # is now 'listed'
-    amount: wei_value = self.parameterizer.getListReward()
-    self.market_token.mint(amount)
-    self.listings[hash].rewards = amount
-    # currently any new listing owner becomes a council member TODO revisit when we change threshold rules
-    if not self.voting.inCouncil(owner):
-      self.voting.addToCouncil(owner)
-    log.Listed(hash, owner, amount)
-    # add to the owner hash now that this is listed
-    self.listing_owners[owner] += 1
+  if data_hash != EMPTY_BYTES32:
+    if self.voting.didPass(hash, self.parameterizer.getQuorum()):
+      self.listings[hash].owner = owner # is now 'listed'
+      amount: wei_value = self.parameterizer.getListReward()
+      self.market_token.mint(amount)
+      self.listings[hash].rewards = amount
+      # currently any new listing owner becomes a council member TODO revisit when we change threshold rules
+      if not self.voting.inCouncil(owner):
+        self.voting.addToCouncil(owner)
+      log.Listed(hash, owner, amount)
+      # add to the owner hash now that this is listed
+      self.listing_owners[owner] += 1
+    else: # we have a data_hash but vote didn't pass - remove it
+      self.datatrust.removeDataHash(hash)
+      log.ApplicationFailed(hash, owner)
   else: # application did not pass vote. there is no listing to remove
     log.ApplicationFailed(hash, owner)
   # regardless, the candidate is pruned

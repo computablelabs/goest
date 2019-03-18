@@ -26,12 +26,13 @@ const (
 )
 
 type ctx struct {
-	InvestingAddress common.Address
-	AuthFactory      *bind.TransactOpts
-	AuthMember1      *bind.TransactOpts
-	AuthMember2      *bind.TransactOpts
-	AuthMember3      *bind.TransactOpts
-	Blockchain       *backends.SimulatedBackend
+	AuthBackend *bind.TransactOpts
+	AuthFactory *bind.TransactOpts
+	AuthInvest  *bind.TransactOpts
+	AuthMember1 *bind.TransactOpts
+	AuthMember2 *bind.TransactOpts
+	AuthMember3 *bind.TransactOpts
+	Blockchain  *backends.SimulatedBackend
 }
 
 type dep struct {
@@ -118,6 +119,7 @@ func Deploy(initialBalance *big.Int, c *ctx) (*dep, error) {
 		marketTokenAddr,
 		votingAddr,
 		paramAddr,
+		dataAddr,
 	)
 
 	if listingErr != nil {
@@ -147,12 +149,16 @@ func Deploy(initialBalance *big.Int, c *ctx) (*dep, error) {
 
 func SetupBlockchain(accountBalance *big.Int) *ctx {
 	// generate a new key, toss the error for now as it shouldnt happen
+	keyBac, _ := crypto.GenerateKey()
 	keyFac, _ := crypto.GenerateKey()
+	keyInv, _ := crypto.GenerateKey()
 	keyMem1, _ := crypto.GenerateKey()
 	keyMem2, _ := crypto.GenerateKey()
 	keyMem3, _ := crypto.GenerateKey()
 
+	authBac := bind.NewKeyedTransactor(keyBac)
 	authFac := bind.NewKeyedTransactor(keyFac)
+	authInv := bind.NewKeyedTransactor(keyInv)
 	authFac.GasPrice = big.NewInt(ONE_GWEI * 2)
 	// authFac.GasLimit = 4000000             // setting a gas limit here causes the "silent simulated backed fail"... TODO PR
 
@@ -162,7 +168,9 @@ func SetupBlockchain(accountBalance *big.Int) *ctx {
 	authMem3 := bind.NewKeyedTransactor(keyMem3)
 
 	alloc := make(core.GenesisAlloc)
+	alloc[authBac.From] = core.GenesisAccount{Balance: accountBalance}
 	alloc[authFac.From] = core.GenesisAccount{Balance: accountBalance}
+	alloc[authInv.From] = core.GenesisAccount{Balance: accountBalance}
 	alloc[authMem1.From] = core.GenesisAccount{Balance: accountBalance}
 	alloc[authMem2.From] = core.GenesisAccount{Balance: accountBalance}
 	alloc[authMem3.From] = core.GenesisAccount{Balance: accountBalance}
@@ -170,11 +178,12 @@ func SetupBlockchain(accountBalance *big.Int) *ctx {
 	bc := backends.NewSimulatedBackend(alloc, 4700000)
 
 	return &ctx{
-		InvestingAddress: common.HexToAddress("0xaoeu"),
-		AuthFactory:      authFac,
-		AuthMember1:      authMem1,
-		AuthMember2:      authMem2,
-		AuthMember3:      authMem3,
-		Blockchain:       bc,
+		AuthBackend: authBac,
+		AuthFactory: authFac,
+		AuthInvest:  authInv,
+		AuthMember1: authMem1,
+		AuthMember2: authMem2,
+		AuthMember3: authMem3,
+		Blockchain:  bc,
 	}
 }

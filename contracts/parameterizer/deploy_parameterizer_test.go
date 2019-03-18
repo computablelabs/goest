@@ -29,11 +29,7 @@ func TestDeployParameterizer(t *testing.T) {
 }
 
 func TestVotingSetPrivilegedContracts(t *testing.T) {
-	factory, p11r, data, list, invest, _ := deployed.VotingContract.GetPrivileged(nil)
-
-	if factory != context.AuthFactory.From {
-		t.Fatalf("Expected factory address of %v but got %v", context.AuthFactory.From, factory)
-	}
+	p11r, data, list, invest, _ := deployed.VotingContract.GetPrivileged(nil)
 
 	if p11r != deployed.ParameterizerAddress {
 		t.Fatalf("Expected p11r address of %v but got %v", deployed.ParameterizerAddress, p11r)

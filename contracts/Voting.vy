@@ -34,12 +34,13 @@ def __init__():
 
 @public
 @constant
-def getPrivileged() -> (address, address, address, address, address):
+def getPrivileged() -> (address, address, address, address):
   """
   @notice Fetch a list of each privileged address recognized by this contract
   @return factory, market, and parameterizer addresses
   """
-  return (self.factory_address, self.parameterizer_address, self.datatrust_address, self.listing_address, self.investing_address)
+  return (self.parameterizer_address, self.datatrust_address,
+    self.listing_address, self.investing_address)
 
 
 @public
@@ -54,14 +55,15 @@ def setPrivileged(parameterizer: address, datatrust: address, listing: address, 
   self.investing_address = investing
 
 
-@private
+@public
 @constant
 def has_privilege(sender: address) -> bool:
   """
   @notice Return a bool indicating whether the given address is a member of this contracts privileged group
   @return bool
   """
-  return (sender == self.factory_address or sender == self.parameterizer_address or sender == self.datatrust_address or sender == self.listing_address or sender == self.investing_address)
+  return (sender == self.parameterizer_address or sender == self.datatrust_address
+    or sender == self.listing_address or sender == self.investing_address)
 
 
 @public

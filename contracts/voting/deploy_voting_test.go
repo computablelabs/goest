@@ -25,11 +25,7 @@ func TestDeployVoting(t *testing.T) {
 
 // NOTE: actual setting done in Main, as it must be, but tested here similar to deploy
 func TestSetPrivileged(t *testing.T) {
-	factory, p11r, data, list, invest, _ := deployed.VotingContract.GetPrivileged(nil)
-
-	if factory != context.AuthFactory.From {
-		t.Fatalf("Expected factory address of %v but got %v", context.AuthFactory.From, factory)
-	}
+	p11r, data, list, invest, _ := deployed.VotingContract.GetPrivileged(nil)
 
 	if list != context.AuthListing.From {
 		t.Fatalf("Expected Listing address of %v but got %v", context.AuthListing.From, list)

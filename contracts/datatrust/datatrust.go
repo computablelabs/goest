@@ -15,10 +15,10 @@ import (
 )
 
 // DatatrustABI is the input ABI used to generate the binding from.
-const DatatrustABI = "[{\"name\":\"Registered\",\"inputs\":[{\"type\":\"bytes32\",\"name\":\"hash\",\"indexed\":true},{\"type\":\"address\",\"name\":\"registrant\",\"indexed\":true}],\"anonymous\":false,\"type\":\"event\"},{\"name\":\"RegistrationSucceeded\",\"inputs\":[{\"type\":\"bytes32\",\"name\":\"hash\",\"indexed\":true},{\"type\":\"address\",\"name\":\"registrant\",\"indexed\":true}],\"anonymous\":false,\"type\":\"event\"},{\"name\":\"RegistrationFailed\",\"inputs\":[{\"type\":\"bytes32\",\"name\":\"hash\",\"indexed\":true},{\"type\":\"address\",\"name\":\"registrant\",\"indexed\":true}],\"anonymous\":false,\"type\":\"event\"},{\"outputs\":[],\"inputs\":[{\"type\":\"address\",\"name\":\"voting_addr\"},{\"type\":\"address\",\"name\":\"p11r_addr\"}],\"constant\":false,\"payable\":false,\"type\":\"constructor\"},{\"name\":\"getHash\",\"outputs\":[{\"type\":\"bytes32\",\"name\":\"out\"}],\"inputs\":[{\"type\":\"string\",\"name\":\"url\"}],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":525},{\"name\":\"getBackendAddress\",\"outputs\":[{\"type\":\"address\",\"name\":\"out\"}],\"inputs\":[],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":513},{\"name\":\"getBackendUrl\",\"outputs\":[{\"type\":\"string\",\"name\":\"out\"}],\"inputs\":[],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":21777},{\"name\":\"setBackendUrl\",\"outputs\":[],\"inputs\":[{\"type\":\"string\",\"name\":\"url\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":176877},{\"name\":\"getDataHash\",\"outputs\":[{\"type\":\"bytes32\",\"name\":\"out\"}],\"inputs\":[{\"type\":\"bytes32\",\"name\":\"hash\"}],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":736},{\"name\":\"setDataHash\",\"outputs\":[],\"inputs\":[{\"type\":\"bytes32\",\"name\":\"listing\"},{\"type\":\"bytes32\",\"name\":\"data\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":35859},{\"name\":\"register\",\"outputs\":[],\"inputs\":[{\"type\":\"string\",\"name\":\"url\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":184481},{\"name\":\"resolveRegistration\",\"outputs\":[],\"inputs\":[{\"type\":\"bytes32\",\"name\":\"hash\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":50081}]"
+const DatatrustABI = "[{\"name\":\"Registered\",\"inputs\":[{\"type\":\"bytes32\",\"name\":\"hash\",\"indexed\":true},{\"type\":\"address\",\"name\":\"registrant\",\"indexed\":true}],\"anonymous\":false,\"type\":\"event\"},{\"name\":\"RegistrationSucceeded\",\"inputs\":[{\"type\":\"bytes32\",\"name\":\"hash\",\"indexed\":true},{\"type\":\"address\",\"name\":\"registrant\",\"indexed\":true}],\"anonymous\":false,\"type\":\"event\"},{\"name\":\"RegistrationFailed\",\"inputs\":[{\"type\":\"bytes32\",\"name\":\"hash\",\"indexed\":true},{\"type\":\"address\",\"name\":\"registrant\",\"indexed\":true}],\"anonymous\":false,\"type\":\"event\"},{\"outputs\":[],\"inputs\":[{\"type\":\"address\",\"name\":\"voting_addr\"},{\"type\":\"address\",\"name\":\"p11r_addr\"}],\"constant\":false,\"payable\":false,\"type\":\"constructor\"},{\"name\":\"getPrivileged\",\"outputs\":[{\"type\":\"address\",\"name\":\"out\"}],\"inputs\":[],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":483},{\"name\":\"setPrivileged\",\"outputs\":[],\"inputs\":[{\"type\":\"address\",\"name\":\"listing\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":35657},{\"name\":\"getHash\",\"outputs\":[{\"type\":\"bytes32\",\"name\":\"out\"}],\"inputs\":[{\"type\":\"string\",\"name\":\"url\"}],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":585},{\"name\":\"getBackendAddress\",\"outputs\":[{\"type\":\"address\",\"name\":\"out\"}],\"inputs\":[],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":573},{\"name\":\"getBackendUrl\",\"outputs\":[{\"type\":\"string\",\"name\":\"out\"}],\"inputs\":[],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":21837},{\"name\":\"setBackendUrl\",\"outputs\":[],\"inputs\":[{\"type\":\"string\",\"name\":\"url\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":176937},{\"name\":\"getDataHash\",\"outputs\":[{\"type\":\"bytes32\",\"name\":\"out\"}],\"inputs\":[{\"type\":\"bytes32\",\"name\":\"hash\"}],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":796},{\"name\":\"setDataHash\",\"outputs\":[],\"inputs\":[{\"type\":\"bytes32\",\"name\":\"listing\"},{\"type\":\"bytes32\",\"name\":\"data\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":35919},{\"name\":\"removeDataHash\",\"outputs\":[],\"inputs\":[{\"type\":\"bytes32\",\"name\":\"hash\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":20940},{\"name\":\"register\",\"outputs\":[],\"inputs\":[{\"type\":\"string\",\"name\":\"url\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":184571},{\"name\":\"resolveRegistration\",\"outputs\":[],\"inputs\":[{\"type\":\"bytes32\",\"name\":\"hash\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":50171}]"
 
 // DatatrustBin is the compiled bytecode used for deploying new contracts.
-const DatatrustBin = `0x600035601c52740100000000000000000000000000000000000000006020526f7fffffffffffffffffffffffffffffff6040527fffffffffffffffffffffffffffffffff8000000000000000000000000000000060605274012a05f1fffffffffffffffffffffffffdabf41c006080527ffffffffffffffffffffffffed5fa0e000000000000000000000000000000000060a05260406109126101403934156100a757600080fd5b602061091260c03960c05160205181106100c057600080fd5b50602060206109120160c03960c05160205181106100dd57600080fd5b5061014051600355610160516004556108fa56600035601c52740100000000000000000000000000000000000000006020526f7fffffffffffffffffffffffffffffff6040527fffffffffffffffffffffffffffffffff8000000000000000000000000000000060605274012a05f1fffffffffffffffffffffffffdabf41c006080527ffffffffffffffffffffffffed5fa0e000000000000000000000000000000000060a052635b6beeb960005114156100ea57602060046101403734156100b457600080fd5b60a06004356004016101603760806004356004013511156100d457600080fd5b61016080516020820120905060005260206000f3005b63edb39a40600051141561011057341561010357600080fd5b60025460005260206000f3005b6376e1263560005114156101f357341561012957600080fd5b60018060c052602060c020610180602082540161012060006005818352015b8261012051602002111561015b5761017d565b61012051850154610120516020028501525b8151600101808352811415610148575b5050505050506101805160206001820306601f8201039050610240610180516080818352015b826102405111156101b3576101cf565b6000610240516101a001535b81516001018083528114156101a3575b5050506020610160526040610180510160206001820306601f8201039050610160f3005b6341d28f90600051141561029e576020600461014037341561021457600080fd5b60a060043560040161016037608060043560040135111561023457600080fd5b600254331461024257600080fd5b61016080600160c052602060c020602082510161012060006005818352015b8261012051602002111561027457610296565b61012051602002850151610120518501555b8151600101808352811415610261575b505050505050005b637a639f6e60005114156102db57602060046101403734156102bf57600080fd5b60006101405160e05260c052604060c0205460005260206000f3005b63b818bf02600051141561032257604060046101403734156102fc57600080fd5b600254331461030a57600080fd5b6101605160006101405160e05260c052604060c02055005b63f2c298be60005114156104f8576020600461014037341561034357600080fd5b60a060043560040161016037608060043560040135111561036357600080fd5b60025433141561037257600080fd5b61016080600160c052602060c020602082510161012060006005818352015b826101205160200211156103a4576103c6565b61012051602002850151610120518501555b8151600101808352811415610391575b505050505050610160805160208201209050610220526003543b6103e957600080fd5b6003543014156103f857600080fd5b60206102c0602463b89694c661024052610220516102605261025c6003545afa61042157600080fd5b6000506102c0511561043257600080fd5b6003543b61043f57600080fd5b60035430141561044e57600080fd5b60006000608463e8b969a461036052610220516103805260046103a052336103c0526004543b61047d57600080fd5b60045430141561048c57600080fd5b60206103406004632d0d2bc66102e0526102fc6004545afa6104ad57600080fd5b600050610340516103e05261037c60006003545af16104cb57600080fd5b33610220517f7d917fcbc9a29a9705ff9936ffa599500e4fd902e4486bae317414fe967b307c60006000a3005b6384e1fe156000511415610803576020600461014037341561051957600080fd5b6003543b61052657600080fd5b60035430141561053557600080fd5b60206101e060246362f9a55d61016052336101805261017c6003545afa61055b57600080fd5b6000506101e05161056b57600080fd5b6003543b61057857600080fd5b60035430141561058757600080fd5b60206102a0604463af61f76061020052610140516102205260046102405261021c6003545afa6105b657600080fd5b6000506102a0516105c657600080fd5b6003543b6105d357600080fd5b6003543014156105e257600080fd5b6020610340602463327322c86102c052610140516102e0526102dc6003545afa61060b57600080fd5b6000506103405161061b57600080fd5b6003543b61062857600080fd5b60035430141561063757600080fd5b6020610400602463eb3014fd61038052610140516103a05261039c6003545afa61066057600080fd5b60005061040051610360526003543b61067857600080fd5b60035430141561068757600080fd5b60206105406044638f354b796104a052610140516104c0526004543b6106ac57600080fd5b6004543014156106bb57600080fd5b6020610480600463c26c12eb6104205261043c6004545afa6106dc57600080fd5b600050610480516104e0526104bc6003545afa6106f857600080fd5b600050610540511561073e576103605160025561036051610140517ff9749f013eb1a881b147fd6da901e63089fadfb6fb375d6e56babcbcb5e0be4e60006000a36107bb565b61036051610140517ff83db24154eb020b1b0c94c9566e464732758c2c6bc070062458777d038baa3c60006000a3600080600160c052602060c020600161012060006001818352015b8261012051602002111561079a576107b4565b6000610120518501555b8151600101808352811415610787575b5050505050505b6003543b6107c857600080fd5b6003543014156107d757600080fd5b6000600060246389bb617c61056052610140516105805261057c60006003545af161080157600080fd5b005b60006000fd5b6100f16108fa036100f16000396100f16108fa036000f3`
+const DatatrustBin = `0x600035601c52740100000000000000000000000000000000000000006020526f7fffffffffffffffffffffffffffffff6040527fffffffffffffffffffffffffffffffff8000000000000000000000000000000060605274012a05f1fffffffffffffffffffffffffdabf41c006080527ffffffffffffffffffffffffed5fa0e000000000000000000000000000000000060a05260406109cb6101403934156100a757600080fd5b60206109cb60c03960c05160205181106100c057600080fd5b50602060206109cb0160c03960c05160205181106100dd57600080fd5b503360055561014051600355610160516004556109b356600035601c52740100000000000000000000000000000000000000006020526f7fffffffffffffffffffffffffffffff6040527fffffffffffffffffffffffffffffffff8000000000000000000000000000000060605274012a05f1fffffffffffffffffffffffffdabf41c006080527ffffffffffffffffffffffffed5fa0e000000000000000000000000000000000060a05263d4c1753960005114156100b95734156100ac57600080fd5b60065460005260206000f3005b632ecace9c600051141561010357602060046101403734156100da57600080fd5b60043560205181106100eb57600080fd5b5060055433146100fa57600080fd5b61014051600655005b635b6beeb9600051141561015a576020600461014037341561012457600080fd5b60a060043560040161016037608060043560040135111561014457600080fd5b61016080516020820120905060005260206000f3005b63edb39a40600051141561018057341561017357600080fd5b60025460005260206000f3005b6376e12635600051141561026357341561019957600080fd5b60018060c052602060c020610180602082540161012060006005818352015b826101205160200211156101cb576101ed565b61012051850154610120516020028501525b81516001018083528114156101b8575b5050505050506101805160206001820306601f8201039050610240610180516080818352015b826102405111156102235761023f565b6000610240516101a001535b8151600101808352811415610213575b5050506020610160526040610180510160206001820306601f8201039050610160f3005b6341d28f90600051141561030e576020600461014037341561028457600080fd5b60a06004356004016101603760806004356004013511156102a457600080fd5b60025433146102b257600080fd5b61016080600160c052602060c020602082510161012060006005818352015b826101205160200211156102e457610306565b61012051602002850151610120518501555b81516001018083528114156102d1575b505050505050005b637a639f6e600051141561034b576020600461014037341561032f57600080fd5b60006101405160e05260c052604060c0205460005260206000f3005b63b818bf026000511415610392576040600461014037341561036c57600080fd5b600254331461037a57600080fd5b6101605160006101405160e05260c052604060c02055005b63bd82badc60005114156103d757602060046101403734156103b357600080fd5b60065433146103c157600080fd5b600060006101405160e05260c052604060c02055005b63f2c298be60005114156105ad57602060046101403734156103f857600080fd5b60a060043560040161016037608060043560040135111561041857600080fd5b60025433141561042757600080fd5b61016080600160c052602060c020602082510161012060006005818352015b826101205160200211156104595761047b565b61012051602002850151610120518501555b8151600101808352811415610446575b505050505050610160805160208201209050610220526003543b61049e57600080fd5b6003543014156104ad57600080fd5b60206102c0602463b89694c661024052610220516102605261025c6003545afa6104d657600080fd5b6000506102c051156104e757600080fd5b6003543b6104f457600080fd5b60035430141561050357600080fd5b60006000608463e8b969a461036052610220516103805260046103a052336103c0526004543b61053257600080fd5b60045430141561054157600080fd5b60206103406004632d0d2bc66102e0526102fc6004545afa61056257600080fd5b600050610340516103e05261037c60006003545af161058057600080fd5b33610220517f7d917fcbc9a29a9705ff9936ffa599500e4fd902e4486bae317414fe967b307c60006000a3005b6384e1fe1560005114156108b857602060046101403734156105ce57600080fd5b6003543b6105db57600080fd5b6003543014156105ea57600080fd5b60206101e060246362f9a55d61016052336101805261017c6003545afa61061057600080fd5b6000506101e05161062057600080fd5b6003543b61062d57600080fd5b60035430141561063c57600080fd5b60206102a0604463af61f76061020052610140516102205260046102405261021c6003545afa61066b57600080fd5b6000506102a05161067b57600080fd5b6003543b61068857600080fd5b60035430141561069757600080fd5b6020610340602463327322c86102c052610140516102e0526102dc6003545afa6106c057600080fd5b600050610340516106d057600080fd5b6003543b6106dd57600080fd5b6003543014156106ec57600080fd5b6020610400602463eb3014fd61038052610140516103a05261039c6003545afa61071557600080fd5b60005061040051610360526003543b61072d57600080fd5b60035430141561073c57600080fd5b60206105406044638f354b796104a052610140516104c0526004543b61076157600080fd5b60045430141561077057600080fd5b6020610480600463c26c12eb6104205261043c6004545afa61079157600080fd5b600050610480516104e0526104bc6003545afa6107ad57600080fd5b60005061054051156107f3576103605160025561036051610140517ff9749f013eb1a881b147fd6da901e63089fadfb6fb375d6e56babcbcb5e0be4e60006000a3610870565b61036051610140517ff83db24154eb020b1b0c94c9566e464732758c2c6bc070062458777d038baa3c60006000a3600080600160c052602060c020600161012060006001818352015b8261012051602002111561084f57610869565b6000610120518501555b815160010180835281141561083c575b5050505050505b6003543b61087d57600080fd5b60035430141561088c57600080fd5b6000600060246389bb617c61056052610140516105805261057c60006003545af16108b657600080fd5b005b60006000fd5b6100f56109b3036100f56000396100f56109b3036000f3`
 
 // DeployDatatrust deploys a new Ethereum contract, binding an instance of Datatrust to it.
 func DeployDatatrust(auth *bind.TransactOpts, backend bind.ContractBackend, voting_addr common.Address, p11r_addr common.Address) (common.Address, *types.Transaction, *Datatrust, error) {
@@ -279,6 +279,32 @@ func (_Datatrust *DatatrustCallerSession) GetHash(url string) ([32]byte, error) 
 	return _Datatrust.Contract.GetHash(&_Datatrust.CallOpts, url)
 }
 
+// GetPrivileged is a free data retrieval call binding the contract method 0xd4c17539.
+//
+// Solidity: function getPrivileged() constant returns(out address)
+func (_Datatrust *DatatrustCaller) GetPrivileged(opts *bind.CallOpts) (common.Address, error) {
+	var (
+		ret0 = new(common.Address)
+	)
+	out := ret0
+	err := _Datatrust.contract.Call(opts, out, "getPrivileged")
+	return *ret0, err
+}
+
+// GetPrivileged is a free data retrieval call binding the contract method 0xd4c17539.
+//
+// Solidity: function getPrivileged() constant returns(out address)
+func (_Datatrust *DatatrustSession) GetPrivileged() (common.Address, error) {
+	return _Datatrust.Contract.GetPrivileged(&_Datatrust.CallOpts)
+}
+
+// GetPrivileged is a free data retrieval call binding the contract method 0xd4c17539.
+//
+// Solidity: function getPrivileged() constant returns(out address)
+func (_Datatrust *DatatrustCallerSession) GetPrivileged() (common.Address, error) {
+	return _Datatrust.Contract.GetPrivileged(&_Datatrust.CallOpts)
+}
+
 // Register is a paid mutator transaction binding the contract method 0xf2c298be.
 //
 // Solidity: function register(url string) returns()
@@ -298,6 +324,27 @@ func (_Datatrust *DatatrustSession) Register(url string) (*types.Transaction, er
 // Solidity: function register(url string) returns()
 func (_Datatrust *DatatrustTransactorSession) Register(url string) (*types.Transaction, error) {
 	return _Datatrust.Contract.Register(&_Datatrust.TransactOpts, url)
+}
+
+// RemoveDataHash is a paid mutator transaction binding the contract method 0xbd82badc.
+//
+// Solidity: function removeDataHash(hash bytes32) returns()
+func (_Datatrust *DatatrustTransactor) RemoveDataHash(opts *bind.TransactOpts, hash [32]byte) (*types.Transaction, error) {
+	return _Datatrust.contract.Transact(opts, "removeDataHash", hash)
+}
+
+// RemoveDataHash is a paid mutator transaction binding the contract method 0xbd82badc.
+//
+// Solidity: function removeDataHash(hash bytes32) returns()
+func (_Datatrust *DatatrustSession) RemoveDataHash(hash [32]byte) (*types.Transaction, error) {
+	return _Datatrust.Contract.RemoveDataHash(&_Datatrust.TransactOpts, hash)
+}
+
+// RemoveDataHash is a paid mutator transaction binding the contract method 0xbd82badc.
+//
+// Solidity: function removeDataHash(hash bytes32) returns()
+func (_Datatrust *DatatrustTransactorSession) RemoveDataHash(hash [32]byte) (*types.Transaction, error) {
+	return _Datatrust.Contract.RemoveDataHash(&_Datatrust.TransactOpts, hash)
 }
 
 // ResolveRegistration is a paid mutator transaction binding the contract method 0x84e1fe15.
@@ -361,6 +408,27 @@ func (_Datatrust *DatatrustSession) SetDataHash(listing [32]byte, data [32]byte)
 // Solidity: function setDataHash(listing bytes32, data bytes32) returns()
 func (_Datatrust *DatatrustTransactorSession) SetDataHash(listing [32]byte, data [32]byte) (*types.Transaction, error) {
 	return _Datatrust.Contract.SetDataHash(&_Datatrust.TransactOpts, listing, data)
+}
+
+// SetPrivileged is a paid mutator transaction binding the contract method 0x2ecace9c.
+//
+// Solidity: function setPrivileged(listing address) returns()
+func (_Datatrust *DatatrustTransactor) SetPrivileged(opts *bind.TransactOpts, listing common.Address) (*types.Transaction, error) {
+	return _Datatrust.contract.Transact(opts, "setPrivileged", listing)
+}
+
+// SetPrivileged is a paid mutator transaction binding the contract method 0x2ecace9c.
+//
+// Solidity: function setPrivileged(listing address) returns()
+func (_Datatrust *DatatrustSession) SetPrivileged(listing common.Address) (*types.Transaction, error) {
+	return _Datatrust.Contract.SetPrivileged(&_Datatrust.TransactOpts, listing)
+}
+
+// SetPrivileged is a paid mutator transaction binding the contract method 0x2ecace9c.
+//
+// Solidity: function setPrivileged(listing address) returns()
+func (_Datatrust *DatatrustTransactorSession) SetPrivileged(listing common.Address) (*types.Transaction, error) {
+	return _Datatrust.Contract.SetPrivileged(&_Datatrust.TransactOpts, listing)
 }
 
 // DatatrustRegisteredIterator is returned from FilterRegistered and is used to iterate over the raw logs and unpacked data for Registered events raised by the Datatrust contract.

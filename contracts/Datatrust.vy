@@ -31,11 +31,33 @@ backend_url: string[128]
 backend_address: address
 voting: Voting
 parameterizer: Parameterizer
+factory_address: address
+listing_address: address
 
 @public
 def __init__(voting_addr: address, p11r_addr: address):
+  self.factory_address = msg.sender
   self.voting = Voting(voting_addr)
   self.parameterizer = Parameterizer(p11r_addr)
+
+
+@public
+@constant
+def getPrivileged() -> address:
+  """
+  @notice Fetch a list of each privileged address recognized by this contract
+  @return Listing contract address
+  """
+  return self.listing_address
+
+
+@public
+def setPrivileged(listing: address):
+  """
+  @notice Allow the Market Factory to set privileged contract addresses
+  """
+  assert msg.sender == self.factory_address
+  self.listing_address = listing
 
 
 @public
@@ -94,6 +116,17 @@ def setDataHash(listing: bytes32, data: bytes32):
   """
   assert msg.sender == self.backend_address
   self.data_hashes[listing] = data
+
+@public
+def removeDataHash(hash: bytes32):
+  """
+  @notice Allow the listing contract to call for the removal of a data_hash
+  whose listing has been removed
+  @dev Restricted to the Listing contract
+  @param hash The Listing whose data_hash to clear
+  """
+  assert msg.sender == self.listing_address
+  clear(self.data_hashes[hash])
 
 
 @public
