@@ -82,8 +82,8 @@ func TestResolveApplication(t *testing.T) {
 	isMember, _ := deployed.VotingContract.InCouncil(nil, context.AuthMember2.From)
 	if isMember != true {
 		_, councilErr := deployed.VotingContract.AddToCouncil(&bind.TransactOpts{
-			From:     context.AuthFactory.From,
-			Signer:   context.AuthFactory.Signer,
+			From:     context.AuthInvest.From,
+			Signer:   context.AuthInvest.Signer,
 			GasPrice: big.NewInt(ONE_GWEI * 2),
 			GasLimit: 100000,
 		}, context.AuthMember2.From)
@@ -354,6 +354,9 @@ func TestExit(t *testing.T) {
 	// we know that the market's bank will decrease here by the listReward
 	marketBal, _ := deployed.MarketTokenContract.BalanceOf(nil, deployed.ListingAddress)
 
+	// there is a data_hash for this listing
+	dataHash, _ := deployed.DatatrustContract.GetDataHash(nil, listingHash)
+
 	_, exitErr := deployed.ListingContract.Exit(&bind.TransactOpts{
 		From:     context.AuthMember1.From,
 		Signer:   context.AuthMember1.Signer,
@@ -375,6 +378,12 @@ func TestExit(t *testing.T) {
 	updatedMarketBal, _ := deployed.MarketTokenContract.BalanceOf(nil, deployed.ListingAddress)
 	if updatedMarketBal.Cmp(marketBal) != -1 {
 		t.Fatalf("Expected %v to be > %v", marketBal, updatedMarketBal)
+	}
+
+	// data_hash should be cleared
+	dataHashNow, _ := deployed.DatatrustContract.GetDataHash(nil, listingHash)
+	if dataHashNow == dataHash {
+		t.Fatalf("Expected data hash to be empty, got: %v", dataHashNow)
 	}
 }
 
@@ -491,5 +500,11 @@ func TestConvertListing(t *testing.T) {
 
 	if newMarketBal.Cmp(expectedMarketBal) != 0 {
 		t.Fatalf("expected market token balance of %v, got: %v", expectedMarketBal, newMarketBal)
+	}
+
+	// data hash should still be intact
+	dataHashNow, _ := deployed.DatatrustContract.GetDataHash(nil, listingHash)
+	if dataHashNow != dataHash {
+		t.Fatalf("Expected data hash not to be empty, got: %v", dataHashNow)
 	}
 }

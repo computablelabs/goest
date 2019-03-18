@@ -41,8 +41,8 @@ func TestChallenge(t *testing.T) {
 	isMember, _ := deployed.VotingContract.InCouncil(nil, context.AuthMember2.From)
 	if isMember != true {
 		_, councilErr := deployed.VotingContract.AddToCouncil(&bind.TransactOpts{
-			From:     context.AuthFactory.From,
-			Signer:   context.AuthFactory.Signer,
+			From:     context.AuthInvest.From,
+			Signer:   context.AuthInvest.Signer,
 			GasPrice: big.NewInt(ONE_GWEI * 2),
 			GasLimit: 100000,
 		}, context.AuthMember2.From)

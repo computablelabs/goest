@@ -1,8 +1,9 @@
 
 # External Contracts
 contract Voting:
-    def getPrivileged() -> (address, address, address, address, address): constant
+    def getPrivileged() -> (address, address, address, address): constant
     def setPrivileged(parameterizer: address, datatrust: address, listing: address, investing: address): modifying
+    def has_privilege(sender: address) -> bool: constant
     def getCouncilCount() -> uint256: constant
     def inCouncil(member: address) -> bool: constant
     def addToCouncil(member: address): modifying

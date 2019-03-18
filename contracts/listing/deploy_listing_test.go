@@ -53,20 +53,20 @@ func TestDeployListing(t *testing.T) {
 	// t.Logf("Gas used to deploy Market %v", mr.GasUsed)
 }
 
-func TestMarketTokenSetPrivilegedContracts(t *testing.T) {
-	_, list, invest, _ := deployed.MarketTokenContract.GetPrivileged(nil)
+func TestMarketTokenSetPrivileged(t *testing.T) {
+	list, invest, _ := deployed.MarketTokenContract.GetPrivileged(nil)
 
 	if list != deployed.ListingAddress {
 		t.Fatalf("Expected listing address of %v but got %v", deployed.ListingAddress, list)
 	}
 
-	if invest != context.InvestingAddress {
-		t.Fatalf("Expected investing address of %v but got %v", context.InvestingAddress, invest)
+	if invest != context.AuthInvest.From {
+		t.Fatalf("Expected investing address of %v but got %v", context.AuthInvest.From, invest)
 	}
 }
 
-func TestVotingSetPrivilegedContracts(t *testing.T) {
-	_, p11r, data, list, invest, _ := deployed.VotingContract.GetPrivileged(nil)
+func TestVotingSetPrivileged(t *testing.T) {
+	p11r, data, list, invest, _ := deployed.VotingContract.GetPrivileged(nil)
 
 	if p11r != deployed.ParameterizerAddress {
 		t.Fatalf("Expected p11r address of %v but got %v", deployed.ParameterizerAddress, p11r)
@@ -80,8 +80,16 @@ func TestVotingSetPrivilegedContracts(t *testing.T) {
 		t.Fatalf("Expected listing address of %v but got %v", deployed.ListingAddress, list)
 	}
 
-	if invest != context.InvestingAddress {
-		t.Fatalf("Expected investing address of %v but got %v", context.InvestingAddress, invest)
+	if invest != context.AuthInvest.From {
+		t.Fatalf("Expected investing address of %v but got %v", context.AuthInvest.From, invest)
+	}
+}
+
+func TestDatatrustSetPrivileged(t *testing.T) {
+	list, _ := deployed.DatatrustContract.GetPrivileged(nil)
+
+	if list != deployed.ListingAddress {
+		t.Fatalf("Expected listing address of %v but got %v", deployed.ListingAddress, list)
 	}
 }
 
@@ -100,7 +108,7 @@ func TestMain(m *testing.M) {
 		Signer:   context.AuthFactory.Signer,
 		GasPrice: big.NewInt(ONE_GWEI * 2),
 		GasLimit: 1000000,
-	}, deployed.ListingAddress, context.InvestingAddress)
+	}, deployed.ListingAddress, context.AuthInvest.From)
 
 	if marketErr != nil {
 		log.Fatalf("Error setting privileged contract address: %v", marketErr)
@@ -111,11 +119,23 @@ func TestMain(m *testing.M) {
 		Signer:   context.AuthFactory.Signer,
 		GasPrice: big.NewInt(ONE_GWEI * 2),
 		GasLimit: 1000000,
-	}, deployed.ParameterizerAddress, deployed.DatatrustAddress, deployed.ListingAddress, context.InvestingAddress)
+	}, deployed.ParameterizerAddress, deployed.DatatrustAddress, deployed.ListingAddress, context.AuthInvest.From)
 
 	if votingErr != nil {
 		// no T pointer here...
 		log.Fatalf("Error setting privileged contract addresses: %v", votingErr)
+	}
+
+	// set datatrust priv...
+	_, dataErr := deployed.DatatrustContract.SetPrivileged(&bind.TransactOpts{
+		From:     context.AuthFactory.From,
+		Signer:   context.AuthFactory.Signer,
+		GasPrice: big.NewInt(ONE_GWEI * 2),
+		GasLimit: 1000000,
+	}, deployed.ListingAddress)
+
+	if dataErr != nil {
+		log.Fatalf("Error setting privileged contract addresses: %v", dataErr)
 	}
 
 	// setup the datatrust with a backend
@@ -132,12 +152,12 @@ func TestMain(m *testing.M) {
 
 	context.Blockchain.Commit()
 
-	// make member2 a council member (if not one). the owner (factory) can do this...
+	// make member2 a council member (if not one). the invest contract can do this...
 	isMember, _ := deployed.VotingContract.InCouncil(nil, context.AuthMember2.From)
 	if isMember != true {
 		_, councilErr := deployed.VotingContract.AddToCouncil(&bind.TransactOpts{
-			From:     context.AuthFactory.From,
-			Signer:   context.AuthFactory.Signer,
+			From:     context.AuthInvest.From,
+			Signer:   context.AuthInvest.Signer,
 			GasPrice: big.NewInt(ONE_GWEI * 2),
 			GasLimit: 100000,
 		}, context.AuthMember2.From)

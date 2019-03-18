@@ -48,8 +48,8 @@ func TestDeployDatatrust(t *testing.T) {
 	// t.Logf("Gas used to deploy Market %v", mr.GasUsed)
 }
 
-func TestVotingSetPrivilegedContracts(t *testing.T) {
-	_, p11r, data, list, invest, _ := deployed.VotingContract.GetPrivileged(nil)
+func TestVotingSetPrivileged(t *testing.T) {
+	p11r, data, list, invest, _ := deployed.VotingContract.GetPrivileged(nil)
 
 	if p11r != deployed.ParameterizerAddress {
 		t.Fatalf("Expected p11r address of %v but got %v", deployed.ParameterizerAddress, p11r)
@@ -59,12 +59,20 @@ func TestVotingSetPrivilegedContracts(t *testing.T) {
 		t.Fatalf("Expected Datatrust address of %v but got %v", deployed.DatatrustAddress, data)
 	}
 
-	if list != context.ListingAddress {
-		t.Fatalf("Expected listing address of %v but got %v", context.ListingAddress, list)
+	if list != context.AuthListing.From {
+		t.Fatalf("Expected listing address of %v but got %v", context.AuthListing.From, list)
 	}
 
 	if invest != context.InvestingAddress {
 		t.Fatalf("Expected investing address of %v but got %v", context.InvestingAddress, invest)
+	}
+}
+
+func TestDatatrustSetPrivileged(t *testing.T) {
+	list, _ := deployed.DatatrustContract.GetPrivileged(nil)
+
+	if list != context.AuthListing.From {
+		t.Fatalf("Expected Listing address of %v but got %v", context.AuthListing.From, list)
 	}
 }
 
@@ -79,11 +87,22 @@ func TestMain(m *testing.M) {
 		Signer:   context.AuthFactory.Signer,
 		GasPrice: big.NewInt(ONE_GWEI * 2),
 		GasLimit: 1000000,
-	}, deployed.ParameterizerAddress, deployed.DatatrustAddress, context.ListingAddress, context.InvestingAddress)
+	}, deployed.ParameterizerAddress, deployed.DatatrustAddress, context.AuthListing.From, context.InvestingAddress)
 
 	if votingErr != nil {
 		// no T pointer here...
 		log.Fatalf("Error setting privileged contract addresses: %v", votingErr)
+	}
+
+	_, dataErr := deployed.DatatrustContract.SetPrivileged(&bind.TransactOpts{
+		From:     context.AuthFactory.From,
+		Signer:   context.AuthFactory.Signer,
+		GasPrice: big.NewInt(ONE_GWEI * 2),
+		GasLimit: 1000000,
+	}, context.AuthListing.From)
+
+	if dataErr != nil {
+		log.Fatalf("Error setting privileged contract addresses: %v", dataErr)
 	}
 
 	context.Blockchain.Commit()

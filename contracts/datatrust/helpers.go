@@ -21,9 +21,9 @@ const (
 )
 
 type ctx struct {
-	ListingAddress   common.Address
 	InvestingAddress common.Address
 	AuthFactory      *bind.TransactOpts
+	AuthListing      *bind.TransactOpts
 	AuthBackend      *bind.TransactOpts
 	AuthMember1      *bind.TransactOpts
 	AuthMember2      *bind.TransactOpts
@@ -105,12 +105,14 @@ func SetupBlockchain(accountBalance *big.Int) *ctx {
 	// generate a new key, toss the error for now as it shouldnt happen
 	keyFac, _ := crypto.GenerateKey()
 	keyBac, _ := crypto.GenerateKey()
+	keyLis, _ := crypto.GenerateKey()
 	keyMem1, _ := crypto.GenerateKey()
 	keyMem2, _ := crypto.GenerateKey()
 	keyMem3, _ := crypto.GenerateKey()
 
 	authFac := bind.NewKeyedTransactor(keyFac)
 	authBac := bind.NewKeyedTransactor(keyBac)
+	authLis := bind.NewKeyedTransactor(keyLis)
 	authFac.GasPrice = big.NewInt(ONE_GWEI * 2)
 	// authFac.GasLimit = 4000000             // setting a gas limit here causes the "silent simulated backed fail"... TODO PR
 
@@ -121,6 +123,7 @@ func SetupBlockchain(accountBalance *big.Int) *ctx {
 	alloc := make(core.GenesisAlloc)
 	alloc[authFac.From] = core.GenesisAccount{Balance: accountBalance}
 	alloc[authBac.From] = core.GenesisAccount{Balance: accountBalance}
+	alloc[authLis.From] = core.GenesisAccount{Balance: accountBalance}
 	alloc[authMem1.From] = core.GenesisAccount{Balance: accountBalance}
 	alloc[authMem2.From] = core.GenesisAccount{Balance: accountBalance}
 	alloc[authMem3.From] = core.GenesisAccount{Balance: accountBalance}
@@ -128,10 +131,10 @@ func SetupBlockchain(accountBalance *big.Int) *ctx {
 	bc := backends.NewSimulatedBackend(alloc, 4700000)
 
 	return &ctx{
-		ListingAddress:   common.HexToAddress("0xlist"),
 		InvestingAddress: common.HexToAddress("0xinv"),
 		AuthFactory:      authFac,
 		AuthBackend:      authBac,
+		AuthListing:      authLis,
 		AuthMember1:      authMem1,
 		AuthMember2:      authMem2,
 		AuthMember3:      authMem3,

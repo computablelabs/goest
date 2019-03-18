@@ -34,7 +34,6 @@ Invested: event({investor: indexed(address), offered: wei_value, minted: wei_val
 # state vars
 investors: map(address, wei_value)
 invested: wei_value # running total of all EtherToken invested in this Market
-factory_address: address
 ether_token: EtherToken
 market_token: MarketToken
 voting: Voting
@@ -43,7 +42,6 @@ parameterizer: Parameterizer
 @public
 def __init__(ether_token_addr: address, market_token_addr: address,
   voting_addr: address, p11r_addr: address):
-    self.factory_address = msg.sender
     self.ether_token = EtherToken(ether_token_addr)
     self.market_token = MarketToken(market_token_addr)
     self.voting = Voting(voting_addr)
