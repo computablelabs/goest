@@ -60,13 +60,18 @@ func Deploy(c *ctx) (*dep, error) {
 		c.AuthFactory,
 		c.Blockchain,
 		votingAddr,
-		big.NewInt(ONE_WEI),  // challengeStake
-		big.NewInt(ONE_GWEI), // conversionRate of 1e9
-		big.NewInt(100),      // InvestDenominator, a scaling factor
-		big.NewInt(110),      // InvestNumerator, a scaling factor
-		big.NewInt(ONE_WEI),  // listReward
-		big.NewInt(50),       // quorum
-		big.NewInt(20),       // voteBy of 20 seconds for specs
+		big.NewInt(ONE_WEI),   // challengeStake
+		big.NewInt(ONE_GWEI),  // conversionRate of 1e9
+		big.NewInt(100),       // InvestDenominator, a scaling factor
+		big.NewInt(110),       // InvestNumerator, a scaling factor
+		big.NewInt(ONE_WEI),   // listReward
+		big.NewInt(ONE_WEI/2), // compute reward
+		big.NewInt(50),        // quorum
+		big.NewInt(20),        // voteBy of 20 seconds for specs
+		big.NewInt(30),        // backend payment percent
+		big.NewInt(50),        // maker payment percent
+		big.NewInt(20),        // reserve payment percent
+		big.NewInt(ONE_WEI/4), // cost per byte
 	)
 
 	if paramErr != nil {

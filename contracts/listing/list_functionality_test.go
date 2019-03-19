@@ -265,12 +265,10 @@ func TestDepositToListing(t *testing.T) {
 	userBal, _ := deployed.MarketTokenContract.BalanceOf(nil, context.AuthMember1.From)
 	// check the market's balance as it should be banking FooMarket's reward
 	marketBal, _ := deployed.MarketTokenContract.BalanceOf(nil, deployed.ListingAddress)
-	t.Log(marketBal)
 	// foomarket itself
 	listingHash, _ := deployed.ListingContract.GetHash(nil, "FooMarket, AZ.")
 	// the current state of foo market
 	_, supply, _, _ := deployed.ListingContract.GetListing(nil, listingHash)
-	t.Log(supply)
 	// add some amount
 	_, depErr := deployed.ListingContract.DepositToListing(&bind.TransactOpts{
 		From:     context.AuthMember1.From,
@@ -292,7 +290,6 @@ func TestDepositToListing(t *testing.T) {
 	}
 
 	_, newSupply, _, _ := deployed.ListingContract.GetListing(nil, listingHash)
-	t.Log(newSupply)
 	if newSupply.Cmp(supply) != 1 {
 		t.Fatalf("Expected new supply %v to be > %v", newSupply, supply)
 	}
@@ -464,12 +461,6 @@ func TestConvertListing(t *testing.T) {
 	userBal, _ := deployed.MarketTokenContract.BalanceOf(nil, context.AuthMember1.From)
 	// same for the market, but should go down
 	marketBal, _ := deployed.MarketTokenContract.BalanceOf(nil, deployed.ListingAddress)
-	t.Log(userBal)
-	t.Log(marketBal)
-
-	// if true != false {
-	// t.Fatal("ack")
-	// }
 
 	_, convertErr := deployed.ListingContract.ConvertListing(&bind.TransactOpts{
 		From:     context.AuthMember1.From,
@@ -491,8 +482,6 @@ func TestConvertListing(t *testing.T) {
 	// same for the market, but should go down
 	newMarketBal, _ := deployed.MarketTokenContract.BalanceOf(nil, deployed.ListingAddress)
 	expectedMarketBal := marketBal.Sub(marketBal, reward)
-	t.Log(newUserBal)
-	t.Log(newMarketBal)
 
 	if newUserBal.Cmp(expectedUserBal) != 0 {
 		t.Fatalf("expected user market token balance of %v, got: %v", expectedUserBal, newUserBal)
