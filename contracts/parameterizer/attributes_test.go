@@ -45,6 +45,14 @@ func TestGetListReward(t *testing.T) {
 	}
 }
 
+func TestGetComputeReward(t *testing.T) {
+	reward, _ := deployed.ParameterizerContract.GetComputeReward(nil)
+
+	if reward.Cmp(big.NewInt(ONE_WEI/2)) != 0 {
+		t.Fatalf("Expected listReward to be 10**9, got: %v", reward)
+	}
+}
+
 func TestGetQuorum(t *testing.T) {
 	quorum, _ := deployed.ParameterizerContract.GetQuorum(nil)
 
@@ -58,5 +66,29 @@ func TestGetVoteBy(t *testing.T) {
 
 	if voteBy.Cmp(big.NewInt(20)) != 0 {
 		t.Fatalf("Expected voteBy to be 20, got: %v", voteBy)
+	}
+}
+
+func TestGetBackendPayment(t *testing.T) {
+	pct, _ := deployed.ParameterizerContract.GetBackendPayment(nil)
+
+	if pct.Cmp(big.NewInt(30)) != 0 {
+		t.Fatalf("Expected backend pay pct to be 30, got: %v", pct)
+	}
+}
+
+func TestGetMakerPayment(t *testing.T) {
+	pct, _ := deployed.ParameterizerContract.GetMakerPayment(nil)
+
+	if pct.Cmp(big.NewInt(50)) != 0 {
+		t.Fatalf("Expected maker pay pct to be 50, got: %v", pct)
+	}
+}
+
+func TestGetReservePayment(t *testing.T) {
+	pct, _ := deployed.ParameterizerContract.GetReservePayment(nil)
+
+	if pct.Cmp(big.NewInt(20)) != 0 {
+		t.Fatalf("Expected reserve pay pct to be 20, got: %v", pct)
 	}
 }
