@@ -6,6 +6,10 @@
 REGISTRATION: constant(uint256) = 4 # candidate.kind
 
 # external contracts
+contract EtherToken:
+  def transfer(to: address, amount: uint256(wei)) -> bool: modifying
+  def transferFrom(source: address, to: address, amount: uint256(wei)) -> bool: modifying
+
 contract Voting:
   def inCouncil(member: address) -> bool: constant
   def candidateIs(hash: bytes32, kind: uint256) -> bool: constant
@@ -17,6 +21,8 @@ contract Voting:
   def pollClosed(hash: bytes32) -> bool: constant
 
 contract Parameterizer:
+  def getBackendPayment() -> uint256: constant
+  def getCostPerByte() -> wei_value: constant
   def getQuorum() -> uint256: constant
   def getVoteBy() -> uint256(sec): constant
 
@@ -27,16 +33,19 @@ RegistrationFailed: event({hash: indexed(bytes32), registrant: indexed(address)}
 
 # state vars
 data_hashes: map(bytes32, bytes32) # listing_hash -> data_hash
+byte_credits: map(address, wei_value) # maps user-address to byte-credits
 backend_url: string[128]
 backend_address: address
+ether_token: EtherToken
 voting: Voting
 parameterizer: Parameterizer
 factory_address: address
 listing_address: address
 
 @public
-def __init__(voting_addr: address, p11r_addr: address):
+def __init__(ether_token_addr: address, voting_addr: address, p11r_addr: address):
   self.factory_address = msg.sender
+  self.ether_token = EtherToken(ether_token_addr)
   self.voting = Voting(voting_addr)
   self.parameterizer = Parameterizer(p11r_addr)
 
@@ -162,3 +171,42 @@ def resolveRegistration(hash: bytes32):
     clear(self.backend_url)
   # regardless, the candidate is pruned
   self.voting.removeCandidate(hash)
+
+
+@public
+def purchaseByteCredits(amount: wei_value):
+  """
+  @notice Allows a user to store byte_credits which can be used later to purchase data from the market
+  @dev Msg.sender will have needed to approve the datatrust contract to spend on their behalf
+  """
+  self.ether_token.transferFrom(msg.sender, self, amount) # note that reserve_payment is implicitly in here
+  self.byte_credits[msg.sender] += amount
+
+
+@public
+@constant
+def getByteCredits(addr: address) -> wei_value:
+  """
+  @notice return the amount, in wei, of byte credits a user has purchased
+  """
+  return self.byte_credits[addr]
+
+
+@public
+def purchaseBytes(addr: address, amount: uint256):
+  """
+  @notice Pay for listing access in bytes via a user's byte credits
+  @dev The requested amount of bytes, at a cost of current cost_per_byte PLUS
+  the cost of the backend_payment must be present or this method will revert.
+  @param amount The number of bytes requested to purchase
+  """
+  assert msg.sender == self.backend_address
+  cost: wei_value = self.parameterizer.getCostPerByte()
+  fee_pct: uint256 = self.parameterizer.getBackendPayment()
+  sub_total: wei_value = amount * cost
+  fee: wei_value = sub_total / (100 / fee_pct)
+  # TODO we _could_ assert credits >= (sub+fee) here, but technically the below operation guards that
+  self.byte_credits[addr] -= (sub_total + fee) # clear the users credits first
+  # backend is given its fee
+  self.ether_token.transfer(self.backend_address, fee)
+

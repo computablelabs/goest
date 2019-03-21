@@ -12,5 +12,8 @@ contract Datatrust:
     def removeDataHash(hash: bytes32): modifying
     def register(url: string[128]): modifying
     def resolveRegistration(hash: bytes32): modifying
+    def purchaseByteCredits(amount: uint256(wei)): modifying
+    def getByteCredits(addr: address) -> uint256(wei): constant
+    def purchaseBytes(addr: address, amount: uint256): modifying
 
 

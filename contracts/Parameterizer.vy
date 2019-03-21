@@ -8,14 +8,13 @@ CONVERSION_RATE: constant(uint256) = 2
 INVEST_DENOMINATOR: constant(uint256) = 3
 INVEST_NUMERATOR: constant(uint256) = 4
 LIST_REWARD: constant(uint256) = 5
-COMPUTE_REWARD: constant(uint256) = 11
+ACCESS_REWARD: constant(uint256) = 10
 QUORUM: constant(uint256) = 6
 VOTE_BY: constant(uint256) = 7
-# % based so the sum of all 3 should == 100
+# _PAYMENTs are % based so the sum of both should be < 100 as there is an implicit reserve_payment
 BACKEND_PAYMENT: constant(uint256) = 8
 MAKER_PAYMENT: constant(uint256) = 9
-RESERVE_PAYMENT: constant(uint256) = 10
-COST_PER_BYTE: constant(uint256) = 12
+COST_PER_BYTE: constant(uint256) = 11
 
 # The sole Candidate 'kind' known to the Parameterizer
 REPARAM: constant(uint256) = 3
@@ -44,30 +43,28 @@ conversion_rate: wei_value
 invest_denominator: uint256
 invest_numerator: uint256
 list_reward: wei_value
-compute_reward: wei_value
+access_reward: wei_value
 quorum: uint256
 vote_by: timedelta
 backend_payment: uint256
 maker_payment: uint256
-reserve_payment: uint256
 cost_per_byte: wei_value
 voting: Voting
 
 @public
 def __init__(voting_addr: address, stake: wei_value, rate: wei_value, denominator: uint256, numerator: uint256, list_re: wei_value,
-  comp_re: wei_value, quorum_pct: uint256, vote_by_delta: timedelta, back_pay: uint256, maker_pay: uint256, res_pay: uint256, cost: wei_value):
+  comp_re: wei_value, quorum_pct: uint256, vote_by_delta: timedelta, back_pay: uint256, maker_pay: uint256, cost: wei_value):
     self.voting = Voting(voting_addr)
     self.challenge_stake = stake
     self.conversion_rate = rate
     self.invest_denominator = denominator
     self.invest_numerator = numerator
     self.list_reward = list_re
-    self.compute_reward = comp_re
+    self.access_reward = comp_re
     self.quorum = quorum_pct
     self.vote_by = vote_by_delta
     self.backend_payment = back_pay
     self.maker_payment = maker_pay
-    self.reserve_payment = res_pay
     self.cost_per_byte = cost
 
 
@@ -76,7 +73,7 @@ def __init__(voting_addr: address, stake: wei_value, rate: wei_value, denominato
 def getBackendPayment() -> uint256:
   """
   @notice The current amount of market token, in wei, awarded to the backend per list usage
-  @return % of 100 given to the backend (split among backend, maker and reserve)
+  @return % of 100 given to the backend
   """
   return self.backend_payment
 
@@ -86,19 +83,9 @@ def getBackendPayment() -> uint256:
 def getMakerPayment() -> uint256:
   """
   @notice The current amount of market token, in wei, awarded to the maker (list owner) per list usage
-  @return % of 100 given to the listing owner (split among backend, maker and reserve)
+  @return % of 100 given to the listing owner
   """
   return self.maker_payment
-
-
-@public
-@constant
-def getReservePayment() -> uint256:
-  """
-  @notice The current amount of market token, in wei, awarded to the reserve per list usage
-  @return % of 100 given to the Reserve (split among backend, maker and reserve)
-  """
-  return self.reserve_payment
 
 
 @public
@@ -169,11 +156,11 @@ def getListReward() -> wei_value:
 
 @public
 @constant
-def getComputeReward() -> wei_value:
+def getAccessReward() -> wei_value:
   """
   @notice Return the current amount of market token, in wei, awarded to a listing when used
   """
-  return self.compute_reward
+  return self.access_reward
 
 
 @public
