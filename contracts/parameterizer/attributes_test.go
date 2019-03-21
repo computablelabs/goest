@@ -45,8 +45,8 @@ func TestGetListReward(t *testing.T) {
 	}
 }
 
-func TestGetComputeReward(t *testing.T) {
-	reward, _ := deployed.ParameterizerContract.GetComputeReward(nil)
+func TestGetAccessReward(t *testing.T) {
+	reward, _ := deployed.ParameterizerContract.GetAccessReward(nil)
 
 	if reward.Cmp(big.NewInt(ONE_WEI/2)) != 0 {
 		t.Fatalf("Expected listReward to be 10**9, got: %v", reward)
@@ -82,13 +82,5 @@ func TestGetMakerPayment(t *testing.T) {
 
 	if pct.Cmp(big.NewInt(50)) != 0 {
 		t.Fatalf("Expected maker pay pct to be 50, got: %v", pct)
-	}
-}
-
-func TestGetReservePayment(t *testing.T) {
-	pct, _ := deployed.ParameterizerContract.GetReservePayment(nil)
-
-	if pct.Cmp(big.NewInt(20)) != 0 {
-		t.Fatalf("Expected reserve pay pct to be 20, got: %v", pct)
 	}
 }

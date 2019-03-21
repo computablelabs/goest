@@ -1,6 +1,7 @@
 package datatrust
 
 import (
+	"github.com/computablelabs/goest/contracts/ethertoken"
 	"github.com/computablelabs/goest/contracts/parameterizer"
 	"github.com/computablelabs/goest/contracts/voting"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
@@ -32,18 +33,35 @@ type ctx struct {
 }
 
 type dep struct {
+	EtherTokenAddress        common.Address
 	DatatrustAddress         common.Address
 	ParameterizerAddress     common.Address
 	VotingAddress            common.Address
+	EtherTokenContract       *ethertoken.EtherToken
 	DatatrustContract        *Datatrust
 	ParameterizerContract    *parameterizer.Parameterizer
 	VotingContract           *voting.Voting
+	EtherTokenTransaction    *types.Transaction
 	DatatrustTransaction     *types.Transaction
 	ParameterizerTransaction *types.Transaction
 	VotingTransaction        *types.Transaction
 }
 
 func Deploy(initialBalance *big.Int, c *ctx) (*dep, error) {
+	etherTokenAddr, etherTokenTrans, etherTokenCont, etherTokenErr := ethertoken.DeployEtherToken(
+		c.AuthFactory,
+		c.Blockchain,
+		c.AuthFactory.From,
+		initialBalance,
+	)
+
+	if etherTokenErr != nil {
+		return nil, etherTokenErr
+	}
+
+	// commit the deploy before deploying voting
+	c.Blockchain.Commit()
+
 	votingAddr, votingTrans, votingCont, votingErr := voting.DeployVoting(
 		c.AuthFactory,
 		c.Blockchain,
@@ -64,12 +82,11 @@ func Deploy(initialBalance *big.Int, c *ctx) (*dep, error) {
 		big.NewInt(100),       // investDenominator, a scaling factor
 		big.NewInt(110),       // investNumerator, a scaling factor
 		big.NewInt(ONE_WEI),   // listReward (one token)
-		big.NewInt(ONE_WEI/2), // compute reward
+		big.NewInt(ONE_WEI/2), // access reward
 		big.NewInt(50),        // quorum
 		big.NewInt(100),       // voteBy
 		big.NewInt(30),        // backend payment percent
 		big.NewInt(50),        // maker payment percent
-		big.NewInt(20),        // reserve payment percent
 		big.NewInt(ONE_WEI/4), // cost per byte
 	)
 
@@ -83,6 +100,7 @@ func Deploy(initialBalance *big.Int, c *ctx) (*dep, error) {
 	dataAddr, dataTrans, dataCont, dataErr := DeployDatatrust(
 		c.AuthFactory,
 		c.Blockchain,
+		etherTokenAddr,
 		votingAddr,
 		paramAddr,
 	)
@@ -94,6 +112,9 @@ func Deploy(initialBalance *big.Int, c *ctx) (*dep, error) {
 	c.Blockchain.Commit()
 
 	return &dep{
+		EtherTokenAddress:        etherTokenAddr,
+		EtherTokenContract:       etherTokenCont,
+		EtherTokenTransaction:    etherTokenTrans,
 		DatatrustAddress:         dataAddr,
 		DatatrustContract:        dataCont,
 		DatatrustTransaction:     dataTrans,

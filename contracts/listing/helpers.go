@@ -26,13 +26,14 @@ const (
 )
 
 type ctx struct {
-	AuthBackend *bind.TransactOpts
-	AuthFactory *bind.TransactOpts
-	AuthInvest  *bind.TransactOpts
-	AuthMember1 *bind.TransactOpts
-	AuthMember2 *bind.TransactOpts
-	AuthMember3 *bind.TransactOpts
-	Blockchain  *backends.SimulatedBackend
+	EtherTokenAddress common.Address
+	AuthBackend       *bind.TransactOpts
+	AuthFactory       *bind.TransactOpts
+	AuthInvest        *bind.TransactOpts
+	AuthMember1       *bind.TransactOpts
+	AuthMember2       *bind.TransactOpts
+	AuthMember3       *bind.TransactOpts
+	Blockchain        *backends.SimulatedBackend
 }
 
 type dep struct {
@@ -88,12 +89,11 @@ func Deploy(initialBalance *big.Int, c *ctx) (*dep, error) {
 		big.NewInt(100),       // investDenominator, a scaling factor
 		big.NewInt(110),       // investNumerator, a scaling factor
 		big.NewInt(ONE_WEI),   // listReward (one token)
-		big.NewInt(ONE_WEI/2), // compute reward
+		big.NewInt(ONE_WEI/2), // access reward
 		big.NewInt(50),        // quorum
 		big.NewInt(100),       // voteBy
 		big.NewInt(30),        // backend payment percent
 		big.NewInt(50),        // maker payment percent
-		big.NewInt(20),        // reserve payment percent
 		big.NewInt(ONE_WEI/4), // cost per byte
 	)
 
@@ -107,6 +107,7 @@ func Deploy(initialBalance *big.Int, c *ctx) (*dep, error) {
 	dataAddr, dataTrans, dataCont, dataErr := datatrust.DeployDatatrust(
 		c.AuthFactory,
 		c.Blockchain,
+		c.EtherTokenAddress,
 		votingAddr,
 		paramAddr,
 	)
@@ -183,12 +184,13 @@ func SetupBlockchain(accountBalance *big.Int) *ctx {
 	bc := backends.NewSimulatedBackend(alloc, 4700000)
 
 	return &ctx{
-		AuthBackend: authBac,
-		AuthFactory: authFac,
-		AuthInvest:  authInv,
-		AuthMember1: authMem1,
-		AuthMember2: authMem2,
-		AuthMember3: authMem3,
-		Blockchain:  bc,
+		EtherTokenAddress: common.HexToAddress("0xether"),
+		AuthBackend:       authBac,
+		AuthFactory:       authFac,
+		AuthInvest:        authInv,
+		AuthMember1:       authMem1,
+		AuthMember2:       authMem2,
+		AuthMember3:       authMem3,
+		Blockchain:        bc,
 	}
 }

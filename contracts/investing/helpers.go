@@ -99,12 +99,11 @@ func Deploy(initialBalance *big.Int, c *ctx) (*dep, error) {
 		big.NewInt(100),       // investDenominator, a scaling factor
 		big.NewInt(110),       // investNumerator, a scaling factor
 		big.NewInt(ONE_WEI),   // listReward (one token)
-		big.NewInt(ONE_WEI/2), // compute reward
+		big.NewInt(ONE_WEI/2), // access reward
 		big.NewInt(50),        // quorum
 		big.NewInt(100),       // voteBy
 		big.NewInt(30),        // backend payment percent
 		big.NewInt(50),        // maker payment percent
-		big.NewInt(20),        // reserve payment percent
 		big.NewInt(ONE_WEI/4), // cost per byte
 	)
 
