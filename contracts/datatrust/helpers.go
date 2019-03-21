@@ -77,17 +77,17 @@ func Deploy(initialBalance *big.Int, c *ctx) (*dep, error) {
 		c.AuthFactory,
 		c.Blockchain,
 		votingAddr,
-		big.NewInt(ONE_WEI),   // challengeStake
-		big.NewInt(ONE_GWEI),  // conversionRate: stipulation is that market token should be, at least, as val as eth
-		big.NewInt(100),       // investDenominator, a scaling factor
-		big.NewInt(110),       // investNumerator, a scaling factor
-		big.NewInt(ONE_WEI),   // listReward (one token)
-		big.NewInt(ONE_WEI/2), // access reward
-		big.NewInt(50),        // quorum
-		big.NewInt(100),       // voteBy
-		big.NewInt(30),        // backend payment percent
-		big.NewInt(50),        // maker payment percent
-		big.NewInt(ONE_WEI/4), // cost per byte
+		big.NewInt(ONE_WEI),  // challengeStake
+		big.NewInt(ONE_GWEI), // conversionRate: stipulation is that market token should be, at least, as val as eth
+		big.NewInt(100),      // investDenominator, a scaling factor
+		big.NewInt(110),      // investNumerator, a scaling factor
+		big.NewInt(ONE_WEI),  // listReward (one token)
+		big.NewInt(ONE_GWEI), // access reward
+		big.NewInt(50),       // quorum
+		big.NewInt(100),      // voteBy
+		big.NewInt(20),       // backend payment percent
+		big.NewInt(60),       // maker payment percent
+		big.NewInt(1000),     // cost per byte (1000 wei per byte)
 	)
 
 	if paramErr != nil {
