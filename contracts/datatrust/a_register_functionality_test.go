@@ -65,7 +65,7 @@ func TestResolveRegistration(t *testing.T) {
 		Signer:   context.AuthMember1.Signer,
 		GasPrice: big.NewInt(ONE_GWEI * 2),
 		GasLimit: 100000,
-	}, hash)
+	}, hash, big.NewInt(1))
 
 	if voteErr != nil {
 		t.Fatalf("Error voting for candidate: %v", voteErr)

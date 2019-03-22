@@ -2,15 +2,13 @@
 # @notice A simplified, weightless, public Voting contract
 # @author Computable
 
-# No poll will collect more than 1k votes
-MAX_LENGTH: constant(uint256) = 1000
-
 struct Candidate:
   kind: uint256 # one of [1,2,3,4] representing an application, challenge, reparam or registration respectively
   owner: address
   vote_by: timestamp
-  votes: address[MAX_LENGTH]
-  votes_length: int128
+  votes: address[1000] # No poll will collect more than 1k votes. TODO kill with cryptography
+  yea: uint256
+  nay: uint256
 
 CandidateAdded: event({hash: indexed(bytes32), kind: indexed(uint256), owner: indexed(address), voteBy: timestamp})
 CandidateRemoved: event({hash: indexed(bytes32)})
@@ -20,7 +18,6 @@ Voted: event({hash: indexed(bytes32), voter: indexed(address)})
 
 candidates: map(bytes32, Candidate)
 council: map(address, bool)
-council_count: uint256
 parameterizer_address: address
 datatrust_address: address
 listing_address: address
@@ -68,15 +65,6 @@ def has_privilege(sender: address) -> bool:
 
 @public
 @constant
-def getCouncilCount() -> uint256:
-  """
-  @notice returns the current number of council members
-  """
-  return self.council_count
-
-
-@public
-@constant
 def inCouncil(member: address) -> bool:
   """
   @notice Check if a given address is a member of the council
@@ -95,7 +83,6 @@ def addToCouncil(member: address):
   assert self.has_privilege(msg.sender)
   assert not self.council[member]
   self.council[member] = True
-  self.council_count += 1
   log.CouncilMemberAdded(member)
 
 
@@ -107,7 +94,6 @@ def removeFromCouncil(member: address):
   assert self.has_privilege(msg.sender)
   assert self.council[member]
   clear(self.council[member])
-  self.council_count -= 1
   log.CouncilMemberRemoved(member)
 
 
@@ -135,13 +121,14 @@ def isCandidate(hash: bytes32) -> bool:
 
 @public
 @constant
-def getCandidate(hash: bytes32) -> (uint256, address, timestamp, int128):
+def getCandidate(hash: bytes32) -> (uint256, address, timestamp, uint256, uint256):
   """
   @notice Return information about the given candidate identified by the given hash
   @dev Hash argument keys a candidate struct in the candidates mapping
   @return The type, vote_by timestamp and number of votes recieved
   """
-  return (self.candidates[hash].kind, self.candidates[hash].owner, self.candidates[hash].vote_by, self.candidates[hash].votes_length)
+  return (self.candidates[hash].kind, self.candidates[hash].owner, self.candidates[hash].vote_by,
+    self.candidates[hash].yea, self.candidates[hash].nay)
 
 
 @public
@@ -184,12 +171,14 @@ def removeCandidate(hash: bytes32):
   clear(self.candidates[hash].owner)
   clear(self.candidates[hash].vote_by)
   # we must clear individual votes that exist
+  total: int128 = convert((self.candidates[hash].yea + self.candidates[hash].nay), int128)
   for i in range(1000):
-    if i == self.candidates[hash].votes_length: # don't interate past the actual number of votes
+    if i == total: # don't interate past the actual number of votes
       break
     else:
       clear(self.candidates[hash].votes[i])
-  clear(self.candidates[hash].votes_length)
+  clear(self.candidates[hash].yea)
+  clear(self.candidates[hash].nay)
   log.CandidateRemoved(hash)
 
 
@@ -203,12 +192,13 @@ def didPass(hash: bytes32, quorum: uint256) -> bool:
   """
   assert self.candidates[hash].owner != ZERO_ADDRESS
   assert self.candidates[hash].vote_by < block.timestamp
+  total: uint256 = self.candidates[hash].yea + self.candidates[hash].nay
   # edge case that no one voted
-  if self.candidates[hash].votes_length == 0:
+  if total == 0:
     # theoretically a market could have a 0 quorum
     return quorum == 0
   else:
-    return (convert((self.candidates[hash].votes_length * 100), uint256) / self.council_count) >= quorum
+    return (self.candidates[hash].yea * 100 / total) >= quorum
 
 
 @public
@@ -217,11 +207,13 @@ def didVote(hash: bytes32, member: address) -> bool:
   """
   @notice Check to see if a given member has voted for a given candidate
   @return bool
+  TODO I just _know_ there is some cryptographic way to do this...
   """
   voted: bool = False
+  total: int128 = convert((self.candidates[hash].yea + self.candidates[hash].nay), int128)
   # NOTE we must use a literal here as vyper won't allow the const as an upper bound
   for i in range(1000):
-    if i == self.candidates[hash].votes_length: # don't interate past the actual number of votes
+    if i == total: # don't interate past the actual number of votes
       break
     elif self.candidates[hash].votes[i] == member:
       voted = True
@@ -241,15 +233,21 @@ def pollClosed(hash: bytes32) -> bool:
 
 
 @public
-def vote(hash: bytes32):
+def vote(hash: bytes32, option: uint256):
   """
   @notice Cast a vote for a given candidate
   @dev Voter must be a council member, and not have already voted
+  @param hash The candidate identifier
+  @param option Yea (1) or Nay (!1)
   """
   assert self.council[msg.sender]
   assert self.candidates[hash].owner != ZERO_ADDRESS
   assert self.candidates[hash].vote_by > block.timestamp
   assert not self.didVote(hash, msg.sender)
-  # here we use the number of votes as an index
-  self.candidates[hash].votes[self.candidates[hash].votes_length] = msg.sender
-  self.candidates[hash].votes_length += 1
+  total: int128 = convert((self.candidates[hash].yea + self.candidates[hash].nay), int128)
+  # the sum of all votes as pointer to next empty index
+  self.candidates[hash].votes[total] = msg.sender
+  if option == 1:
+    self.candidates[hash].yea += 1
+  else:
+    self.candidates[hash].nay += 1

@@ -37,19 +37,19 @@ func TestVote(t *testing.T) {
 	context.Blockchain.Commit()
 
 	// should be no votes atm
-	_, _, _, preVote, _ := deployed.VotingContract.GetCandidate(nil, bytes)
+	_, _, _, preYea, _, _ := deployed.VotingContract.GetCandidate(nil, bytes)
 
-	if preVote.Cmp(big.NewInt(0)) != 0 {
-		t.Fatalf("Expected number of votes to be 0, got: %v", preVote)
+	if preYea.Cmp(big.NewInt(0)) != 0 {
+		t.Fatalf("Expected number of votes to be 0, got: %v", preYea)
 	}
 
-	// cast a vote
+	// cast a yea vote
 	_, voteErr := deployed.VotingContract.Vote(&bind.TransactOpts{
 		From:     context.AuthMember1.From,
 		Signer:   context.AuthMember1.Signer,
 		GasPrice: big.NewInt(ONE_GWEI * 2),
 		GasLimit: 100000,
-	}, bytes)
+	}, bytes, big.NewInt(1))
 
 	if voteErr != nil {
 		t.Fatalf("Error voting for candidate: %v", voteErr)
@@ -58,10 +58,10 @@ func TestVote(t *testing.T) {
 	context.Blockchain.Commit()
 
 	// has been recorded in the candidate's votes
-	_, _, _, votes, _ := deployed.VotingContract.GetCandidate(nil, bytes)
+	_, _, _, yea, _, _ := deployed.VotingContract.GetCandidate(nil, bytes)
 
-	if votes.Cmp(big.NewInt(0)) != 1 {
-		t.Fatalf("Expected number of votes to be > 0, got: %v", votes)
+	if yea.Cmp(big.NewInt(0)) != 1 {
+		t.Fatalf("Expected number of votes to be > 0, got: %v", yea)
 	}
 }
 
