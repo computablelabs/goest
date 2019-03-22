@@ -176,7 +176,7 @@ func TestMain(m *testing.M) {
 		Signer:   context.AuthMember2.Signer,
 		GasPrice: big.NewInt(ONE_GWEI * 2),
 		GasLimit: 100000,
-	}, hash)
+	}, hash, big.NewInt(1))
 
 	if voteErr != nil {
 		log.Fatalf("Error voting for candidate: %v", voteErr)

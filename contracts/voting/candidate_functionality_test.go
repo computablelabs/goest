@@ -36,7 +36,7 @@ func TestIsCandidate(t *testing.T) {
 func TestGetCandidate(t *testing.T) {
 	bytes := GenBytes32("iCanHazListing")
 
-	kind, owner, voteBy, votes, err := deployed.VotingContract.GetCandidate(nil, bytes)
+	kind, owner, voteBy, yea, nay, err := deployed.VotingContract.GetCandidate(nil, bytes)
 
 	if err != nil {
 		t.Fatalf("Error getting candidate: %v", err)
@@ -55,8 +55,12 @@ func TestGetCandidate(t *testing.T) {
 		t.Fatalf("Expected vote by date to be > 0, got: %v", voteBy)
 	}
 
-	if votes.Cmp(big.NewInt(0)) != 0 {
-		t.Fatalf("Expected no votes to be cast yet, got: %v", votes)
+	if yea.Cmp(big.NewInt(0)) != 0 {
+		t.Fatalf("Expected no votes to be cast yet, got: %v", yea)
+	}
+
+	if nay.Cmp(big.NewInt(0)) != 0 {
+		t.Fatalf("Expected no votes to be cast yet, got: %v", nay)
 	}
 }
 

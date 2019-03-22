@@ -101,7 +101,7 @@ func TestResolveApplication(t *testing.T) {
 		Signer:   context.AuthMember2.Signer,
 		GasPrice: big.NewInt(ONE_GWEI * 2),
 		GasLimit: 100000,
-	}, listingHash)
+	}, listingHash, big.NewInt(1))
 
 	if voteErr != nil {
 		t.Fatalf("Error voting for candidate: %v", voteErr)
@@ -419,7 +419,7 @@ func TestConvertListing(t *testing.T) {
 		Signer:   context.AuthMember2.Signer,
 		GasPrice: big.NewInt(ONE_GWEI * 2),
 		GasLimit: 100000,
-	}, listingHash)
+	}, listingHash, big.NewInt(1))
 
 	if voteErr != nil {
 		t.Fatalf("Error voting for candidate: %v", voteErr)

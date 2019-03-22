@@ -59,7 +59,7 @@ func TestChallenge(t *testing.T) {
 		Signer:   context.AuthMember2.Signer,
 		GasPrice: big.NewInt(ONE_GWEI * 2),
 		GasLimit: 100000,
-	}, listingHash)
+	}, listingHash, big.NewInt(1))
 
 	if voteErr != nil {
 		t.Fatalf("Error voting for candidate: %v", voteErr)
@@ -160,7 +160,7 @@ func TestResolveChallenge(t *testing.T) {
 		Signer:   context.AuthMember2.Signer,
 		GasPrice: big.NewInt(ONE_GWEI * 2),
 		GasLimit: 1000000,
-	}, listingHash)
+	}, listingHash, big.NewInt(1))
 
 	if voteErr != nil {
 		t.Fatalf("Error voting for candidate: %v", voteErr)
@@ -175,10 +175,10 @@ func TestResolveChallenge(t *testing.T) {
 		t.Fatalf("Expected voted to be true, got: %v", voted)
 	}
 
-	_, _, _, votes, _ := deployed.VotingContract.GetCandidate(nil, listingHash)
+	_, _, _, yea, _, _ := deployed.VotingContract.GetCandidate(nil, listingHash)
 
-	if votes.Cmp(big.NewInt(0)) != 1 {
-		t.Fatalf("Expected at least one vote, got: %v", votes)
+	if yea.Cmp(big.NewInt(0)) != 1 {
+		t.Fatalf("Expected at least one vote, got: %v", yea)
 	}
 
 	// the vote is recorded now, and the challenge should be ready to be resolved once we pass the voteBy
