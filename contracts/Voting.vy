@@ -6,18 +6,14 @@ struct Candidate:
   kind: uint256 # one of [1,2,3,4] representing an application, challenge, reparam or registration respectively
   owner: address
   vote_by: timestamp
-  votes: address[1000] # No poll will collect more than 1k votes. TODO kill with cryptography
   yea: uint256
   nay: uint256
 
 CandidateAdded: event({hash: indexed(bytes32), kind: indexed(uint256), owner: indexed(address), voteBy: timestamp})
 CandidateRemoved: event({hash: indexed(bytes32)})
-CouncilMemberAdded: event({member: indexed(address)})
-CouncilMemberRemoved: event({member: indexed(address)})
 Voted: event({hash: indexed(bytes32), voter: indexed(address)})
 
 candidates: map(bytes32, Candidate)
-council: map(address, bool)
 parameterizer_address: address
 datatrust_address: address
 listing_address: address
@@ -61,40 +57,6 @@ def has_privilege(sender: address) -> bool:
   """
   return (sender == self.parameterizer_address or sender == self.datatrust_address
     or sender == self.listing_address or sender == self.investing_address)
-
-
-@public
-@constant
-def inCouncil(member: address) -> bool:
-  """
-  @notice Check if a given address is a member of the council
-  @return bool
-  """
-  return self.council[member]
-
-
-@public
-def addToCouncil(member: address):
-  """
-  @notice Add a member to the Market Council
-  @dev Only privileged contracts may call this method
-  @param member The address of the possible new council member
-  """
-  assert self.has_privilege(msg.sender)
-  assert not self.council[member]
-  self.council[member] = True
-  log.CouncilMemberAdded(member)
-
-
-@public
-def removeFromCouncil(member: address):
-  """
-  @notice Remove a member from the council
-  """
-  assert self.has_privilege(msg.sender)
-  assert self.council[member]
-  clear(self.council[member])
-  log.CouncilMemberRemoved(member)
 
 
 @public
@@ -167,18 +129,7 @@ def removeCandidate(hash: bytes32):
   """
   assert self.has_privilege(msg.sender)
   assert self.candidates[hash].owner != ZERO_ADDRESS
-  clear(self.candidates[hash].kind)
-  clear(self.candidates[hash].owner)
-  clear(self.candidates[hash].vote_by)
-  # we must clear individual votes that exist
-  total: int128 = convert((self.candidates[hash].yea + self.candidates[hash].nay), int128)
-  for i in range(1000):
-    if i == total: # don't interate past the actual number of votes
-      break
-    else:
-      clear(self.candidates[hash].votes[i])
-  clear(self.candidates[hash].yea)
-  clear(self.candidates[hash].nay)
+  clear(self.candidates[hash]) # TODO assure this works vs individually setting to 0
   log.CandidateRemoved(hash)
 
 
@@ -203,26 +154,6 @@ def didPass(hash: bytes32, quorum: uint256) -> bool:
 
 @public
 @constant
-def didVote(hash: bytes32, member: address) -> bool:
-  """
-  @notice Check to see if a given member has voted for a given candidate
-  @return bool
-  TODO I just _know_ there is some cryptographic way to do this...
-  """
-  voted: bool = False
-  total: int128 = convert((self.candidates[hash].yea + self.candidates[hash].nay), int128)
-  # NOTE we must use a literal here as vyper won't allow the const as an upper bound
-  for i in range(1000):
-    if i == total: # don't interate past the actual number of votes
-      break
-    elif self.candidates[hash].votes[i] == member:
-      voted = True
-      break
-  return voted
-
-
-@public
-@constant
 def pollClosed(hash: bytes32) -> bool:
   """
   @notice Check to see if a given candidate's polling has closed
@@ -236,17 +167,11 @@ def pollClosed(hash: bytes32) -> bool:
 def vote(hash: bytes32, option: uint256):
   """
   @notice Cast a vote for a given candidate
-  @dev Voter must be a council member, and not have already voted
   @param hash The candidate identifier
   @param option Yea (1) or Nay (!1)
   """
-  assert self.council[msg.sender]
   assert self.candidates[hash].owner != ZERO_ADDRESS
   assert self.candidates[hash].vote_by > block.timestamp
-  assert not self.didVote(hash, msg.sender)
-  total: int128 = convert((self.candidates[hash].yea + self.candidates[hash].nay), int128)
-  # the sum of all votes as pointer to next empty index
-  self.candidates[hash].votes[total] = msg.sender
   if option == 1:
     self.candidates[hash].yea += 1
   else:

@@ -78,20 +78,6 @@ func TestInvest(t *testing.T) {
 
 	context.Blockchain.Commit()
 
-	// member 3 is not on council yet
-	inCouncil, _ := deployed.VotingContract.InCouncil(nil, context.AuthMember3.From)
-
-	if inCouncil != false {
-		t.Fatalf("Expected inCouncil to be false, got: %v", inCouncil)
-	}
-
-	// member 3 also not an investor yet
-	investment, _ := deployed.InvestingContract.GetInvestment(nil, context.AuthMember3.From)
-
-	if investment.Cmp(big.NewInt(0)) != 0 {
-		t.Fatalf("Expected no investment yet, got: %v", investment)
-	}
-
 	// snapshot this user's market token bal as investing will increase by what was minted
 	bal, _ := deployed.MarketTokenContract.BalanceOf(nil, context.AuthMember3.From)
 	// here we will just offer the suggested price
@@ -111,27 +97,6 @@ func TestInvest(t *testing.T) {
 	}
 
 	context.Blockchain.Commit()
-
-	// should be an investor now
-	investmentNow, _ := deployed.InvestingContract.GetInvestment(nil, context.AuthMember3.From)
-
-	if investmentNow.Cmp(investment) != 1 {
-		t.Fatalf("Expected investment to be > 0, got: %v", investmentNow)
-	}
-
-	// should be a council member now
-	inCouncilNow, _ := deployed.VotingContract.InCouncil(nil, context.AuthMember3.From)
-
-	if inCouncilNow != true {
-		t.Fatalf("Expected inCouncil to be true, got: %v", inCouncilNow)
-	}
-
-	// inspect the investment
-	invested, _ := deployed.InvestingContract.GetInvestment(nil, context.AuthMember3.From)
-
-	if invested.Cmp(big.NewInt(ONE_GWEI*10)) != 0 {
-		t.Fatalf("Expected %v to be %v", invested, price)
-	}
 
 	// if offering the price, you'll always get 1 gwei worth of market token
 	// this will be reflected in the market token balance for this investor

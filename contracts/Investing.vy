@@ -15,13 +15,6 @@ contract MarketToken:
   def totalSupply() -> uint256(wei): constant
   def transfer(to: address, amount: uint256(wei)) -> bool: modifying
 
-contract Voting:
-  def inCouncil(member: address) -> bool: constant
-  def addToCouncil(member: address): modifying
-  def removeFromCouncil(member: address): modifying
-  def getCandidateCount() -> int128: constant
-  def getCandidateKey(index: int128) -> bytes32: constant
-
 contract Parameterizer:
   def getConversionRate() -> uint256(wei): constant
   def getInvestDenominator() -> uint256: constant
@@ -32,38 +25,15 @@ Divested: event({investor: indexed(address), transferred: wei_value})
 Invested: event({investor: indexed(address), offered: wei_value, minted: wei_value})
 
 # state vars
-investors: map(address, wei_value)
-invested: wei_value # running total of all EtherToken invested in this Market
 ether_token: EtherToken
 market_token: MarketToken
-voting: Voting
 parameterizer: Parameterizer
 
 @public
-def __init__(ether_token_addr: address, market_token_addr: address,
-  voting_addr: address, p11r_addr: address):
+def __init__(ether_token_addr: address, market_token_addr: address, p11r_addr: address):
     self.ether_token = EtherToken(ether_token_addr)
     self.market_token = MarketToken(market_token_addr)
-    self.voting = Voting(voting_addr)
     self.parameterizer = Parameterizer(p11r_addr)
-
-
-@public
-@constant
-def getInvested() -> wei_value:
-  """
-  @notice Return the total amount of Ether Token invested in this Market
-  """
-  return self.invested
-
-
-@public
-@constant
-def getInvestment(addr: address) -> wei_value:
-  """
-  @notice Return the amount of EtherToken a given investor has invested in this market
-  """
-  return self.investors[addr]
 
 
 @public
@@ -97,11 +67,6 @@ def invest(offer: wei_value):
   minted: uint256 = (offer / price) * 1000000000 # NOTE using wei_value here throws TypeMismatch
   self.market_token.mint(minted)
   self.market_token.transfer(msg.sender, minted)
-  self.investors[msg.sender] += offer
-  self.invested += offer
-  # currently any investor is made a council member TODO revisit when we implement threshold rules
-  if not self.voting.inCouncil(msg.sender):
-    self.voting.addToCouncil(msg.sender)
   log.Invested(msg.sender, offer, minted)
 
 
@@ -131,9 +96,5 @@ def divest():
   assert divested > 0
   # before any transfer, burn their market tokens and remove if an investor
   self.market_token.burnAll(msg.sender)
-  if self.investors[msg.sender] > 0:
-    clear(self.investors[msg.sender])
-    # ATM all investors are council members TODO edit when threshold rules implemented
-    self.voting.removeFromCouncil(msg.sender)
   self.ether_token.transfer(msg.sender, divested)
   log.Divested(msg.sender, divested)

@@ -40,25 +40,7 @@ func TestRegister(t *testing.T) {
 func TestResolveRegistration(t *testing.T) {
 	// we should not have an address yet
 	nodress, _ := deployed.DatatrustContract.GetBackendAddress(nil)
-
 	hash, _ := deployed.DatatrustContract.GetHash(nil, "http://www.icanhazbackend.com")
-	// we'll need a council member
-	isMember, _ := deployed.VotingContract.InCouncil(nil, context.AuthMember1.From)
-	if isMember != true {
-		_, councilErr := deployed.VotingContract.AddToCouncil(&bind.TransactOpts{
-			From:     context.AuthListing.From,
-			Signer:   context.AuthListing.Signer,
-			GasPrice: big.NewInt(ONE_GWEI * 2),
-			GasLimit: 100000,
-		}, context.AuthMember1.From)
-
-		if councilErr != nil {
-			t.Fatal("Error adding member to council")
-		}
-	}
-
-	context.Blockchain.Commit()
-
 	// cast a vote for
 	_, voteErr := deployed.VotingContract.Vote(&bind.TransactOpts{
 		From:     context.AuthMember1.From,
@@ -77,7 +59,6 @@ func TestResolveRegistration(t *testing.T) {
 	context.Blockchain.AdjustTime(100 * time.Second)
 	context.Blockchain.Commit()
 
-	// any council member can call for resolution
 	_, resolveErr := deployed.DatatrustContract.ResolveRegistration(&bind.TransactOpts{
 		From:     context.AuthMember1.From,
 		Signer:   context.AuthMember1.Signer,

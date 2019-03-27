@@ -25,7 +25,6 @@ struct Reparam:
 
 # Parameterizer has access to the Voting contract, being recognized by it as privileged
 contract Voting:
-  def inCouncil(member: address) -> bool: constant
   def candidateIs(hash: bytes32, kind: uint256) -> bool: constant
   def isCandidate(hash: bytes32) -> bool: constant
   def addCandidate(hash: bytes32, kind: uint256, owner: address, vote_by: uint256(sec)): modifying
@@ -195,11 +194,10 @@ def getVoteBy() -> timedelta:
 def reparameterize(param: uint256, value: uint256):
   """
   @notice Suggest a change to a Parameterizer attribute, creating a candidate for it
-  @dev Sender must be in council, and there must not be a matching candidate already open
+  @dev Sender must not be a matching candidate already open
   @param param The attribute to change
   @param value What to change it to
   """
-  assert self.voting.inCouncil(msg.sender)
   # hashed identifier made up of the prop and its proposed value
   hash: bytes32 = keccak256(convert((param + value), bytes32)) # TODO may not need to SHA this
   assert not self.voting.isCandidate(hash)
@@ -212,10 +210,9 @@ def reparameterize(param: uint256, value: uint256):
 def resolveReparam(hash: bytes32):
   """
   @notice Determine if a Reparam Candidate collected enough votes to pass, setting it if so
-  @dev This method enforces that the caller is a council member, the candidate is of the correct type and its poll is closed
+  @dev This method enforces that the candidate is of the correct type and its poll is closed
   @param hash The Reparam identifier
   """
-  assert self.voting.inCouncil(msg.sender)
   assert self.voting.candidateIs(hash, REPARAM)
   assert self.voting.pollClosed(hash)
   # ascertain which param,value we are looking at

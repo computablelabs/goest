@@ -11,7 +11,6 @@ contract EtherToken:
   def transferFrom(source: address, to: address, amount: uint256(wei)) -> bool: modifying
 
 contract Voting:
-  def inCouncil(member: address) -> bool: constant
   def candidateIs(hash: bytes32, kind: uint256) -> bool: constant
   def isCandidate(hash: bytes32) -> bool: constant
   def addCandidate(hash: bytes32, kind: uint256, owner: address, vote_by: uint256(sec)): modifying
@@ -158,7 +157,6 @@ def resolveRegistration(hash: bytes32):
   @notice Set internal backend in use if approved (remove if not)
   @param hash The hashed string url of the backend candidate
   """
-  assert self.voting.inCouncil(msg.sender)
   assert self.voting.candidateIs(hash, REGISTRATION)
   assert self.voting.pollClosed(hash)
   owner: address = self.voting.getCandidateOwner(hash)

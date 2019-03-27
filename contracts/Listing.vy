@@ -19,9 +19,6 @@ contract MarketToken:
   def transferFrom(source: address, to: address, amount: uint256(wei)) -> bool: modifying
 
 contract Voting:
-  def inCouncil(member: address) -> bool: constant
-  def addToCouncil(member: address): modifying
-  def removeFromCouncil(member: address): modifying
   def candidateIs(hash: bytes32, kind: uint256) -> bool: constant
   def isCandidate(hash: bytes32) -> bool: constant
   def addCandidate(hash: bytes32, kind: uint256, owner: address, vote_by: uint256(sec)): modifying
@@ -54,7 +51,6 @@ ListingWithdraw: event({hash: indexed(bytes32), owner: indexed(address), withdra
 
 # state vars
 listings: map(bytes32, Listing)
-listing_owners: map(address, uint256) # maps makers to number of listings owned. NOTE this goes away with correct council membership rules
 market_token: MarketToken
 voting: Voting
 parameterizer: Parameterizer
@@ -75,15 +71,6 @@ def isListed(hash: bytes32) -> bool:
   @notice Return a boolean representing whether a Listing has been listed
   """
   return self.listings[hash].owner != ZERO_ADDRESS
-
-
-@public
-@constant
-def isListingOwner(addr: address) -> bool:
-  """
-  @notice Return a bool indicating if the given address owns any listings
-  """
-  return self.listing_owners[addr] >= 1
 
 
 @public
@@ -159,8 +146,6 @@ def convertListing(hash:bytes32):
     self.listings[hash].rewards = 0
     self.market_token.transfer(self.listings[hash].owner, funds)
   self.listings[hash].owner = self
-  if self.listing_owners[msg.sender] > 0:
-    self.listing_owners[msg.sender] -= 1
   log.ListingConverted(hash)
 
 
@@ -178,12 +163,6 @@ def removeListing(hash: bytes32):
   if self.listings[hash].rewards > 0:
     self.market_token.burn(self.listings[hash].rewards)
     clear(self.listings[hash].rewards)
-  # regardless, this owner has one less listing now, given they had any
-  if self.listing_owners[self.listings[hash].owner] > 0:
-    self.listing_owners[self.listings[hash].owner] -= 1
-  # possibly remove from council TODO revisit when we change council threshold rules
-  if self.voting.inCouncil(self.listings[hash].owner) and self.listing_owners[self.listings[hash].owner] < 1:
-    self.voting.removeFromCouncil(self.listings[hash].owner)
   # finally clear the removed listing...
   clear(self.listings[hash]) # TODO assure we don't need to do this by hand
   # datatrust now needs to clear the data hash
@@ -198,7 +177,6 @@ def resolveApplication(hash: bytes32):
   @dev Added as a listing if passing vote. Candidate is cleared regardless. Datatrust data_hash for this listing must be set.
   @param hash The identifier for said applicant
   """
-  assert self.voting.inCouncil(msg.sender)
   assert self.voting.candidateIs(hash, APPLICATION)
   assert self.voting.pollClosed(hash)
   data_hash: bytes32 = self.datatrust.getDataHash(hash)
@@ -210,12 +188,7 @@ def resolveApplication(hash: bytes32):
       amount: wei_value = self.parameterizer.getListReward()
       self.market_token.mint(amount)
       self.listings[hash].rewards = amount
-      # currently any new listing owner becomes a council member TODO revisit when we change threshold rules
-      if not self.voting.inCouncil(owner):
-        self.voting.addToCouncil(owner)
       log.Listed(hash, owner, amount)
-      # add to the owner hash now that this is listed
-      self.listing_owners[owner] += 1
     else: # we have a data_hash but vote didn't pass - remove it
       self.datatrust.removeDataHash(hash)
       log.ApplicationFailed(hash, owner)
@@ -249,7 +222,6 @@ def resolveChallenge(hash: bytes32):
   takes precedence over voting
   @param hash The identifier for a Given challenge
   """
-  assert self.voting.inCouncil(msg.sender)
   assert self.voting.candidateIs(hash, CHALLENGE)
   assert self.voting.pollClosed(hash)
   owner: address = self.voting.getCandidateOwner(hash)

@@ -152,23 +152,6 @@ func TestMain(m *testing.M) {
 
 	context.Blockchain.Commit()
 
-	// make member2 a council member (if not one). the invest contract can do this...
-	isMember, _ := deployed.VotingContract.InCouncil(nil, context.AuthMember2.From)
-	if isMember != true {
-		_, councilErr := deployed.VotingContract.AddToCouncil(&bind.TransactOpts{
-			From:     context.AuthInvest.From,
-			Signer:   context.AuthInvest.Signer,
-			GasPrice: big.NewInt(ONE_GWEI * 2),
-			GasLimit: 100000,
-		}, context.AuthMember2.From)
-
-		if councilErr != nil {
-			log.Fatal("Error adding member to council")
-		}
-	}
-
-	context.Blockchain.Commit()
-
 	// vote for the backend candidate
 	hash, _ := deployed.DatatrustContract.GetHash(nil, "https://www.immabackend.biz")
 	_, voteErr := deployed.VotingContract.Vote(&bind.TransactOpts{
@@ -188,7 +171,7 @@ func TestMain(m *testing.M) {
 	context.Blockchain.AdjustTime(100 * time.Second)
 	context.Blockchain.Commit()
 
-	// any council member can call for resolution
+	// call for resolution
 	_, resolveErr := deployed.DatatrustContract.ResolveRegistration(&bind.TransactOpts{
 		From:     context.AuthMember2.From,
 		Signer:   context.AuthMember2.Signer,
