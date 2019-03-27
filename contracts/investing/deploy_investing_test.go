@@ -26,10 +26,6 @@ func TestDeployInvesting(t *testing.T) {
 		t.Error("Expected a valid market token deployment address to be returned from deploy, got empty byte array instead")
 	}
 
-	if len(deployed.VotingAddress.Bytes()) == 0 {
-		t.Error("Expected a valid voting deployment address to be returned from deploy, got empty byte array instead")
-	}
-
 	if len(deployed.ParameterizerAddress.Bytes()) == 0 {
 		t.Error("Expected a valid parameterizer deployment address to be returned from deploy, got empty byte array instead")
 	}
@@ -68,26 +64,6 @@ func TestMarketTokenSetPrivilegedContracts(t *testing.T) {
 	}
 }
 
-func TestVotingSetPrivilegedContracts(t *testing.T) {
-	p11r, data, list, invest, _ := deployed.VotingContract.GetPrivileged(nil)
-
-	if p11r != deployed.ParameterizerAddress {
-		t.Fatalf("Expected p11r address of %v but got %v", deployed.ParameterizerAddress, p11r)
-	}
-
-	if data != context.DatatrustAddress {
-		t.Fatalf("Expected datatrust address of %v but got %v", context.DatatrustAddress, data)
-	}
-
-	if list != context.ListingAddress {
-		t.Fatalf("Expected listing address of %v but got %v", context.ListingAddress, list)
-	}
-
-	if invest != deployed.InvestingAddress {
-		t.Fatalf("Expected investing address of %v but got %v", deployed.InvestingAddress, invest)
-	}
-}
-
 // we'll locate our testmain in these deploy_foo_test files as a pattern.
 // NOTE the test main is run once per package, therefore
 // the ctx and dep vars will be avail to the other tests in the package
@@ -107,18 +83,6 @@ func TestMain(m *testing.M) {
 
 	if marketErr != nil {
 		log.Fatalf("Error setting privileged contract address: %v", marketErr)
-	}
-
-	_, votingErr := deployed.VotingContract.SetPrivileged(&bind.TransactOpts{
-		From:     context.AuthFactory.From,
-		Signer:   context.AuthFactory.Signer,
-		GasPrice: big.NewInt(ONE_GWEI * 2),
-		GasLimit: 1000000,
-	}, deployed.ParameterizerAddress, context.DatatrustAddress, context.ListingAddress, deployed.InvestingAddress)
-
-	if votingErr != nil {
-		// no T pointer here...
-		log.Fatalf("Error setting privileged contract addresses: %v", votingErr)
 	}
 
 	context.Blockchain.Commit()

@@ -37,22 +37,7 @@ func TestChallenge(t *testing.T) {
 	if dataErr != nil {
 		t.Fatal("Error setting data hash for listing")
 	}
-	// must be a council member
-	isMember, _ := deployed.VotingContract.InCouncil(nil, context.AuthMember2.From)
-	if isMember != true {
-		_, councilErr := deployed.VotingContract.AddToCouncil(&bind.TransactOpts{
-			From:     context.AuthInvest.From,
-			Signer:   context.AuthInvest.Signer,
-			GasPrice: big.NewInt(ONE_GWEI * 2),
-			GasLimit: 100000,
-		}, context.AuthMember2.From)
-
-		if councilErr != nil {
-			t.Fatal("Error adding member to council")
-		}
-
-		context.Blockchain.Commit()
-	}
+	context.Blockchain.Commit()
 
 	_, voteErr := deployed.VotingContract.Vote(&bind.TransactOpts{
 		From:     context.AuthMember2.From,
@@ -71,7 +56,7 @@ func TestChallenge(t *testing.T) {
 	context.Blockchain.AdjustTime(100 * time.Second)
 	context.Blockchain.Commit()
 
-	// any council member can call for resolution
+	// call for resolution
 	_, resolveErr := deployed.ListingContract.ResolveApplication(&bind.TransactOpts{
 		From:     context.AuthMember2.From,
 		Signer:   context.AuthMember2.Signer,
@@ -167,13 +152,6 @@ func TestResolveChallenge(t *testing.T) {
 	}
 
 	context.Blockchain.Commit()
-
-	// member2's vote should be recorded now
-	voted, _ := deployed.VotingContract.DidVote(nil, listingHash, context.AuthMember2.From)
-
-	if voted != true {
-		t.Fatalf("Expected voted to be true, got: %v", voted)
-	}
 
 	_, _, _, yea, _, _ := deployed.VotingContract.GetCandidate(nil, listingHash)
 

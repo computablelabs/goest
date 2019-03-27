@@ -8,18 +8,6 @@ import (
 )
 
 func TestVote(t *testing.T) {
-	// we need a council member
-	_, councilErr := deployed.VotingContract.AddToCouncil(&bind.TransactOpts{
-		From:     context.AuthInvesting.From,
-		Signer:   context.AuthInvesting.Signer,
-		GasPrice: big.NewInt(ONE_GWEI * 2),
-		GasLimit: 100000,
-	}, context.AuthMember1.From)
-
-	if councilErr != nil {
-		t.Fatalf("Error adding council member: %v", councilErr)
-	}
-
 	// we need a candidate
 	bytes := GenBytes32("iLoveListing.com")
 
@@ -65,15 +53,6 @@ func TestVote(t *testing.T) {
 	}
 }
 
-func TestDidVote(t *testing.T) {
-	bytes := GenBytes32("iLoveListing.com")
-	voted, _ := deployed.VotingContract.DidVote(nil, bytes, context.AuthMember1.From)
-
-	if voted != true {
-		t.Fatalf("Expected member didVote to be true, got: %v", voted)
-	}
-}
-
 func TestPollClosed(t *testing.T) {
 	// should still be open
 	bytes := GenBytes32("iLoveListing.com")
@@ -96,7 +75,7 @@ func TestPollClosed(t *testing.T) {
 
 func TestDidPass(t *testing.T) {
 	bytes := GenBytes32("iLoveListing.com")
-	// with only one council member, the one vote will do it
+	// the one total vote will do it
 	passed, _ := deployed.VotingContract.DidPass(nil, bytes, big.NewInt(50))
 
 	if passed != true {

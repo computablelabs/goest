@@ -8,20 +8,6 @@ import (
 )
 
 func TestParameterize(t *testing.T) {
-	// we need a council member
-	_, councilErr := deployed.VotingContract.AddToCouncil(&bind.TransactOpts{
-		From:     context.AuthListing.From,
-		Signer:   context.AuthListing.Signer,
-		GasPrice: big.NewInt(ONE_GWEI * 2),
-		GasLimit: 100000,
-	}, context.AuthMember1.From)
-
-	if councilErr != nil {
-		t.Fatalf("Error adding council member: %v", councilErr)
-	}
-
-	context.Blockchain.Commit()
-
 	_, err := deployed.ParameterizerContract.Reparameterize(&bind.TransactOpts{
 		From:     context.AuthMember1.From,
 		Signer:   context.AuthMember1.Signer,

@@ -4,7 +4,6 @@ import (
 	"github.com/computablelabs/goest/contracts/ethertoken"
 	"github.com/computablelabs/goest/contracts/markettoken"
 	"github.com/computablelabs/goest/contracts/parameterizer"
-	"github.com/computablelabs/goest/contracts/voting"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind/backends"
 	"github.com/ethereum/go-ethereum/common"
@@ -26,6 +25,7 @@ const (
 )
 
 type ctx struct {
+	VotingAddress    common.Address
 	ListingAddress   common.Address
 	DatatrustAddress common.Address
 	AuthFactory      *bind.TransactOpts
@@ -40,17 +40,14 @@ type dep struct {
 	MarketTokenAddress       common.Address
 	EtherTokenAddress        common.Address
 	ParameterizerAddress     common.Address
-	VotingAddress            common.Address
 	InvestingContract        *Investing
 	MarketTokenContract      *markettoken.MarketToken
 	EtherTokenContract       *ethertoken.EtherToken
 	ParameterizerContract    *parameterizer.Parameterizer
-	VotingContract           *voting.Voting
 	InvestingTransaction     *types.Transaction
 	MarketTokenTransaction   *types.Transaction
 	EtherTokenTransaction    *types.Transaction
 	ParameterizerTransaction *types.Transaction
-	VotingTransaction        *types.Transaction
 }
 
 func Deploy(initialBalance *big.Int, c *ctx) (*dep, error) {
@@ -76,24 +73,12 @@ func Deploy(initialBalance *big.Int, c *ctx) (*dep, error) {
 		return nil, etherTokenErr
 	}
 
-	// commit the deploy before deploying voting
-	c.Blockchain.Commit()
-
-	votingAddr, votingTrans, votingCont, votingErr := voting.DeployVoting(
-		c.AuthFactory,
-		c.Blockchain,
-	)
-
-	if votingErr != nil {
-		return nil, votingErr
-	}
-
 	c.Blockchain.Commit()
 
 	paramAddr, paramTrans, paramCont, paramErr := parameterizer.DeployParameterizer(
 		c.AuthFactory,
 		c.Blockchain,
-		votingAddr,
+		c.VotingAddress,
 		big.NewInt(ONE_WEI),   // challengeStake
 		big.NewInt(ONE_GWEI),  // conversionRate: stipulation is that market token should be, at least, as val as eth
 		big.NewInt(100),       // investDenominator, a scaling factor
@@ -119,7 +104,6 @@ func Deploy(initialBalance *big.Int, c *ctx) (*dep, error) {
 		c.Blockchain,
 		etherTokenAddr,
 		marketTokenAddr,
-		votingAddr,
 		paramAddr,
 	)
 
@@ -142,9 +126,6 @@ func Deploy(initialBalance *big.Int, c *ctx) (*dep, error) {
 		ParameterizerAddress:     paramAddr,
 		ParameterizerContract:    paramCont,
 		ParameterizerTransaction: paramTrans,
-		VotingAddress:            votingAddr,
-		VotingContract:           votingCont,
-		VotingTransaction:        votingTrans,
 	}, nil
 }
 
@@ -172,6 +153,7 @@ func SetupBlockchain(accountBalance *big.Int) *ctx {
 	bc := backends.NewSimulatedBackend(alloc, 4700000)
 
 	return &ctx{
+		VotingAddress:    common.HexToAddress("0xvote"),
 		ListingAddress:   common.HexToAddress("0xlist"),
 		DatatrustAddress: common.HexToAddress("0xdata"),
 		AuthFactory:      authFac,

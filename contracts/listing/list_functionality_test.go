@@ -75,25 +75,9 @@ func TestResolveApplication(t *testing.T) {
 		t.Fatal("Error setting data hash for listing")
 	}
 
+	context.Blockchain.Commit()
 	// check the market's balance as the mint operation should increment it after successful listing
 	marketBal, _ := deployed.MarketTokenContract.BalanceOf(nil, deployed.ListingAddress)
-
-	// make member2 a council member (if not one). the owner (factory) can do this...
-	isMember, _ := deployed.VotingContract.InCouncil(nil, context.AuthMember2.From)
-	if isMember != true {
-		_, councilErr := deployed.VotingContract.AddToCouncil(&bind.TransactOpts{
-			From:     context.AuthInvest.From,
-			Signer:   context.AuthInvest.Signer,
-			GasPrice: big.NewInt(ONE_GWEI * 2),
-			GasLimit: 100000,
-		}, context.AuthMember2.From)
-
-		if councilErr != nil {
-			t.Fatal("Error adding member to council")
-		}
-	}
-
-	context.Blockchain.Commit()
 
 	// cast a vote for
 	_, voteErr := deployed.VotingContract.Vote(&bind.TransactOpts{
@@ -156,14 +140,6 @@ func TestResolveApplication(t *testing.T) {
 
 	if isCandidate == true {
 		t.Fatal("Expected approved listing's candidate to have been removed")
-	}
-}
-
-func TestIsListingOwner(t *testing.T) {
-	isOwner, _ := deployed.ListingContract.IsListingOwner(nil, context.AuthMember1.From)
-
-	if isOwner != true {
-		t.Fatalf("Exepected isOwner to be true, got: %v", isOwner)
 	}
 }
 
