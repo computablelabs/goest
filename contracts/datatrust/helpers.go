@@ -2,6 +2,7 @@ package datatrust
 
 import (
 	"github.com/computablelabs/goest/contracts/ethertoken"
+	"github.com/computablelabs/goest/contracts/markettoken"
 	"github.com/computablelabs/goest/contracts/parameterizer"
 	"github.com/computablelabs/goest/contracts/voting"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
@@ -34,14 +35,17 @@ type ctx struct {
 
 type dep struct {
 	EtherTokenAddress        common.Address
+	MarketTokenAddress       common.Address
 	DatatrustAddress         common.Address
 	ParameterizerAddress     common.Address
 	VotingAddress            common.Address
 	EtherTokenContract       *ethertoken.EtherToken
+	MarketTokenContract      *markettoken.MarketToken
 	DatatrustContract        *Datatrust
 	ParameterizerContract    *parameterizer.Parameterizer
 	VotingContract           *voting.Voting
 	EtherTokenTransaction    *types.Transaction
+	MarketTokenTransaction   *types.Transaction
 	DatatrustTransaction     *types.Transaction
 	ParameterizerTransaction *types.Transaction
 	VotingTransaction        *types.Transaction
@@ -59,12 +63,25 @@ func Deploy(initialBalance *big.Int, c *ctx) (*dep, error) {
 		return nil, etherTokenErr
 	}
 
-	// commit the deploy before deploying voting
+	c.Blockchain.Commit()
+
+	marketTokenAddr, marketTokenTrans, marketTokenCont, marketTokenErr := markettoken.DeployMarketToken(
+		c.AuthFactory,
+		c.Blockchain,
+		c.AuthFactory.From,
+		initialBalance,
+	)
+
+	if marketTokenErr != nil {
+		return nil, marketTokenErr
+	}
+
 	c.Blockchain.Commit()
 
 	votingAddr, votingTrans, votingCont, votingErr := voting.DeployVoting(
 		c.AuthFactory,
 		c.Blockchain,
+		marketTokenAddr,
 	)
 
 	if votingErr != nil {
@@ -77,14 +94,14 @@ func Deploy(initialBalance *big.Int, c *ctx) (*dep, error) {
 		c.AuthFactory,
 		c.Blockchain,
 		votingAddr,
-		big.NewInt(ONE_WEI),  // challengeStake
 		big.NewInt(ONE_GWEI), // conversionRate: stipulation is that market token should be, at least, as val as eth
 		big.NewInt(100),      // investDenominator, a scaling factor
 		big.NewInt(110),      // investNumerator, a scaling factor
 		big.NewInt(ONE_WEI),  // listReward (one token)
 		big.NewInt(ONE_GWEI), // access reward
-		big.NewInt(50),       // quorum
+		big.NewInt(ONE_GWEI), // Stake
 		big.NewInt(100),      // voteBy
+		big.NewInt(50),       // quorum
 		big.NewInt(20),       // backend payment percent
 		big.NewInt(60),       // maker payment percent
 		big.NewInt(1000),     // cost per byte (1000 wei per byte)
@@ -115,6 +132,9 @@ func Deploy(initialBalance *big.Int, c *ctx) (*dep, error) {
 		EtherTokenAddress:        etherTokenAddr,
 		EtherTokenContract:       etherTokenCont,
 		EtherTokenTransaction:    etherTokenTrans,
+		MarketTokenAddress:       marketTokenAddr,
+		MarketTokenContract:      marketTokenCont,
+		MarketTokenTransaction:   marketTokenTrans,
 		DatatrustAddress:         dataAddr,
 		DatatrustContract:        dataCont,
 		DatatrustTransaction:     dataTrans,

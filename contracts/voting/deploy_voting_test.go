@@ -51,7 +51,19 @@ func TestMain(m *testing.M) {
 	// see ./helpers#context
 	context = SetupBlockchain(big.NewInt(ONE_WEI))
 	// see ./helpers#deployed
-	deployed, deployedError = Deploy(context)
+	deployed, deployedError = Deploy(big.NewInt(ONE_WEI*5), context)
+
+	// the markettoken must have its privileges set
+	_, marketErr := deployed.MarketTokenContract.SetPrivileged(&bind.TransactOpts{
+		From:     context.AuthFactory.From,
+		Signer:   context.AuthFactory.Signer,
+		GasPrice: big.NewInt(ONE_GWEI * 2),
+		GasLimit: 1000000,
+	}, context.ListingAddress, context.InvestingAddress)
+
+	if marketErr != nil {
+		log.Fatalf("Error setting privileged contract address: %v", marketErr)
+	}
 
 	// the voting contract must have its privileged addresses set or shit won't work, NOTE this is done, IRL, by the factory
 	_, err := deployed.VotingContract.SetPrivileged(&bind.TransactOpts{

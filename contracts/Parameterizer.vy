@@ -3,14 +3,14 @@
 # @author Computable
 
 # We refer to any 'params' as integers to avoid conversions to and from strings
-CHALLENGE_STAKE: constant(uint256) = 1
 CONVERSION_RATE: constant(uint256) = 2
 INVEST_DENOMINATOR: constant(uint256) = 3
 INVEST_NUMERATOR: constant(uint256) = 4
 LIST_REWARD: constant(uint256) = 5
 ACCESS_REWARD: constant(uint256) = 10
-QUORUM: constant(uint256) = 6
+STAKE: constant(uint256) = 1
 VOTE_BY: constant(uint256) = 7
+QUORUM: constant(uint256) = 6
 # _PAYMENTs are % based so the sum of both should be < 100 as there is an implicit reserve_payment
 BACKEND_PAYMENT: constant(uint256) = 8
 MAKER_PAYMENT: constant(uint256) = 9
@@ -27,7 +27,7 @@ struct Reparam:
 contract Voting:
   def candidateIs(hash: bytes32, kind: uint256) -> bool: constant
   def isCandidate(hash: bytes32) -> bool: constant
-  def addCandidate(hash: bytes32, kind: uint256, owner: address, vote_by: uint256(sec)): modifying
+  def addCandidate(hash: bytes32, kind: uint256, owner: address, stake: uint256(wei), vote_by: uint256(sec)): modifying
   def removeCandidate(hash: bytes32): modifying
   def didPass(hash: bytes32, quorum: uint256) -> bool: constant
   def pollClosed(hash: bytes32) -> bool: constant
@@ -37,31 +37,31 @@ ReparamFailed: event({hash: indexed(bytes32), param: indexed(uint256), value: ui
 ReparamSucceeded: event({hash: indexed(bytes32), param: indexed(uint256), value: uint256})
 
 reparams: map(bytes32, Reparam)
-challenge_stake: wei_value
 conversion_rate: wei_value
 invest_denominator: uint256
 invest_numerator: uint256
 list_reward: wei_value
 access_reward: wei_value
-quorum: uint256
+stake: wei_value
 vote_by: timedelta
+quorum: uint256
 backend_payment: uint256
 maker_payment: uint256
 cost_per_byte: wei_value
 voting: Voting
 
 @public
-def __init__(voting_addr: address, stake: wei_value, rate: wei_value, denominator: uint256, numerator: uint256, list_re: wei_value,
-  comp_re: wei_value, quorum_pct: uint256, vote_by_delta: timedelta, back_pay: uint256, maker_pay: uint256, cost: wei_value):
+def __init__(voting_addr: address, rate: wei_value, denominator: uint256, numerator: uint256, list_re: wei_value,
+  comp_re: wei_value, stk: wei_value, vote_by_delta: timedelta, quorum_pct: uint256, back_pay: uint256, maker_pay: uint256, cost: wei_value):
     self.voting = Voting(voting_addr)
-    self.challenge_stake = stake
     self.conversion_rate = rate
     self.invest_denominator = denominator
     self.invest_numerator = numerator
     self.list_reward = list_re
     self.access_reward = comp_re
-    self.quorum = quorum_pct
+    self.stake = stk
     self.vote_by = vote_by_delta
+    self.quorum = quorum_pct
     self.backend_payment = back_pay
     self.maker_payment = maker_pay
     self.cost_per_byte = cost
@@ -98,11 +98,11 @@ def getCostPerByte() -> wei_value:
 
 @public
 @constant
-def getChallengeStake() -> wei_value:
+def getStake() -> wei_value:
   """
-  @notice Return the current challenge stake value in wei
+  @notice Return the current voting/challenge stake value in wei
   """
-  return self.challenge_stake
+  return self.stake
 
 
 @public
@@ -202,7 +202,7 @@ def reparameterize(param: uint256, value: uint256):
   hash: bytes32 = keccak256(convert((param + value), bytes32)) # TODO may not need to SHA this
   assert not self.voting.isCandidate(hash)
   self.reparams[hash] = Reparam({param: param, value:value})
-  self.voting.addCandidate(hash, REPARAM, msg.sender, self.vote_by)
+  self.voting.addCandidate(hash, REPARAM, msg.sender, self.stake, self.vote_by)
   log.ReparamProposed(msg.sender, hash, param, value)
 
 
@@ -219,9 +219,8 @@ def resolveReparam(hash: bytes32):
   param: uint256 = self.reparams[hash].param
   value: uint256 = self.reparams[hash].value
   if self.voting.didPass(hash, self.quorum):
-    if param == CHALLENGE_STAKE:
-      self.challenge_stake = value
-    elif param == CONVERSION_RATE:
+    #TODO in time we can likely tell an optimal order for these...
+    if param == CONVERSION_RATE:
       self.conversion_rate = value
     elif param == INVEST_DENOMINATOR:
       self.invest_denominator = value
@@ -229,10 +228,20 @@ def resolveReparam(hash: bytes32):
       self.invest_numerator = value
     elif param == LIST_REWARD:
       self.list_reward = value
-    elif param == QUORUM:
-      self.quorum = value
+    elif param == ACCESS_REWARD:
+      self.access_reward = value
+    elif param == STAKE:
+      self.stake = value
     elif param == VOTE_BY:
       self.vote_by = value
+    elif param == QUORUM:
+      self.quorum = value
+    elif param == MAKER_PAYMENT:
+      self.maker_payment = value
+    elif param == BACKEND_PAYMENT:
+      self.backend_payment = value
+    elif param == COST_PER_BYTE:
+      self.cost_per_byte = value
     log.ReparamSucceeded(hash, param, value)
   # did not get enough votes...
   log.ReparamFailed(hash, param, value)

@@ -1,6 +1,7 @@
 package parameterizer
 
 import (
+	"github.com/computablelabs/goest/contracts/markettoken"
 	"github.com/computablelabs/goest/contracts/voting"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind/backends"
@@ -15,7 +16,7 @@ const ONE_WEI = 1000000000000000000
 const ONE_GWEI = 1000000000
 
 // to match the p11r's internal params
-var CHALLENGE_STAKE = big.NewInt(1)
+var STAKE = big.NewInt(1)
 var CONVERSION_RATE = big.NewInt(2)
 var INVEST_D = big.NewInt(3)
 var INVEST_N = big.NewInt(4)
@@ -34,8 +35,10 @@ type ctx struct {
 	Blockchain    *backends.SimulatedBackend
 }
 
-// NOTE: there is no marketAddress present as we don't need an actual market here
 type dep struct {
+	MarketTokenAddress       common.Address
+	MarketTokenContract      *markettoken.MarketToken
+	MarketTokenTransaction   *types.Transaction
 	VotingAddress            common.Address
 	ParameterizerAddress     common.Address
 	VotingContract           *voting.Voting
@@ -44,10 +47,24 @@ type dep struct {
 	ParameterizerTransaction *types.Transaction
 }
 
-func Deploy(c *ctx) (*dep, error) {
+func Deploy(initialBalance *big.Int, c *ctx) (*dep, error) {
+	marketTokenAddr, marketTokenTrans, marketTokenCont, marketTokenErr := markettoken.DeployMarketToken(
+		c.AuthFactory,
+		c.Blockchain,
+		c.AuthFactory.From,
+		initialBalance,
+	)
+
+	if marketTokenErr != nil {
+		return nil, marketTokenErr
+	}
+
+	c.Blockchain.Commit()
+
 	votingAddr, votingTrans, votingCont, votingErr := voting.DeployVoting(
 		c.AuthFactory,
 		c.Blockchain,
+		marketTokenAddr,
 	)
 
 	if votingErr != nil {
@@ -60,14 +77,14 @@ func Deploy(c *ctx) (*dep, error) {
 		c.AuthFactory,
 		c.Blockchain,
 		votingAddr,
-		big.NewInt(ONE_WEI),   // challengeStake
 		big.NewInt(ONE_GWEI),  // conversionRate of 1e9
 		big.NewInt(100),       // InvestDenominator, a scaling factor
 		big.NewInt(110),       // InvestNumerator, a scaling factor
 		big.NewInt(ONE_WEI),   // listReward
 		big.NewInt(ONE_WEI/2), // access reward
-		big.NewInt(50),        // quorum
+		big.NewInt(ONE_GWEI),  // stake
 		big.NewInt(20),        // voteBy of 20 seconds for specs
+		big.NewInt(50),        // quorum
 		big.NewInt(30),        // backend payment percent
 		big.NewInt(50),        // maker payment percent
 		big.NewInt(ONE_WEI/4), // cost per byte
@@ -80,6 +97,9 @@ func Deploy(c *ctx) (*dep, error) {
 	c.Blockchain.Commit()
 
 	return &dep{
+		MarketTokenAddress:       marketTokenAddr,
+		MarketTokenContract:      marketTokenCont,
+		MarketTokenTransaction:   marketTokenTrans,
 		VotingAddress:            votingAddr,
 		VotingContract:           votingCont,
 		VotingTransaction:        votingTrans,

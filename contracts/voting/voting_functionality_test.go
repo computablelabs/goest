@@ -16,7 +16,7 @@ func TestVote(t *testing.T) {
 		Signer:   context.AuthParameterizer.Signer,
 		GasPrice: big.NewInt(ONE_GWEI * 2),
 		GasLimit: 150000,
-	}, bytes, APPLICATION, context.AuthMember1.From, big.NewInt(20)) // numbers smaller that 10 can be erratic?
+	}, bytes, APPLICATION, context.AuthMember1.From, big.NewInt(ONE_GWEI), big.NewInt(20)) // numbers smaller that 10 can be erratic?
 
 	if candidateErr != nil {
 		t.Fatalf("Error adding candidate: %v", candidateErr)
@@ -25,7 +25,7 @@ func TestVote(t *testing.T) {
 	context.Blockchain.Commit()
 
 	// should be no votes atm
-	_, _, _, preYea, _, _ := deployed.VotingContract.GetCandidate(nil, bytes)
+	_, _, _, _, preYea, _, _ := deployed.VotingContract.GetCandidate(nil, bytes)
 
 	if preYea.Cmp(big.NewInt(0)) != 0 {
 		t.Fatalf("Expected number of votes to be 0, got: %v", preYea)
@@ -46,7 +46,7 @@ func TestVote(t *testing.T) {
 	context.Blockchain.Commit()
 
 	// has been recorded in the candidate's votes
-	_, _, _, yea, _, _ := deployed.VotingContract.GetCandidate(nil, bytes)
+	_, _, _, _, yea, _, _ := deployed.VotingContract.GetCandidate(nil, bytes)
 
 	if yea.Cmp(big.NewInt(0)) != 1 {
 		t.Fatalf("Expected number of votes to be > 0, got: %v", yea)

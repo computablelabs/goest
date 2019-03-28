@@ -1,6 +1,7 @@
 package voting
 
 import (
+	"github.com/computablelabs/goest/contracts/markettoken"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind/backends"
 	"github.com/ethereum/go-ethereum/common"
@@ -19,6 +20,8 @@ var CHALLENGE = big.NewInt(2)
 var REPARAM = big.NewInt(3)
 
 type ctx struct {
+	ListingAddress    common.Address
+	InvestingAddress  common.Address
 	AuthFactory       *bind.TransactOpts
 	AuthParameterizer *bind.TransactOpts
 	AuthDatatrust     *bind.TransactOpts
@@ -30,15 +33,33 @@ type ctx struct {
 }
 
 type dep struct {
-	VotingAddress     common.Address
-	VotingContract    *Voting
-	VotingTransaction *types.Transaction
+	MarketTokenAddress     common.Address
+	MarketTokenContract    *markettoken.MarketToken
+	MarketTokenTransaction *types.Transaction
+	VotingAddress          common.Address
+	VotingContract         *Voting
+	VotingTransaction      *types.Transaction
 }
 
-func Deploy(c *ctx) (*dep, error) {
+func Deploy(initialBalance *big.Int, c *ctx) (*dep, error) {
+	marketTokenAddr, marketTokenTrans, marketTokenCont, marketTokenErr := markettoken.DeployMarketToken(
+		c.AuthFactory,
+		c.Blockchain,
+		c.AuthFactory.From,
+		initialBalance,
+	)
+
+	if marketTokenErr != nil {
+		return nil, marketTokenErr
+	}
+
+	// commit the deploy before deploying voting
+	c.Blockchain.Commit()
+
 	votingAddr, votingTrans, votingCont, votingErr := DeployVoting(
 		c.AuthFactory,
 		c.Blockchain,
+		marketTokenAddr,
 	)
 
 	if votingErr != nil {
@@ -48,9 +69,12 @@ func Deploy(c *ctx) (*dep, error) {
 	c.Blockchain.Commit()
 
 	return &dep{
-		VotingAddress:     votingAddr,
-		VotingContract:    votingCont,
-		VotingTransaction: votingTrans,
+		MarketTokenAddress:     marketTokenAddr,
+		MarketTokenContract:    marketTokenCont,
+		MarketTokenTransaction: marketTokenTrans,
+		VotingAddress:          votingAddr,
+		VotingContract:         votingCont,
+		VotingTransaction:      votingTrans,
 	}, nil
 }
 
@@ -89,6 +113,8 @@ func SetupBlockchain(accountBalance *big.Int) *ctx {
 	bc := backends.NewSimulatedBackend(alloc, 4700000)
 
 	return &ctx{
+		ListingAddress:    common.HexToAddress("0xlist"),
+		InvestingAddress:  common.HexToAddress("0xinv"),
 		AuthListing:       authList,
 		AuthInvesting:     authInv,
 		AuthFactory:       authFac,

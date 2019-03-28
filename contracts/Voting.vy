@@ -2,18 +2,29 @@
 # @notice A simplified, weightless, public Voting contract
 # @author Computable
 
+# constants
+CHALLENGE: constant(uint256) = 2 # candidate.kind that voting knows about
+
 struct Candidate:
   kind: uint256 # one of [1,2,3,4] representing an application, challenge, reparam or registration respectively
   owner: address
+  stake: wei_value
   vote_by: timestamp
   yea: uint256
   nay: uint256
 
+# external contracts
+contract MarketToken:
+  def transfer(to: address, amount: uint256(wei)) -> bool: modifying
+  def transferFrom(source: address, to: address, amount: uint256(wei)) -> bool: modifying
+
 CandidateAdded: event({hash: indexed(bytes32), kind: indexed(uint256), owner: indexed(address), voteBy: timestamp})
 CandidateRemoved: event({hash: indexed(bytes32)})
-Voted: event({hash: indexed(bytes32), voter: indexed(address)})
+Voted: event({hash: indexed(bytes32), voter: indexed(address), option: uint256})
 
 candidates: map(bytes32, Candidate)
+stakes: map(address, map(bytes32, wei_value)) # user -> candidate -> $
+market_token: MarketToken
 parameterizer_address: address
 datatrust_address: address
 listing_address: address
@@ -21,8 +32,9 @@ investing_address: address
 factory_address: address
 
 @public
-def __init__():
+def __init__(market_token_addr: address):
   self.factory_address = msg.sender
+  self.market_token = MarketToken(market_token_addr)
 
 
 @public
@@ -83,14 +95,14 @@ def isCandidate(hash: bytes32) -> bool:
 
 @public
 @constant
-def getCandidate(hash: bytes32) -> (uint256, address, timestamp, uint256, uint256):
+def getCandidate(hash: bytes32) -> (uint256, address, wei_value, timestamp, uint256, uint256):
   """
   @notice Return information about the given candidate identified by the given hash
   @dev Hash argument keys a candidate struct in the candidates mapping
   @return The type, vote_by timestamp and number of votes recieved
   """
-  return (self.candidates[hash].kind, self.candidates[hash].owner, self.candidates[hash].vote_by,
-    self.candidates[hash].yea, self.candidates[hash].nay)
+  return (self.candidates[hash].kind, self.candidates[hash].owner, self.candidates[hash].stake,
+    self.candidates[hash].vote_by, self.candidates[hash].yea, self.candidates[hash].nay)
 
 
 @public
@@ -103,20 +115,25 @@ def getCandidateOwner(hash: bytes32) -> address:
 
 
 @public
-def addCandidate(hash: bytes32, kind: uint256, owner: address, vote_by: timedelta):
+def addCandidate(hash: bytes32, kind: uint256, owner: address, stake: wei_value, vote_by: timedelta):
   """
   @notice Given a listing or parameter hash, create a new voting candidate
   @dev Only priveliged contracts may call this method
   @param hash The identifier for the listing or reparameterization candidate
   @param kind The type of candidate we are adding
   @param owner The adress which owns this created candidate
+  @param stake How much, in wei, must be staked to vote or challenge
   @param vote_by How long into the future until polls for this candidate close
   """
   assert self.has_privilege(msg.sender)
   assert self.candidates[hash].owner == ZERO_ADDRESS
+  if kind == CHALLENGE: # a challenger must successfully stake a challenge
+    self.market_token.transferFrom(owner, self, stake)
+    self.stakes[owner][hash] = stake
   end: timestamp = block.timestamp + vote_by
   self.candidates[hash].kind = kind
   self.candidates[hash].owner = owner
+  self.candidates[hash].stake = stake
   self.candidates[hash].vote_by = end
   log.CandidateAdded(hash, kind, owner, end)
 
@@ -176,3 +193,43 @@ def vote(hash: bytes32, option: uint256):
     self.candidates[hash].yea += 1
   else:
     self.candidates[hash].nay += 1
+  log.Voted(hash, msg.sender, option)
+
+
+@public
+def transferStake(hash: bytes32, addr: address):
+  """
+  @notice The stakes belonging to one address are being credited to another due to a lost challenge.
+  @param hash The Candidate identifier
+  @param addr The Address recieving the credit
+  """
+  assert msg.sender == self.listing_address # only the listing contract will call this
+  staked: wei_value = self.stakes[self.candidates[hash].owner][hash]
+  clear(self.stakes[self.candidates[hash].owner][hash])
+  self.stakes[addr][hash] = staked
+
+
+@public
+@constant
+def getStake(hash: bytes32, addr: address) -> wei_value:
+  """
+  @notice Return the balance staked by a given user for a given candidate
+  @param hash The candidate identifier
+  @param addr Address that did the staking
+  """
+  return self.stakes[addr][hash]
+
+
+@public
+def unstake(hash: bytes32):
+  """
+  @notice Allow a user to (re)claim stakes that they have rights to
+  @dev The candidate in question must have been resolved
+  NOTE: There is an edge case where a candidate is resolved and another opens with the same name
+  before unstaking. In that case a user simply waits until that poll is over.
+  @param hash The Candidate identifier
+  """
+  assert self.candidates[hash].owner == ZERO_ADDRESS # must be resolved (have been removed)
+  staked: wei_value = self.stakes[msg.sender][hash]
+  clear(self.stakes[msg.sender][hash])
+  self.market_token.transfer(msg.sender, staked)
