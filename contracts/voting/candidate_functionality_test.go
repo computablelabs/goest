@@ -14,7 +14,7 @@ func TestAddCandidate(t *testing.T) {
 		Signer:   context.AuthListing.Signer,
 		GasPrice: big.NewInt(ONE_GWEI * 2),
 		GasLimit: 150000,
-	}, bytes, APPLICATION, context.AuthMember1.From, big.NewInt(2))
+	}, bytes, APPLICATION, context.AuthMember1.From, big.NewInt(ONE_GWEI), big.NewInt(2))
 
 	if err != nil {
 		t.Fatalf("Error adding candidate: %v", err)
@@ -36,7 +36,7 @@ func TestIsCandidate(t *testing.T) {
 func TestGetCandidate(t *testing.T) {
 	bytes := GenBytes32("iCanHazListing")
 
-	kind, owner, voteBy, yea, nay, err := deployed.VotingContract.GetCandidate(nil, bytes)
+	kind, owner, stake, voteBy, yea, nay, err := deployed.VotingContract.GetCandidate(nil, bytes)
 
 	if err != nil {
 		t.Fatalf("Error getting candidate: %v", err)
@@ -48,6 +48,10 @@ func TestGetCandidate(t *testing.T) {
 
 	if owner != context.AuthMember1.From {
 		t.Fatalf("Expected %v to be %v", owner, context.AuthMember1.From)
+	}
+
+	if stake.Cmp(big.NewInt(ONE_GWEI)) != 0 {
+		t.Fatal("Expected stake to be 1e9")
 	}
 
 	// should be > 0

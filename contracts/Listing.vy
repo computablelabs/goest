@@ -21,14 +21,15 @@ contract MarketToken:
 contract Voting:
   def candidateIs(hash: bytes32, kind: uint256) -> bool: constant
   def isCandidate(hash: bytes32) -> bool: constant
-  def addCandidate(hash: bytes32, kind: uint256, owner: address, vote_by: uint256(sec)): modifying
   def getCandidateOwner(hash: bytes32) -> address: constant
+  def addCandidate(hash: bytes32, kind: uint256, owner: address, stake: uint256(wei), vote_by: uint256(sec)): modifying
   def removeCandidate(hash: bytes32): modifying
   def didPass(hash: bytes32, quorum: uint256) -> bool: constant
   def pollClosed(hash: bytes32) -> bool: constant
+  def transferStake(hash: bytes32, addr: address): modifying
 
 contract Parameterizer:
-  def getChallengeStake() -> uint256(wei): constant
+  def getStake() -> uint256(wei): constant
   def getListReward() -> uint256(wei): constant
   def getQuorum() -> uint256: constant
   def getVoteBy() -> uint256(sec): constant
@@ -41,8 +42,8 @@ contract Datatrust:
 ApplicationFailed: event({hash: indexed(bytes32), applicant: indexed(address)})
 Applied: event({hash: indexed(bytes32), applicant: indexed(address)})
 Challenged: event({hash: indexed(bytes32), challenger: indexed(address)})
-ChallengeFailed: event({hash: indexed(bytes32), challenger: indexed(address), reward: wei_value})
-ChallengeSucceeded: event({hash: indexed(bytes32), challenger: indexed(address), reward: wei_value})
+ChallengeFailed: event({hash: indexed(bytes32), challenger: indexed(address)})
+ChallengeSucceeded: event({hash: indexed(bytes32), challenger: indexed(address)})
 Listed: event({hash: indexed(bytes32), owner: indexed(address), reward: wei_value})
 ListingConverted: event({ hash: indexed(bytes32)})
 ListingDeposit: event({hash: indexed(bytes32), owner: indexed(address), deposited: wei_value})
@@ -110,7 +111,7 @@ def list(listing: string[64]):
   hash: bytes32 = keccak256(listing)
   assert not self.voting.isCandidate(hash) # not an applicant
   assert self.listings[hash].owner == ZERO_ADDRESS # not already listed
-  self.voting.addCandidate(hash, APPLICATION, msg.sender, self.parameterizer.getVoteBy())
+  self.voting.addCandidate(hash, APPLICATION, msg.sender, self.parameterizer.getStake(), self.parameterizer.getVoteBy())
   log.Applied(hash, msg.sender)
 
 
@@ -206,11 +207,8 @@ def challenge(hash: bytes32):
   @param hash The identifier for the listing being challenged
   """
   assert self.listings[hash].owner != ZERO_ADDRESS
-  stake: wei_value = self.parameterizer.getChallengeStake()
   assert not self.voting.isCandidate(hash) # assure not already challenged
-  # TODO make it possible to stake from a listing?
-  self.market_token.transferFrom(msg.sender, self, stake)
-  self.voting.addCandidate(hash, CHALLENGE, msg.sender, self.parameterizer.getVoteBy())
+  self.voting.addCandidate(hash, CHALLENGE, msg.sender, self.parameterizer.getStake(), self.parameterizer.getVoteBy())
   log.Challenged(hash, msg.sender)
 
 
@@ -224,36 +222,17 @@ def resolveChallenge(hash: bytes32):
   """
   assert self.voting.candidateIs(hash, CHALLENGE)
   assert self.voting.pollClosed(hash)
-  owner: address = self.voting.getCandidateOwner(hash)
-  stake: wei_value = self.parameterizer.getChallengeStake()
-  # before we tally votes, we check that the challengee has the funds to stake with
-  supply: wei_value = self.listings[hash].supply
-  rewards: wei_value = self.listings[hash].rewards
-  if (supply + rewards) < stake:
-    # we allow a challenger to recieve whatever balances a listing may have had, if present
-    if (supply + rewards) > 0:
-      self.listings[hash].supply = 0
-      self.listings[hash].rewards = 0
-      self.market_token.transfer(owner, (supply + rewards))
+  owner: address = self.voting.getCandidateOwner(hash) # TODO this could likely be removed now
+  # Case: challenge won
+  if self.voting.didPass(hash, self.parameterizer.getQuorum()):
     self.removeListing(hash)
-  else:
-    # Now we can check voting. Case: challenge won
-    if self.voting.didPass(hash, self.parameterizer.getQuorum()):
-      # adjust the supply and rewards depending on where we were able to assemble the stake from
-      if supply >= stake:
-        self.listings[hash].supply -= stake
-      else:
-        self.listings[hash].supply = 0
-        self.listings[hash].rewards -= (stake - supply)
-      # x2 as challenger gets back their own stake + the listing's
-      self.market_token.transfer(owner, stake*2)
-      self.removeListing(hash)
-      log.ChallengeSucceeded(hash, owner, stake)
-    else: # Case: listing won
-      self.listings[hash].rewards += stake
-      log.ChallengeFailed(hash, owner, stake)
-    # regardless, clean up the candidate
-    self.voting.removeCandidate(hash)
+    log.ChallengeSucceeded(hash, owner)
+  else: # Case: listing won
+    # the voting contract will make the stake avail (via unstake) to the list owner
+    self.voting.transferStake(hash, self.listings[hash].owner)
+    log.ChallengeFailed(hash, owner)
+  # regardless, clean up the candidate
+  self.voting.removeCandidate(hash)
 
 
 @public

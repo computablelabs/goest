@@ -82,6 +82,18 @@ func TestMain(m *testing.M) {
 	// see ./helpers#deployed
 	deployed, deployedError = Deploy(big.NewInt(ONE_WEI*6), context) // 6 tokens in wei
 
+	// the markettoken must have its privileges set
+	_, marketErr := deployed.MarketTokenContract.SetPrivileged(&bind.TransactOpts{
+		From:     context.AuthFactory.From,
+		Signer:   context.AuthFactory.Signer,
+		GasPrice: big.NewInt(ONE_GWEI * 2),
+		GasLimit: 1000000,
+	}, context.AuthListing.From, context.InvestingAddress)
+
+	if marketErr != nil {
+		log.Fatalf("Error setting privileged contract address: %v", marketErr)
+	}
+
 	_, votingErr := deployed.VotingContract.SetPrivileged(&bind.TransactOpts{
 		From:     context.AuthFactory.From,
 		Signer:   context.AuthFactory.Signer,

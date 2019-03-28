@@ -13,8 +13,8 @@ contract EtherToken:
 contract Voting:
   def candidateIs(hash: bytes32, kind: uint256) -> bool: constant
   def isCandidate(hash: bytes32) -> bool: constant
-  def addCandidate(hash: bytes32, kind: uint256, owner: address, vote_by: uint256(sec)): modifying
   def getCandidateOwner(hash: bytes32) -> address: constant
+  def addCandidate(hash: bytes32, kind: uint256, owner: address, stake: uint256(wei), vote_by: uint256(sec)): modifying
   def removeCandidate(hash: bytes32): modifying
   def didPass(hash: bytes32, quorum: uint256) -> bool: constant
   def pollClosed(hash: bytes32) -> bool: constant
@@ -22,6 +22,7 @@ contract Voting:
 contract Parameterizer:
   def getBackendPayment() -> uint256: constant
   def getCostPerByte() -> wei_value: constant
+  def getStake() -> uint256(wei): constant
   def getQuorum() -> uint256: constant
   def getVoteBy() -> uint256(sec): constant
 
@@ -147,7 +148,7 @@ def register(url: string[128]):
   self.backend_url = url # we'll clear this if the registration fails
   hash: bytes32 = keccak256(url)
   assert not self.voting.isCandidate(hash)
-  self.voting.addCandidate(hash, REGISTRATION, msg.sender, self.parameterizer.getVoteBy())
+  self.voting.addCandidate(hash, REGISTRATION, msg.sender, self.parameterizer.getStake(), self.parameterizer.getVoteBy())
   log.Registered(hash, msg.sender)
 
 

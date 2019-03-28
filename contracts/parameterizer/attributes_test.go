@@ -5,10 +5,10 @@ import (
 	"testing"
 )
 
-func TestGetChallengeStake(t *testing.T) {
-	stake, _ := deployed.ParameterizerContract.GetChallengeStake(nil)
+func TestGetStake(t *testing.T) {
+	stake, _ := deployed.ParameterizerContract.GetStake(nil)
 
-	if stake.Cmp(big.NewInt(ONE_WEI)) != 0 {
+	if stake.Cmp(big.NewInt(ONE_GWEI)) != 0 {
 		t.Fatalf("Expected challengeStake to be 10**18, got: %v", stake)
 	}
 }

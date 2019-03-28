@@ -84,7 +84,7 @@ func TestResolveApplication(t *testing.T) {
 		From:     context.AuthMember2.From,
 		Signer:   context.AuthMember2.Signer,
 		GasPrice: big.NewInt(ONE_GWEI * 2),
-		GasLimit: 100000,
+		GasLimit: 150000,
 	}, listingHash, big.NewInt(1))
 
 	if voteErr != nil {
