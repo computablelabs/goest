@@ -32,6 +32,7 @@ type ctx struct {
 	AuthFactory   *bind.TransactOpts
 	AuthMember1   *bind.TransactOpts
 	AuthMember2   *bind.TransactOpts
+	AuthMember3   *bind.TransactOpts
 	Blockchain    *backends.SimulatedBackend
 }
 
@@ -83,7 +84,7 @@ func Deploy(initialBalance *big.Int, c *ctx) (*dep, error) {
 		big.NewInt(ONE_WEI),   // listReward
 		big.NewInt(ONE_WEI/2), // access reward
 		big.NewInt(ONE_GWEI),  // stake
-		big.NewInt(20),        // voteBy of 20 seconds for specs
+		big.NewInt(40),        // voteBy of 20 seconds for specs
 		big.NewInt(50),        // quorum
 		big.NewInt(30),        // backend payment percent
 		big.NewInt(50),        // maker payment percent
@@ -118,12 +119,14 @@ func SetupBlockchain(accountBalance *big.Int) *ctx {
 	keyFac, _ := crypto.GenerateKey()
 	keyMem1, _ := crypto.GenerateKey()
 	keyMem2, _ := crypto.GenerateKey()
+	keyMem3, _ := crypto.GenerateKey()
 	authData := bind.NewKeyedTransactor(keyData)
 	authList := bind.NewKeyedTransactor(keyList)
 	authInv := bind.NewKeyedTransactor(keyInv)
 	authFac := bind.NewKeyedTransactor(keyFac)
 	authMem1 := bind.NewKeyedTransactor(keyMem1)
 	authMem2 := bind.NewKeyedTransactor(keyMem2)
+	authMem3 := bind.NewKeyedTransactor(keyMem3)
 	alloc := make(core.GenesisAlloc)
 	alloc[authData.From] = core.GenesisAccount{Balance: accountBalance}
 	alloc[authList.From] = core.GenesisAccount{Balance: accountBalance}
@@ -131,6 +134,7 @@ func SetupBlockchain(accountBalance *big.Int) *ctx {
 	alloc[authFac.From] = core.GenesisAccount{Balance: accountBalance}
 	alloc[authMem1.From] = core.GenesisAccount{Balance: accountBalance}
 	alloc[authMem2.From] = core.GenesisAccount{Balance: accountBalance}
+	alloc[authMem3.From] = core.GenesisAccount{Balance: accountBalance}
 	// 2nd arg is a gas limit, a uint64. we'll use 4.7 million
 	bc := backends.NewSimulatedBackend(alloc, 4700000)
 
@@ -142,6 +146,7 @@ func SetupBlockchain(accountBalance *big.Int) *ctx {
 		AuthFactory:   authFac,
 		AuthMember1:   authMem1,
 		AuthMember2:   authMem2,
+		AuthMember3:   authMem3,
 		Blockchain:    bc,
 	}
 }

@@ -54,12 +54,46 @@ func TestResolveReparam(t *testing.T) {
 	// how we will fetch this proposal
 	paramHash, _ := deployed.ParameterizerContract.GetHash(nil, big.NewInt(7), big.NewInt(25))
 
-	// cast a vote, one will suffice as we only have one council member here
+	// cast a vote, member may need funding...
+	memBal, _ := deployed.MarketTokenContract.BalanceOf(nil, context.AuthMember3.From)
+	if memBal.Cmp(big.NewInt(ONE_GWEI)) == -1 {
+		// transfer one
+		_, transErr := deployed.MarketTokenContract.Transfer(&bind.TransactOpts{
+			From:     context.AuthFactory.From,
+			Signer:   context.AuthFactory.Signer,
+			GasPrice: big.NewInt(ONE_GWEI * 2),
+			GasLimit: 1000000,
+		}, context.AuthMember3.From, big.NewInt(ONE_GWEI))
+
+		if transErr != nil {
+			t.Fatalf("Error transferring tokens to member: %v", transErr)
+		}
+
+		context.Blockchain.Commit()
+	}
+
+	// member will need to have approved the voting contract to spend
+	allowed, _ := deployed.MarketTokenContract.Allowance(nil, context.AuthMember3.From, deployed.VotingAddress)
+	if !(allowed.Cmp(big.NewInt(ONE_GWEI)) >= 0) {
+		_, approveErr := deployed.MarketTokenContract.Approve(&bind.TransactOpts{
+			From:     context.AuthMember3.From,
+			Signer:   context.AuthMember3.Signer,
+			GasPrice: big.NewInt(ONE_GWEI * 2),
+			GasLimit: 1000000,
+		}, deployed.VotingAddress, big.NewInt(ONE_GWEI))
+
+		if approveErr != nil {
+			t.Fatalf("Error approving market contract to spend: %v", approveErr)
+		}
+
+		context.Blockchain.Commit()
+	}
+
 	_, voteErr := deployed.VotingContract.Vote(&bind.TransactOpts{
-		From:     context.AuthMember1.From,
-		Signer:   context.AuthMember1.Signer,
+		From:     context.AuthMember3.From,
+		Signer:   context.AuthMember3.Signer,
 		GasPrice: big.NewInt(ONE_GWEI * 2),
-		GasLimit: 100000,
+		GasLimit: 150000,
 	}, paramHash, big.NewInt(1))
 
 	if voteErr != nil {
@@ -68,8 +102,15 @@ func TestResolveReparam(t *testing.T) {
 
 	context.Blockchain.Commit()
 
+	_, _, _, _, yea, _, _ := deployed.VotingContract.GetCandidate(nil, paramHash)
+	t.Log(yea)
+
+	if yea.Cmp(big.NewInt(0)) != 1 {
+		t.Fatalf("Expected number of votes to be > 0, got: %v", yea)
+	}
+
 	// move time forward so the poll is closed
-	context.Blockchain.AdjustTime(20 * time.Second)
+	context.Blockchain.AdjustTime(40 * time.Second)
 	context.Blockchain.Commit()
 
 	// make sure its closed now

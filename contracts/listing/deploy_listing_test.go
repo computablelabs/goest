@@ -152,13 +152,47 @@ func TestMain(m *testing.M) {
 
 	context.Blockchain.Commit()
 
-	// vote for the backend candidate
+	// vote for the backend candidate, member will likely need funds
+	memBal, _ := deployed.MarketTokenContract.BalanceOf(nil, context.AuthMember3.From)
+	if memBal.Cmp(big.NewInt(ONE_GWEI)) == -1 {
+		// transfer one
+		_, transErr := deployed.MarketTokenContract.Transfer(&bind.TransactOpts{
+			From:     context.AuthFactory.From,
+			Signer:   context.AuthFactory.Signer,
+			GasPrice: big.NewInt(ONE_GWEI * 2),
+			GasLimit: 1000000,
+		}, context.AuthMember3.From, big.NewInt(ONE_GWEI))
+
+		if transErr != nil {
+			log.Fatalf("Error transferring tokens to member: %v", transErr)
+		}
+
+		context.Blockchain.Commit()
+	}
+
+	// member will need to have approved the voting contract to spend
+	allowed, _ := deployed.MarketTokenContract.Allowance(nil, context.AuthMember3.From, deployed.VotingAddress)
+	if !(allowed.Cmp(big.NewInt(ONE_GWEI)) >= 0) {
+		_, approveErr := deployed.MarketTokenContract.Approve(&bind.TransactOpts{
+			From:     context.AuthMember3.From,
+			Signer:   context.AuthMember3.Signer,
+			GasPrice: big.NewInt(ONE_GWEI * 2),
+			GasLimit: 1000000,
+		}, deployed.VotingAddress, big.NewInt(ONE_GWEI))
+
+		if approveErr != nil {
+			log.Fatalf("Error approving market contract to spend: %v", approveErr)
+		}
+
+		context.Blockchain.Commit()
+	}
+
 	hash, _ := deployed.DatatrustContract.GetHash(nil, "https://www.immabackend.biz")
 	_, voteErr := deployed.VotingContract.Vote(&bind.TransactOpts{
-		From:     context.AuthMember2.From,
-		Signer:   context.AuthMember2.Signer,
+		From:     context.AuthMember3.From,
+		Signer:   context.AuthMember3.Signer,
 		GasPrice: big.NewInt(ONE_GWEI * 2),
-		GasLimit: 100000,
+		GasLimit: 150000,
 	}, hash, big.NewInt(1))
 
 	if voteErr != nil {
@@ -184,6 +218,19 @@ func TestMain(m *testing.M) {
 	}
 
 	context.Blockchain.Commit()
+
+	// member can unstake now
+	_, unErr := deployed.VotingContract.Unstake(&bind.TransactOpts{
+		From:     context.AuthMember3.From,
+		Signer:   context.AuthMember3.Signer,
+		GasPrice: big.NewInt(ONE_GWEI * 2),
+		GasLimit: 150000,
+	}, hash)
+
+	if unErr != nil {
+		log.Fatalf("Error Unstaking: %v", unErr)
+	}
+
 	code := m.Run()
 	os.Exit(code)
 }
