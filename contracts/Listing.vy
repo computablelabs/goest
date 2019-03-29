@@ -10,7 +10,6 @@ CHALLENGE: constant(uint256) = 2 # candidate.kind
 struct Listing:
   owner: address
   supply: wei_value
-  rewards: wei_value
 
 contract MarketToken:
   def burn(amount: uint256(wei)): modifying
@@ -45,8 +44,6 @@ Challenged: event({hash: indexed(bytes32), challenger: indexed(address)})
 ChallengeFailed: event({hash: indexed(bytes32), challenger: indexed(address)})
 ChallengeSucceeded: event({hash: indexed(bytes32), challenger: indexed(address)})
 Listed: event({hash: indexed(bytes32), owner: indexed(address), reward: wei_value})
-ListingConverted: event({ hash: indexed(bytes32)})
-ListingDeposit: event({hash: indexed(bytes32), owner: indexed(address), deposited: wei_value})
 ListingRemoved: event({hash: indexed(bytes32)})
 ListingWithdraw: event({hash: indexed(bytes32), owner: indexed(address), withdrawn: wei_value})
 
@@ -75,23 +72,9 @@ def isListed(hash: bytes32) -> bool:
 
 
 @public
-def depositToListing(hash: bytes32, amount: wei_value):
-  """
-  @notice Allow the supply of a listed listing to be increased
-  @param hash Identifier of the listing to deposit supply to
-  @param amount How much to deposit
-  """
-  assert self.listings[hash].owner != ZERO_ADDRESS
-  self.market_token.transferFrom(msg.sender, self, amount)
-  self.listings[hash].supply += amount
-  log.ListingDeposit(hash, msg.sender, amount)
-
-
-@public
 def withdrawFromListing(hash: bytes32, amount: wei_value):
   """
   @notice Allow a maker to witdhraw from the supply of an owned listing
-  @dev Funds may come from supply only
   @param hash The listing identifier
   @param amount The funds to withdraw
   """
@@ -126,28 +109,12 @@ def getHash(str: string[64]) -> bytes32:
 
 @public
 @constant
-def getListing(hash: bytes32) -> (address, wei_value, wei_value):
+def getListing(hash: bytes32) -> (address, wei_value):
   """
   @notice Return pertinent information about a listing
   @param hash The listing identifier
   """
-  return (self.listings[hash].owner, self.listings[hash].supply, self.listings[hash].rewards)
-
-
-@public
-def convertListing(hash:bytes32):
-  """
-  @notice Allow a Listing owner to claim their rewards (and any supply present) by turning over ownership to the Market
-  @param hash The listing identifier
-  """
-  assert self.listings[hash].owner == msg.sender
-  funds: wei_value = self.listings[hash].supply + self.listings[hash].rewards
-  if funds > 0:
-    self.listings[hash].supply = 0
-    self.listings[hash].rewards = 0
-    self.market_token.transfer(self.listings[hash].owner, funds)
-  self.listings[hash].owner = self
-  log.ListingConverted(hash)
+  return (self.listings[hash].owner, self.listings[hash].supply)
 
 
 @private
@@ -159,12 +126,8 @@ def removeListing(hash: bytes32):
   """
   assert self.listings[hash].owner != ZERO_ADDRESS
   if self.listings[hash].supply > 0:
-    self.market_token.transfer(self.listings[hash].owner, self.listings[hash].supply)
+    self.market_token.burn(self.listings[hash].supply)
     clear(self.listings[hash].supply)
-  if self.listings[hash].rewards > 0:
-    self.market_token.burn(self.listings[hash].rewards)
-    clear(self.listings[hash].rewards)
-  # finally clear the removed listing...
   clear(self.listings[hash]) # TODO assure we don't need to do this by hand
   # datatrust now needs to clear the data hash
   self.datatrust.removeDataHash(hash)
@@ -188,7 +151,7 @@ def resolveApplication(hash: bytes32):
       self.listings[hash].owner = owner # is now 'listed'
       amount: wei_value = self.parameterizer.getListReward()
       self.market_token.mint(amount)
-      self.listings[hash].rewards = amount
+      self.listings[hash].supply = amount
       log.Listed(hash, owner, amount)
     else: # we have a data_hash but vote didn't pass - remove it
       self.datatrust.removeDataHash(hash)

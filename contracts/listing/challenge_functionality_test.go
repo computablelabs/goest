@@ -106,7 +106,7 @@ func TestChallenge(t *testing.T) {
 	context.Blockchain.Commit()
 
 	// should be listed now, with a reward
-	owner, _, _, _ := deployed.ListingContract.GetListing(nil, listingHash)
+	owner, _, _ := deployed.ListingContract.GetListing(nil, listingHash)
 
 	if owner != context.AuthMember1.From {
 		t.Fatalf("Exepected listing to be owned by member 1, got: %v", owner)
