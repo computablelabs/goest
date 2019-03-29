@@ -41,12 +41,46 @@ func TestResolveRegistration(t *testing.T) {
 	// we should not have an address yet
 	nodress, _ := deployed.DatatrustContract.GetBackendAddress(nil)
 	hash, _ := deployed.DatatrustContract.GetHash(nil, "http://www.icanhazbackend.com")
-	// cast a vote for
+	// cast a vote for, member may need funds
+	memBal, _ := deployed.MarketTokenContract.BalanceOf(nil, context.AuthMember1.From)
+	if memBal.Cmp(big.NewInt(ONE_GWEI)) == -1 {
+		// transfer one
+		_, transErr := deployed.MarketTokenContract.Transfer(&bind.TransactOpts{
+			From:     context.AuthFactory.From,
+			Signer:   context.AuthFactory.Signer,
+			GasPrice: big.NewInt(ONE_GWEI * 2),
+			GasLimit: 1000000,
+		}, context.AuthMember1.From, big.NewInt(ONE_GWEI))
+
+		if transErr != nil {
+			t.Fatalf("Error transferring tokens to member: %v", transErr)
+		}
+
+		context.Blockchain.Commit()
+	}
+
+	// member will need to have approved the voting contract to spend
+	allowed, _ := deployed.MarketTokenContract.Allowance(nil, context.AuthMember1.From, deployed.VotingAddress)
+	if !(allowed.Cmp(big.NewInt(ONE_GWEI)) >= 0) {
+		_, approveErr := deployed.MarketTokenContract.Approve(&bind.TransactOpts{
+			From:     context.AuthMember1.From,
+			Signer:   context.AuthMember1.Signer,
+			GasPrice: big.NewInt(ONE_GWEI * 2),
+			GasLimit: 1000000,
+		}, deployed.VotingAddress, big.NewInt(ONE_GWEI))
+
+		if approveErr != nil {
+			t.Fatalf("Error approving market contract to spend: %v", approveErr)
+		}
+
+		context.Blockchain.Commit()
+	}
+
 	_, voteErr := deployed.VotingContract.Vote(&bind.TransactOpts{
 		From:     context.AuthMember1.From,
 		Signer:   context.AuthMember1.Signer,
 		GasPrice: big.NewInt(ONE_GWEI * 2),
-		GasLimit: 100000,
+		GasLimit: 150000,
 	}, hash, big.NewInt(1))
 
 	if voteErr != nil {

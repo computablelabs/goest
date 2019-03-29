@@ -64,7 +64,7 @@ func TestGetQuorum(t *testing.T) {
 func TestGetVoteBy(t *testing.T) {
 	voteBy, _ := deployed.ParameterizerContract.GetVoteBy(nil)
 
-	if voteBy.Cmp(big.NewInt(20)) != 0 {
+	if voteBy.Cmp(big.NewInt(40)) != 0 {
 		t.Fatalf("Expected voteBy to be 20, got: %v", voteBy)
 	}
 }

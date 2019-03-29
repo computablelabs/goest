@@ -20,7 +20,7 @@ contract MarketToken:
 
 CandidateAdded: event({hash: indexed(bytes32), kind: indexed(uint256), owner: indexed(address), voteBy: timestamp})
 CandidateRemoved: event({hash: indexed(bytes32)})
-Voted: event({hash: indexed(bytes32), voter: indexed(address), option: uint256})
+Voted: event({hash: indexed(bytes32), voter: indexed(address)})
 
 candidates: map(bytes32, Candidate)
 stakes: map(address, map(bytes32, wei_value)) # user -> candidate -> $
@@ -184,16 +184,19 @@ def pollClosed(hash: bytes32) -> bool:
 def vote(hash: bytes32, option: uint256):
   """
   @notice Cast a vote for a given candidate
+  @dev User mush have approved market token to spend on their behalf
   @param hash The candidate identifier
   @param option Yea (1) or Nay (!1)
   """
   assert self.candidates[hash].owner != ZERO_ADDRESS
   assert self.candidates[hash].vote_by > block.timestamp
+  self.market_token.transferFrom(msg.sender, self, self.candidates[hash].stake)
+  self.stakes[msg.sender][hash] += self.candidates[hash].stake
   if option == 1:
     self.candidates[hash].yea += 1
   else:
     self.candidates[hash].nay += 1
-  log.Voted(hash, msg.sender, option)
+  log.Voted(hash, msg.sender)
 
 
 @public

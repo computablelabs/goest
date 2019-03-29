@@ -53,7 +53,7 @@ func TestVotingSetPrivilegedContracts(t *testing.T) {
 // the ctx and dep vars will be avail to the other tests in the package
 func TestMain(m *testing.M) {
 	// see ./helpers#context
-	context = SetupBlockchain(big.NewInt(ONE_WEI)) // 1 ETH in wei
+	context = SetupBlockchain(big.NewInt(ONE_WEI * 5))
 	// see ./helpers#deployed
 	deployed, deployedError = Deploy(big.NewInt(ONE_WEI*5), context)
 

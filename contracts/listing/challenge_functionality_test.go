@@ -37,11 +37,46 @@ func TestChallenge(t *testing.T) {
 	if dataErr != nil {
 		t.Fatal("Error setting data hash for listing")
 	}
+
 	context.Blockchain.Commit()
 
+	// user may need funds
+	memBal, _ := deployed.MarketTokenContract.BalanceOf(nil, context.AuthMember3.From)
+	if memBal.Cmp(big.NewInt(ONE_GWEI)) == -1 {
+		// transfer one
+		_, transErr := deployed.MarketTokenContract.Transfer(&bind.TransactOpts{
+			From:     context.AuthFactory.From,
+			Signer:   context.AuthFactory.Signer,
+			GasPrice: big.NewInt(ONE_GWEI * 2),
+			GasLimit: 1000000,
+		}, context.AuthMember3.From, big.NewInt(ONE_GWEI))
+
+		if transErr != nil {
+			t.Fatalf("Error transferring tokens to member: %v", transErr)
+		}
+
+		context.Blockchain.Commit()
+	}
+
+	// member will need to have approved the voting contract to spend
+	allowed, _ := deployed.MarketTokenContract.Allowance(nil, context.AuthMember3.From, deployed.VotingAddress)
+	if !(allowed.Cmp(big.NewInt(ONE_GWEI)) >= 0) {
+		_, approveErr := deployed.MarketTokenContract.Approve(&bind.TransactOpts{
+			From:     context.AuthMember3.From,
+			Signer:   context.AuthMember3.Signer,
+			GasPrice: big.NewInt(ONE_GWEI * 2),
+			GasLimit: 1000000,
+		}, deployed.VotingAddress, big.NewInt(ONE_GWEI))
+
+		if approveErr != nil {
+			t.Fatalf("Error approving market contract to spend: %v", approveErr)
+		}
+
+		context.Blockchain.Commit()
+	}
 	_, voteErr := deployed.VotingContract.Vote(&bind.TransactOpts{
-		From:     context.AuthMember2.From,
-		Signer:   context.AuthMember2.Signer,
+		From:     context.AuthMember3.From,
+		Signer:   context.AuthMember3.Signer,
 		GasPrice: big.NewInt(ONE_GWEI * 2),
 		GasLimit: 150000,
 	}, listingHash, big.NewInt(1))
@@ -77,33 +112,54 @@ func TestChallenge(t *testing.T) {
 		t.Fatalf("Exepected listing to be owned by member 1, got: %v", owner)
 	}
 
-	// now we can challenge. member2 will need funds approved && such
-	_, transErr := deployed.MarketTokenContract.Transfer(&bind.TransactOpts{
-		From:     context.AuthFactory.From,
-		Signer:   context.AuthFactory.Signer,
+	// member can unstake
+	_, unErr := deployed.VotingContract.Unstake(&bind.TransactOpts{
+		From:     context.AuthMember3.From,
+		Signer:   context.AuthMember3.Signer,
 		GasPrice: big.NewInt(ONE_GWEI * 2),
-		GasLimit: 1000000,
-	}, context.AuthMember2.From, big.NewInt(ONE_WEI*2)) // 2 tokens
+		GasLimit: 150000,
+	}, listingHash)
 
-	if transErr != nil {
-		t.Fatalf("Error transferring tokens to member: %v", transErr)
+	if unErr != nil {
+		t.Fatalf("Error Unstaking: %v", unErr)
 	}
 
 	context.Blockchain.Commit()
 
-	// the transfers happen at the voting contract for challenge
-	_, approveErr := deployed.MarketTokenContract.Approve(&bind.TransactOpts{
-		From:     context.AuthMember2.From,
-		Signer:   context.AuthMember2.Signer,
-		GasPrice: big.NewInt(ONE_GWEI * 2),
-		GasLimit: 1000000,
-	}, deployed.VotingAddress, big.NewInt(ONE_WEI*2)) // up to 2 tokenWei
+	// member 2 as challenger here, may need funds
+	mem2Bal, _ := deployed.MarketTokenContract.BalanceOf(nil, context.AuthMember2.From)
+	if mem2Bal.Cmp(big.NewInt(ONE_GWEI)) == -1 {
+		// transfer one
+		_, transErr := deployed.MarketTokenContract.Transfer(&bind.TransactOpts{
+			From:     context.AuthFactory.From,
+			Signer:   context.AuthFactory.Signer,
+			GasPrice: big.NewInt(ONE_GWEI * 2),
+			GasLimit: 1000000,
+		}, context.AuthMember2.From, big.NewInt(ONE_GWEI))
 
-	if approveErr != nil {
-		t.Fatalf("Error approving market contract to spend: %v", approveErr)
+		if transErr != nil {
+			t.Fatalf("Error transferring tokens to member: %v", transErr)
+		}
+
+		context.Blockchain.Commit()
 	}
 
-	context.Blockchain.Commit()
+	// member will need to have approved the voting contract to spend
+	allowed2, _ := deployed.MarketTokenContract.Allowance(nil, context.AuthMember2.From, deployed.VotingAddress)
+	if !(allowed2.Cmp(big.NewInt(ONE_GWEI)) >= 0) {
+		_, approveErr := deployed.MarketTokenContract.Approve(&bind.TransactOpts{
+			From:     context.AuthMember2.From,
+			Signer:   context.AuthMember2.Signer,
+			GasPrice: big.NewInt(ONE_GWEI * 2),
+			GasLimit: 1000000,
+		}, deployed.VotingAddress, big.NewInt(ONE_GWEI))
+
+		if approveErr != nil {
+			t.Fatalf("Error approving market contract to spend: %v", approveErr)
+		}
+
+		context.Blockchain.Commit()
+	}
 
 	// note our balances right now as challenging will change them
 	memberBal, _ := deployed.MarketTokenContract.BalanceOf(nil, context.AuthMember2.From)
@@ -127,6 +183,7 @@ func TestChallenge(t *testing.T) {
 	if memberBal.Cmp(newMemberBal) != 1 {
 		t.Fatalf("Expected %v to be > %v", memberBal, newMemberBal)
 	}
+
 	// market then goes up as it banks that amount...
 	newMarketBal, _ := deployed.MarketTokenContract.BalanceOf(nil, deployed.VotingAddress)
 	if newMarketBal.Cmp(marketBal) != 1 {
@@ -146,12 +203,28 @@ func TestResolveChallenge(t *testing.T) {
 	votingBal, _ := deployed.MarketTokenContract.BalanceOf(nil, deployed.VotingAddress)
 	memberBal, _ := deployed.MarketTokenContract.BalanceOf(nil, context.AuthMember2.From)
 
-	// we need to cast a vote for the challenge, or the listing will "win"
+	// we need to cast a vote for the challenge, or the listing will "win". member3 as voter here
+	allowed, _ := deployed.MarketTokenContract.Allowance(nil, context.AuthMember3.From, deployed.VotingAddress)
+	if !(allowed.Cmp(big.NewInt(ONE_GWEI)) >= 0) {
+		_, approveErr := deployed.MarketTokenContract.Approve(&bind.TransactOpts{
+			From:     context.AuthMember3.From,
+			Signer:   context.AuthMember3.Signer,
+			GasPrice: big.NewInt(ONE_GWEI * 2),
+			GasLimit: 1000000,
+		}, deployed.VotingAddress, big.NewInt(ONE_GWEI))
+
+		if approveErr != nil {
+			t.Fatalf("Error approving market contract to spend: %v", approveErr)
+		}
+
+		context.Blockchain.Commit()
+	}
+
 	_, voteErr := deployed.VotingContract.Vote(&bind.TransactOpts{
-		From:     context.AuthMember2.From,
-		Signer:   context.AuthMember2.Signer,
+		From:     context.AuthMember3.From,
+		Signer:   context.AuthMember3.Signer,
 		GasPrice: big.NewInt(ONE_GWEI * 2),
-		GasLimit: 1000000,
+		GasLimit: 150000,
 	}, listingHash, big.NewInt(1))
 
 	if voteErr != nil {
@@ -208,6 +281,18 @@ func TestResolveChallenge(t *testing.T) {
 		t.Fatalf("Error unstaking: %v", unErr)
 	}
 
+	// voter may also unstake
+	_, un2Err := deployed.VotingContract.Unstake(&bind.TransactOpts{
+		From:     context.AuthMember3.From,
+		Signer:   context.AuthMember3.Signer,
+		GasPrice: big.NewInt(ONE_GWEI * 2),
+		GasLimit: 1000000,
+	}, listingHash)
+
+	if un2Err != nil {
+		t.Fatalf("Error unstaking: %v", un2Err)
+	}
+
 	context.Blockchain.Commit()
 
 	votingBalNow, _ := deployed.MarketTokenContract.BalanceOf(nil, deployed.VotingAddress)
@@ -223,10 +308,15 @@ func TestResolveChallenge(t *testing.T) {
 		t.Fatalf("Expected %v to be > %v", memberBalNow, memberBal)
 	}
 
-	// the stake is cleared
+	// the stakes are cleared
 	stake, _ := deployed.VotingContract.GetStake(nil, listingHash, context.AuthMember2.From)
 	if stake.Cmp(big.NewInt(0)) != 0 {
 		t.Fatalf("Expected stake to be 0, got: %v", stake)
+	}
+
+	stake2, _ := deployed.VotingContract.GetStake(nil, listingHash, context.AuthMember3.From)
+	if stake2.Cmp(big.NewInt(0)) != 0 {
+		t.Fatalf("Expected stake to be 0, got: %v", stake2)
 	}
 }
 
@@ -261,9 +351,26 @@ func TestLosingChallenge(t *testing.T) {
 	}
 	context.Blockchain.Commit()
 
+	// member3 as voter
+	allowed, _ := deployed.MarketTokenContract.Allowance(nil, context.AuthMember3.From, deployed.VotingAddress)
+	if !(allowed.Cmp(big.NewInt(ONE_GWEI)) >= 0) {
+		_, approveErr := deployed.MarketTokenContract.Approve(&bind.TransactOpts{
+			From:     context.AuthMember3.From,
+			Signer:   context.AuthMember3.Signer,
+			GasPrice: big.NewInt(ONE_GWEI * 2),
+			GasLimit: 1000000,
+		}, deployed.VotingAddress, big.NewInt(ONE_GWEI))
+
+		if approveErr != nil {
+			t.Fatalf("Error approving market contract to spend: %v", approveErr)
+		}
+
+		context.Blockchain.Commit()
+	}
+
 	_, voteErr := deployed.VotingContract.Vote(&bind.TransactOpts{
-		From:     context.AuthMember2.From,
-		Signer:   context.AuthMember2.Signer,
+		From:     context.AuthMember3.From,
+		Signer:   context.AuthMember3.Signer,
 		GasPrice: big.NewInt(ONE_GWEI * 2),
 		GasLimit: 150000,
 	}, listingHash, big.NewInt(1))
@@ -293,6 +400,22 @@ func TestLosingChallenge(t *testing.T) {
 	context.Blockchain.Commit()
 
 	// challenge it -- we won't vote for the chall so that it loses...
+	allowed2, _ := deployed.MarketTokenContract.Allowance(nil, context.AuthMember2.From, deployed.VotingAddress)
+	if !(allowed2.Cmp(big.NewInt(ONE_GWEI)) >= 0) {
+		_, approveErr := deployed.MarketTokenContract.Approve(&bind.TransactOpts{
+			From:     context.AuthMember2.From,
+			Signer:   context.AuthMember2.Signer,
+			GasPrice: big.NewInt(ONE_GWEI * 2),
+			GasLimit: 1000000,
+		}, deployed.VotingAddress, big.NewInt(ONE_GWEI))
+
+		if approveErr != nil {
+			t.Fatalf("Error approving market contract to spend: %v", approveErr)
+		}
+
+		context.Blockchain.Commit()
+	}
+
 	_, challengeErr := deployed.ListingContract.Challenge(&bind.TransactOpts{
 		From:     context.AuthMember2.From,
 		Signer:   context.AuthMember2.Signer,
@@ -310,10 +433,16 @@ func TestLosingChallenge(t *testing.T) {
 	member1Bal, _ := deployed.MarketTokenContract.BalanceOf(nil, context.AuthMember1.From)
 	member1Stake, _ := deployed.VotingContract.GetStake(nil, listingHash, context.AuthMember1.From)
 	member2Stake, _ := deployed.VotingContract.GetStake(nil, listingHash, context.AuthMember2.From)
+	member3Stake, _ := deployed.VotingContract.GetStake(nil, listingHash, context.AuthMember3.From)
 
 	// we know member2 has staked now
 	if member2Stake.Cmp(big.NewInt(0)) != 1 {
 		t.Fatalf("Expected member 2 stake to be > 0, got: %v", member2Stake)
+	}
+
+	// and 3...
+	if member3Stake.Cmp(big.NewInt(0)) != 1 {
+		t.Fatalf("Expected member 3 stake to be > 0, got: %v", member3Stake)
 	}
 
 	// we know member1 has not staked now
@@ -350,6 +479,12 @@ func TestLosingChallenge(t *testing.T) {
 		t.Fatalf("Expected member 1 stake to be > 0, got: %v", member1StakeNow)
 	}
 
+	// member 3 stake is unchanged
+	member3StakeNow, _ := deployed.VotingContract.GetStake(nil, listingHash, context.AuthMember3.From)
+	if member3StakeNow.Cmp(big.NewInt(0)) != 1 {
+		t.Fatalf("Expected member 3 stake to be > 0, got: %v", member3StakeNow)
+	}
+
 	// member 1 can actually unstake that credit
 	_, unErr := deployed.VotingContract.Unstake(&bind.TransactOpts{
 		From:     context.AuthMember1.From,
@@ -362,6 +497,18 @@ func TestLosingChallenge(t *testing.T) {
 		t.Fatalf("Error unstaking: %v", unErr)
 	}
 
+	// member 3 too
+	_, un3Err := deployed.VotingContract.Unstake(&bind.TransactOpts{
+		From:     context.AuthMember3.From,
+		Signer:   context.AuthMember3.Signer,
+		GasPrice: big.NewInt(ONE_GWEI * 2),
+		GasLimit: 1000000,
+	}, listingHash)
+
+	if un3Err != nil {
+		t.Fatalf("Error unstaking: %v", un3Err)
+	}
+
 	context.Blockchain.Commit()
 
 	// member 1 has a higher bal now
@@ -370,9 +517,14 @@ func TestLosingChallenge(t *testing.T) {
 		t.Fatalf("Expected %v to be > %v", member1BalNow, member1Bal)
 	}
 
-	// the stake is cleared
+	// the stakes are cleared
 	stake, _ := deployed.VotingContract.GetStake(nil, listingHash, context.AuthMember1.From)
 	if stake.Cmp(big.NewInt(0)) != 0 {
 		t.Fatalf("Expected stake to be 0, got: %v", stake)
+	}
+
+	stake3, _ := deployed.VotingContract.GetStake(nil, listingHash, context.AuthMember3.From)
+	if stake3.Cmp(big.NewInt(0)) != 0 {
+		t.Fatalf("Expected stake 3 to be 0, got: %v", stake3)
 	}
 }
