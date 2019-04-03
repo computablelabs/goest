@@ -1,6 +1,7 @@
 package markettokentest
 
 import (
+	"fmt"
 	"github.com/computablelabs/goest/tests/test"
 	"github.com/ethereum/go-ethereum/common"
 	"math/big"
@@ -68,5 +69,28 @@ func TestMint(t *testing.T) {
 }
 
 func TestStopMinting(t *testing.T) {
-	// only a privileged contract may call to stop minting TODO
+	supply, _ := deployed.MarketTokenContract.TotalSupply(nil)
+	// minting stopped is false by default
+	if stopped, _ := deployed.MarketTokenContract.MintingStopped(nil); stopped != false {
+		t.Errorf("Expected minting stopped to be false, got %v", stopped)
+	}
+	// stop and (re)check
+	_, err := deployed.MarketTokenContract.StopMinting(test.GetTxOpts(context.AuthUser3, nil, // user 3 is listing imposter
+		big.NewInt(test.ONE_GWEI*2), 100000))
+	test.IfNotNil(t, err, fmt.Sprintf("Error stopping minting: %v", err))
+	context.Blockchain.Commit()
+
+	if stopped, _ := deployed.MarketTokenContract.MintingStopped(nil); stopped != true {
+		t.Errorf("Expected minting stopped to be true, got %v", stopped)
+	}
+
+	// no more minting can be done
+	_, noMint := deployed.MarketTokenContract.Mint(test.GetTxOpts(context.AuthUser3, nil,
+		big.NewInt(test.ONE_GWEI*2), 100000), big.NewInt(test.ONE_WEI))
+	test.IfNotNil(t, noMint, "Error checking that no minting occurred")
+
+	// did not actually mint anything
+	if newSupply, _ := deployed.MarketTokenContract.TotalSupply(nil); newSupply.Cmp(supply) != 0 {
+		t.Errorf("Expected total supply to remain %v, got %v", supply, newSupply)
+	}
 }
