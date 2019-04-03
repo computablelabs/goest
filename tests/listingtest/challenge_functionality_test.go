@@ -292,11 +292,11 @@ func TestLosingChallenge(t *testing.T) {
 	// the stakes are cleared
 	stake, _ := deployed.VotingContract.GetStake(nil, listingHash, context.AuthUser1.From)
 	if stake.Cmp(big.NewInt(0)) != 0 {
-		t.Fatalf("Expected stake to be 0, got: %v", stake)
+		t.Errorf("Expected stake to be 0, got: %v", stake)
 	}
 
 	stake3, _ := deployed.VotingContract.GetStake(nil, listingHash, context.AuthUser3.From)
 	if stake3.Cmp(big.NewInt(0)) != 0 {
-		t.Fatalf("Expected stake 3 to be 0, got: %v", stake3)
+		t.Errorf("Expected stake 3 to be 0, got: %v", stake3)
 	}
 }

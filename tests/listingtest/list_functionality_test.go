@@ -109,7 +109,7 @@ func TestResolveApplication(t *testing.T) {
 	isCandidate, _ := deployed.VotingContract.IsCandidate(nil, listingHash)
 
 	if isCandidate == true {
-		t.Fatal("Expected approved listing's candidate to have been removed")
+		t.Error("Expected approved listing's candidate to have been removed")
 	}
 
 	// member can unstake

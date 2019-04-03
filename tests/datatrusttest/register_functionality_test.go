@@ -20,7 +20,7 @@ func TestRegister(t *testing.T) {
 	// url will be stored as we wait on the voting
 	url, _ := deployed.DatatrustContract.GetBackendUrl(nil)
 	if !strings.Contains(url, "icanhazbackend") {
-		t.Fatalf("expected url to be %v, got: %v", "http://www.icanhazbackend.com", url)
+		t.Errorf("expected url to be %v, got: %v", "http://www.icanhazbackend.com", url)
 	}
 
 	// we should have the candidate

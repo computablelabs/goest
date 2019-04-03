@@ -20,7 +20,7 @@ func TestPurchaseByteCredits(t *testing.T) {
 
 	ethBal, _ := deployed.EtherTokenContract.BalanceOf(nil, context.AuthUser3.From)
 	if ethBal.Cmp(big.NewInt(0)) != 1 {
-		t.Fatalf("Expected member bal to be > 0, got: %v", ethBal)
+		t.Errorf("Expected member bal to be > 0, got: %v", ethBal)
 	}
 
 	// the datatrust portion of the 'reserve' currently
@@ -51,16 +51,16 @@ func TestPurchaseByteCredits(t *testing.T) {
 	// ether token balances should be updated
 	ethBalNow, _ := deployed.EtherTokenContract.BalanceOf(nil, context.AuthUser3.From)
 	if ethBalNow.Cmp(ethBal) != -1 {
-		t.Fatalf("Expected %v to be < %v", ethBalNow, ethBal)
+		t.Errorf("Expected %v to be < %v", ethBalNow, ethBal)
 	}
 
 	ethAllowNow, _ := deployed.EtherTokenContract.Allowance(nil, context.AuthUser3.From, deployed.DatatrustAddress)
 	if ethAllowNow.Cmp(ethAllow) != -1 {
-		t.Fatalf("Expected %v to be < %v", ethAllowNow, ethAllow)
+		t.Errorf("Expected %v to be < %v", ethAllowNow, ethAllow)
 	}
 
 	dataEthBalNow, _ := deployed.EtherTokenContract.BalanceOf(nil, deployed.DatatrustAddress)
 	if dataEthBalNow.Cmp(dataEthBal) != 1 {
-		t.Fatalf("Expected %v to be > %v", dataEthBalNow, dataEthBal)
+		t.Errorf("Expected %v to be > %v", dataEthBalNow, dataEthBal)
 	}
 }
