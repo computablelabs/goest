@@ -148,7 +148,7 @@ def mint(amount: wei_value):
   @dev We only allow the Market Contract to call for minting, and only when not stopped
   """
   assert self.has_privilege(msg.sender)
-  assert self.mintingStopped != True
+  assert not self.mintingStopped
   self.supply += amount
   self.balances[msg.sender] += amount
   log.Mint(msg.sender, amount)
@@ -172,8 +172,9 @@ def setPrivileged(listing: address, investing: address):
 def stopMinting():
   """
   @notice Forbid any further minting of Market Token funds
-  @dev We only allow the Market contract to call for minting to stop
+  @dev We only allow a priviliged contract to stop minting
   """
+  assert self.has_privilege(msg.sender)
   self.mintingStopped = True
   log.MintStopped()
 

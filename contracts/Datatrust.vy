@@ -175,11 +175,12 @@ def resolveRegistration(hash: bytes32):
 @public
 def purchaseByteCredits(amount: wei_value):
   """
-  @notice Allows a user to store byte_credits which can be used later to purchase data from the market
+  @notice Allows a user to buy the byte_credits needed for datatrust data access
   @dev Msg.sender will have needed to approve the datatrust contract to spend on their behalf
   """
   self.ether_token.transferFrom(msg.sender, self, amount) # note that reserve_payment is implicitly in here
   self.byte_credits[msg.sender] += amount
+  # TODO either make funds avail for backend to claim, or transfer directly as per backend_payment
 
 
 @public
@@ -189,23 +190,3 @@ def getByteCredits(addr: address) -> wei_value:
   @notice return the amount, in wei, of byte credits a user has purchased
   """
   return self.byte_credits[addr]
-
-
-@public
-def purchaseBytes(addr: address, amount: uint256):
-  """
-  @notice Pay for listing access in bytes via a user's byte credits
-  @dev The requested amount of bytes, at a cost of current cost_per_byte PLUS
-  the cost of the backend_payment must be present or this method will revert.
-  @param amount The number of bytes requested to purchase
-  """
-  assert msg.sender == self.backend_address
-  cost: wei_value = self.parameterizer.getCostPerByte()
-  fee_pct: uint256 = self.parameterizer.getBackendPayment()
-  sub_total: wei_value = amount * cost
-  fee: wei_value = sub_total / (100 / fee_pct)
-  # TODO we _could_ assert credits >= (sub+fee) here, but technically the below operation guards that
-  self.byte_credits[addr] -= (sub_total + fee) # clear the users credits first
-  # backend is given its fee
-  self.ether_token.transfer(self.backend_address, fee)
-

@@ -31,7 +31,7 @@
     "precompile:datatrust:vyper": "vyper -f abi contracts/Datatrust.vy > contracts/datatrust/datatrust.abi && vyper -f bytecode contracts/Datatrust.vy > contracts/datatrust/datatrust.bin",
     "compile:datatrust:vyper": "~/go/bin/abigen -abi contracts/datatrust/datatrust.abi -pkg datatrust -out contracts/datatrust/datatrust.go -bin contracts/datatrust/datatrust.bin",
     "compile:datatrust:vyper:external":"vyper -f external_interface contracts/Datatrust.vy > contracts/datatrust_external.vy",
-    "test": "go test -v ./..."
+    "test": "go test -v ./tests/..."
   },
   "repository": {
     "type": "git",
