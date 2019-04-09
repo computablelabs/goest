@@ -4,7 +4,6 @@ contract Listing:
     def isListed(hash: bytes32) -> bool: constant
     def withdrawFromListing(hash: bytes32, amount: uint256(wei)): modifying
     def list(hash: bytes32): modifying
-    def getHash(str: string[64]) -> bytes32: constant
     def getListing(hash: bytes32) -> (address, uint256(wei)): constant
     def resolveApplication(hash: bytes32): modifying
     def challenge(hash: bytes32): modifying

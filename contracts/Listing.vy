@@ -99,15 +99,6 @@ def list(hash: bytes32):
 
 @public
 @constant
-def getHash(str: string[64]) -> bytes32:
-  """
-  @notice Return a hashed value given a string of MAX_LENGTH 64 chars
-  """
-  return keccak256(str)
-
-
-@public
-@constant
 def getListing(hash: bytes32) -> (address, wei_value):
   """
   @notice Return pertinent information about a listing

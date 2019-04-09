@@ -11,7 +11,7 @@ import (
 // the challenge wins in this spec...
 
 func TestChallenge(t *testing.T) {
-	listingHash, _ := deployed.ListingContract.GetHash(nil, "BarMarket12345")
+	listingHash := test.GenBytes32("BarMarket12345")
 	_, listErr := deployed.ListingContract.List(test.GetTxOpts(context.AuthUser1, nil,
 		big.NewInt(test.ONE_GWEI*2), 250000), listingHash)
 	test.IfNotNil(t, listErr, fmt.Sprintf("Error applying for list status: %v", listErr))
@@ -99,7 +99,7 @@ func TestChallenge(t *testing.T) {
 }
 
 func TestResolveChallenge(t *testing.T) {
-	listingHash, _ := deployed.ListingContract.GetHash(nil, "BarMarket12345")
+	listingHash := test.GenBytes32("BarMarket12345")
 	// the marketBal will decrease as the challenger unstakes post resolution
 	votingBal, _ := deployed.MarketTokenContract.BalanceOf(nil, deployed.VotingAddress)
 	memberBal, _ := deployed.MarketTokenContract.BalanceOf(nil, context.AuthUser2.From)
@@ -179,7 +179,7 @@ func TestResolveChallenge(t *testing.T) {
 
 func TestLosingChallenge(t *testing.T) {
 	// get a listing up
-	listingHash, _ := deployed.ListingContract.GetHash(nil, "BazDataXYZ")
+	listingHash := test.GenBytes32("BazDataXYZ")
 	_, listErr := deployed.ListingContract.List(test.GetTxOpts(context.AuthUser1,
 		nil, big.NewInt(test.ONE_GWEI*2), 250000), listingHash)
 	test.IfNotNil(t, listErr, fmt.Sprintf("Error applying for list status: %v", listErr))
