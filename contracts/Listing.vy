@@ -85,13 +85,12 @@ def withdrawFromListing(hash: bytes32, amount: wei_value):
 
 
 @public
-def list(listing: string[64]):
+def list(hash: bytes32):
   """
   @notice Allows a maker to propose a new listing to a Market, creating a candidate for voting
   @dev Listing cannot already exist, in any active form. Owner not set here as it's an application
-  @param listing A string (max length of 64 chars) serving as a unique identifier for this Listing when hashed
+  @param An Ethereum hash (keccack256) serving as a unique identifier for this Listing when hashed
   """
-  hash: bytes32 = keccak256(listing)
   assert not self.voting.isCandidate(hash) # not an applicant
   assert self.listings[hash].owner == ZERO_ADDRESS # not already listed
   self.voting.addCandidate(hash, APPLICATION, msg.sender, self.parameterizer.getStake(), self.parameterizer.getVoteBy())
@@ -102,7 +101,7 @@ def list(listing: string[64]):
 @constant
 def getHash(str: string[64]) -> bytes32:
   """
-  @notice Return the same hashed value, given a string (max length 64 chars), that we generate internally when listing
+  @notice Return a hashed value given a string of MAX_LENGTH 64 chars
   """
   return keccak256(str)
 

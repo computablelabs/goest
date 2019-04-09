@@ -11,12 +11,11 @@ import (
 // the challenge wins in this spec...
 
 func TestChallenge(t *testing.T) {
+	listingHash, _ := deployed.ListingContract.GetHash(nil, "BarMarket12345")
 	_, listErr := deployed.ListingContract.List(test.GetTxOpts(context.AuthUser1, nil,
-		big.NewInt(test.ONE_GWEI*2), 250000), "BarMarket12345")
+		big.NewInt(test.ONE_GWEI*2), 250000), listingHash)
 	test.IfNotNil(t, listErr, fmt.Sprintf("Error applying for list status: %v", listErr))
 	context.Blockchain.Commit()
-
-	listingHash, _ := deployed.ListingContract.GetHash(nil, "BarMarket12345")
 
 	// data_hash needs to be set first
 	dataHash, _ := deployed.DatatrustContract.GetHash(nil, "thisissomemoardata")
@@ -180,12 +179,11 @@ func TestResolveChallenge(t *testing.T) {
 
 func TestLosingChallenge(t *testing.T) {
 	// get a listing up
+	listingHash, _ := deployed.ListingContract.GetHash(nil, "BazDataXYZ")
 	_, listErr := deployed.ListingContract.List(test.GetTxOpts(context.AuthUser1,
-		nil, big.NewInt(test.ONE_GWEI*2), 250000), "BazDataXYZ")
+		nil, big.NewInt(test.ONE_GWEI*2), 250000), listingHash)
 	test.IfNotNil(t, listErr, fmt.Sprintf("Error applying for list status: %v", listErr))
 	context.Blockchain.Commit()
-
-	listingHash, _ := deployed.ListingContract.GetHash(nil, "BazDataXYZ")
 
 	// data_hash needs to be set first
 	dataHash, _ := deployed.DatatrustContract.GetHash(nil, "thisisallthedata")

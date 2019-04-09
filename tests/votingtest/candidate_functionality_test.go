@@ -9,8 +9,9 @@ import (
 )
 
 func TestAddCandidate(t *testing.T) {
+	listingHash, _ := deployed.ListingContract.GetHash(nil, "Voting Candidate Test")
 	_, listErr := deployed.ListingContract.List(test.GetTxOpts(context.AuthUser1, nil,
-		big.NewInt(test.ONE_GWEI*2), 150000), "Voting Candidate Test")
+		big.NewInt(test.ONE_GWEI*2), 150000), listingHash)
 	test.IfNotNil(t, listErr, fmt.Sprintf("Error adding candidate: %v", listErr))
 
 	context.Blockchain.Commit()

@@ -9,13 +9,13 @@ import (
 )
 
 func TestList(t *testing.T) {
+	listingHash, _ := deployed.ListingContract.GetHash(nil, "FooMarket, AZ.")
+
 	_, listErr := deployed.ListingContract.List(test.GetTxOpts(context.AuthUser1, nil,
-		big.NewInt(test.ONE_GWEI*2), 250000), "FooMarket, AZ.")
+		big.NewInt(test.ONE_GWEI*2), 250000), listingHash)
 	test.IfNotNil(t, listErr, fmt.Sprintf("Error applying for list status: %v", listErr))
 	context.Blockchain.Commit()
 
-	// should have created a voting candidate
-	listingHash, _ := deployed.ListingContract.GetHash(nil, "FooMarket, AZ.")
 	isCan, _ := deployed.VotingContract.IsCandidate(nil, listingHash)
 
 	if !isCan {
@@ -123,13 +123,12 @@ func TestResolveApplicationThatFails(t *testing.T) {
 	// check the market's balance as it should not change in a no-list op
 	marketBal, _ := deployed.MarketTokenContract.BalanceOf(nil, deployed.ListingAddress)
 
+	listingHash, _ := deployed.ListingContract.GetHash(nil, "BarMarket, CA.")
+
 	_, listErr := deployed.ListingContract.List(test.GetTxOpts(context.AuthUser1, nil,
-		big.NewInt(test.ONE_GWEI*2), 1000000), "BarMarket, CA.")
+		big.NewInt(test.ONE_GWEI*2), 1000000), listingHash)
 	test.IfNotNil(t, listErr, fmt.Sprintf("Error applying for list status: %v", listErr))
 	context.Blockchain.Commit()
-
-	// our listing
-	listingHash, _ := deployed.ListingContract.GetHash(nil, "BarMarket, CA.")
 
 	// move past the voteBy with no votes being cast
 	context.Blockchain.AdjustTime(100 * time.Second)
