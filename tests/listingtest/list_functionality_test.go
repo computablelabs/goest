@@ -9,13 +9,13 @@ import (
 )
 
 func TestList(t *testing.T) {
+	listingHash := test.GenBytes32("FooMarket, AZ.")
+
 	_, listErr := deployed.ListingContract.List(test.GetTxOpts(context.AuthUser1, nil,
-		big.NewInt(test.ONE_GWEI*2), 250000), "FooMarket, AZ.")
+		big.NewInt(test.ONE_GWEI*2), 250000), listingHash)
 	test.IfNotNil(t, listErr, fmt.Sprintf("Error applying for list status: %v", listErr))
 	context.Blockchain.Commit()
 
-	// should have created a voting candidate
-	listingHash, _ := deployed.ListingContract.GetHash(nil, "FooMarket, AZ.")
 	isCan, _ := deployed.VotingContract.IsCandidate(nil, listingHash)
 
 	if !isCan {
@@ -25,7 +25,7 @@ func TestList(t *testing.T) {
 
 func TestIsListed(t *testing.T) {
 	// we'll need to gen the listingHash to match
-	listingHash, _ := deployed.ListingContract.GetHash(nil, "FooMarket, AZ.")
+	listingHash := test.GenBytes32("FooMarket, AZ.")
 
 	isListed, _ := deployed.ListingContract.IsListed(nil, listingHash)
 	if isListed == true {
@@ -34,7 +34,7 @@ func TestIsListed(t *testing.T) {
 }
 
 func TestGetListing(t *testing.T) {
-	listingHash, _ := deployed.ListingContract.GetHash(nil, "FooMarket, AZ.")
+	listingHash := test.GenBytes32("FooMarket, AZ.")
 
 	owner, supply, _ := deployed.ListingContract.GetListing(nil, listingHash)
 
@@ -50,7 +50,7 @@ func TestGetListing(t *testing.T) {
 
 func TestResolveApplication(t *testing.T) {
 	// our listing
-	listingHash, _ := deployed.ListingContract.GetHash(nil, "FooMarket, AZ.")
+	listingHash := test.GenBytes32("FooMarket, AZ.")
 	// the datatrust must have a data_hash for this listing before it will pass
 	dataHash, _ := deployed.DatatrustContract.GetHash(nil, "thisissomedata")
 	_, dataErr := deployed.DatatrustContract.SetDataHash(test.GetTxOpts(context.AuthBackend, nil,
@@ -123,13 +123,12 @@ func TestResolveApplicationThatFails(t *testing.T) {
 	// check the market's balance as it should not change in a no-list op
 	marketBal, _ := deployed.MarketTokenContract.BalanceOf(nil, deployed.ListingAddress)
 
+	listingHash := test.GenBytes32("BarMarket, CA.")
+
 	_, listErr := deployed.ListingContract.List(test.GetTxOpts(context.AuthUser1, nil,
-		big.NewInt(test.ONE_GWEI*2), 1000000), "BarMarket, CA.")
+		big.NewInt(test.ONE_GWEI*2), 1000000), listingHash)
 	test.IfNotNil(t, listErr, fmt.Sprintf("Error applying for list status: %v", listErr))
 	context.Blockchain.Commit()
-
-	// our listing
-	listingHash, _ := deployed.ListingContract.GetHash(nil, "BarMarket, CA.")
 
 	// move past the voteBy with no votes being cast
 	context.Blockchain.AdjustTime(100 * time.Second)
@@ -171,7 +170,7 @@ func TestWithdrawFromListing(t *testing.T) {
 	// check the market's balance...
 	marketBal, _ := deployed.MarketTokenContract.BalanceOf(nil, deployed.ListingAddress)
 	// foomarket itself
-	listingHash, _ := deployed.ListingContract.GetHash(nil, "FooMarket, AZ.")
+	listingHash := test.GenBytes32("FooMarket, AZ.")
 	// the current state of foo market
 	_, supply, _ := deployed.ListingContract.GetListing(nil, listingHash)
 	// withdraw that same amt
@@ -199,7 +198,7 @@ func TestWithdrawFromListing(t *testing.T) {
 
 func TestExit(t *testing.T) {
 	// going to remove this one
-	listingHash, _ := deployed.ListingContract.GetHash(nil, "FooMarket, AZ.")
+	listingHash := test.GenBytes32("FooMarket, AZ.")
 	// is it listed?
 	listed, _ := deployed.ListingContract.IsListed(nil, listingHash)
 	if !listed {

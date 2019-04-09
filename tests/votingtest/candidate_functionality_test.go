@@ -9,15 +9,16 @@ import (
 )
 
 func TestAddCandidate(t *testing.T) {
+	listingHash := test.GenBytes32("Voting Candidate Test")
 	_, listErr := deployed.ListingContract.List(test.GetTxOpts(context.AuthUser1, nil,
-		big.NewInt(test.ONE_GWEI*2), 150000), "Voting Candidate Test")
+		big.NewInt(test.ONE_GWEI*2), 150000), listingHash)
 	test.IfNotNil(t, listErr, fmt.Sprintf("Error adding candidate: %v", listErr))
 
 	context.Blockchain.Commit()
 }
 
 func TestIsCandidate(t *testing.T) {
-	bytes, _ := deployed.ListingContract.GetHash(nil, "Voting Candidate Test")
+	bytes := test.GenBytes32("Voting Candidate Test")
 
 	isCandidate, _ := deployed.VotingContract.IsCandidate(nil, bytes)
 
@@ -27,7 +28,7 @@ func TestIsCandidate(t *testing.T) {
 }
 
 func TestGetCandidate(t *testing.T) {
-	bytes, _ := deployed.ListingContract.GetHash(nil, "Voting Candidate Test")
+	bytes := test.GenBytes32("Voting Candidate Test")
 
 	kind, owner, stake, voteBy, yea, nay, err := deployed.VotingContract.GetCandidate(nil, bytes)
 	test.IfNotNil(t, err, fmt.Sprintf("Error getting candidate: %v", err))
@@ -59,7 +60,7 @@ func TestGetCandidate(t *testing.T) {
 }
 
 func TestCandidateIs(t *testing.T) {
-	bytes, _ := deployed.ListingContract.GetHash(nil, "Voting Candidate Test")
+	bytes := test.GenBytes32("Voting Candidate Test")
 
 	// it's not a challenge...
 	shouldBeFalse, _ := deployed.VotingContract.CandidateIs(nil, bytes, test.CHALLENGE)
@@ -88,7 +89,7 @@ func TestRemoveCandidate(t *testing.T) {
 	context.Blockchain.AdjustTime(100 * time.Second)
 	context.Blockchain.Commit()
 
-	bytes, _ := deployed.ListingContract.GetHash(nil, "Voting Candidate Test")
+	bytes := test.GenBytes32("Voting Candidate Test")
 
 	_, err := deployed.ListingContract.ResolveApplication(test.GetTxOpts(context.AuthUser1, nil,
 		big.NewInt(test.ONE_GWEI*2), 150000), bytes)
