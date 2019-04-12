@@ -5,6 +5,13 @@
 # constants
 REGISTRATION: constant(uint256) = 4 # candidate.kind
 
+# structs
+struct Delivery:
+  owner:address
+  bytes_requested: uint256
+  bytes_delivered: uint256
+  url: string[128]
+
 # external contracts
 contract EtherToken:
   def transfer(to: address, amount: uint256(wei)) -> bool: modifying
@@ -30,10 +37,14 @@ contract Parameterizer:
 Registered: event({hash: indexed(bytes32), registrant: indexed(address)})
 RegistrationSucceeded: event({hash: indexed(bytes32), registrant: indexed(address)})
 RegistrationFailed: event({hash: indexed(bytes32), registrant: indexed(address)})
+DeliveryRequested: event({hash: indexed(bytes32), requester: indexed(address), amount: uint256})
+Delivered: event({hash: indexed(bytes32)})
 
 # state vars
 data_hashes: map(bytes32, bytes32) # listing_hash -> data_hash
 byte_credits: map(address, wei_value) # maps user-address to byte-credits
+access_credits: map(bytes32, wei_value) # maps a listing to any accumulated access rewards it may claim
+deliveries: map(bytes32, Delivery) # maps delivery_hash -> delivery
 backend_url: string[128]
 backend_address: address
 ether_token: EtherToken
@@ -173,14 +184,21 @@ def resolveRegistration(hash: bytes32):
 
 
 @public
-def purchaseByteCredits(amount: wei_value):
+def requestDelivery(hash: bytes32, amount: uint256):
   """
-  @notice Allows a user to buy the byte_credits needed for datatrust data access
-  @dev Msg.sender will have needed to approve the datatrust contract to spend on their behalf
+  @notice Allow a user to request that a delivery of 'amount' (bytes) be made available to them.
+  @param hash This is a keccack hash recieved by a client that uniquely identifies a request. NOTE care should be taken
+  by the client to insure this is uinque.
+  @param amount The number of bytes the user is paying for.
+  @dev We will use any remaining byte_credits this user may have before charnging for new ones. Note that this payment
+  eventually makes its way through the system funding backend_payment, maker_payment and reserve_payment
   """
-  self.ether_token.transferFrom(msg.sender, self, amount) # note that reserve_payment is implicitly in here
-  self.byte_credits[msg.sender] += amount
-  # TODO either make funds avail for backend to claim, or transfer directly as per backend_payment
+  assert self.deliveries[hash].owner == ZERO_ADDRESS # not already a request
+  actual: wei_value = self.parameterizer.getCostPerByte() * amount - self.byte_credits[msg.sender]
+  self.ether_token.transferFrom(msg.sender, self, actual) # not part of the reserve yet, simply locked by this contract
+  self.byte_credits[msg.sender] += actual
+  self.deliveries[hash].owner = msg.sender
+  self.deliveries[hash].bytes_requested = amount
 
 
 @public
@@ -190,3 +208,41 @@ def getByteCredits(addr: address) -> wei_value:
   @notice return the amount, in wei, of byte credits a user has purchased
   """
   return self.byte_credits[addr]
+
+
+@public
+@constant
+def getDelivery(hash: bytes32) -> (address, uint256, uint256, string[128]):
+  """
+  @notice Return the data present in a given delivery request
+  @param hash The hashed delivery identifier
+  """
+  return (self.deliveries[hash].owner, self.deliveries[hash].bytes_requested,
+    self.deliveries[hash].bytes_delivered, self.deliveries[hash].url)
+
+
+@public
+def listingAccessed(listing_hash:bytes32, delivery_hash: bytes32, amount: uint256):
+  """
+  @dev Only a registered backend may call. Enforce that the claimed listing exists.
+  @param listing_hash The listing that was accessed
+  @param delivery_hash Which delivery object this access was for
+  @param amount How many bytes were accessed
+  """
+  assert msg.sender == self.backend_address
+  assert self.data_hashes[listing_hash] != EMPTY_BYTES32
+  total: wei_value = self.parameterizer.getCostPerByte() * amount
+  # this can be claimed later by the listing owner, and are subtractive to byte_credits
+  self.access_credits[listing_hash] += total
+  self.byte_credits[self.deliveries[delivery_hash].owner] -= total
+  # bytes_delivered must eq (or exceed) bytes_requested in order for a datatrust to claim delivery
+  self.deliveries[delivery_hash].bytes_delivered += amount
+
+
+@public
+@constant
+def getAccessCredits(hash: bytes32) -> wei_value:
+  """
+  @notice return the amount, in wei, of access credits a listing has accumulated
+  """
+  return self.access_credits[hash]
