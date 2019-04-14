@@ -221,4 +221,3 @@ def transferFrom(source: address, to: address, amount: wei_value) -> bool:
   self.allowances[source][msg.sender] -= amount
   log.Transfer(source, to, amount)
   return True
-

@@ -166,7 +166,7 @@ def didPass(hash: bytes32, quorum: uint256) -> bool:
     # theoretically a market could have a 0 quorum
     return quorum == 0
   else:
-    return (self.candidates[hash].yea * 100 / total) >= quorum
+    return ((self.candidates[hash].yea * 100) / total) >= quorum
 
 
 @public

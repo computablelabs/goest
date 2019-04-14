@@ -22,16 +22,8 @@ func TestGetConversionRate(t *testing.T) {
 	}
 }
 
-func TestGetInvestDenominator(t *testing.T) {
-	d, _ := deployed.ParameterizerContract.GetInvestDenominator(nil)
-
-	if d.Cmp(big.NewInt(100)) != 0 {
-		t.Errorf("Expected Invest Denominator to be %v, got: %v", 100, d)
-	}
-}
-
-func TestGetInvestNumerator(t *testing.T) {
-	n, _ := deployed.ParameterizerContract.GetInvestNumerator(nil)
+func TestGetSpread(t *testing.T) {
+	n, _ := deployed.ParameterizerContract.GetSpread(nil)
 
 	if n.Cmp(big.NewInt(110)) != 0 {
 		t.Errorf("Expected Invest Numerator to be %v, got: %v", 110, n)
@@ -43,14 +35,6 @@ func TestGetListReward(t *testing.T) {
 
 	if reward.Cmp(big.NewInt(test.ONE_WEI)) != 0 {
 		t.Errorf("Expected listReward to be 10**18, got: %v", reward)
-	}
-}
-
-func TestGetAccessReward(t *testing.T) {
-	reward, _ := deployed.ParameterizerContract.GetAccessReward(nil)
-
-	if reward.Cmp(big.NewInt(test.ONE_GWEI)) != 0 {
-		t.Errorf("Expected listReward to be 10**9, got: %v", reward)
 	}
 }
 
@@ -83,5 +67,13 @@ func TestGetMakerPayment(t *testing.T) {
 
 	if pct.Cmp(big.NewInt(50)) != 0 {
 		t.Errorf("Expected maker pay pct to be 50, got: %v", pct)
+	}
+}
+
+func TestReservePayment(t *testing.T) {
+	pct, _ := deployed.ParameterizerContract.GetReservePayment(nil)
+
+	if pct.Cmp(big.NewInt(20)) != 0 {
+		t.Errorf("Expected reserve pay pct to be 20, got: %v", pct)
 	}
 }

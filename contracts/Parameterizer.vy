@@ -4,10 +4,8 @@
 
 # We refer to any 'params' as integers to avoid conversions to and from strings
 CONVERSION_RATE: constant(uint256) = 2
-INVEST_DENOMINATOR: constant(uint256) = 3
-INVEST_NUMERATOR: constant(uint256) = 4
+SPREAD: constant(uint256) = 4
 LIST_REWARD: constant(uint256) = 5
-ACCESS_REWARD: constant(uint256) = 10
 STAKE: constant(uint256) = 1
 VOTE_BY: constant(uint256) = 7
 QUORUM: constant(uint256) = 6
@@ -38,10 +36,8 @@ ReparamSucceeded: event({hash: indexed(bytes32), param: indexed(uint256), value:
 
 reparams: map(bytes32, Reparam)
 conversion_rate: wei_value
-invest_denominator: uint256
-invest_numerator: uint256
+spread: uint256
 list_reward: wei_value
-access_reward: wei_value
 stake: wei_value
 vote_by: timedelta
 quorum: uint256
@@ -51,17 +47,15 @@ cost_per_byte: wei_value
 voting: Voting
 
 @public
-def __init__(voting_addr: address, rate: wei_value, denominator: uint256, numerator: uint256, list_re: wei_value,
-  comp_re: wei_value, stk: wei_value, vote_by_delta: timedelta, quorum_pct: uint256, back_pay: uint256, maker_pay: uint256, cost: wei_value):
+def __init__(voting_addr: address, rate: wei_value, spd: uint256, list_re: wei_value, stk: wei_value,
+  vote_by_del: timedelta, q_pct: uint256, back_pay: uint256, maker_pay: uint256, cost: wei_value):
     self.voting = Voting(voting_addr)
     self.conversion_rate = rate
-    self.invest_denominator = denominator
-    self.invest_numerator = numerator
+    self.spread = spd
     self.list_reward = list_re
-    self.access_reward = comp_re
     self.stake = stk
-    self.vote_by = vote_by_delta
-    self.quorum = quorum_pct
+    self.vote_by = vote_by_del
+    self.quorum = q_pct
     self.backend_payment = back_pay
     self.maker_payment = maker_pay
     self.cost_per_byte = cost
@@ -71,8 +65,7 @@ def __init__(voting_addr: address, rate: wei_value, denominator: uint256, numera
 @constant
 def getBackendPayment() -> uint256:
   """
-  @notice The current amount of market token, in wei, awarded to the backend per list usage
-  @return % of 100 given to the backend
+  @notice Returns the percentage of a delivery cost given to the backend upon delivering
   """
   return self.backend_payment
 
@@ -81,10 +74,19 @@ def getBackendPayment() -> uint256:
 @constant
 def getMakerPayment() -> uint256:
   """
-  @notice The current amount of market token, in wei, awarded to the maker (list owner) per list usage
-  @return % of 100 given to the listing owner
+  @notice Returns the percentage of a delivery cost given to a maker per their list usage
   """
   return self.maker_payment
+
+
+@public
+@constant
+def getReservePayment() -> uint256:
+  """
+  @notice Returns the percentage of a delivery cost given to the reserve upon purchase
+  @dev As you can see we dont require an explicit Reserve amount as we can simply use this delta.
+  """
+  return 100 - (self.backend_payment + self.maker_payment)
 
 
 @public
@@ -129,20 +131,11 @@ def getHash(param: uint256, value: uint256) -> bytes32:
 
 @public
 @constant
-def getInvestDenominator() -> uint256:
+def getSpread() -> uint256:
   """
-  @notice Return the current conversion_slope_denominator scaling factor
+  @notice Return the current spread scaling factor
   """
-  return self.invest_denominator
-
-
-@public
-@constant
-def getInvestNumerator() -> uint256:
-  """
-  @notice Return the current conversion_slope_numerator scaling factor
-  """
-  return self.invest_numerator
+  return self.spread
 
 
 @public
@@ -152,14 +145,6 @@ def getListReward() -> wei_value:
   @notice Return the current amount of market token, in wei, awarded to a new listing
   """
   return self.list_reward
-
-@public
-@constant
-def getAccessReward() -> wei_value:
-  """
-  @notice Return the current amount of market token, in wei, awarded to a listing when used
-  """
-  return self.access_reward
 
 
 @public
@@ -222,14 +207,10 @@ def resolveReparam(hash: bytes32):
     #TODO in time we can likely tell an optimal order for these...
     if param == CONVERSION_RATE:
       self.conversion_rate = value
-    elif param == INVEST_DENOMINATOR:
-      self.invest_denominator = value
-    elif param == INVEST_NUMERATOR:
-      self.invest_numerator = value
+    elif param == SPREAD:
+      self.spread = value
     elif param == LIST_REWARD:
       self.list_reward = value
-    elif param == ACCESS_REWARD:
-      self.access_reward = value
     elif param == STAKE:
       self.stake = value
     elif param == VOTE_BY:

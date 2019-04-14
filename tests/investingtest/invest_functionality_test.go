@@ -11,19 +11,18 @@ import (
 func buyPrice() uint64 {
 	rate, _ := deployed.ParameterizerContract.GetConversionRate(nil)
 	rate64 := rate.Uint64()
-	investD, _ := deployed.ParameterizerContract.GetInvestDenominator(nil)
-	investD64 := investD.Uint64()
-	investN, _ := deployed.ParameterizerContract.GetInvestNumerator(nil)
-	investN64 := investN.Uint64()
+	var d64 uint64 = 100
+	spread, _ := deployed.ParameterizerContract.GetSpread(nil)
+	spread64 := spread.Uint64()
 	reserve, _ := deployed.MarketTokenContract.BalanceOf(nil, deployed.MarketTokenAddress)
 	reserve64 := reserve.Uint64()
 	tot, _ := deployed.MarketTokenContract.TotalSupply(nil)
 	tot64 := tot.Uint64()
 
 	if tot64 < 1000000000000000000 {
-		return rate64 + investN64*reserve64/investD64
+		return rate64 + ((spread64 * reserve64) / d64)
 	} else {
-		return rate64 + (investN64*reserve64*1000000000000000000)/(investD64*tot64)
+		return rate64 + ((spread64 * reserve64 * 1000000000000000000) / (d64 * tot64))
 	}
 }
 
