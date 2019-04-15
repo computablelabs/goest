@@ -202,15 +202,13 @@ def requestDelivery(hash: bytes32, amount: uint256):
   @param hash This is a keccack hash recieved by a client that uniquely identifies a request. NOTE care should be taken
   by the client to insure this is uinque.
   @param amount The number of bytes the user is paying for.
-  @dev We will use any remaining byte_credits this user may have before charnging for new ones. Note that
-  reserve percentage payment is made here
   """
   assert self.deliveries[hash].owner == ZERO_ADDRESS # not already a request
-  actual: wei_value = self.parameterizer.getCostPerByte() * amount - self.byte_credits[msg.sender]
-  res_fee: wei_value = actual / (100 / self.parameterizer.getReservePayment())
-  self.ether_token.transferFrom(msg.sender, self, actual) # take the total payment
+  total: wei_value = self.parameterizer.getCostPerByte() * amount
+  res_fee: wei_value = total / (100 / self.parameterizer.getReservePayment())
+  self.ether_token.transferFrom(msg.sender, self, total) # take the total payment
   self.ether_token.transfer(self.investing_address, res_fee) # transfer res_pct to reserve
-  self.byte_credits[msg.sender] += actual # should reflect the total payment
+  self.byte_credits[msg.sender] += total # should reflect the total payment
   self.deliveries[hash].owner = msg.sender
   self.deliveries[hash].bytes_requested = amount
 
