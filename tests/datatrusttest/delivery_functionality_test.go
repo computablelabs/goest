@@ -11,6 +11,8 @@ import (
 func TestRequestDelivery(t *testing.T) {
 	// user has no credits atm
 	bytesBal, _ := deployed.DatatrustContract.GetByteCredits(nil, context.AuthUser3.From)
+	// reserve balance atm. This will go up by the res_payment after a request...
+	resBal, _ := deployed.EtherTokenContract.BalanceOf(nil, deployed.InvestingAddress)
 
 	// make a deposit in ETH, resulting in a 1:1 ethertoken balance
 	_, depErr := deployed.EtherTokenContract.Deposit(test.GetTxOpts(context.AuthUser3,
@@ -24,7 +26,7 @@ func TestRequestDelivery(t *testing.T) {
 		t.Errorf("Expected member bal to be > 0, got: %v", ethBal)
 	}
 
-	// any unused byte credits are banked by the datatrust contract at the ether token
+	// any unused byte credits are banked by the datatrust contract at the ether token (-res_payment)
 	dataEthBal, _ := deployed.EtherTokenContract.BalanceOf(nil, deployed.DatatrustAddress)
 
 	// member needs to have approved datatrust to spend ether token
@@ -43,7 +45,7 @@ func TestRequestDelivery(t *testing.T) {
 	query := test.GenBytes32("select * from SPAM where EGGS eq TRUE")
 
 	// assure no delivery exists for this query
-	owner, req, _, _, _ := deployed.DatatrustContract.GetDelivery(nil, query)
+	owner, req, _, _ := deployed.DatatrustContract.GetDelivery(nil, query)
 	if owner == context.AuthUser3.From {
 		t.Error("Expected no delivery object yet")
 	}
@@ -53,7 +55,7 @@ func TestRequestDelivery(t *testing.T) {
 	}
 
 	_, delErr := deployed.DatatrustContract.RequestDelivery(test.GetTxOpts(
-		context.AuthUser3, nil, big.NewInt(test.ONE_GWEI*2), 150000), query, big.NewInt(1024*1024)) // ~1MB
+		context.AuthUser3, nil, big.NewInt(test.ONE_GWEI*2), 250000), query, big.NewInt(1024*1024)) // ~1MB
 	test.IfNotNil(t, delErr, fmt.Sprintf("Error requesting delivery: %v", delErr))
 
 	context.Blockchain.Commit()
@@ -80,8 +82,20 @@ func TestRequestDelivery(t *testing.T) {
 		t.Errorf("Expected %v to be > %v", dataEthBalNow, dataEthBal)
 	}
 
+	resBalNow, _ := deployed.EtherTokenContract.BalanceOf(nil, deployed.InvestingAddress)
+	if resBalNow.Cmp(resBal) != 1 {
+		t.Errorf("Expected %v to be > %v", resBalNow, resBal)
+	}
+
+	// at this point the sum of what went into the reserve + the amount locked in datatrust will == byte_credits
+	toRes := resBalNow.Sub(resBalNow, resBal)
+	summed := toRes.Add(toRes, dataEthBalNow)
+	if summed.Cmp(bytesBalNow) != 0 {
+		t.Errorf("Expected %v to be %v", summed, bytesBalNow)
+	}
+
 	// delivery object should be present
-	ownerNow, reqNow, _, _, _ := deployed.DatatrustContract.GetDelivery(nil, query)
+	ownerNow, reqNow, _, _ := deployed.DatatrustContract.GetDelivery(nil, query)
 	if ownerNow != context.AuthUser3.From {
 		t.Error("Expected delivery object to be owned by user 3")
 	}
@@ -169,7 +183,7 @@ func TestListingAccessed(t *testing.T) {
 	// current access_credits for listiing, should increase with reporting
 	accessBal, _ := deployed.DatatrustContract.GetAccessCredits(nil, listingHash)
 	// none delivered yet...
-	_, _, delivered, _, _ := deployed.DatatrustContract.GetDelivery(nil, query)
+	_, _, delivered, _ := deployed.DatatrustContract.GetDelivery(nil, query)
 
 	_, accErr := deployed.DatatrustContract.ListingAccessed(test.GetTxOpts(context.AuthBackend, nil,
 		// let's say one listing was used for 1/2 the request
@@ -187,7 +201,7 @@ func TestListingAccessed(t *testing.T) {
 		t.Errorf("Expected %v to be > %v", accessBalNow, accessBal)
 	}
 	// half has been delivered
-	_, _, deliveredNow, _, _ := deployed.DatatrustContract.GetDelivery(nil, query)
+	_, _, deliveredNow, _ := deployed.DatatrustContract.GetDelivery(nil, query)
 	if deliveredNow.Cmp(delivered) != 1 {
 		t.Errorf("Expected %v to be > %v", deliveredNow, delivered)
 	}

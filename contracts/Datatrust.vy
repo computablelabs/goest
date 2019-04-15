@@ -10,7 +10,6 @@ struct Delivery:
   owner:address
   bytes_requested: uint256
   bytes_delivered: uint256
-  url: string[128]
 
 # external contracts
 contract EtherToken:
@@ -28,6 +27,7 @@ contract Voting:
 
 contract Parameterizer:
   def getBackendPayment() -> uint256: constant
+  def getReservePayment() -> uint256: constant
   def getCostPerByte() -> wei_value: constant
   def getStake() -> uint256(wei): constant
   def getQuorum() -> uint256: constant
@@ -51,14 +51,16 @@ ether_token: EtherToken
 voting: Voting
 parameterizer: Parameterizer
 factory_address: address
+investing_address: address
 listing_address: address
 
 @public
-def __init__(ether_token_addr: address, voting_addr: address, p11r_addr: address):
+def __init__(ether_token_addr: address, voting_addr: address, p11r_addr: address, inv_addr: address):
   self.factory_address = msg.sender
   self.ether_token = EtherToken(ether_token_addr)
   self.voting = Voting(voting_addr)
   self.parameterizer = Parameterizer(p11r_addr)
+  self.investing_address = inv_addr # does not consume the contract, only knows the address
 
 
 @public
@@ -69,6 +71,16 @@ def getPrivileged() -> address:
   @return Listing contract address
   """
   return self.listing_address
+
+
+@public
+@constant
+def getInvesting() -> address:
+  """
+  @notice Return the address at which the datatrust contract transfers reserve payments to
+  @dev This should always be the address of the Investing contract deployed with this market
+  """
+  return self.investing_address
 
 
 @public
@@ -190,13 +202,13 @@ def requestDelivery(hash: bytes32, amount: uint256):
   @param hash This is a keccack hash recieved by a client that uniquely identifies a request. NOTE care should be taken
   by the client to insure this is uinque.
   @param amount The number of bytes the user is paying for.
-  @dev We will use any remaining byte_credits this user may have before charnging for new ones. Note that this payment
-  eventually makes its way through the system funding backend_payment, maker_payment and reserve_payment
   """
   assert self.deliveries[hash].owner == ZERO_ADDRESS # not already a request
-  actual: wei_value = self.parameterizer.getCostPerByte() * amount - self.byte_credits[msg.sender]
-  self.ether_token.transferFrom(msg.sender, self, actual) # not part of the reserve yet, simply locked by this contract
-  self.byte_credits[msg.sender] += actual
+  total: wei_value = self.parameterizer.getCostPerByte() * amount
+  res_fee: wei_value = total / (100 / self.parameterizer.getReservePayment())
+  self.ether_token.transferFrom(msg.sender, self, total) # take the total payment
+  self.ether_token.transfer(self.investing_address, res_fee) # transfer res_pct to reserve
+  self.byte_credits[msg.sender] += total # should reflect the total payment
   self.deliveries[hash].owner = msg.sender
   self.deliveries[hash].bytes_requested = amount
 
@@ -212,13 +224,13 @@ def getByteCredits(addr: address) -> wei_value:
 
 @public
 @constant
-def getDelivery(hash: bytes32) -> (address, uint256, uint256, string[128]):
+def getDelivery(hash: bytes32) -> (address, uint256, uint256):
   """
   @notice Return the data present in a given delivery request
   @param hash The hashed delivery identifier
   """
   return (self.deliveries[hash].owner, self.deliveries[hash].bytes_requested,
-    self.deliveries[hash].bytes_delivered, self.deliveries[hash].url)
+    self.deliveries[hash].bytes_delivered)
 
 
 @public

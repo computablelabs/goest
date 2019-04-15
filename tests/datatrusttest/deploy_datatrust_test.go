@@ -17,14 +17,6 @@ func TestDeployDatatrust(t *testing.T) {
 		t.Fatalf("Failed to deploy the Datatrust contract or a dependency: %v", deployedError)
 	}
 
-	if len(deployed.VotingAddress.Bytes()) == 0 {
-		t.Fatal("Expected a valid voting deployment address to be returned from deploy, got empty byte array instead")
-	}
-
-	if len(deployed.ParameterizerAddress.Bytes()) == 0 {
-		t.Error("Expected a valid parameterizer deployment address to be returned from deploy, got empty byte array instead")
-	}
-
 	if len(deployed.DatatrustAddress.Bytes()) == 0 {
 		t.Error("Expected a valid Datatrust deployment address to be returned from deploy, got empty byte array instead")
 	}
@@ -35,6 +27,14 @@ func TestDatatrustSetPrivileged(t *testing.T) {
 
 	if list != deployed.ListingAddress {
 		t.Fatalf("Expected Listing address of %v but got %v", deployed.ListingAddress, list)
+	}
+}
+
+func TestDatatrustGetInvesting(t *testing.T) {
+	inv, _ := deployed.DatatrustContract.GetInvesting(nil)
+
+	if inv != deployed.InvestingAddress {
+		t.Fatalf("Expected Investing address of %v but got %v", deployed.InvestingAddress, inv)
 	}
 }
 

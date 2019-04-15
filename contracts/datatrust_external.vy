@@ -2,6 +2,7 @@
 # External Contracts
 contract Datatrust:
     def getPrivileged() -> address: constant
+    def getInvesting() -> address: constant
     def setPrivileged(listing: address): modifying
     def getHash(url: string[128]) -> bytes32: constant
     def getBackendAddress() -> address: constant
@@ -14,7 +15,7 @@ contract Datatrust:
     def resolveRegistration(hash: bytes32): modifying
     def requestDelivery(hash: bytes32, amount: uint256): modifying
     def getByteCredits(addr: address) -> uint256(wei): constant
-    def getDelivery(hash: bytes32) -> (address, uint256, uint256, string[128]): constant
+    def getDelivery(hash: bytes32) -> (address, uint256, uint256): constant
     def listingAccessed(listing_hash: bytes32, delivery_hash: bytes32, amount: uint256): modifying
     def getAccessCredits(hash: bytes32) -> uint256(wei): constant
 

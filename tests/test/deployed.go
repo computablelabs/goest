@@ -126,6 +126,7 @@ func Deploy(initialBal *big.Int, c *Ctx) (*Dep, error) {
 		etherTokenAddr,
 		votingAddr,
 		paramAddr,
+		investAddr,
 	)
 
 	if dataErr != nil {
