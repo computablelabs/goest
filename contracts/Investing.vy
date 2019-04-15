@@ -17,8 +17,7 @@ contract MarketToken:
 
 contract Parameterizer:
   def getConversionRate() -> uint256(wei): constant
-  def getInvestDenominator() -> uint256: constant
-  def getInvestNumerator() -> uint256: constant
+  def getSpread() -> uint256: constant
 
 # events
 Divested: event({investor: indexed(address), transferred: wei_value})
@@ -41,24 +40,21 @@ def __init__(ether_token_addr: address, market_token_addr: address, p11r_addr: a
 def getInvestmentPrice() -> wei_value:
   """
   @notice Return the amount of Ether token (in wei) needed to purchase one billionth of a Market token
-  @dev WIP
   """
   rate: wei_value = self.parameterizer.getConversionRate()
-  invest_d: uint256 = self.parameterizer.getInvestDenominator()
-  invest_n: uint256 = self.parameterizer.getInvestNumerator()
+  spread: uint256 = self.parameterizer.getSpread()
   reserve: wei_value = self.ether_token.balanceOf(self)
   total: wei_value = self.market_token.totalSupply()
   if total < 1000000000000000000: # that is, is total supply less than one token in wei
-    return rate + invest_n * reserve / invest_d
+    return rate + ((spread * reserve) / 100)
   else:
-    return rate + (invest_n * reserve * 1000000000000000000) / (invest_d * total)
+    return rate + ((spread * reserve * 1000000000000000000) / (100 * total))
 
 
 @public
 def invest(offer: wei_value):
   """
   @notice Allow an investor to purchase MarketToken with EtherToken priced according to the "buy-curve"
-  @dev WIP
   @param offer An amount of Ether Token in Wei
   """
   price: wei_value = self.getInvestmentPrice()
@@ -82,7 +78,7 @@ def getDivestmentProceeds(addr: address) -> wei_value:
   bal: wei_value = self.market_token.balanceOf(addr)
   reserve: wei_value = self.ether_token.balanceOf(self)
   total: wei_value = self.market_token.totalSupply()
-  return bal * reserve / total
+  return (bal * reserve) / total
 
 
 @public

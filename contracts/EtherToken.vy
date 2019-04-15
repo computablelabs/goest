@@ -152,4 +152,3 @@ def withdraw(amount: wei_value):
   self.supply -= amount
   send(msg.sender, amount)
   log.Withdraw(msg.sender, amount)
-

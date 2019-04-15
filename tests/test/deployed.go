@@ -47,7 +47,7 @@ type Dep struct {
 // Also passed a hydrated Ctx object, used to aid the deploying.
 // Returns a hydrated Dep object or any error incurred.
 func Deploy(initialBal *big.Int, c *Ctx) (*Dep, error) {
-	// Ether Token: consumes: none, privileged: none
+	// Ether Token: { consumes: [none], privileged: [none] }
 	etherTokenAddr, etherTokenTrans, etherTokenCont, etherTokenErr := ethertoken.DeployEtherToken(
 		c.AuthFactory,
 		c.Blockchain,
@@ -59,7 +59,7 @@ func Deploy(initialBal *big.Int, c *Ctx) (*Dep, error) {
 		return nil, etherTokenErr
 	}
 
-	// Market Token: consumes: none, privileged: Listing, Investing
+	// Market Token: { consumes: [none], privileged: [listing, investing] }
 	marketTokenAddr, marketTokenTrans, marketTokenCont, marketTokenErr := markettoken.DeployMarketToken(
 		c.AuthFactory,
 		c.Blockchain,
@@ -70,10 +70,9 @@ func Deploy(initialBal *big.Int, c *Ctx) (*Dep, error) {
 	if marketTokenErr != nil {
 		return nil, marketTokenErr
 	}
-
 	c.Blockchain.Commit()
 
-	// Voting: consumes: Market Token, privileged: Parameterizer, Datatrust, Listing, Investing
+	// Voting: { consumes: [market token], privileged:[parameterizer, datatrust, listing, investing] }
 	votingAddr, votingTrans, votingCont, votingErr := voting.DeployVoting(
 		c.AuthFactory,
 		c.Blockchain,
@@ -83,19 +82,16 @@ func Deploy(initialBal *big.Int, c *Ctx) (*Dep, error) {
 	if votingErr != nil {
 		return nil, votingErr
 	}
-
 	c.Blockchain.Commit()
 
-	// Parameterizer: consumes: Voting, privileged: none
+	// Parameterizer: { consumes: [voting], privileged: [none] }
 	paramAddr, paramTrans, paramCont, paramErr := parameterizer.DeployParameterizer(
 		c.AuthFactory,
 		c.Blockchain,
 		votingAddr,
 		big.NewInt(ONE_GWEI),   // conversionRate: stipulation is that market token should be, at least, as val as eth
-		big.NewInt(100),        // investDenominator, a scaling factor
-		big.NewInt(110),        // investNumerator, a scaling factor
+		big.NewInt(110),        // spread, a scaling factor
 		big.NewInt(ONE_WEI),    // listReward (one token)
-		big.NewInt(ONE_GWEI),   // access reward
 		big.NewInt(ONE_GWEI),   // Stake
 		big.NewInt(100),        // voteBy
 		big.NewInt(50),         // quorum
@@ -107,9 +103,23 @@ func Deploy(initialBal *big.Int, c *Ctx) (*Dep, error) {
 	if paramErr != nil {
 		return nil, paramErr
 	}
-
 	c.Blockchain.Commit()
 
+	// Investing: { consumes: [ether token, market token, parameterizer], privileged: [none] }
+	investAddr, investTrans, investCont, investErr := investing.DeployInvesting(
+		c.AuthFactory,
+		c.Blockchain,
+		etherTokenAddr,
+		marketTokenAddr,
+		paramAddr,
+	)
+
+	if investErr != nil {
+		return nil, investErr
+	}
+	c.Blockchain.Commit()
+
+	// Datatrust: { consumes: [ether token, voting, parameterizer], privileged: [listing] }
 	dataAddr, dataTrans, dataCont, dataErr := datatrust.DeployDatatrust(
 		c.AuthFactory,
 		c.Blockchain,
@@ -121,9 +131,9 @@ func Deploy(initialBal *big.Int, c *Ctx) (*Dep, error) {
 	if dataErr != nil {
 		return nil, dataErr
 	}
-
 	c.Blockchain.Commit()
 
+	// Listing: { consumes: [market token, voting, parameterizer, datatrust], privileged: [none] }
 	listingAddr, listingTrans, listingCont, listingErr := listing.DeployListing(
 		c.AuthFactory,
 		c.Blockchain,
@@ -136,21 +146,6 @@ func Deploy(initialBal *big.Int, c *Ctx) (*Dep, error) {
 	if listingErr != nil {
 		return nil, listingErr
 	}
-
-	c.Blockchain.Commit()
-
-	investAddr, investTrans, investCont, investErr := investing.DeployInvesting(
-		c.AuthFactory,
-		c.Blockchain,
-		etherTokenAddr,
-		marketTokenAddr,
-		paramAddr,
-	)
-
-	if investErr != nil {
-		return nil, investErr
-	}
-
 	c.Blockchain.Commit()
 
 	// Set privileged addresses now that contracts are deployed. First: Market Token
