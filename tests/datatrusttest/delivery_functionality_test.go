@@ -206,3 +206,120 @@ func TestListingAccessed(t *testing.T) {
 		t.Errorf("Expected %v to be > %v", deliveredNow, delivered)
 	}
 }
+
+func TestDeliveredThatShouldFail(t *testing.T) {
+	// note the ether token balances
+	beAddr, _ := deployed.DatatrustContract.GetBackendAddress(nil)
+	beBal, _ := deployed.EtherTokenContract.BalanceOf(nil, beAddr)
+	dtBal, _ := deployed.EtherTokenContract.BalanceOf(nil, deployed.DatatrustAddress)
+	query := test.GenBytes32("select * from SPAM where EGGS eq TRUE")
+	_, req, del, _ := deployed.DatatrustContract.GetDelivery(nil, query)
+	// assure its not delivered
+	if req.Cmp(del) != 1 {
+		t.Errorf("Expected %v to be > %v", req, del)
+	}
+	// we can attempt to call delivered for a delivery object that has not been 'filled'
+	urlHash := test.GenBytes32("someURL.net/lumberjack")
+	_, delErr := deployed.DatatrustContract.Delivered(test.GetTxOpts(context.AuthBackend, nil,
+		big.NewInt(test.ONE_GWEI*2), 150000), query, urlHash)
+	test.IfNotNil(t, delErr, "Error calling delivered")
+	context.Blockchain.Commit()
+	// no balance changes should have occurred
+	beBalNow, _ := deployed.EtherTokenContract.BalanceOf(nil, beAddr)
+	dtBalNow, _ := deployed.EtherTokenContract.BalanceOf(nil, deployed.DatatrustAddress)
+
+	if beBal.Cmp(beBalNow) != 0 {
+		t.Errorf("Expected %v to be %v", beBal, beBalNow)
+	}
+
+	if dtBal.Cmp(dtBalNow) != 0 {
+		t.Errorf("Expected %v to be %v", dtBal, dtBalNow)
+	}
+}
+
+func TestDelivered(t *testing.T) {
+	// we'll put up another listing to claim was accessed
+	listingHash := test.GenBytes32("LookAtMyJunkToo")
+	_, listErr := deployed.ListingContract.List(test.GetTxOpts(context.AuthUser2, nil,
+		big.NewInt(test.ONE_GWEI*2), 250000), listingHash)
+	test.IfNotNil(t, listErr, fmt.Sprintf("Error applying for list status: %v", listErr))
+	context.Blockchain.Commit()
+
+	dataHash := test.GenBytes32("moardata")
+	_, dataErr := deployed.DatatrustContract.SetDataHash(test.GetTxOpts(context.AuthBackend, nil,
+		big.NewInt(test.ONE_GWEI*2), 100000), listingHash, dataHash)
+	test.IfNotNil(t, dataErr, "Error setting data hash for listing")
+	context.Blockchain.Commit()
+
+	// cast a vote for, voter may need funds...
+	transErr := test.MaybeTransferMarketToken(context, deployed, context.AuthFactory,
+		context.AuthUser1.From, big.NewInt(test.ONE_GWEI))
+	test.IfNotNil(t, transErr, fmt.Sprintf("Error transferring tokens to member: %v", transErr))
+	context.Blockchain.Commit()
+	// member will need to have approved the voting contract to spend
+	appErr := test.MaybeIncreaseMarketTokenApproval(context, deployed, context.AuthUser1,
+		deployed.VotingAddress, big.NewInt(test.ONE_GWEI))
+	test.IfNotNil(t, appErr, fmt.Sprintf("Error approving market contract to spend: %v", appErr))
+	context.Blockchain.Commit()
+
+	_, voteErr := deployed.VotingContract.Vote(test.GetTxOpts(context.AuthUser1, nil,
+		big.NewInt(test.ONE_GWEI*2), 150000), listingHash, big.NewInt(1))
+	test.IfNotNil(t, voteErr, fmt.Sprintf("Error voting for candidate: %v", voteErr))
+	context.Blockchain.Commit()
+
+	// move past the voteBy
+	context.Blockchain.AdjustTime(100 * time.Second)
+	context.Blockchain.Commit()
+
+	// any council member can call for resolution
+	_, resolveErr := deployed.ListingContract.ResolveApplication(test.GetTxOpts(context.AuthUser1, nil,
+		big.NewInt(test.ONE_GWEI*2), 1000000), listingHash)
+	test.IfNotNil(t, resolveErr, fmt.Sprintf("Error resolving application: %v", resolveErr))
+	context.Blockchain.Commit()
+
+	// with that in place we can claim it as the source of the rest of the delivery
+	query := test.GenBytes32("select * from SPAM where EGGS eq TRUE")
+	_, accErr := deployed.DatatrustContract.ListingAccessed(test.GetTxOpts(context.AuthBackend, nil,
+		// let's say one listing was used for the other 1/2 of the request
+		big.NewInt(test.ONE_GWEI*2), 150000), listingHash, query, big.NewInt(1024*512))
+	test.IfNotNil(t, accErr, "Error claiming listing accessed")
+	context.Blockchain.Commit()
+
+	// we should see a delivery object whose bytes delivered match the bytes requested
+	_, req, del, _ := deployed.DatatrustContract.GetDelivery(nil, query)
+	if req.Cmp(del) != 0 {
+		t.Errorf("Expected %v to be > %v", req, del)
+	}
+
+	// we should see equal access credits for both listings
+	ogListingHash := test.GenBytes32("LookAtMyJunk")
+	ogAccessBal, _ := deployed.DatatrustContract.GetAccessCredits(nil, ogListingHash)
+	accessBal, _ := deployed.DatatrustContract.GetAccessCredits(nil, listingHash)
+	if accessBal.Cmp(ogAccessBal) != 0 {
+		t.Errorf("Expected %v to be > %v", accessBal, 0)
+	}
+
+	// note the ether token balances
+	beAddr, _ := deployed.DatatrustContract.GetBackendAddress(nil)
+	beBal, _ := deployed.EtherTokenContract.BalanceOf(nil, beAddr)
+	dtBal, _ := deployed.EtherTokenContract.BalanceOf(nil, deployed.DatatrustAddress)
+
+	urlHash := test.GenBytes32("someURL.net/roger/shrubber")
+	_, delErr := deployed.DatatrustContract.Delivered(test.GetTxOpts(context.AuthBackend, nil,
+		big.NewInt(test.ONE_GWEI*2), 250000), query, urlHash)
+	test.IfNotNil(t, delErr, "Error calling delivered")
+	context.Blockchain.Commit()
+	// should see balance changes now
+	beBalNow, _ := deployed.EtherTokenContract.BalanceOf(nil, beAddr)
+	dtBalNow, _ := deployed.EtherTokenContract.BalanceOf(nil, deployed.DatatrustAddress)
+
+	// newest bal will have increased
+	if beBalNow.Cmp(beBal) != 1 {
+		t.Errorf("Expected %v to be > %v", beBalNow, beBal)
+	}
+
+	// newest bal will have decreased
+	if dtBalNow.Cmp(dtBal) != -1 {
+		t.Errorf("Expected %v to be < %v", dtBalNow, dtBal)
+	}
+}
