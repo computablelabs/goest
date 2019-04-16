@@ -288,7 +288,7 @@ func TestDelivered(t *testing.T) {
 	// we should see a delivery object whose bytes delivered match the bytes requested
 	_, req, del, _ := deployed.DatatrustContract.GetDelivery(nil, query)
 	if req.Cmp(del) != 0 {
-		t.Errorf("Expected %v to be > %v", req, del)
+		t.Errorf("Expected %v to be %v", req, del)
 	}
 
 	// we should see equal access credits for both listings
@@ -296,7 +296,7 @@ func TestDelivered(t *testing.T) {
 	ogAccessBal, _ := deployed.DatatrustContract.GetAccessCredits(nil, ogListingHash)
 	accessBal, _ := deployed.DatatrustContract.GetAccessCredits(nil, listingHash)
 	if accessBal.Cmp(ogAccessBal) != 0 {
-		t.Errorf("Expected %v to be > %v", accessBal, 0)
+		t.Errorf("Expected %v to be %v", accessBal, ogAccessBal)
 	}
 
 	// note the ether token balances
