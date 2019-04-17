@@ -38,7 +38,7 @@ Registered: event({hash: indexed(bytes32), registrant: indexed(address)})
 RegistrationSucceeded: event({hash: indexed(bytes32), registrant: indexed(address)})
 RegistrationFailed: event({hash: indexed(bytes32), registrant: indexed(address)})
 DeliveryRequested: event({hash: indexed(bytes32), requester: indexed(address), amount: uint256})
-Delivered: event({hash: indexed(bytes32)})
+Delivered: event({hash: indexed(bytes32), owner: indexed(address), url: bytes32})
 
 # state vars
 data_hashes: map(bytes32, bytes32) # listing_hash -> data_hash
@@ -234,21 +234,21 @@ def getDelivery(hash: bytes32) -> (address, uint256, uint256):
 
 
 @public
-def listingAccessed(listing_hash:bytes32, delivery_hash: bytes32, amount: uint256):
+def listingAccessed(listing:bytes32, delivery: bytes32, amount: uint256):
   """
   @dev Only a registered backend may call. Enforce that the claimed listing exists.
-  @param listing_hash The listing that was accessed
-  @param delivery_hash Which delivery object this access was for
+  @param listing The listing that was accessed
+  @param delivery Which delivery object this access was for
   @param amount How many bytes were accessed
   """
   assert msg.sender == self.backend_address
-  assert self.data_hashes[listing_hash] != EMPTY_BYTES32
+  assert self.data_hashes[listing] != EMPTY_BYTES32
   total: wei_value = self.parameterizer.getCostPerByte() * amount
   # this can be claimed later by the listing owner, and are subtractive to byte_credits
-  self.access_credits[listing_hash] += total
-  self.byte_credits[self.deliveries[delivery_hash].owner] -= total
+  self.access_credits[listing] += total
+  self.byte_credits[self.deliveries[delivery].owner] -= total
   # bytes_delivered must eq (or exceed) bytes_requested in order for a datatrust to claim delivery
-  self.deliveries[delivery_hash].bytes_delivered += amount
+  self.deliveries[delivery].bytes_delivered += amount
 
 
 @public
@@ -258,3 +258,25 @@ def getAccessCredits(hash: bytes32) -> wei_value:
   @notice return the amount, in wei, of access credits a listing has accumulated
   """
   return self.access_credits[hash]
+
+
+@public
+def delivered(delivery: bytes32, url: bytes32):
+  """
+  @notice Allow a backend to collect its payment.
+  @dev We check that a backend has delivered, at least, the amount of bytes requested.
+  NOTE: bytes_requested is the multiplier for backend payment.
+  @param delivery Identifier of the delivery in question
+  @param url A hash of the URL that the backend delivered to
+  """
+  assert msg.sender == self.backend_address
+  owner: address = self.deliveries[delivery].owner
+  requested: uint256 = self.deliveries[delivery].bytes_requested
+  assert self.deliveries[delivery].bytes_delivered >= requested
+  # clear the delivery record first
+  clear(self.deliveries[delivery])
+  # now pay the datatrust from the banked delivery request
+  back_fee: wei_value = (self.parameterizer.getCostPerByte() * requested) / (100 / self.parameterizer.getBackendPayment())
+  self.ether_token.transfer(self.backend_address, back_fee)
+  log.Delivered(delivery, owner, url)
+

@@ -16,7 +16,8 @@ contract Datatrust:
     def requestDelivery(hash: bytes32, amount: uint256): modifying
     def getByteCredits(addr: address) -> uint256(wei): constant
     def getDelivery(hash: bytes32) -> (address, uint256, uint256): constant
-    def listingAccessed(listing_hash: bytes32, delivery_hash: bytes32, amount: uint256): modifying
+    def listingAccessed(listing: bytes32, delivery: bytes32, amount: uint256): modifying
     def getAccessCredits(hash: bytes32) -> uint256(wei): constant
+    def delivered(delivery: bytes32, url: bytes32): modifying
 
 
