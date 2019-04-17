@@ -264,18 +264,19 @@ def getAccessCredits(hash: bytes32) -> wei_value:
 def delivered(delivery: bytes32, url: bytes32):
   """
   @notice Allow a backend to collect its payment.
-  @dev We check that a backend has delivered, at least, the amount of bytes requested
+  @dev We check that a backend has delivered, at least, the amount of bytes requested.
+  NOTE: bytes_requested is the multiplier for backend payment.
   @param delivery Identifier of the delivery in question
   @param url A hash of the URL that the backend delivered to
   """
   assert msg.sender == self.backend_address
   owner: address = self.deliveries[delivery].owner
-  delivered: uint256 = self.deliveries[delivery].bytes_delivered
-  assert delivered >= self.deliveries[delivery].bytes_requested
+  requested: uint256 = self.deliveries[delivery].bytes_requested
+  assert self.deliveries[delivery].bytes_delivered >= requested
   # clear the delivery record first
   clear(self.deliveries[delivery])
   # now pay the datatrust from the banked delivery request
-  back_fee: wei_value = (self.parameterizer.getCostPerByte() * delivered) / (100 / self.parameterizer.getBackendPayment())
+  back_fee: wei_value = (self.parameterizer.getCostPerByte() * requested) / (100 / self.parameterizer.getBackendPayment())
   self.ether_token.transfer(self.backend_address, back_fee)
   log.Delivered(delivery, owner, url)
 
