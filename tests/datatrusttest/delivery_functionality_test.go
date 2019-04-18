@@ -10,7 +10,7 @@ import (
 
 func TestRequestDelivery(t *testing.T) {
 	// user has no credits atm
-	bytesBal, _ := deployed.DatatrustContract.GetByteCredits(nil, context.AuthUser3.From)
+	purchased, _ := deployed.DatatrustContract.GetBytesPurchased(nil, context.AuthUser3.From)
 	// reserve balance atm. This will go up by the res_payment after a request...
 	resBal, _ := deployed.EtherTokenContract.BalanceOf(nil, deployed.InvestingAddress)
 
@@ -26,7 +26,7 @@ func TestRequestDelivery(t *testing.T) {
 		t.Errorf("Expected member bal to be > 0, got: %v", ethBal)
 	}
 
-	// any unused byte credits are banked by the datatrust contract at the ether token (-res_payment)
+	// purchase payments are banked by the datatrust contract at the ether token (-res_payment)
 	dataEthBal, _ := deployed.EtherTokenContract.BalanceOf(nil, deployed.DatatrustAddress)
 
 	// member needs to have approved datatrust to spend ether token
@@ -35,7 +35,6 @@ func TestRequestDelivery(t *testing.T) {
 	test.IfNotNil(t, approveErr, fmt.Sprintf("Error approving spender: %v", approveErr))
 
 	// transaction cost is (1024*1024) requested * 1000 (cost_per_byte) = 1048576000 wei
-
 	context.Blockchain.Commit()
 
 	// note the allowance as later purchasing should decrease it
@@ -60,10 +59,10 @@ func TestRequestDelivery(t *testing.T) {
 
 	context.Blockchain.Commit()
 
-	// user should now have some bytecredit
-	bytesBalNow, _ := deployed.DatatrustContract.GetByteCredits(nil, context.AuthUser3.From)
-	if bytesBalNow.Cmp(bytesBal) != 1 {
-		t.Errorf("Expected byte credit %v to be more than %v", bytesBalNow, bytesBal)
+	// user should now have some bytes
+	purchasedNow, _ := deployed.DatatrustContract.GetBytesPurchased(nil, context.AuthUser3.From)
+	if purchasedNow.Cmp(purchased) != 1 {
+		t.Errorf("Expected byte balance %v to be more than %v", purchasedNow, purchased)
 	}
 
 	// ether token balances should be updated
@@ -87,11 +86,13 @@ func TestRequestDelivery(t *testing.T) {
 		t.Errorf("Expected %v to be > %v", resBalNow, resBal)
 	}
 
-	// at this point the sum of what went into the reserve + the amount locked in datatrust will == byte_credits
+	// at this point the sum of what went into the reserve + the amount locked in datatrust will == bytesPurchased * cost_per_byte
 	toRes := resBalNow.Sub(resBalNow, resBal)
 	summed := toRes.Add(toRes, dataEthBalNow)
-	if summed.Cmp(bytesBalNow) != 0 {
-		t.Errorf("Expected %v to be %v", summed, bytesBalNow)
+	cost, _ := deployed.ParameterizerContract.GetCostPerByte(nil)
+	bytesCost := purchasedNow.Mul(purchasedNow, cost)
+	if summed.Cmp(bytesCost) != 0 {
+		t.Errorf("Expected %v to be %v", summed, bytesCost)
 	}
 
 	// delivery object should be present
@@ -178,10 +179,10 @@ func TestListingAccessed(t *testing.T) {
 
 	// with a listing in place we can claim that it was accessed
 	query := test.GenBytes32("select * from SPAM where EGGS eq TRUE")
-	// current byte credits, should decrease with listing access reporting
-	bytesBal, _ := deployed.DatatrustContract.GetByteCredits(nil, context.AuthUser3.From)
-	// current access_credits for listiing, should increase with reporting
-	accessBal, _ := deployed.DatatrustContract.GetAccessCredits(nil, listingHash)
+	// current bytes purchased, should decrease with listing access reporting
+	bytesBal, _ := deployed.DatatrustContract.GetBytesPurchased(nil, context.AuthUser3.From)
+	// current bytes_accessed for listiing, should increase with reporting
+	accessBal, _ := deployed.DatatrustContract.GetBytesAccessed(nil, listingHash)
 	// none delivered yet...
 	_, _, delivered, _ := deployed.DatatrustContract.GetDelivery(nil, query)
 
@@ -191,12 +192,12 @@ func TestListingAccessed(t *testing.T) {
 	test.IfNotNil(t, accErr, "Error claiming listing accessed")
 	context.Blockchain.Commit()
 
-	bytesBalNow, _ := deployed.DatatrustContract.GetByteCredits(nil, context.AuthUser3.From)
+	bytesBalNow, _ := deployed.DatatrustContract.GetBytesPurchased(nil, context.AuthUser3.From)
 	if bytesBalNow.Cmp(bytesBal) != -1 {
 		t.Errorf("Expected %v to be > %v", bytesBal, bytesBalNow)
 	}
-	// current access_credits for listiing, should increase with reporting
-	accessBalNow, _ := deployed.DatatrustContract.GetAccessCredits(nil, listingHash)
+	// current bytes_accessed for listiing, should increase with reporting
+	accessBalNow, _ := deployed.DatatrustContract.GetBytesAccessed(nil, listingHash)
 	if accessBalNow.Cmp(accessBal) != 1 {
 		t.Errorf("Expected %v to be > %v", accessBalNow, accessBal)
 	}
@@ -291,12 +292,18 @@ func TestDelivered(t *testing.T) {
 		t.Errorf("Expected %v to be %v", req, del)
 	}
 
-	// we should see equal access credits for both listings
+	// we should see equal access for both listings
 	ogListingHash := test.GenBytes32("LookAtMyJunk")
-	ogAccessBal, _ := deployed.DatatrustContract.GetAccessCredits(nil, ogListingHash)
-	accessBal, _ := deployed.DatatrustContract.GetAccessCredits(nil, listingHash)
+	ogAccessBal, _ := deployed.DatatrustContract.GetBytesAccessed(nil, ogListingHash)
+	accessBal, _ := deployed.DatatrustContract.GetBytesAccessed(nil, listingHash)
 	if accessBal.Cmp(ogAccessBal) != 0 {
 		t.Errorf("Expected %v to be %v", accessBal, ogAccessBal)
+	}
+
+	// the user should have no avail bytes at this time
+	purchased, _ := deployed.DatatrustContract.GetBytesPurchased(nil, context.AuthUser3.From)
+	if purchased.Cmp(big.NewInt(0)) != 0 {
+		t.Errorf("expected %v to be 0", purchased)
 	}
 
 	// note the ether token balances
