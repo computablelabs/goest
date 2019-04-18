@@ -14,10 +14,10 @@ contract Datatrust:
     def register(url: string[128]): modifying
     def resolveRegistration(hash: bytes32): modifying
     def requestDelivery(hash: bytes32, amount: uint256): modifying
-    def getByteCredits(addr: address) -> uint256(wei): constant
+    def getBytesPurchased(addr: address) -> uint256: constant
     def getDelivery(hash: bytes32) -> (address, uint256, uint256): constant
     def listingAccessed(listing: bytes32, delivery: bytes32, amount: uint256): modifying
-    def getAccessCredits(hash: bytes32) -> uint256(wei): constant
+    def getBytesAccessed(hash: bytes32) -> uint256: constant
     def delivered(delivery: bytes32, url: bytes32): modifying
 
 
