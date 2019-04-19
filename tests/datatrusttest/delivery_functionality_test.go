@@ -8,13 +8,6 @@ import (
 	"time"
 )
 
-func TransferDatatrustSomeEtherToken(t *testing.T) {
-	_, transErr := deployed.EtherTokenContract.Transfer(test.GetTxOpts(context.AuthFactory, nil,
-		big.NewInt(test.ONE_GWEI*2), 100000), deployed.DatatrustAddress, big.NewInt(test.ONE_GWEI))
-	test.IfNotNil(t, transErr, "Error in transfer")
-	context.Blockchain.Commit()
-}
-
 func TestRequestDelivery(t *testing.T) {
 	// user has no credits atm
 	purchased, _ := deployed.DatatrustContract.GetBytesPurchased(nil, context.AuthUser3.From)
