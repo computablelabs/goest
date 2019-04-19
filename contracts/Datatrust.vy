@@ -262,6 +262,19 @@ def getBytesAccessed(hash: bytes32) -> uint256:
 
 
 @public
+def bytesAccessedClaimed(hash: bytes32, fee: wei_value):
+  """
+  @notice Called by the Listing contract when a maker claims their listing access rewards
+  @param hash The listing identifier
+  @param fee Amount of ether token to transfer to the reserve
+  """
+  assert msg.sender == self.listing_address
+  clear(self.bytes_accessed[hash]) # clear before paying
+  self.ether_token.transfer(self.investing_address, fee)
+  # NOTE bytes accessed claimed event published by Listing contract
+
+
+@public
 def delivered(delivery: bytes32, url: bytes32):
   """
   @notice Allow a backend to collect its payment.

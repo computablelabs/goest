@@ -89,15 +89,15 @@ func Deploy(initialBal *big.Int, c *Ctx) (*Dep, error) {
 		c.AuthFactory,
 		c.Blockchain,
 		votingAddr,
-		big.NewInt(ONE_GWEI),   // conversionRate: stipulation is that market token should be, at least, as val as eth
-		big.NewInt(110),        // spread, a scaling factor
-		big.NewInt(ONE_WEI),    // listReward (one token)
-		big.NewInt(ONE_GWEI),   // Stake
-		big.NewInt(100),        // voteBy
-		big.NewInt(50),         // quorum
-		big.NewInt(30),         // backend payment percent
-		big.NewInt(50),         // maker payment percent
-		big.NewInt(ONE_FINNEY), // cost per byte
+		big.NewInt(ONE_GWEI),     // conversionRate: stipulation is that market token should be, at least, as val as eth
+		big.NewInt(110),          // spread, a scaling factor
+		big.NewInt(ONE_WEI),      // listReward (one token)
+		big.NewInt(ONE_GWEI),     // Stake
+		big.NewInt(100),          // voteBy
+		big.NewInt(50),           // quorum
+		big.NewInt(25),           // backend payment percent
+		big.NewInt(50),           // maker payment percent
+		big.NewInt(ONE_FINNEY*6), // cost per byte at 5000 wei
 	)
 
 	if paramErr != nil {
@@ -126,7 +126,7 @@ func Deploy(initialBal *big.Int, c *Ctx) (*Dep, error) {
 		etherTokenAddr,
 		votingAddr,
 		paramAddr,
-		investAddr,
+		investAddr, // does not consume the investing contract, simply references the address to transfer to reserve
 	)
 
 	if dataErr != nil {
@@ -134,7 +134,7 @@ func Deploy(initialBal *big.Int, c *Ctx) (*Dep, error) {
 	}
 	c.Blockchain.Commit()
 
-	// Listing: { consumes: [market token, voting, parameterizer, datatrust], privileged: [none] }
+	// Listing: { consumes: [market token, voting, parameterizer, datatrust, investing], privileged: [none] }
 	listingAddr, listingTrans, listingCont, listingErr := listing.DeployListing(
 		c.AuthFactory,
 		c.Blockchain,
@@ -142,6 +142,7 @@ func Deploy(initialBal *big.Int, c *Ctx) (*Dep, error) {
 		votingAddr,
 		paramAddr,
 		dataAddr,
+		investAddr,
 	)
 
 	if listingErr != nil {
