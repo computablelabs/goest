@@ -28,6 +28,8 @@ contract Voting:
   def transferStake(hash: bytes32, addr: address): modifying
 
 contract Parameterizer:
+  def getMakerPayment() -> uint256: constant
+  def getCostPerByte() -> uint256(wei): constant
   def getStake() -> uint256(wei): constant
   def getListReward() -> uint256(wei): constant
   def getQuorum() -> uint256: constant
@@ -36,10 +38,16 @@ contract Parameterizer:
 contract Datatrust:
   def getDataHash(hash: bytes32) -> bytes32: constant
   def removeDataHash(hash: bytes32): modifying
+  def getBytesAccessed(hash: bytes32) -> uint256: constant
+  def bytesAccessedClaimed(hash: bytes32, fee: uint256(wei)): modifying
+
+contract Investing:
+  def getInvestmentPrice() -> uint256(wei): constant
 
 # events
 ApplicationFailed: event({hash: indexed(bytes32), applicant: indexed(address)})
 Applied: event({hash: indexed(bytes32), applicant: indexed(address)})
+BytesAccessedClaimed: event({hash: indexed(bytes32), claimed: uint256, minted: uint256})
 Challenged: event({hash: indexed(bytes32), challenger: indexed(address)})
 ChallengeFailed: event({hash: indexed(bytes32), challenger: indexed(address)})
 ChallengeSucceeded: event({hash: indexed(bytes32), challenger: indexed(address)})
@@ -53,13 +61,16 @@ market_token: MarketToken
 voting: Voting
 parameterizer: Parameterizer
 datatrust: Datatrust
+investing: Investing
 
 @public
-def __init__(market_token_addr: address, voting_addr: address, p11r_addr: address, data_addr: address):
+def __init__(market_token_addr: address, voting_addr: address, p11r_addr: address,
+  data_addr: address, inv_addr: address):
     self.market_token = MarketToken(market_token_addr)
     self.voting = Voting(voting_addr)
     self.parameterizer = Parameterizer(p11r_addr)
     self.datatrust = Datatrust(data_addr)
+    self.investing = Investing(inv_addr)
 
 
 @public
@@ -150,6 +161,29 @@ def resolveApplication(hash: bytes32):
     log.ApplicationFailed(hash, owner)
   # regardless, the candidate is pruned
   self.voting.removeCandidate(hash)
+
+
+@public
+def claimBytesAccessed(hash: bytes32):
+  """
+  @notice Allows a listing owner to claim the rewards of listing access. These are invested
+  into the market and will be noted at the listing.supply (MarketToken)
+  @param hash The listing identifier
+  """
+  assert msg.sender == self.listings[hash].owner
+  # the algo for maker payment is (accessed*cost)/(100/maker_pct)
+  accessed: uint256 = self.datatrust.getBytesAccessed(hash)
+  maker_fee: wei_value = (self.parameterizer.getCostPerByte() * accessed) / (100 / self.parameterizer.getMakerPayment())
+  price: wei_value = self.investing.getInvestmentPrice()
+  # if credits accumulated are too low to invest, exit now
+  assert maker_fee >= price
+  # clear the credits before proceeding (also transfers fee to reserve)
+  self.datatrust.bytesAccessedClaimed(hash, maker_fee)
+  # the fee is then invested according to the buy-curve. TODO possibly abstract some within the investing contract
+  minted: uint256 = (maker_fee/price) * 1000000000 # 1Billionth token is the smallest denomination...
+  self.market_token.mint(minted)
+  self.listings[hash].supply += minted
+  log.BytesAccessedClaimed(hash, accessed, minted)
 
 
 @public

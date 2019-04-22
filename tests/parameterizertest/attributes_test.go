@@ -57,8 +57,8 @@ func TestGetVoteBy(t *testing.T) {
 func TestGetBackendPayment(t *testing.T) {
 	pct, _ := deployed.ParameterizerContract.GetBackendPayment(nil)
 
-	if pct.Cmp(big.NewInt(30)) != 0 {
-		t.Errorf("Expected backend pay pct to be 30, got: %v", pct)
+	if pct.Cmp(big.NewInt(25)) != 0 {
+		t.Errorf("Expected backend pay pct to be 25, got: %v", pct)
 	}
 }
 
@@ -73,7 +73,7 @@ func TestGetMakerPayment(t *testing.T) {
 func TestReservePayment(t *testing.T) {
 	pct, _ := deployed.ParameterizerContract.GetReservePayment(nil)
 
-	if pct.Cmp(big.NewInt(20)) != 0 {
-		t.Errorf("Expected reserve pay pct to be 20, got: %v", pct)
+	if pct.Cmp(big.NewInt(25)) != 0 {
+		t.Errorf("Expected reserve pay pct to be 25, got: %v", pct)
 	}
 }
