@@ -224,8 +224,8 @@ def resolveReparam(hash: bytes32):
     elif param == COST_PER_BYTE:
       self.cost_per_byte = value
     log.ReparamSucceeded(hash, param, value)
-  # did not get enough votes...
-  log.ReparamFailed(hash, param, value)
+  else: # did not get enough votes...
+    log.ReparamFailed(hash, param, value)
   # regardless, cleanup the reparam and candidate
   self.voting.removeCandidate(hash)
   # TODO make sure this works as expected
