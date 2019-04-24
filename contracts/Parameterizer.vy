@@ -126,7 +126,7 @@ def getHash(param: uint256, value: uint256) -> bytes32:
   @param value what to set it to
   @return The generated hash
   """
-  return keccak256(convert((param + value), bytes32))
+  return keccak256(concat(convert(param, bytes32), convert(value, bytes32)))
 
 
 @public
@@ -184,7 +184,7 @@ def reparameterize(param: uint256, value: uint256):
   @param value What to change it to
   """
   # hashed identifier made up of the prop and its proposed value
-  hash: bytes32 = keccak256(convert((param + value), bytes32)) # TODO may not need to SHA this
+  hash: bytes32 = keccak256(concat(convert(param, bytes32), convert(value, bytes32)))
   assert not self.voting.isCandidate(hash)
   self.reparams[hash] = Reparam({param: param, value:value})
   self.voting.addCandidate(hash, REPARAM, msg.sender, self.stake, self.vote_by)
