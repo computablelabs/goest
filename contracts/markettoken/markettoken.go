@@ -16,10 +16,10 @@ import (
 )
 
 // MarketTokenABI is the input ABI used to generate the binding from.
-const MarketTokenABI = "[{\"name\":\"Approval\",\"inputs\":[{\"type\":\"address\",\"name\":\"owner\",\"indexed\":true},{\"type\":\"address\",\"name\":\"spender\",\"indexed\":true},{\"type\":\"uint256\",\"name\":\"amount\",\"indexed\":false,\"unit\":\"wei\"}],\"anonymous\":false,\"type\":\"event\"},{\"name\":\"Burn\",\"inputs\":[{\"type\":\"address\",\"name\":\"burner\",\"indexed\":true},{\"type\":\"uint256\",\"name\":\"amount\",\"indexed\":false,\"unit\":\"wei\"}],\"anonymous\":false,\"type\":\"event\"},{\"name\":\"Mint\",\"inputs\":[{\"type\":\"address\",\"name\":\"to\",\"indexed\":true},{\"type\":\"uint256\",\"name\":\"amount\",\"indexed\":false,\"unit\":\"wei\"}],\"anonymous\":false,\"type\":\"event\"},{\"name\":\"MintStopped\",\"inputs\":[],\"anonymous\":false,\"type\":\"event\"},{\"name\":\"Transfer\",\"inputs\":[{\"type\":\"address\",\"name\":\"source\",\"indexed\":true},{\"type\":\"address\",\"name\":\"to\",\"indexed\":true},{\"type\":\"uint256\",\"name\":\"amount\",\"indexed\":false,\"unit\":\"wei\"}],\"anonymous\":false,\"type\":\"event\"},{\"outputs\":[],\"inputs\":[{\"type\":\"address\",\"name\":\"initial_account\"},{\"type\":\"uint256\",\"name\":\"initial_balance\",\"unit\":\"wei\"}],\"constant\":false,\"payable\":false,\"type\":\"constructor\"},{\"name\":\"allowance\",\"outputs\":[{\"type\":\"uint256\",\"name\":\"out\",\"unit\":\"wei\"}],\"inputs\":[{\"type\":\"address\",\"name\":\"owner\"},{\"type\":\"address\",\"name\":\"spender\"}],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":815},{\"name\":\"approve\",\"outputs\":[{\"type\":\"bool\",\"name\":\"out\"}],\"inputs\":[{\"type\":\"address\",\"name\":\"spender\"},{\"type\":\"uint256\",\"name\":\"amount\",\"unit\":\"wei\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":37719},{\"name\":\"balanceOf\",\"outputs\":[{\"type\":\"uint256\",\"name\":\"out\",\"unit\":\"wei\"}],\"inputs\":[{\"type\":\"address\",\"name\":\"owner\"}],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":715},{\"name\":\"getPrivileged\",\"outputs\":[{\"type\":\"address\",\"name\":\"out\"},{\"type\":\"address\",\"name\":\"out\"}],\"inputs\":[],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":851},{\"name\":\"has_privilege\",\"outputs\":[{\"type\":\"bool\",\"name\":\"out\"}],\"inputs\":[{\"type\":\"address\",\"name\":\"sender\"}],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":884},{\"name\":\"burn\",\"outputs\":[],\"inputs\":[{\"type\":\"uint256\",\"name\":\"amount\",\"unit\":\"wei\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":75309},{\"name\":\"burnAll\",\"outputs\":[],\"inputs\":[{\"type\":\"address\",\"name\":\"owner\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":80387},{\"name\":\"decreaseApproval\",\"outputs\":[],\"inputs\":[{\"type\":\"address\",\"name\":\"spender\"},{\"type\":\"uint256\",\"name\":\"amount\",\"unit\":\"wei\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":39335},{\"name\":\"increaseApproval\",\"outputs\":[],\"inputs\":[{\"type\":\"address\",\"name\":\"spender\"},{\"type\":\"uint256\",\"name\":\"amount\",\"unit\":\"wei\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":39098},{\"name\":\"mint\",\"outputs\":[],\"inputs\":[{\"type\":\"uint256\",\"name\":\"amount\",\"unit\":\"wei\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":76132},{\"name\":\"setPrivileged\",\"outputs\":[],\"inputs\":[{\"type\":\"address\",\"name\":\"listing\"},{\"type\":\"address\",\"name\":\"investing\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":70981},{\"name\":\"stopMinting\",\"outputs\":[],\"inputs\":[],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":38270},{\"name\":\"totalSupply\",\"outputs\":[{\"type\":\"uint256\",\"name\":\"out\",\"unit\":\"wei\"}],\"inputs\":[],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":843},{\"name\":\"transfer\",\"outputs\":[{\"type\":\"bool\",\"name\":\"out\"}],\"inputs\":[{\"type\":\"address\",\"name\":\"to\"},{\"type\":\"uint256\",\"name\":\"amount\",\"unit\":\"wei\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":74504},{\"name\":\"transferFrom\",\"outputs\":[{\"type\":\"bool\",\"name\":\"out\"}],\"inputs\":[{\"type\":\"address\",\"name\":\"source\"},{\"type\":\"address\",\"name\":\"to\"},{\"type\":\"uint256\",\"name\":\"amount\",\"unit\":\"wei\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":110477},{\"name\":\"decimals\",\"outputs\":[{\"type\":\"uint256\",\"name\":\"out\"}],\"inputs\":[],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":933},{\"name\":\"mintingStopped\",\"outputs\":[{\"type\":\"bool\",\"name\":\"out\"}],\"inputs\":[],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":963}]"
+const MarketTokenABI = "[{\"name\":\"Approval\",\"inputs\":[{\"type\":\"address\",\"name\":\"owner\",\"indexed\":true},{\"type\":\"address\",\"name\":\"spender\",\"indexed\":true},{\"type\":\"uint256\",\"name\":\"amount\",\"indexed\":false,\"unit\":\"wei\"}],\"anonymous\":false,\"type\":\"event\"},{\"name\":\"Burn\",\"inputs\":[{\"type\":\"address\",\"name\":\"burner\",\"indexed\":true},{\"type\":\"uint256\",\"name\":\"amount\",\"indexed\":false,\"unit\":\"wei\"}],\"anonymous\":false,\"type\":\"event\"},{\"name\":\"Mint\",\"inputs\":[{\"type\":\"address\",\"name\":\"to\",\"indexed\":true},{\"type\":\"uint256\",\"name\":\"amount\",\"indexed\":false,\"unit\":\"wei\"}],\"anonymous\":false,\"type\":\"event\"},{\"name\":\"Transfer\",\"inputs\":[{\"type\":\"address\",\"name\":\"source\",\"indexed\":true},{\"type\":\"address\",\"name\":\"to\",\"indexed\":true},{\"type\":\"uint256\",\"name\":\"amount\",\"indexed\":false,\"unit\":\"wei\"}],\"anonymous\":false,\"type\":\"event\"},{\"outputs\":[],\"inputs\":[{\"type\":\"address\",\"name\":\"initial_account\"},{\"type\":\"uint256\",\"name\":\"initial_balance\",\"unit\":\"wei\"}],\"constant\":false,\"payable\":false,\"type\":\"constructor\"},{\"name\":\"allowance\",\"outputs\":[{\"type\":\"uint256\",\"name\":\"out\",\"unit\":\"wei\"}],\"inputs\":[{\"type\":\"address\",\"name\":\"owner\"},{\"type\":\"address\",\"name\":\"spender\"}],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":815},{\"name\":\"approve\",\"outputs\":[{\"type\":\"bool\",\"name\":\"out\"}],\"inputs\":[{\"type\":\"address\",\"name\":\"spender\"},{\"type\":\"uint256\",\"name\":\"amount\",\"unit\":\"wei\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":37719},{\"name\":\"balanceOf\",\"outputs\":[{\"type\":\"uint256\",\"name\":\"out\",\"unit\":\"wei\"}],\"inputs\":[{\"type\":\"address\",\"name\":\"owner\"}],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":715},{\"name\":\"getPrivileged\",\"outputs\":[{\"type\":\"address\",\"name\":\"out\"},{\"type\":\"address\",\"name\":\"out\"}],\"inputs\":[],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":851},{\"name\":\"has_privilege\",\"outputs\":[{\"type\":\"bool\",\"name\":\"out\"}],\"inputs\":[{\"type\":\"address\",\"name\":\"sender\"}],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":884},{\"name\":\"burn\",\"outputs\":[],\"inputs\":[{\"type\":\"uint256\",\"name\":\"amount\",\"unit\":\"wei\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":75309},{\"name\":\"burnAll\",\"outputs\":[],\"inputs\":[{\"type\":\"address\",\"name\":\"owner\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":80387},{\"name\":\"decreaseApproval\",\"outputs\":[],\"inputs\":[{\"type\":\"address\",\"name\":\"spender\"},{\"type\":\"uint256\",\"name\":\"amount\",\"unit\":\"wei\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":38862},{\"name\":\"increaseApproval\",\"outputs\":[],\"inputs\":[{\"type\":\"address\",\"name\":\"spender\"},{\"type\":\"uint256\",\"name\":\"amount\",\"unit\":\"wei\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":39098},{\"name\":\"mint\",\"outputs\":[],\"inputs\":[{\"type\":\"uint256\",\"name\":\"amount\",\"unit\":\"wei\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":75841},{\"name\":\"setPrivileged\",\"outputs\":[],\"inputs\":[{\"type\":\"address\",\"name\":\"listing\"},{\"type\":\"address\",\"name\":\"investing\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":70981},{\"name\":\"totalSupply\",\"outputs\":[{\"type\":\"uint256\",\"name\":\"out\",\"unit\":\"wei\"}],\"inputs\":[],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":813},{\"name\":\"transfer\",\"outputs\":[{\"type\":\"bool\",\"name\":\"out\"}],\"inputs\":[{\"type\":\"address\",\"name\":\"to\"},{\"type\":\"uint256\",\"name\":\"amount\",\"unit\":\"wei\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":74471},{\"name\":\"transferFrom\",\"outputs\":[{\"type\":\"bool\",\"name\":\"out\"}],\"inputs\":[{\"type\":\"address\",\"name\":\"source\"},{\"type\":\"address\",\"name\":\"to\"},{\"type\":\"uint256\",\"name\":\"amount\",\"unit\":\"wei\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":110441},{\"name\":\"decimals\",\"outputs\":[{\"type\":\"uint256\",\"name\":\"out\"}],\"inputs\":[],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":903}]"
 
 // MarketTokenBin is the compiled bytecode used for deploying new contracts.
-const MarketTokenBin = `0x600035601c52740100000000000000000000000000000000000000006020526f7fffffffffffffffffffffffffffffff6040527fffffffffffffffffffffffffffffffff8000000000000000000000000000000060605274012a05f1fffffffffffffffffffffffffdabf41c006080527ffffffffffffffffffffffffed5fa0e000000000000000000000000000000000060a0526040610b8e6101403934156100a757600080fd5b6020610b8e60c03960c05160205181106100c057600080fd5b50601260025560006006556101605160016101405160e05260c052604060c02055336003556101605160075561016051610180526101405160007fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef6020610180a3610b7656600035601c52740100000000000000000000000000000000000000006020526f7fffffffffffffffffffffffffffffff6040527fffffffffffffffffffffffffffffffff8000000000000000000000000000000060605274012a05f1fffffffffffffffffffffffffdabf41c006080527ffffffffffffffffffffffffed5fa0e000000000000000000000000000000000060a05263dd62ed3e600051141561010357604060046101403734156100b457600080fd5b60043560205181106100c557600080fd5b5060243560205181106100d757600080fd5b5060006101405160e05260c052604060c0206101605160e05260c052604060c0205460005260206000f3005b63095ea7b36000511415610198576040600461014037341561012457600080fd5b600435602051811061013557600080fd5b506101605160003360e05260c052604060c0206101405160e05260c052604060c02055610160516101805261014051337f8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b9256020610180a3600160005260206000f3005b6370a0823160005114156101e757602060046101403734156101b957600080fd5b60043560205181106101ca57600080fd5b5060016101405160e05260c052604060c0205460005260206000f3005b63d4c17539600051141561022157341561020057600080fd5b604061014052610160600454815260055481602001525061014051610160f3005b636a395d23600051141561026f576020600461014037341561024257600080fd5b600435602051811061025357600080fd5b50600554610140511460045461014051141760005260206000f3005b6342966c68600051141561033b576020600461014037341561029057600080fd5b60206101e06024636a395d2361016052336101805261017c6000305af16102b657600080fd5b6101e0516102c357600080fd5b60013360e05260c052604060c02061014051815410156102e257600080fd5b61014051815403815550600761014051815410156102ff57600080fd5b610140518154038155506101405161020052337fcc16f5dbb4873280815c1ee09dbd06736cffcc184412cf7a71a0fdb75d397ca56020610200a2005b637e9d2ac1600051141561043d576020600461014037341561035c57600080fd5b600435602051811061036d57600080fd5b5060206101e06024636a395d2361016052336101805261017c6000305af161039457600080fd5b6101e0516103a157600080fd5b60016101405160e05260c052604060c0205461020052600761020051815410156103ca57600080fd5b61020051815403815550600060016101405160e05260c052604060c02055600060006101405160e05260c052604060c0203360e05260c052604060c020556102005161022052610140517fcc16f5dbb4873280815c1ee09dbd06736cffcc184412cf7a71a0fdb75d397ca56020610220a2005b63661884636000511415610546576040600461014037341561045e57600080fd5b600435602051811061046f57600080fd5b5060003360e05260c052604060c0206101405160e05260c052604060c020546101605111156104bd57600060003360e05260c052604060c0206101405160e05260c052604060c020556104f6565b60003360e05260c052604060c0206101405160e05260c052604060c02061016051815410156104eb57600080fd5b610160518154038155505b60003360e05260c052604060c0206101405160e05260c052604060c020546101805261014051337f8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b9256020610180a3005b63d73dd6236000511415610604576040600461014037341561056757600080fd5b600435602051811061057857600080fd5b5060003360e05260c052604060c0206101405160e05260c052604060c02080546101605182540110156105aa57600080fd5b6101605181540181555060003360e05260c052604060c0206101405160e05260c052604060c020546101805261014051337f8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b9256020610180a3005b63a0712d6860005114156106e3576020600461014037341561062557600080fd5b60206101e06024636a395d2361016052336101805261017c6000305af161064b57600080fd5b6101e05161065857600080fd5b6006541561066557600080fd5b6007805461014051825401101561067b57600080fd5b6101405181540181555060013360e05260c052604060c02080546101405182540110156106a757600080fd5b610140518154018155506101405161020052337f0f6798a560793a54c3bcfe86a93cde1e73087d944c0ea20544137d41213968856020610200a2005b63b01e369f6000511415610746576040600461014037341561070457600080fd5b600435602051811061071557600080fd5b50602435602051811061072757600080fd5b50600354331461073657600080fd5b6101405160045561016051600555005b633e3e0b1260005114156107bf57341561075f57600080fd5b60206101c06024636a395d2361014052336101605261015c6000305af161078557600080fd5b6101c05161079257600080fd5b60016006557f58e0e1f03176dfa647922b700f27e00bfa7f939db5a6fb7dd47cc6dcd3cf619c60006000a1005b6318160ddd60005114156107e55734156107d857600080fd5b60075460005260206000f3005b63a9059cbb60005114156108c1576040600461014037341561080657600080fd5b600435602051811061081757600080fd5b50600061014051141561082957600080fd5b60013360e05260c052604060c020610160518154101561084857600080fd5b6101605181540381555060016101405160e05260c052604060c020805461016051825401101561087757600080fd5b61016051815401815550610160516101805261014051337fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef6020610180a3600160005260206000f3005b6323b872dd60005114156109fe57606060046101403734156108e257600080fd5b60043560205181106108f357600080fd5b50602435602051811061090557600080fd5b50600061014051141561091757600080fd5b600061016051141561092857600080fd5b60016101405160e05260c052604060c020610180518154101561094a57600080fd5b6101805181540381555060016101605160e05260c052604060c020805461018051825401101561097957600080fd5b6101805181540181555060006101405160e05260c052604060c0203360e05260c052604060c02061018051815410156109b157600080fd5b61018051815403815550610180516101a05261016051610140517fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef60206101a0a3600160005260206000f3005b63313ce5676000511415610a24573415610a1757600080fd5b60025460005260206000f3005b63f339292f6000511415610a4a573415610a3d57600080fd5b60065460005260206000f3005b60006000fd5b610126610b7603610126600039610126610b76036000f3`
+const MarketTokenBin = `0x600035601c52740100000000000000000000000000000000000000006020526f7fffffffffffffffffffffffffffffff6040527fffffffffffffffffffffffffffffffff8000000000000000000000000000000060605274012a05f1fffffffffffffffffffffffffdabf41c006080527ffffffffffffffffffffffffed5fa0e000000000000000000000000000000000060a0526040610a8c6101403934156100a757600080fd5b6020610a8c60c03960c05160205181106100c057600080fd5b5060126002556101605160016101405160e05260c052604060c02055336003556101605160065561016051610180526101405160007fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef6020610180a3610a7456600035601c52740100000000000000000000000000000000000000006020526f7fffffffffffffffffffffffffffffff6040527fffffffffffffffffffffffffffffffff8000000000000000000000000000000060605274012a05f1fffffffffffffffffffffffffdabf41c006080527ffffffffffffffffffffffffed5fa0e000000000000000000000000000000000060a05263dd62ed3e600051141561010357604060046101403734156100b457600080fd5b60043560205181106100c557600080fd5b5060243560205181106100d757600080fd5b5060006101405160e05260c052604060c0206101605160e05260c052604060c0205460005260206000f3005b63095ea7b36000511415610198576040600461014037341561012457600080fd5b600435602051811061013557600080fd5b506101605160003360e05260c052604060c0206101405160e05260c052604060c02055610160516101805261014051337f8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b9256020610180a3600160005260206000f3005b6370a0823160005114156101e757602060046101403734156101b957600080fd5b60043560205181106101ca57600080fd5b5060016101405160e05260c052604060c0205460005260206000f3005b63d4c17539600051141561022157341561020057600080fd5b604061014052610160600454815260055481602001525061014051610160f3005b636a395d23600051141561026f576020600461014037341561024257600080fd5b600435602051811061025357600080fd5b50600554610140511460045461014051141760005260206000f3005b6342966c68600051141561033b576020600461014037341561029057600080fd5b60206101e06024636a395d2361016052336101805261017c6000305af16102b657600080fd5b6101e0516102c357600080fd5b60013360e05260c052604060c02061014051815410156102e257600080fd5b61014051815403815550600661014051815410156102ff57600080fd5b610140518154038155506101405161020052337fcc16f5dbb4873280815c1ee09dbd06736cffcc184412cf7a71a0fdb75d397ca56020610200a2005b637e9d2ac1600051141561043d576020600461014037341561035c57600080fd5b600435602051811061036d57600080fd5b5060206101e06024636a395d2361016052336101805261017c6000305af161039457600080fd5b6101e0516103a157600080fd5b60016101405160e05260c052604060c0205461020052600661020051815410156103ca57600080fd5b61020051815403815550600060016101405160e05260c052604060c02055600060006101405160e05260c052604060c0203360e05260c052604060c020556102005161022052610140517fcc16f5dbb4873280815c1ee09dbd06736cffcc184412cf7a71a0fdb75d397ca56020610220a2005b636618846360005114156104f8576040600461014037341561045e57600080fd5b600435602051811061046f57600080fd5b5060003360e05260c052604060c0206101405160e05260c052604060c020610160518154101561049e57600080fd5b6101605181540381555060003360e05260c052604060c0206101405160e05260c052604060c020546101805261014051337f8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b9256020610180a3005b63d73dd62360005114156105b6576040600461014037341561051957600080fd5b600435602051811061052a57600080fd5b5060003360e05260c052604060c0206101405160e05260c052604060c020805461016051825401101561055c57600080fd5b6101605181540181555060003360e05260c052604060c0206101405160e05260c052604060c020546101805261014051337f8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b9256020610180a3005b63a0712d68600051141561068857602060046101403734156105d757600080fd5b60206101e06024636a395d2361016052336101805261017c6000305af16105fd57600080fd5b6101e05161060a57600080fd5b6006805461014051825401101561062057600080fd5b6101405181540181555060013360e05260c052604060c020805461014051825401101561064c57600080fd5b610140518154018155506101405161020052337f0f6798a560793a54c3bcfe86a93cde1e73087d944c0ea20544137d41213968856020610200a2005b63b01e369f60005114156106eb57604060046101403734156106a957600080fd5b60043560205181106106ba57600080fd5b5060243560205181106106cc57600080fd5b5060035433146106db57600080fd5b6101405160045561016051600555005b6318160ddd600051141561071157341561070457600080fd5b60065460005260206000f3005b63a9059cbb60005114156107ec576040600461014037341561073257600080fd5b600435602051811061074357600080fd5b506000610140511861075457600080fd5b60013360e05260c052604060c020610160518154101561077357600080fd5b6101605181540381555060016101405160e05260c052604060c02080546101605182540110156107a257600080fd5b61016051815401815550610160516101805261014051337fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef6020610180a3600160005260206000f3005b6323b872dd6000511415610927576060600461014037341561080d57600080fd5b600435602051811061081e57600080fd5b50602435602051811061083057600080fd5b506000610140511861084157600080fd5b6000610160511861085157600080fd5b60016101405160e05260c052604060c020610180518154101561087357600080fd5b6101805181540381555060016101605160e05260c052604060c02080546101805182540110156108a257600080fd5b6101805181540181555060006101405160e05260c052604060c0203360e05260c052604060c02061018051815410156108da57600080fd5b61018051815403815550610180516101a05261016051610140517fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef60206101a0a3600160005260206000f3005b63313ce567600051141561094d57341561094057600080fd5b60025460005260206000f3005b60006000fd5b610121610a7403610121600039610121610a74036000f3`
 
 // DeployMarketToken deploys a new Ethereum contract, binding an instance of MarketToken to it.
 func DeployMarketToken(auth *bind.TransactOpts, backend bind.ContractBackend, initial_account common.Address, initial_balance *big.Int) (common.Address, *types.Transaction, *MarketToken, error) {
@@ -310,32 +310,6 @@ func (_MarketToken *MarketTokenCallerSession) HasPrivilege(sender common.Address
 	return _MarketToken.Contract.HasPrivilege(&_MarketToken.CallOpts, sender)
 }
 
-// MintingStopped is a free data retrieval call binding the contract method 0xf339292f.
-//
-// Solidity: function mintingStopped() constant returns(out bool)
-func (_MarketToken *MarketTokenCaller) MintingStopped(opts *bind.CallOpts) (bool, error) {
-	var (
-		ret0 = new(bool)
-	)
-	out := ret0
-	err := _MarketToken.contract.Call(opts, out, "mintingStopped")
-	return *ret0, err
-}
-
-// MintingStopped is a free data retrieval call binding the contract method 0xf339292f.
-//
-// Solidity: function mintingStopped() constant returns(out bool)
-func (_MarketToken *MarketTokenSession) MintingStopped() (bool, error) {
-	return _MarketToken.Contract.MintingStopped(&_MarketToken.CallOpts)
-}
-
-// MintingStopped is a free data retrieval call binding the contract method 0xf339292f.
-//
-// Solidity: function mintingStopped() constant returns(out bool)
-func (_MarketToken *MarketTokenCallerSession) MintingStopped() (bool, error) {
-	return _MarketToken.Contract.MintingStopped(&_MarketToken.CallOpts)
-}
-
 // TotalSupply is a free data retrieval call binding the contract method 0x18160ddd.
 //
 // Solidity: function totalSupply() constant returns(out uint256)
@@ -507,27 +481,6 @@ func (_MarketToken *MarketTokenSession) SetPrivileged(listing common.Address, in
 // Solidity: function setPrivileged(listing address, investing address) returns()
 func (_MarketToken *MarketTokenTransactorSession) SetPrivileged(listing common.Address, investing common.Address) (*types.Transaction, error) {
 	return _MarketToken.Contract.SetPrivileged(&_MarketToken.TransactOpts, listing, investing)
-}
-
-// StopMinting is a paid mutator transaction binding the contract method 0x3e3e0b12.
-//
-// Solidity: function stopMinting() returns()
-func (_MarketToken *MarketTokenTransactor) StopMinting(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _MarketToken.contract.Transact(opts, "stopMinting")
-}
-
-// StopMinting is a paid mutator transaction binding the contract method 0x3e3e0b12.
-//
-// Solidity: function stopMinting() returns()
-func (_MarketToken *MarketTokenSession) StopMinting() (*types.Transaction, error) {
-	return _MarketToken.Contract.StopMinting(&_MarketToken.TransactOpts)
-}
-
-// StopMinting is a paid mutator transaction binding the contract method 0x3e3e0b12.
-//
-// Solidity: function stopMinting() returns()
-func (_MarketToken *MarketTokenTransactorSession) StopMinting() (*types.Transaction, error) {
-	return _MarketToken.Contract.StopMinting(&_MarketToken.TransactOpts)
 }
 
 // Transfer is a paid mutator transaction binding the contract method 0xa9059cbb.
@@ -960,127 +913,6 @@ func (_MarketToken *MarketTokenFilterer) WatchMint(opts *bind.WatchOpts, sink ch
 				// New log arrived, parse the event and forward to the user
 				event := new(MarketTokenMint)
 				if err := _MarketToken.contract.UnpackLog(event, "Mint", log); err != nil {
-					return err
-				}
-				event.Raw = log
-
-				select {
-				case sink <- event:
-				case err := <-sub.Err():
-					return err
-				case <-quit:
-					return nil
-				}
-			case err := <-sub.Err():
-				return err
-			case <-quit:
-				return nil
-			}
-		}
-	}), nil
-}
-
-// MarketTokenMintStoppedIterator is returned from FilterMintStopped and is used to iterate over the raw logs and unpacked data for MintStopped events raised by the MarketToken contract.
-type MarketTokenMintStoppedIterator struct {
-	Event *MarketTokenMintStopped // Event containing the contract specifics and raw log
-
-	contract *bind.BoundContract // Generic contract to use for unpacking event data
-	event    string              // Event name to use for unpacking event data
-
-	logs chan types.Log        // Log channel receiving the found contract events
-	sub  ethereum.Subscription // Subscription for errors, completion and termination
-	done bool                  // Whether the subscription completed delivering logs
-	fail error                 // Occurred error to stop iteration
-}
-
-// Next advances the iterator to the subsequent event, returning whether there
-// are any more events found. In case of a retrieval or parsing error, false is
-// returned and Error() can be queried for the exact failure.
-func (it *MarketTokenMintStoppedIterator) Next() bool {
-	// If the iterator failed, stop iterating
-	if it.fail != nil {
-		return false
-	}
-	// If the iterator completed, deliver directly whatever's available
-	if it.done {
-		select {
-		case log := <-it.logs:
-			it.Event = new(MarketTokenMintStopped)
-			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
-				it.fail = err
-				return false
-			}
-			it.Event.Raw = log
-			return true
-
-		default:
-			return false
-		}
-	}
-	// Iterator still in progress, wait for either a data or an error event
-	select {
-	case log := <-it.logs:
-		it.Event = new(MarketTokenMintStopped)
-		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
-			it.fail = err
-			return false
-		}
-		it.Event.Raw = log
-		return true
-
-	case err := <-it.sub.Err():
-		it.done = true
-		it.fail = err
-		return it.Next()
-	}
-}
-
-// Error returns any retrieval or parsing error occurred during filtering.
-func (it *MarketTokenMintStoppedIterator) Error() error {
-	return it.fail
-}
-
-// Close terminates the iteration process, releasing any pending underlying
-// resources.
-func (it *MarketTokenMintStoppedIterator) Close() error {
-	it.sub.Unsubscribe()
-	return nil
-}
-
-// MarketTokenMintStopped represents a MintStopped event raised by the MarketToken contract.
-type MarketTokenMintStopped struct {
-	Raw types.Log // Blockchain specific contextual infos
-}
-
-// FilterMintStopped is a free log retrieval operation binding the contract event 0x58e0e1f03176dfa647922b700f27e00bfa7f939db5a6fb7dd47cc6dcd3cf619c.
-//
-// Solidity: e MintStopped()
-func (_MarketToken *MarketTokenFilterer) FilterMintStopped(opts *bind.FilterOpts) (*MarketTokenMintStoppedIterator, error) {
-
-	logs, sub, err := _MarketToken.contract.FilterLogs(opts, "MintStopped")
-	if err != nil {
-		return nil, err
-	}
-	return &MarketTokenMintStoppedIterator{contract: _MarketToken.contract, event: "MintStopped", logs: logs, sub: sub}, nil
-}
-
-// WatchMintStopped is a free log subscription operation binding the contract event 0x58e0e1f03176dfa647922b700f27e00bfa7f939db5a6fb7dd47cc6dcd3cf619c.
-//
-// Solidity: e MintStopped()
-func (_MarketToken *MarketTokenFilterer) WatchMintStopped(opts *bind.WatchOpts, sink chan<- *MarketTokenMintStopped) (event.Subscription, error) {
-
-	logs, sub, err := _MarketToken.contract.WatchLogs(opts, "MintStopped")
-	if err != nil {
-		return nil, err
-	}
-	return event.NewSubscription(func(quit <-chan struct{}) error {
-		defer sub.Unsubscribe()
-		for {
-			select {
-			case log := <-logs:
-				// New log arrived, parse the event and forward to the user
-				event := new(MarketTokenMintStopped)
-				if err := _MarketToken.contract.UnpackLog(event, "MintStopped", log); err != nil {
 					return err
 				}
 				event.Raw = log
