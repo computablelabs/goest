@@ -6,7 +6,6 @@
 Approval: event({owner: indexed(address), spender: indexed(address), amount: wei_value})
 Burn: event({burner: indexed(address), amount: wei_value})
 Mint: event({to: indexed(address), amount: wei_value})
-MintStopped: event()
 Transfer: event({source: indexed(address), to: indexed(address), amount: wei_value})
 
 allowances: map(address, map(address, wei_value))
@@ -15,14 +14,12 @@ decimals: public(uint256)
 factory_address: address
 listing_address: address
 investing_address: address
-mintingStopped: public(bool)
 supply: wei_value
 
 @public
 def __init__(initial_account: address, initial_balance: wei_value):
   self.decimals = 18
-  self.mintingStopped = False
-  self.balances[initial_account] = initial_balance
+  self.balances[initial_account] = initial_balance # TODO this _could_ be msg.sender and not need the arg
   self.factory_address = msg.sender
   self.supply = initial_balance
   log.Transfer(ZERO_ADDRESS, initial_account, initial_balance)
@@ -122,11 +119,7 @@ def decreaseApproval(spender: address, amount: wei_value):
   @param spender The spender of the funds
   @param amount The amount to decrease a previous allowance by
   """
-  if amount > self.allowances[msg.sender][spender]:
-    # TODO we _could_ assert here
-    self.allowances[msg.sender][spender] = 0
-  else:
-    self.allowances[msg.sender][spender] -= amount
+  self.allowances[msg.sender][spender] -= amount # vyper will throw if overrun here
   log.Approval(msg.sender, spender, self.allowances[msg.sender][spender])
 
 
@@ -145,13 +138,13 @@ def increaseApproval(spender: address, amount: wei_value):
 def mint(amount: wei_value):
   """
   @notice Create new Market Token funds and add them to the Market Contract balance
-  @dev We only allow the Market Contract to call for minting, and only when not stopped
+  @dev We only allow the Market Contract to call for minting
   """
   assert self.has_privilege(msg.sender)
-  assert not self.mintingStopped
   self.supply += amount
   self.balances[msg.sender] += amount
   log.Mint(msg.sender, amount)
+  # TODO look at implementing a mintFor method to avoid mint followed by immediate transfer
 
 
 @public
@@ -166,17 +159,6 @@ def setPrivileged(listing: address, investing: address):
   # TODO we _could_ also only allow this to occur once
   self.listing_address = listing
   self.investing_address = investing
-
-
-@public
-def stopMinting():
-  """
-  @notice Forbid any further minting of Market Token funds
-  @dev We only allow a priviliged contract to stop minting
-  """
-  assert self.has_privilege(msg.sender)
-  self.mintingStopped = True
-  log.MintStopped()
 
 
 @public

@@ -61,7 +61,7 @@ def invest(offer: wei_value):
   assert offer >= price # you cannot buy less than one billionth of a market token
   self.ether_token.transferFrom(msg.sender, self, offer)
   minted: uint256 = (offer / price) * 1000000000 # NOTE using wei_value here throws TypeMismatch
-  self.market_token.mint(minted)
+  self.market_token.mint(minted) # TODO maybe implement `mintFor()`
   self.market_token.transfer(msg.sender, minted)
   log.Invested(msg.sender, offer, minted)
 

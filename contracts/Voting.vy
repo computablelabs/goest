@@ -160,13 +160,14 @@ def didPass(hash: bytes32, quorum: uint256) -> bool:
   """
   assert self.candidates[hash].owner != ZERO_ADDRESS
   assert self.candidates[hash].vote_by < block.timestamp
-  total: uint256 = self.candidates[hash].yea + self.candidates[hash].nay
+  yea: uint256 = self.candidates[hash].yea
+  total: uint256 = yea + self.candidates[hash].nay
   # edge case that no one voted
   if total == 0:
     # theoretically a market could have a 0 quorum
     return quorum == 0
   else:
-    return ((self.candidates[hash].yea * 100) / total) >= quorum
+    return ((yea * 100) / total) >= quorum
 
 
 @public
@@ -190,8 +191,9 @@ def vote(hash: bytes32, option: uint256):
   """
   assert self.candidates[hash].owner != ZERO_ADDRESS
   assert self.candidates[hash].vote_by > block.timestamp
-  self.market_token.transferFrom(msg.sender, self, self.candidates[hash].stake)
-  self.stakes[msg.sender][hash] += self.candidates[hash].stake
+  stake: wei_value = self.candidates[hash].stake
+  self.market_token.transferFrom(msg.sender, self, stake)
+  self.stakes[msg.sender][hash] += stake
   if option == 1:
     self.candidates[hash].yea += 1
   else:

@@ -125,10 +125,9 @@ def removeListing(hash: bytes32):
   @dev We clear the members of a struct pointed to by the listing hash (enabling re-use)
   @param hash The listing to remove
   """
-  assert self.listings[hash].owner != ZERO_ADDRESS
-  if self.listings[hash].supply > 0:
-    self.market_token.burn(self.listings[hash].supply)
-    clear(self.listings[hash].supply)
+  supply: wei_value = self.listings[hash].supply
+  if supply > 0:
+    self.market_token.burn(supply)
   clear(self.listings[hash]) # TODO assure we don't need to do this by hand
   # datatrust now needs to clear the data hash
   self.datatrust.removeDataHash(hash)
@@ -146,9 +145,8 @@ def resolveApplication(hash: bytes32):
   assert self.voting.pollClosed(hash)
   data_hash: bytes32 = self.datatrust.getDataHash(hash)
   owner: address = self.voting.getCandidateOwner(hash)
-  # case: listing accepted
   if data_hash != EMPTY_BYTES32:
-    if self.voting.didPass(hash, self.parameterizer.getQuorum()):
+    if self.voting.didPass(hash, self.parameterizer.getQuorum()): # case: listing passed
       self.listings[hash].owner = owner # is now 'listed'
       amount: wei_value = self.parameterizer.getListReward()
       self.market_token.mint(amount)
@@ -179,7 +177,7 @@ def claimBytesAccessed(hash: bytes32):
   assert maker_fee >= price
   # clear the credits before proceeding (also transfers fee to reserve)
   self.datatrust.bytesAccessedClaimed(hash, maker_fee)
-  # the fee is then invested according to the buy-curve. TODO possibly abstract some within the investing contract
+  # the fee is then invested according to the buy-curve.
   minted: uint256 = (maker_fee/price) * 1000000000 # 1Billionth token is the smallest denomination...
   self.market_token.mint(minted)
   self.listings[hash].supply += minted
