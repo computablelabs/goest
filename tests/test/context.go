@@ -14,7 +14,7 @@ import (
 // rather than scattered about many specs.
 // Also holds the Geth simulated backend.
 type Ctx struct {
-	AuthFactory *bind.TransactOpts
+	AuthOwner   *bind.TransactOpts
 	AuthBackend *bind.TransactOpts
 	AuthUser1   *bind.TransactOpts
 	AuthUser2   *bind.TransactOpts
@@ -26,13 +26,13 @@ type Ctx struct {
 // Given a bal argument, it assigns this as the wallet balance for
 // each authorization object in the Ctx
 func GetContext(bal *big.Int) *Ctx {
-	authFac := getAuthObject()
+	authOwn := getAuthObject()
 	authBac := getAuthObject()
 	authU1 := getAuthObject()
 	authU2 := getAuthObject()
 	authU3 := getAuthObject()
 	alloc := make(core.GenesisAlloc)
-	alloc[authFac.From] = core.GenesisAccount{Balance: bal}
+	alloc[authOwn.From] = core.GenesisAccount{Balance: bal}
 	alloc[authBac.From] = core.GenesisAccount{Balance: bal}
 	alloc[authU1.From] = core.GenesisAccount{Balance: bal}
 	alloc[authU2.From] = core.GenesisAccount{Balance: bal}
@@ -41,7 +41,7 @@ func GetContext(bal *big.Int) *Ctx {
 	bc := backends.NewSimulatedBackend(alloc, 4700000)
 
 	return &Ctx{
-		AuthFactory: authFac,
+		AuthOwner:   authOwn,
 		AuthBackend: authBac,
 		AuthUser1:   authU1,
 		AuthUser2:   authU2,

@@ -57,7 +57,7 @@ func TestMain(m *testing.M) {
 	context.Blockchain.Commit()
 
 	// vote for the backend candidate, member will likely need funds
-	transErr := test.MaybeTransferMarketToken(context, deployed, context.AuthFactory,
+	transErr := test.MaybeTransferMarketToken(context, deployed, context.AuthOwner,
 		context.AuthUser3.From, big.NewInt(test.ONE_GWEI))
 	test.IfNotNil(&logr{}, transErr, "Error transferring tokens")
 

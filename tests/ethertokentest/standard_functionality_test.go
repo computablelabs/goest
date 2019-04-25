@@ -8,13 +8,13 @@ import (
 )
 
 func TestTransferFrom(t *testing.T) {
-	ownerBal, _ := deployed.EtherTokenContract.BalanceOf(nil, context.AuthFactory.From)
+	ownerBal, _ := deployed.EtherTokenContract.BalanceOf(nil, context.AuthOwner.From)
 
 	// if we wanted to check the owner's account bal
-	// t.Logf("owner balance: %v", context.Alloc[context.AuthFactory.From].Balance)
+	// t.Logf("owner balance: %v", context.Alloc[context.AuthOwner.From].Balance)
 
 	// transfer from owner to user
-	_, err := deployed.EtherTokenContract.Transfer(test.GetTxOpts(context.AuthFactory, nil,
+	_, err := deployed.EtherTokenContract.Transfer(test.GetTxOpts(context.AuthOwner, nil,
 		big.NewInt(test.ONE_GWEI*2), 100000), context.AuthUser1.From, big.NewInt(test.ONE_WEI*4))
 	test.IfNotNil(t, err, fmt.Sprintf("Error transferring funds from owner to user: %v", err))
 
@@ -32,7 +32,7 @@ func TestTransferFrom(t *testing.T) {
 
 	// owner should have 4 subtracted
 	expectedBal := ownerBal.Sub(ownerBal, big.NewInt(test.ONE_WEI*4))
-	newOwnerBal, _ := deployed.EtherTokenContract.BalanceOf(nil, context.AuthFactory.From)
+	newOwnerBal, _ := deployed.EtherTokenContract.BalanceOf(nil, context.AuthOwner.From)
 	if newOwnerBal.Cmp(expectedBal) != 0 {
 		t.Errorf("Expected owner balance of %v, got %v", expectedBal, newOwnerBal)
 	}

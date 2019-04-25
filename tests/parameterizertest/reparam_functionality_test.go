@@ -49,7 +49,7 @@ func ResolveReparam(t *testing.T) {
 	paramHash, _ := deployed.ParameterizerContract.GetHash(nil, big.NewInt(7), big.NewInt(25))
 
 	// cast a vote, member may need funding...
-	test.MaybeTransferMarketToken(context, deployed, context.AuthFactory, context.AuthUser3.From, big.NewInt(test.ONE_GWEI))
+	test.MaybeTransferMarketToken(context, deployed, context.AuthOwner, context.AuthUser3.From, big.NewInt(test.ONE_GWEI))
 
 	// member will need to have approved the voting contract to spend
 	test.MaybeIncreaseMarketTokenApproval(context, deployed, context.AuthUser3, deployed.VotingAddress, big.NewInt(test.ONE_GWEI))

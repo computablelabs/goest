@@ -20,7 +20,7 @@ func TestTransfer(t *testing.T) {
 	user := common.HexToAddress("0xabc")
 
 	// NOTE: if we want to view the transaction itself, it would be the first return arg
-	_, err := deployed.EtherTokenContract.Transfer(test.GetTxOpts(context.AuthFactory, nil,
+	_, err := deployed.EtherTokenContract.Transfer(test.GetTxOpts(context.AuthOwner, nil,
 		big.NewInt(test.ONE_GWEI*2), 100000), user, big.NewInt(test.ONE_WEI))
 	test.IfNotNil(t, err, fmt.Sprintf("Error transferring funds to another account: %v", err))
 
@@ -38,7 +38,7 @@ func TestBalanceOf(t *testing.T) {
 	}
 
 	// that 100000 should have been subtracted from the original owner, Auth.From in this case
-	ownerBal, _ := deployed.EtherTokenContract.BalanceOf(nil, context.AuthFactory.From)
+	ownerBal, _ := deployed.EtherTokenContract.BalanceOf(nil, context.AuthOwner.From)
 
 	if ownerBal.Cmp(big.NewInt(test.ONE_WEI*8)) != 0 {
 		t.Errorf("Expected owner balance of 8 tokens in wei, got %v", ownerBal)

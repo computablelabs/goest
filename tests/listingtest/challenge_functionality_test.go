@@ -25,7 +25,7 @@ func TestChallenge(t *testing.T) {
 	context.Blockchain.Commit()
 
 	// user may need funds
-	transErr := test.MaybeTransferMarketToken(context, deployed, context.AuthFactory,
+	transErr := test.MaybeTransferMarketToken(context, deployed, context.AuthOwner,
 		context.AuthUser3.From, big.NewInt(test.ONE_GWEI))
 	test.IfNotNil(t, transErr, "Error transferring market token")
 	// member will need to have approved the voting contract to spend
@@ -62,7 +62,7 @@ func TestChallenge(t *testing.T) {
 	context.Blockchain.Commit()
 
 	// member 2 as challenger here, may need funds
-	transErr2 := test.MaybeTransferMarketToken(context, deployed, context.AuthFactory,
+	transErr2 := test.MaybeTransferMarketToken(context, deployed, context.AuthOwner,
 		context.AuthUser2.From, big.NewInt(test.ONE_GWEI))
 	test.IfNotNil(t, transErr2, "Error transferring market token")
 	// member will need to have approved the voting contract to spend

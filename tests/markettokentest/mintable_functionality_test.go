@@ -25,7 +25,7 @@ func TestBalanceOf(t *testing.T) {
 	}
 
 	// owner has a truthy bal.
-	ownerBal, _ := deployed.MarketTokenContract.BalanceOf(nil, context.AuthFactory.From)
+	ownerBal, _ := deployed.MarketTokenContract.BalanceOf(nil, context.AuthOwner.From)
 
 	if ownerBal.Cmp(big.NewInt(0)) != 1 {
 		t.Errorf("Expected owner balance to be greater than 0, got %v", ownerBal)
@@ -34,14 +34,14 @@ func TestBalanceOf(t *testing.T) {
 
 func TestMint(t *testing.T) {
 	// only a privileged contract may call for mint, have a user pose as Listing
-	_, privErr := deployed.MarketTokenContract.SetPrivileged(test.GetTxOpts(context.AuthFactory, nil, big.NewInt(test.ONE_GWEI*2),
+	_, privErr := deployed.MarketTokenContract.SetPrivileged(test.GetTxOpts(context.AuthOwner, nil, big.NewInt(test.ONE_GWEI*2),
 		100000), context.AuthUser3.From, deployed.InvestingAddress)
 	test.IfNotNil(t, privErr, "Error setting Market Token privileged contracts")
 
 	context.Blockchain.Commit()
 
 	supply, _ := deployed.MarketTokenContract.TotalSupply(nil)
-	ownerBal, _ := deployed.MarketTokenContract.BalanceOf(nil, context.AuthFactory.From)
+	ownerBal, _ := deployed.MarketTokenContract.BalanceOf(nil, context.AuthOwner.From)
 	listBal, _ := deployed.MarketTokenContract.BalanceOf(nil, context.AuthUser3.From) // our imposter
 	// minting will add to the balances...
 	_, mintErr := deployed.MarketTokenContract.Mint(test.GetTxOpts(context.AuthUser3, nil, big.NewInt(test.ONE_GWEI*2),
@@ -62,7 +62,7 @@ func TestMint(t *testing.T) {
 	}
 
 	// owner bal does not increase in a mint operation
-	if newOwnerBal, _ := deployed.MarketTokenContract.BalanceOf(nil, context.AuthFactory.From); newOwnerBal.Cmp(ownerBal) != 0 {
+	if newOwnerBal, _ := deployed.MarketTokenContract.BalanceOf(nil, context.AuthOwner.From); newOwnerBal.Cmp(ownerBal) != 0 {
 		t.Errorf("Expected %v to be %v", newOwnerBal, ownerBal)
 	}
 }
