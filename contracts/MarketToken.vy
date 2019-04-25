@@ -11,7 +11,7 @@ Transfer: event({source: indexed(address), to: indexed(address), amount: wei_val
 allowances: map(address, map(address, wei_value))
 balances: map(address, wei_value)
 decimals: public(uint256)
-factory_address: address
+owner_address: address
 listing_address: address
 investing_address: address
 supply: wei_value
@@ -20,7 +20,7 @@ supply: wei_value
 def __init__(initial_account: address, initial_balance: wei_value):
   self.decimals = 18
   self.balances[initial_account] = initial_balance # TODO this _could_ be msg.sender and not need the arg
-  self.factory_address = msg.sender
+  self.owner_address = msg.sender
   self.supply = initial_balance
   log.Transfer(ZERO_ADDRESS, initial_account, initial_balance)
 
@@ -151,11 +151,11 @@ def mint(amount: wei_value):
 def setPrivileged(listing: address, investing: address):
   """
   @notice We restrict some activities to only privileged contracts
-  @dev We only allow the factory to set the privileged address(es)
+  @dev We only allow the owner to set the privileged address(es)
   @param listing The deployed address of the Listing Contract
   @param investing The deployed address of the Investing Contract
   """
-  assert msg.sender == self.factory_address
+  assert msg.sender == self.owner_address
   # TODO we _could_ also only allow this to occur once
   self.listing_address = listing
   self.investing_address = investing

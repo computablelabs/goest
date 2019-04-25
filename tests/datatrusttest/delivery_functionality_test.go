@@ -119,7 +119,7 @@ func TestListingAccessed(t *testing.T) {
 	hash, _ := deployed.DatatrustContract.GetHash(nil, "https://www.imyerbackend.io")
 
 	// auth member will need at least the stake
-	transErr := test.MaybeTransferMarketToken(context, deployed, context.AuthFactory, context.AuthUser1.From,
+	transErr := test.MaybeTransferMarketToken(context, deployed, context.AuthOwner, context.AuthUser1.From,
 		big.NewInt(test.ONE_GWEI))
 	test.IfNotNil(t, transErr, "Error maybe transferring market tokens")
 
@@ -159,7 +159,7 @@ func TestListingAccessed(t *testing.T) {
 	context.Blockchain.Commit()
 
 	// cast a vote for the listing, voter may need funds...
-	transErr2 := test.MaybeTransferMarketToken(context, deployed, context.AuthFactory,
+	transErr2 := test.MaybeTransferMarketToken(context, deployed, context.AuthOwner,
 		context.AuthUser1.From, big.NewInt(test.ONE_GWEI))
 	test.IfNotNil(t, transErr2, fmt.Sprintf("Error transferring tokens to member: %v", transErr2))
 	context.Blockchain.Commit()
@@ -264,7 +264,7 @@ func TestDelivered(t *testing.T) {
 	context.Blockchain.Commit()
 
 	// cast a vote for, voter may need funds...
-	transErr := test.MaybeTransferMarketToken(context, deployed, context.AuthFactory,
+	transErr := test.MaybeTransferMarketToken(context, deployed, context.AuthOwner,
 		context.AuthUser2.From, big.NewInt(test.ONE_GWEI))
 	test.IfNotNil(t, transErr, fmt.Sprintf("Error transferring tokens to member: %v", transErr))
 	context.Blockchain.Commit()

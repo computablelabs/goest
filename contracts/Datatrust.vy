@@ -50,13 +50,13 @@ backend_address: address
 ether_token: EtherToken
 voting: Voting
 parameterizer: Parameterizer
-factory_address: address
+owner_address: address
 investing_address: address
 listing_address: address
 
 @public
 def __init__(ether_token_addr: address, voting_addr: address, p11r_addr: address, inv_addr: address):
-  self.factory_address = msg.sender
+  self.owner_address = msg.sender
   self.ether_token = EtherToken(ether_token_addr)
   self.voting = Voting(voting_addr)
   self.parameterizer = Parameterizer(p11r_addr)
@@ -86,9 +86,9 @@ def getInvesting() -> address:
 @public
 def setPrivileged(listing: address):
   """
-  @notice Allow the Market Factory to set privileged contract addresses
+  @notice Allow the Market owner to set privileged contract addresses
   """
-  assert msg.sender == self.factory_address
+  assert msg.sender == self.owner_address
   self.listing_address = listing
 
 

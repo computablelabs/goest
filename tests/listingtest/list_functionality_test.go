@@ -61,7 +61,7 @@ func TestResolveApplication(t *testing.T) {
 	marketBal, _ := deployed.MarketTokenContract.BalanceOf(nil, deployed.ListingAddress)
 
 	// cast a vote for, voter may need funds...
-	transErr := test.MaybeTransferMarketToken(context, deployed, context.AuthFactory, context.AuthUser2.From,
+	transErr := test.MaybeTransferMarketToken(context, deployed, context.AuthOwner, context.AuthUser2.From,
 		big.NewInt(test.ONE_GWEI))
 	test.IfNotNil(t, transErr, fmt.Sprintf("Error transferring tokens to member: %v", transErr))
 	context.Blockchain.Commit()

@@ -8,7 +8,7 @@ import (
 
 func TestBurn(t *testing.T) {
 	// MarketToken.Burn is only available to privileged contracts. Have user 3 pose as Listing...
-	_, privErr := deployed.MarketTokenContract.SetPrivileged(test.GetTxOpts(context.AuthFactory, nil, big.NewInt(test.ONE_GWEI*2),
+	_, privErr := deployed.MarketTokenContract.SetPrivileged(test.GetTxOpts(context.AuthOwner, nil, big.NewInt(test.ONE_GWEI*2),
 		100000), context.AuthUser3.From, deployed.InvestingAddress)
 	test.IfNotNil(t, privErr, "Error setting Market Token privileged contracts")
 
@@ -37,7 +37,7 @@ func TestBurn(t *testing.T) {
 	}
 
 	// reset the actual listing privileged address
-	_, privErr2 := deployed.MarketTokenContract.SetPrivileged(test.GetTxOpts(context.AuthFactory, nil, big.NewInt(test.ONE_GWEI*2),
+	_, privErr2 := deployed.MarketTokenContract.SetPrivileged(test.GetTxOpts(context.AuthOwner, nil, big.NewInt(test.ONE_GWEI*2),
 		100000), deployed.ListingAddress, deployed.InvestingAddress)
 	test.IfNotNil(t, privErr2, "Error resetting Market Token privileged contracts")
 }

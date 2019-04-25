@@ -10,7 +10,7 @@ import (
 
 func TestVote(t *testing.T) {
 	// auth member will need at least the stake
-	transErr := test.MaybeTransferMarketToken(context, deployed, context.AuthFactory, context.AuthUser1.From,
+	transErr := test.MaybeTransferMarketToken(context, deployed, context.AuthOwner, context.AuthUser1.From,
 		big.NewInt(test.ONE_GWEI))
 	test.IfNotNil(t, transErr, "Error maybe transferring market tokens")
 

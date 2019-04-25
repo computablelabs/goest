@@ -42,16 +42,16 @@ type Dep struct {
 
 // Deploy function which, well, deploys our contracts - returning
 // a hydrated Dep object ready for use.
-// The initialBal argument is an amount of token(in wei) credited to the AuthFactory
+// The initialBal argument is an amount of token(in wei) credited to the AuthOwner
 // in the deployed MarketToken and EtherToken Contracts.
 // Also passed a hydrated Ctx object, used to aid the deploying.
 // Returns a hydrated Dep object or any error incurred.
 func Deploy(initialBal *big.Int, c *Ctx) (*Dep, error) {
 	// Ether Token: { consumes: [none], privileged: [none] }
 	etherTokenAddr, etherTokenTrans, etherTokenCont, etherTokenErr := ethertoken.DeployEtherToken(
-		c.AuthFactory,
+		c.AuthOwner,
 		c.Blockchain,
-		c.AuthFactory.From,
+		c.AuthOwner.From,
 		initialBal,
 	)
 
@@ -61,9 +61,9 @@ func Deploy(initialBal *big.Int, c *Ctx) (*Dep, error) {
 
 	// Market Token: { consumes: [none], privileged: [listing, investing] }
 	marketTokenAddr, marketTokenTrans, marketTokenCont, marketTokenErr := markettoken.DeployMarketToken(
-		c.AuthFactory,
+		c.AuthOwner,
 		c.Blockchain,
-		c.AuthFactory.From,
+		c.AuthOwner.From,
 		initialBal,
 	)
 
@@ -74,7 +74,7 @@ func Deploy(initialBal *big.Int, c *Ctx) (*Dep, error) {
 
 	// Voting: { consumes: [market token], privileged:[parameterizer, datatrust, listing, investing] }
 	votingAddr, votingTrans, votingCont, votingErr := voting.DeployVoting(
-		c.AuthFactory,
+		c.AuthOwner,
 		c.Blockchain,
 		marketTokenAddr,
 	)
@@ -86,7 +86,7 @@ func Deploy(initialBal *big.Int, c *Ctx) (*Dep, error) {
 
 	// Parameterizer: { consumes: [voting], privileged: [none] }
 	paramAddr, paramTrans, paramCont, paramErr := parameterizer.DeployParameterizer(
-		c.AuthFactory,
+		c.AuthOwner,
 		c.Blockchain,
 		votingAddr,
 		big.NewInt(ONE_GWEI),     // conversionRate: stipulation is that market token should be, at least, as val as eth
@@ -107,7 +107,7 @@ func Deploy(initialBal *big.Int, c *Ctx) (*Dep, error) {
 
 	// Investing: { consumes: [ether token, market token, parameterizer], privileged: [none] }
 	investAddr, investTrans, investCont, investErr := investing.DeployInvesting(
-		c.AuthFactory,
+		c.AuthOwner,
 		c.Blockchain,
 		etherTokenAddr,
 		marketTokenAddr,
@@ -121,7 +121,7 @@ func Deploy(initialBal *big.Int, c *Ctx) (*Dep, error) {
 
 	// Datatrust: { consumes: [ether token, voting, parameterizer], privileged: [listing] }
 	dataAddr, dataTrans, dataCont, dataErr := datatrust.DeployDatatrust(
-		c.AuthFactory,
+		c.AuthOwner,
 		c.Blockchain,
 		etherTokenAddr,
 		votingAddr,
@@ -136,7 +136,7 @@ func Deploy(initialBal *big.Int, c *Ctx) (*Dep, error) {
 
 	// Listing: { consumes: [market token, voting, parameterizer, datatrust, investing], privileged: [none] }
 	listingAddr, listingTrans, listingCont, listingErr := listing.DeployListing(
-		c.AuthFactory,
+		c.AuthOwner,
 		c.Blockchain,
 		marketTokenAddr,
 		votingAddr,
@@ -151,7 +151,7 @@ func Deploy(initialBal *big.Int, c *Ctx) (*Dep, error) {
 	c.Blockchain.Commit()
 
 	// Set privileged addresses now that contracts are deployed. First: Market Token
-	_, mtPrivErr := marketTokenCont.SetPrivileged(GetTxOpts(c.AuthFactory, nil, big.NewInt(ONE_GWEI*2), 100000),
+	_, mtPrivErr := marketTokenCont.SetPrivileged(GetTxOpts(c.AuthOwner, nil, big.NewInt(ONE_GWEI*2), 100000),
 		listingAddr, investAddr)
 
 	if mtPrivErr != nil {
@@ -159,14 +159,14 @@ func Deploy(initialBal *big.Int, c *Ctx) (*Dep, error) {
 	}
 
 	// Voting
-	_, vtPrivErr := votingCont.SetPrivileged(GetTxOpts(c.AuthFactory, nil, big.NewInt(ONE_GWEI*2), 150000),
+	_, vtPrivErr := votingCont.SetPrivileged(GetTxOpts(c.AuthOwner, nil, big.NewInt(ONE_GWEI*2), 150000),
 		paramAddr, dataAddr, listingAddr, investAddr)
 
 	if vtPrivErr != nil {
 		return nil, vtPrivErr
 	}
 
-	_, dtPrivErr := dataCont.SetPrivileged(GetTxOpts(c.AuthFactory, nil, big.NewInt(ONE_GWEI*2), 150000), listingAddr)
+	_, dtPrivErr := dataCont.SetPrivileged(GetTxOpts(c.AuthOwner, nil, big.NewInt(ONE_GWEI*2), 150000), listingAddr)
 
 	if dtPrivErr != nil {
 		return nil, dtPrivErr
