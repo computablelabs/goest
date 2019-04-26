@@ -13,6 +13,19 @@ import (
 	"math/big"
 )
 
+// the params struct holds values that will be set in the P11r at init during deploy
+type Params struct {
+	ConversionRate *big.Int
+	Spread         *big.Int
+	ListReward     *big.Int
+	Stake          *big.Int
+	VoteBy         *big.Int
+	Quorum         *big.Int
+	BackendPct     *big.Int
+	MakerPct       *big.Int
+	CostPerByte    *big.Int
+}
+
 // The deployed struct holds references to the instantiated contracts on the
 // simulated backend. Also, refernces to each contract's adress and the
 // deployment transaction itself, in case we want to inspect it.
@@ -42,17 +55,18 @@ type Dep struct {
 
 // Deploy function which, well, deploys our contracts - returning
 // a hydrated Dep object ready for use.
-// The initialBal argument is an amount of token(in wei) credited to the AuthOwner
-// in the deployed MarketToken and EtherToken Contracts.
+// The etBal argument is an amount of ether token(in wei) credited to the AuthOwner
+// The mtBal argument is an amount of market token(in wei) credited to the AuthOwner
 // Also passed a hydrated Ctx object, used to aid the deploying.
+// Params arg is hydrated with values for the parameterizer.
 // Returns a hydrated Dep object or any error incurred.
-func Deploy(initialBal *big.Int, c *Ctx) (*Dep, error) {
+func Deploy(etBal *big.Int, mtBal *big.Int, c *Ctx, p *Params) (*Dep, error) {
 	// Ether Token: { consumes: [none], privileged: [none] }
 	etherTokenAddr, etherTokenTrans, etherTokenCont, etherTokenErr := ethertoken.DeployEtherToken(
 		c.AuthOwner,
 		c.Blockchain,
 		c.AuthOwner.From,
-		initialBal,
+		etBal,
 	)
 
 	if etherTokenErr != nil {
@@ -64,7 +78,7 @@ func Deploy(initialBal *big.Int, c *Ctx) (*Dep, error) {
 		c.AuthOwner,
 		c.Blockchain,
 		c.AuthOwner.From,
-		initialBal,
+		mtBal,
 	)
 
 	if marketTokenErr != nil {
@@ -89,15 +103,15 @@ func Deploy(initialBal *big.Int, c *Ctx) (*Dep, error) {
 		c.AuthOwner,
 		c.Blockchain,
 		votingAddr,
-		big.NewInt(ONE_GWEI),     // conversionRate: stipulation is that market token should be, at least, as val as eth
-		big.NewInt(110),          // spread, a scaling factor
-		big.NewInt(ONE_WEI),      // listReward (one token)
-		big.NewInt(ONE_GWEI),     // Stake
-		big.NewInt(100),          // voteBy
-		big.NewInt(50),           // quorum
-		big.NewInt(25),           // backend payment percent
-		big.NewInt(50),           // maker payment percent
-		big.NewInt(ONE_FINNEY*6), // cost per byte at 5000 wei
+		p.ConversionRate,
+		p.Spread,
+		p.ListReward,
+		p.Stake,
+		p.VoteBy,
+		p.Quorum,
+		p.BackendPct,
+		p.MakerPct,
+		p.CostPerByte,
 	)
 
 	if paramErr != nil {

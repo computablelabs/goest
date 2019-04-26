@@ -48,7 +48,7 @@ def getInvestmentPrice() -> wei_value:
   if total < 1000000000000000000: # that is, is total supply less than one token in wei
     return rate + ((spread * reserve) / 100)
   else:
-    return rate + ((spread * reserve * 1000000000000000000) / (100 * total))
+    return rate + ((spread * reserve * 1000000000) / (100 * total)) # NOTE the multiplier ONE_GWEI
 
 
 @public
@@ -60,7 +60,7 @@ def invest(offer: wei_value):
   price: wei_value = self.getInvestmentPrice()
   assert offer >= price # you cannot buy less than one billionth of a market token
   self.ether_token.transferFrom(msg.sender, self, offer)
-  minted: uint256 = (offer / price) * 1000000000 # NOTE using wei_value here throws TypeMismatch
+  minted: uint256 = (offer / price) * 1000000000 # NOTE the ONE_GWEI multiplier here as well
   self.market_token.mint(minted) # TODO maybe implement `mintFor()`
   self.market_token.transfer(msg.sender, minted)
   log.Invested(msg.sender, offer, minted)
