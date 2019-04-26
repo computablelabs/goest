@@ -66,7 +66,7 @@ func TestInvest(t *testing.T) {
 	price, _ := deployed.InvestingContract.GetInvestmentPrice(nil)
 	// t.Logf("Investment price: %v", price)
 
-	// investing the asking price will always yield one market token gwei
+	// investing the asking price will... what?
 	_, investErr := deployed.InvestingContract.Invest(test.GetTxOpts(context.AuthUser3, nil,
 		big.NewInt(test.ONE_GWEI*2), 1000000), price.Mul(price, big.NewInt(10))) // 1e9 * 10
 	test.IfNotNil(t, investErr, fmt.Sprintf("Error investing in market: %v", investErr))
