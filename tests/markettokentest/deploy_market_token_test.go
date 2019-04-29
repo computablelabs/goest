@@ -25,7 +25,17 @@ func TestDeployMarketToken(t *testing.T) {
 
 func TestMain(m *testing.M) {
 	context = test.GetContext(big.NewInt(test.ONE_WEI))
-	deployed, deployedError = test.Deploy(big.NewInt(test.ONE_WEI*5), context) // deployed with a 5 token balance
+	deployed, deployedError = test.Deploy(big.NewInt(test.ONE_WEI*5), big.NewInt(test.ONE_WEI*5), context, &test.Params{
+		ConversionRate: big.NewInt(test.ONE_GWEI),
+		Spread:         big.NewInt(110),
+		ListReward:     big.NewInt(test.ONE_WEI),
+		Stake:          big.NewInt(test.ONE_GWEI),
+		VoteBy:         big.NewInt(100),
+		Quorum:         big.NewInt(50),
+		BackendPct:     big.NewInt(25),
+		MakerPct:       big.NewInt(50),
+		CostPerByte:    big.NewInt(test.ONE_FINNEY * 6),
+	}) // deployed with a 5 token balance
 	code := m.Run()
 	os.Exit(code)
 }
