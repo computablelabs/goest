@@ -171,14 +171,14 @@ def claimBytesAccessed(hash: bytes32):
   assert msg.sender == self.listings[hash].owner
   # the algo for maker payment is (accessed*cost)/(100/maker_pct)
   accessed: uint256 = self.datatrust.getBytesAccessed(hash)
-  maker_fee: wei_value = (self.parameterizer.getCostPerByte() * accessed) / (100 / self.parameterizer.getMakerPayment())
+  maker_fee: wei_value = (self.parameterizer.getCostPerByte() * accessed * self.parameterizer.getMakerPayment()) / 100
   price: wei_value = self.investing.getInvestmentPrice()
   # if credits accumulated are too low to invest, exit now
   assert maker_fee >= price
   # clear the credits before proceeding (also transfers fee to reserve)
   self.datatrust.bytesAccessedClaimed(hash, maker_fee)
   # the fee is then invested according to the buy-curve.
-  minted: uint256 = (maker_fee/price) * 1000000000 # 1Billionth token is the smallest denomination...
+  minted: uint256 = (maker_fee * 1000000000) / price # 1Billionth token is the smallest denomination...
   self.market_token.mint(minted)
   self.listings[hash].supply += minted
   log.BytesAccessedClaimed(hash, accessed, minted)

@@ -1,6 +1,7 @@
 package test
 
 import (
+	"fmt"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
@@ -85,4 +86,22 @@ func MaybeTransferMarketToken(c *Ctx, d *Dep, from *bind.TransactOpts, to common
 		c.Blockchain.Commit()
 	}
 	return nil
+}
+
+// Commafy will take a big integer and return a string with commas so that logging
+// big integers is human readable
+func Commafy(n *big.Int) string {
+	in := fmt.Sprintf("%d", n)
+	out := make([]byte, len(in)+(len(in)-2+int(in[0]/'0'))/3)
+
+	for i, j, k := len(in)-1, len(out)-1, 0; ; i, j = i-1, j-1 {
+		out[j] = in[i]
+		if i == 0 {
+			return string(out)
+		}
+		if k++; k == 3 {
+			j, k = j-1, 0
+			out[j] = ','
+		}
+	}
 }
