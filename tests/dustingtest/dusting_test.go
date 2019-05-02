@@ -59,9 +59,9 @@ func TestRequestDelivery(t *testing.T) {
 	}
 
 	// the actual request for a delivery...
-	t.Log("User requests delivery for ~100MB")
+	t.Log("User requests delivery for ~10MB")
 	_, delErr := deployed.DatatrustContract.RequestDelivery(test.GetTxOpts(
-		context.AuthUser3, nil, big.NewInt(test.ONE_GWEI*2), 250000), query, big.NewInt((1024*1024)*10)) // ~100MB
+		context.AuthUser3, nil, big.NewInt(test.ONE_GWEI*2), 250000), query, big.NewInt((1024*1024)*10)) // ~10MB
 	test.IfNotNil(t, delErr, fmt.Sprintf("Error requesting delivery: %v", delErr))
 
 	context.Blockchain.Commit()
@@ -114,9 +114,9 @@ func TestRequestDelivery(t *testing.T) {
 		t.Error("Expected delivery object to be owned by user 3")
 	}
 	if reqNow.Cmp(big.NewInt((1024*1024)*10)) != 0 {
-		t.Errorf("Expected bytes requested to be ~100MB, got: %v", reqNow)
+		t.Errorf("Expected bytes requested to be ~10MB, got: %v", reqNow)
 	}
-	t.Logf("Delivery object bytes_requested: %v", reqNow)
+	t.Logf("Delivery object bytes_requested: %v", test.Commafy(reqNow))
 	t.Logf("Delivery object bytes_delivered: %v", deliv)
 }
 
