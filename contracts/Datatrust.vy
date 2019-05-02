@@ -206,7 +206,7 @@ def requestDelivery(hash: bytes32, amount: uint256):
   """
   assert self.deliveries[hash].owner == ZERO_ADDRESS # not already a request
   total: wei_value = self.parameterizer.getCostPerByte() * amount
-  res_fee: wei_value = total / (100 / self.parameterizer.getReservePayment())
+  res_fee: wei_value = (total * self.parameterizer.getReservePayment()) / 100
   self.ether_token.transferFrom(msg.sender, self, total) # take the total payment
   self.ether_token.transfer(self.investing_address, res_fee) # transfer res_pct to reserve
   self.bytes_purchased[msg.sender] += amount # all purchases by this user. deducted from via listing access
@@ -290,6 +290,6 @@ def delivered(delivery: bytes32, url: bytes32):
   # clear the delivery record first
   clear(self.deliveries[delivery])
   # now pay the datatrust from the banked delivery request
-  back_fee: wei_value = (self.parameterizer.getCostPerByte() * requested) / (100 / self.parameterizer.getBackendPayment())
+  back_fee: wei_value = (self.parameterizer.getCostPerByte() * requested * self.parameterizer.getBackendPayment()) / 100
   self.ether_token.transfer(self.backend_address, back_fee)
   log.Delivered(delivery, owner, url)

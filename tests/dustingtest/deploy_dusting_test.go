@@ -1,4 +1,4 @@
-package scenarioone
+package dustingtest
 
 import (
 	"github.com/computablelabs/goest/tests/test"
@@ -7,21 +7,14 @@ import (
 	"testing"
 )
 
-// variables decalred here have package scope
 var context *test.Ctx
 var deployed *test.Dep
 var deployedError error
 
 func TestMain(m *testing.M) {
-	// need this to create bigger ETH balances (literal will overflow)
-	var x big.Int
-	elevenEth := x.Mul(big.NewInt(test.ONE_WEI), big.NewInt(11))
-	oneHundredEth := x.Mul(big.NewInt(test.ONE_WEI), big.NewInt(100))
-	oneHundredOneEth := x.Add(oneHundredEth, big.NewInt(test.ONE_WEI))
-
-	context = test.GetContext(elevenEth) // users have 11 ETH account bal
+	context = test.GetContext(big.NewInt(test.ONE_WEI * 9)) // users have 3 ETH account bal
 	// etherToken bal, marketToken bal, ctx, params (args)
-	deployed, deployedError = test.Deploy(oneHundredOneEth, big.NewInt(test.ONE_WEI),
+	deployed, deployedError = test.Deploy(big.NewInt(test.ONE_WEI*9), big.NewInt(test.ONE_WEI*9),
 		context, &test.Params{
 			ConversionRate: big.NewInt(test.ONE_SZABO),
 			Spread:         big.NewInt(110),
@@ -29,8 +22,8 @@ func TestMain(m *testing.M) {
 			Stake:          big.NewInt(10000000000000000), // 1 X 10**16
 			VoteBy:         big.NewInt(100),               // no need to use a "real" voteBy
 			Quorum:         big.NewInt(50),
-			BackendPct:     big.NewInt(25),
-			MakerPct:       big.NewInt(25),
+			BackendPct:     big.NewInt(39),
+			MakerPct:       big.NewInt(21),
 			CostPerByte:    big.NewInt(test.ONE_GWEI * 100),
 		})
 
