@@ -9,8 +9,8 @@ import (
 )
 
 func buyPrice() uint64 {
-	rate, _ := deployed.ParameterizerContract.GetConversionRate(nil)
-	rate64 := rate.Uint64()
+	floor, _ := deployed.ParameterizerContract.GetPriceFloor(nil)
+	floor64 := floor.Uint64()
 	var d64 uint64 = 100
 	spread, _ := deployed.ParameterizerContract.GetSpread(nil)
 	spread64 := spread.Uint64()
@@ -20,9 +20,9 @@ func buyPrice() uint64 {
 	tot64 := tot.Uint64()
 
 	if tot64 < 1000000000000000000 {
-		return rate64 + ((spread64 * reserve64) / d64)
+		return floor64 + ((spread64 * reserve64) / d64)
 	} else {
-		return rate64 + ((spread64 * reserve64 * 1000000000000000000) / (d64 * tot64))
+		return floor64 + ((spread64 * reserve64 * 1000000000000000000) / (d64 * tot64))
 	}
 }
 

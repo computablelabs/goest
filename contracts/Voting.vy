@@ -152,9 +152,9 @@ def removeCandidate(hash: bytes32):
 
 @public
 @constant
-def didPass(hash: bytes32, quorum: uint256) -> bool:
+def didPass(hash: bytes32, plurality: uint256) -> bool:
   """
-  @notice Return a bool indicating whether a given candidate recieved enough votes to exceed the quorum
+  @notice Return a bool indicating whether a given candidate recieved enough votes to exceed the plurality
   @dev The poll must be closed. Also we cover the corner case that no one voted.
   @return bool
   """
@@ -164,10 +164,10 @@ def didPass(hash: bytes32, quorum: uint256) -> bool:
   total: uint256 = yea + self.candidates[hash].nay
   # edge case that no one voted
   if total == 0:
-    # theoretically a market could have a 0 quorum
-    return quorum == 0
+    # theoretically a market could have a 0 plurality
+    return plurality == 0
   else:
-    return ((yea * 100) / total) >= quorum
+    return ((yea * 100) / total) >= plurality
 
 
 @public

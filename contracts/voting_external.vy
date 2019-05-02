@@ -10,7 +10,7 @@ contract Voting:
     def getCandidateOwner(hash: bytes32) -> address: constant
     def addCandidate(hash: bytes32, kind: uint256, owner: address, stake: uint256(wei), vote_by: uint256(sec)): modifying
     def removeCandidate(hash: bytes32): modifying
-    def didPass(hash: bytes32, quorum: uint256) -> bool: constant
+    def didPass(hash: bytes32, plurality: uint256) -> bool: constant
     def pollClosed(hash: bytes32) -> bool: constant
     def vote(hash: bytes32, option: uint256): modifying
     def transferStake(hash: bytes32, addr: address): modifying

@@ -15,10 +15,10 @@ func TestGetStake(t *testing.T) {
 }
 
 func TestGetConversionRate(t *testing.T) {
-	rate, _ := deployed.ParameterizerContract.GetConversionRate(nil)
+	floor, _ := deployed.ParameterizerContract.GetPriceFloor(nil)
 
-	if rate.Cmp(big.NewInt(test.ONE_GWEI)) != 0 {
-		t.Errorf("Expected conversionRate to be 10**9, got: %v", rate)
+	if floor.Cmp(big.NewInt(test.ONE_GWEI)) != 0 {
+		t.Errorf("Expected price_floor to be 10**9, got: %v", floor)
 	}
 }
 
@@ -38,11 +38,11 @@ func TestGetListReward(t *testing.T) {
 	}
 }
 
-func TestGetQuorum(t *testing.T) {
-	quorum, _ := deployed.ParameterizerContract.GetQuorum(nil)
+func TestGetPlurality(t *testing.T) {
+	pl, _ := deployed.ParameterizerContract.GetPlurality(nil)
 
-	if quorum.Cmp(big.NewInt(50)) != 0 {
-		t.Errorf("Expected quorum to be 50, got: %v", quorum)
+	if pl.Cmp(big.NewInt(50)) != 0 {
+		t.Errorf("Expected plurality to be 50, got: %v", pl)
 	}
 }
 

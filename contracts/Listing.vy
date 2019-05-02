@@ -23,7 +23,7 @@ contract Voting:
   def getCandidateOwner(hash: bytes32) -> address: constant
   def addCandidate(hash: bytes32, kind: uint256, owner: address, stake: uint256(wei), vote_by: uint256(sec)): modifying
   def removeCandidate(hash: bytes32): modifying
-  def didPass(hash: bytes32, quorum: uint256) -> bool: constant
+  def didPass(hash: bytes32, plurality: uint256) -> bool: constant
   def pollClosed(hash: bytes32) -> bool: constant
   def transferStake(hash: bytes32, addr: address): modifying
 
@@ -32,7 +32,7 @@ contract Parameterizer:
   def getCostPerByte() -> uint256(wei): constant
   def getStake() -> uint256(wei): constant
   def getListReward() -> uint256(wei): constant
-  def getQuorum() -> uint256: constant
+  def getPlurality() -> uint256: constant
   def getVoteBy() -> uint256(sec): constant
 
 contract Datatrust:
@@ -146,7 +146,7 @@ def resolveApplication(hash: bytes32):
   data_hash: bytes32 = self.datatrust.getDataHash(hash)
   owner: address = self.voting.getCandidateOwner(hash)
   if data_hash != EMPTY_BYTES32:
-    if self.voting.didPass(hash, self.parameterizer.getQuorum()): # case: listing passed
+    if self.voting.didPass(hash, self.parameterizer.getPlurality()): # case: listing passed
       self.listings[hash].owner = owner # is now 'listed'
       amount: wei_value = self.parameterizer.getListReward()
       self.market_token.mint(amount)
@@ -209,7 +209,7 @@ def resolveChallenge(hash: bytes32):
   assert self.voting.pollClosed(hash)
   owner: address = self.voting.getCandidateOwner(hash) # TODO this could likely be removed now
   # Case: challenge won
-  if self.voting.didPass(hash, self.parameterizer.getQuorum()):
+  if self.voting.didPass(hash, self.parameterizer.getPlurality()):
     self.removeListing(hash)
     log.ChallengeSucceeded(hash, owner)
   else: # Case: listing won

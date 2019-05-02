@@ -16,18 +16,18 @@ import (
 )
 
 // ParameterizerABI is the input ABI used to generate the binding from.
-const ParameterizerABI = "[{\"name\":\"ReparamProposed\",\"inputs\":[{\"type\":\"address\",\"name\":\"owner\",\"indexed\":true},{\"type\":\"bytes32\",\"name\":\"hash\",\"indexed\":true},{\"type\":\"uint256\",\"name\":\"param\",\"indexed\":true},{\"type\":\"uint256\",\"name\":\"value\",\"indexed\":false}],\"anonymous\":false,\"type\":\"event\"},{\"name\":\"ReparamFailed\",\"inputs\":[{\"type\":\"bytes32\",\"name\":\"hash\",\"indexed\":true},{\"type\":\"uint256\",\"name\":\"param\",\"indexed\":true},{\"type\":\"uint256\",\"name\":\"value\",\"indexed\":false}],\"anonymous\":false,\"type\":\"event\"},{\"name\":\"ReparamSucceeded\",\"inputs\":[{\"type\":\"bytes32\",\"name\":\"hash\",\"indexed\":true},{\"type\":\"uint256\",\"name\":\"param\",\"indexed\":true},{\"type\":\"uint256\",\"name\":\"value\",\"indexed\":false}],\"anonymous\":false,\"type\":\"event\"},{\"outputs\":[],\"inputs\":[{\"type\":\"address\",\"name\":\"voting_addr\"},{\"type\":\"uint256\",\"name\":\"rate\",\"unit\":\"wei\"},{\"type\":\"uint256\",\"name\":\"spd\"},{\"type\":\"uint256\",\"name\":\"list_re\",\"unit\":\"wei\"},{\"type\":\"uint256\",\"name\":\"stk\",\"unit\":\"wei\"},{\"type\":\"uint256\",\"name\":\"vote_by_del\",\"unit\":\"sec\"},{\"type\":\"uint256\",\"name\":\"q_pct\"},{\"type\":\"uint256\",\"name\":\"back_pay\"},{\"type\":\"uint256\",\"name\":\"maker_pay\"},{\"type\":\"uint256\",\"name\":\"cost\",\"unit\":\"wei\"}],\"constant\":false,\"payable\":false,\"type\":\"constructor\"},{\"name\":\"getBackendPayment\",\"outputs\":[{\"type\":\"uint256\",\"name\":\"out\"}],\"inputs\":[],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":483},{\"name\":\"getMakerPayment\",\"outputs\":[{\"type\":\"uint256\",\"name\":\"out\"}],\"inputs\":[],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":513},{\"name\":\"getReservePayment\",\"outputs\":[{\"type\":\"uint256\",\"name\":\"out\"}],\"inputs\":[],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":2766},{\"name\":\"getCostPerByte\",\"outputs\":[{\"type\":\"uint256\",\"name\":\"out\",\"unit\":\"wei\"}],\"inputs\":[],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":573},{\"name\":\"getStake\",\"outputs\":[{\"type\":\"uint256\",\"name\":\"out\",\"unit\":\"wei\"}],\"inputs\":[],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":603},{\"name\":\"getConversionRate\",\"outputs\":[{\"type\":\"uint256\",\"name\":\"out\",\"unit\":\"wei\"}],\"inputs\":[],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":633},{\"name\":\"getHash\",\"outputs\":[{\"type\":\"bytes32\",\"name\":\"out\"}],\"inputs\":[{\"type\":\"uint256\",\"name\":\"param\"},{\"type\":\"uint256\",\"name\":\"value\"}],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":722},{\"name\":\"getSpread\",\"outputs\":[{\"type\":\"uint256\",\"name\":\"out\"}],\"inputs\":[],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":693},{\"name\":\"getListReward\",\"outputs\":[{\"type\":\"uint256\",\"name\":\"out\",\"unit\":\"wei\"}],\"inputs\":[],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":723},{\"name\":\"getQuorum\",\"outputs\":[{\"type\":\"uint256\",\"name\":\"out\"}],\"inputs\":[],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":753},{\"name\":\"getReparam\",\"outputs\":[{\"type\":\"uint256\",\"name\":\"out\"},{\"type\":\"uint256\",\"name\":\"out\"}],\"inputs\":[{\"type\":\"bytes32\",\"name\":\"hash\"}],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":1459},{\"name\":\"getVoteBy\",\"outputs\":[{\"type\":\"uint256\",\"name\":\"out\",\"unit\":\"sec\"}],\"inputs\":[],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":813},{\"name\":\"reparameterize\",\"outputs\":[],\"inputs\":[{\"type\":\"uint256\",\"name\":\"param\"},{\"type\":\"uint256\",\"name\":\"value\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":78259},{\"name\":\"resolveReparam\",\"outputs\":[],\"inputs\":[{\"type\":\"bytes32\",\"name\":\"hash\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":87261}]"
+const ParameterizerABI = "[{\"name\":\"ReparamProposed\",\"inputs\":[{\"type\":\"address\",\"name\":\"owner\",\"indexed\":true},{\"type\":\"bytes32\",\"name\":\"hash\",\"indexed\":true},{\"type\":\"uint256\",\"name\":\"param\",\"indexed\":true},{\"type\":\"uint256\",\"name\":\"value\",\"indexed\":false}],\"anonymous\":false,\"type\":\"event\"},{\"name\":\"ReparamFailed\",\"inputs\":[{\"type\":\"bytes32\",\"name\":\"hash\",\"indexed\":true},{\"type\":\"uint256\",\"name\":\"param\",\"indexed\":true},{\"type\":\"uint256\",\"name\":\"value\",\"indexed\":false}],\"anonymous\":false,\"type\":\"event\"},{\"name\":\"ReparamSucceeded\",\"inputs\":[{\"type\":\"bytes32\",\"name\":\"hash\",\"indexed\":true},{\"type\":\"uint256\",\"name\":\"param\",\"indexed\":true},{\"type\":\"uint256\",\"name\":\"value\",\"indexed\":false}],\"anonymous\":false,\"type\":\"event\"},{\"outputs\":[],\"inputs\":[{\"type\":\"address\",\"name\":\"v_addr\"},{\"type\":\"uint256\",\"name\":\"pr_fl\",\"unit\":\"wei\"},{\"type\":\"uint256\",\"name\":\"spd\"},{\"type\":\"uint256\",\"name\":\"list_re\",\"unit\":\"wei\"},{\"type\":\"uint256\",\"name\":\"stk\",\"unit\":\"wei\"},{\"type\":\"uint256\",\"name\":\"vote_by_d\",\"unit\":\"sec\"},{\"type\":\"uint256\",\"name\":\"pl\"},{\"type\":\"uint256\",\"name\":\"back_p\"},{\"type\":\"uint256\",\"name\":\"maker_p\"},{\"type\":\"uint256\",\"name\":\"cost\",\"unit\":\"wei\"}],\"constant\":false,\"payable\":false,\"type\":\"constructor\"},{\"name\":\"getBackendPayment\",\"outputs\":[{\"type\":\"uint256\",\"name\":\"out\"}],\"inputs\":[],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":483},{\"name\":\"getMakerPayment\",\"outputs\":[{\"type\":\"uint256\",\"name\":\"out\"}],\"inputs\":[],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":513},{\"name\":\"getReservePayment\",\"outputs\":[{\"type\":\"uint256\",\"name\":\"out\"}],\"inputs\":[],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":2766},{\"name\":\"getCostPerByte\",\"outputs\":[{\"type\":\"uint256\",\"name\":\"out\",\"unit\":\"wei\"}],\"inputs\":[],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":573},{\"name\":\"getStake\",\"outputs\":[{\"type\":\"uint256\",\"name\":\"out\",\"unit\":\"wei\"}],\"inputs\":[],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":603},{\"name\":\"getPriceFloor\",\"outputs\":[{\"type\":\"uint256\",\"name\":\"out\",\"unit\":\"wei\"}],\"inputs\":[],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":633},{\"name\":\"getHash\",\"outputs\":[{\"type\":\"bytes32\",\"name\":\"out\"}],\"inputs\":[{\"type\":\"uint256\",\"name\":\"param\"},{\"type\":\"uint256\",\"name\":\"value\"}],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":722},{\"name\":\"getSpread\",\"outputs\":[{\"type\":\"uint256\",\"name\":\"out\"}],\"inputs\":[],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":693},{\"name\":\"getListReward\",\"outputs\":[{\"type\":\"uint256\",\"name\":\"out\",\"unit\":\"wei\"}],\"inputs\":[],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":723},{\"name\":\"getPlurality\",\"outputs\":[{\"type\":\"uint256\",\"name\":\"out\"}],\"inputs\":[],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":753},{\"name\":\"getReparam\",\"outputs\":[{\"type\":\"uint256\",\"name\":\"out\"},{\"type\":\"uint256\",\"name\":\"out\"}],\"inputs\":[{\"type\":\"bytes32\",\"name\":\"hash\"}],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":1459},{\"name\":\"getVoteBy\",\"outputs\":[{\"type\":\"uint256\",\"name\":\"out\",\"unit\":\"sec\"}],\"inputs\":[],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":813},{\"name\":\"reparameterize\",\"outputs\":[],\"inputs\":[{\"type\":\"uint256\",\"name\":\"param\"},{\"type\":\"uint256\",\"name\":\"value\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":78259},{\"name\":\"resolveReparam\",\"outputs\":[],\"inputs\":[{\"type\":\"bytes32\",\"name\":\"hash\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":87261}]"
 
 // ParameterizerBin is the compiled bytecode used for deploying new contracts.
-const ParameterizerBin = `0x600035601c52740100000000000000000000000000000000000000006020526f7fffffffffffffffffffffffffffffff6040527fffffffffffffffffffffffffffffffff8000000000000000000000000000000060605274012a05f1fffffffffffffffffffffffffdabf41c006080527ffffffffffffffffffffffffed5fa0e000000000000000000000000000000000060a0526101406108ef6101403934156100a857600080fd5b60206108ef60c03960c05160205181106100c157600080fd5b5061014051600a5561016051600155610180516002556101a0516003556101c0516004556101e051600555610200516006556102205160075561024051600855610260516009556108d756600035601c52740100000000000000000000000000000000000000006020526f7fffffffffffffffffffffffffffffff6040527fffffffffffffffffffffffffffffffff8000000000000000000000000000000060605274012a05f1fffffffffffffffffffffffffdabf41c006080527ffffffffffffffffffffffffed5fa0e000000000000000000000000000000000060a052634b8b7dce60005114156100b95734156100ac57600080fd5b60075460005260206000f3005b63ccc3412f60005114156100df5734156100d257600080fd5b60085460005260206000f3005b63ffe44da8600051141561014a5734156100f857600080fd5b60075460085460075401101561010d57600080fd5b600854600754016064101561012157600080fd5b60075460085460075401101561013657600080fd5b6008546007540160640360005260206000f3005b63cd2d5438600051141561017057341561016357600080fd5b60095460005260206000f3005b63fc0e3d90600051141561019657341561018957600080fd5b60045460005260206000f3005b63f36089ec60005114156101bc5734156101af57600080fd5b60015460005260206000f3005b631b855044600051141561022257604060046101403734156101dd57600080fd5b600061014051602082610180010152602081019050610160516020826101800101526020810190508061018052610180905080516020820120905060005260206000f3005b637b3cee60600051141561024857341561023b57600080fd5b60025460005260206000f3005b63dc2b2853600051141561026e57341561026157600080fd5b60035460005260206000f3005b63c26c12eb600051141561029457341561028757600080fd5b60065460005260206000f3005b63d90f8f0d600051141561030757602060046101403734156102b557600080fd5b60406101605261018060006101405160e05260c052604060c02060c052602060c020548152600160006101405160e05260c052604060c02060c052602060c020015481602001525061016051610180f3005b632d0d2bc6600051141561032d57341561032057600080fd5b60055460005260206000f3005b63c183621860005114156104a3576040600461014037341561034e57600080fd5b6000610140516020826101a0010152602081019050610160516020826101a0010152602081019050806101a0526101a0905080516020820120905061018052600a543b61039a57600080fd5b600a5430186103a857600080fd5b60206102a0602463b89694c661022052610180516102405261023c600a545afa6103d157600080fd5b6000506102a051156103e257600080fd5b60006101805160e05260c052604060c02060c052602060c02061014051815561016051600182015550600a543b61041857600080fd5b600a54301861042657600080fd5b6000600060a463bb12c49e6102c052610180516102e052600361030052336103205260045461034052600554610360526102dc6000600a545af161046957600080fd5b610160516103c0526101405161018051337fb38eb1d14189ba2de4ca92c3ead8d4c2a61d566d266d46b487c4fa82ae73284260206103c0a4005b63435c709a60005114156107c457602060046101403734156104c457600080fd5b600a543b6104d157600080fd5b600a5430186104df57600080fd5b6020610200604463af61f76061016052610140516101805260036101a05261017c600a545afa61050e57600080fd5b6000506102005161051e57600080fd5b600a543b61052b57600080fd5b600a54301861053957600080fd5b60206102a0602463327322c861022052610140516102405261023c600a545afa61056257600080fd5b6000506102a05161057257600080fd5b60006101405160e05260c052604060c02060c052602060c020546102c052600160006101405160e05260c052604060c02060c052602060c02001546102e052600a543b6105be57600080fd5b600a5430186105cc57600080fd5b60206103c06044638f354b796103205261014051610340526006546103605261033c600a545afa6105fc57600080fd5b6000506103c051156107205760026102c0511415610620576102e0516001556106e4565b60046102c0511415610638576102e0516002556106e3565b60056102c0511415610650576102e0516003556106e2565b60016102c0511415610668576102e0516004556106e1565b60076102c0511415610680576102e0516005556106e0565b60066102c0511415610698576102e0516006556106df565b60096102c05114156106b0576102e0516008556106de565b60086102c05114156106c8576102e0516007556106dd565b600b6102c05114156106dc576102e0516009555b5b5b5b5b5b5b5b5b6102e0516103e0526102c051610140517fe6f29ce1d705c668b223a35e77096d95bbd994c121503fba4b29e65be92bc7e860206103e0a3610758565b6102e051610300526102c051610140517f1f050cdbc74210070c4a499a73459732a158933d789331de2757eb4d356302536020610300a35b600a543b61076557600080fd5b600a54301861077357600080fd5b6000600060246389bb617c61040052610140516104205261041c6000600a545af161079d57600080fd5b60006101405160e05260c052604060c02060c052602060c020600081556000600182015550005b60006000fd5b61010d6108d70361010d60003961010d6108d7036000f3`
+const ParameterizerBin = `0x600035601c52740100000000000000000000000000000000000000006020526f7fffffffffffffffffffffffffffffff6040527fffffffffffffffffffffffffffffffff8000000000000000000000000000000060605274012a05f1fffffffffffffffffffffffffdabf41c006080527ffffffffffffffffffffffffed5fa0e000000000000000000000000000000000060a0526101406108ef6101403934156100a857600080fd5b60206108ef60c03960c05160205181106100c157600080fd5b5061014051600a5561016051600155610180516002556101a0516003556101c0516004556101e051600555610200516006556102205160075561024051600855610260516009556108d756600035601c52740100000000000000000000000000000000000000006020526f7fffffffffffffffffffffffffffffff6040527fffffffffffffffffffffffffffffffff8000000000000000000000000000000060605274012a05f1fffffffffffffffffffffffffdabf41c006080527ffffffffffffffffffffffffed5fa0e000000000000000000000000000000000060a052634b8b7dce60005114156100b95734156100ac57600080fd5b60075460005260206000f3005b63ccc3412f60005114156100df5734156100d257600080fd5b60085460005260206000f3005b63ffe44da8600051141561014a5734156100f857600080fd5b60075460085460075401101561010d57600080fd5b600854600754016064101561012157600080fd5b60075460085460075401101561013657600080fd5b6008546007540160640360005260206000f3005b63cd2d5438600051141561017057341561016357600080fd5b60095460005260206000f3005b63fc0e3d90600051141561019657341561018957600080fd5b60045460005260206000f3005b6303bca7d360005114156101bc5734156101af57600080fd5b60015460005260206000f3005b631b855044600051141561022257604060046101403734156101dd57600080fd5b600061014051602082610180010152602081019050610160516020826101800101526020810190508061018052610180905080516020820120905060005260206000f3005b637b3cee60600051141561024857341561023b57600080fd5b60025460005260206000f3005b63dc2b2853600051141561026e57341561026157600080fd5b60035460005260206000f3005b633d1e37d5600051141561029457341561028757600080fd5b60065460005260206000f3005b63d90f8f0d600051141561030757602060046101403734156102b557600080fd5b60406101605261018060006101405160e05260c052604060c02060c052602060c020548152600160006101405160e05260c052604060c02060c052602060c020015481602001525061016051610180f3005b632d0d2bc6600051141561032d57341561032057600080fd5b60055460005260206000f3005b63c183621860005114156104a3576040600461014037341561034e57600080fd5b6000610140516020826101a0010152602081019050610160516020826101a0010152602081019050806101a0526101a0905080516020820120905061018052600a543b61039a57600080fd5b600a5430186103a857600080fd5b60206102a0602463b89694c661022052610180516102405261023c600a545afa6103d157600080fd5b6000506102a051156103e257600080fd5b60006101805160e05260c052604060c02060c052602060c02061014051815561016051600182015550600a543b61041857600080fd5b600a54301861042657600080fd5b6000600060a463bb12c49e6102c052610180516102e052600361030052336103205260045461034052600554610360526102dc6000600a545af161046957600080fd5b610160516103c0526101405161018051337fb38eb1d14189ba2de4ca92c3ead8d4c2a61d566d266d46b487c4fa82ae73284260206103c0a4005b63435c709a60005114156107c457602060046101403734156104c457600080fd5b600a543b6104d157600080fd5b600a5430186104df57600080fd5b6020610200604463af61f76061016052610140516101805260036101a05261017c600a545afa61050e57600080fd5b6000506102005161051e57600080fd5b600a543b61052b57600080fd5b600a54301861053957600080fd5b60206102a0602463327322c861022052610140516102405261023c600a545afa61056257600080fd5b6000506102a05161057257600080fd5b60006101405160e05260c052604060c02060c052602060c020546102c052600160006101405160e05260c052604060c02060c052602060c02001546102e052600a543b6105be57600080fd5b600a5430186105cc57600080fd5b60206103c06044638f354b796103205261014051610340526006546103605261033c600a545afa6105fc57600080fd5b6000506103c051156107205760026102c0511415610620576102e0516001556106e4565b60046102c0511415610638576102e0516002556106e3565b60056102c0511415610650576102e0516003556106e2565b60016102c0511415610668576102e0516004556106e1565b60076102c0511415610680576102e0516005556106e0565b60066102c0511415610698576102e0516006556106df565b60096102c05114156106b0576102e0516008556106de565b60086102c05114156106c8576102e0516007556106dd565b600b6102c05114156106dc576102e0516009555b5b5b5b5b5b5b5b5b6102e0516103e0526102c051610140517fe6f29ce1d705c668b223a35e77096d95bbd994c121503fba4b29e65be92bc7e860206103e0a3610758565b6102e051610300526102c051610140517f1f050cdbc74210070c4a499a73459732a158933d789331de2757eb4d356302536020610300a35b600a543b61076557600080fd5b600a54301861077357600080fd5b6000600060246389bb617c61040052610140516104205261041c6000600a545af161079d57600080fd5b60006101405160e05260c052604060c02060c052602060c020600081556000600182015550005b60006000fd5b61010d6108d70361010d60003961010d6108d7036000f3`
 
 // DeployParameterizer deploys a new Ethereum contract, binding an instance of Parameterizer to it.
-func DeployParameterizer(auth *bind.TransactOpts, backend bind.ContractBackend, voting_addr common.Address, rate *big.Int, spd *big.Int, list_re *big.Int, stk *big.Int, vote_by_del *big.Int, q_pct *big.Int, back_pay *big.Int, maker_pay *big.Int, cost *big.Int) (common.Address, *types.Transaction, *Parameterizer, error) {
+func DeployParameterizer(auth *bind.TransactOpts, backend bind.ContractBackend, v_addr common.Address, pr_fl *big.Int, spd *big.Int, list_re *big.Int, stk *big.Int, vote_by_d *big.Int, pl *big.Int, back_p *big.Int, maker_p *big.Int, cost *big.Int) (common.Address, *types.Transaction, *Parameterizer, error) {
 	parsed, err := abi.JSON(strings.NewReader(ParameterizerABI))
 	if err != nil {
 		return common.Address{}, nil, nil, err
 	}
-	address, tx, contract, err := bind.DeployContract(auth, parsed, common.FromHex(ParameterizerBin), backend, voting_addr, rate, spd, list_re, stk, vote_by_del, q_pct, back_pay, maker_pay, cost)
+	address, tx, contract, err := bind.DeployContract(auth, parsed, common.FromHex(ParameterizerBin), backend, v_addr, pr_fl, spd, list_re, stk, vote_by_d, pl, back_p, maker_p, cost)
 	if err != nil {
 		return common.Address{}, nil, nil, err
 	}
@@ -202,32 +202,6 @@ func (_Parameterizer *ParameterizerCallerSession) GetBackendPayment() (*big.Int,
 	return _Parameterizer.Contract.GetBackendPayment(&_Parameterizer.CallOpts)
 }
 
-// GetConversionRate is a free data retrieval call binding the contract method 0xf36089ec.
-//
-// Solidity: function getConversionRate() constant returns(out uint256)
-func (_Parameterizer *ParameterizerCaller) GetConversionRate(opts *bind.CallOpts) (*big.Int, error) {
-	var (
-		ret0 = new(*big.Int)
-	)
-	out := ret0
-	err := _Parameterizer.contract.Call(opts, out, "getConversionRate")
-	return *ret0, err
-}
-
-// GetConversionRate is a free data retrieval call binding the contract method 0xf36089ec.
-//
-// Solidity: function getConversionRate() constant returns(out uint256)
-func (_Parameterizer *ParameterizerSession) GetConversionRate() (*big.Int, error) {
-	return _Parameterizer.Contract.GetConversionRate(&_Parameterizer.CallOpts)
-}
-
-// GetConversionRate is a free data retrieval call binding the contract method 0xf36089ec.
-//
-// Solidity: function getConversionRate() constant returns(out uint256)
-func (_Parameterizer *ParameterizerCallerSession) GetConversionRate() (*big.Int, error) {
-	return _Parameterizer.Contract.GetConversionRate(&_Parameterizer.CallOpts)
-}
-
 // GetCostPerByte is a free data retrieval call binding the contract method 0xcd2d5438.
 //
 // Solidity: function getCostPerByte() constant returns(out uint256)
@@ -332,30 +306,56 @@ func (_Parameterizer *ParameterizerCallerSession) GetMakerPayment() (*big.Int, e
 	return _Parameterizer.Contract.GetMakerPayment(&_Parameterizer.CallOpts)
 }
 
-// GetQuorum is a free data retrieval call binding the contract method 0xc26c12eb.
+// GetPlurality is a free data retrieval call binding the contract method 0x3d1e37d5.
 //
-// Solidity: function getQuorum() constant returns(out uint256)
-func (_Parameterizer *ParameterizerCaller) GetQuorum(opts *bind.CallOpts) (*big.Int, error) {
+// Solidity: function getPlurality() constant returns(out uint256)
+func (_Parameterizer *ParameterizerCaller) GetPlurality(opts *bind.CallOpts) (*big.Int, error) {
 	var (
 		ret0 = new(*big.Int)
 	)
 	out := ret0
-	err := _Parameterizer.contract.Call(opts, out, "getQuorum")
+	err := _Parameterizer.contract.Call(opts, out, "getPlurality")
 	return *ret0, err
 }
 
-// GetQuorum is a free data retrieval call binding the contract method 0xc26c12eb.
+// GetPlurality is a free data retrieval call binding the contract method 0x3d1e37d5.
 //
-// Solidity: function getQuorum() constant returns(out uint256)
-func (_Parameterizer *ParameterizerSession) GetQuorum() (*big.Int, error) {
-	return _Parameterizer.Contract.GetQuorum(&_Parameterizer.CallOpts)
+// Solidity: function getPlurality() constant returns(out uint256)
+func (_Parameterizer *ParameterizerSession) GetPlurality() (*big.Int, error) {
+	return _Parameterizer.Contract.GetPlurality(&_Parameterizer.CallOpts)
 }
 
-// GetQuorum is a free data retrieval call binding the contract method 0xc26c12eb.
+// GetPlurality is a free data retrieval call binding the contract method 0x3d1e37d5.
 //
-// Solidity: function getQuorum() constant returns(out uint256)
-func (_Parameterizer *ParameterizerCallerSession) GetQuorum() (*big.Int, error) {
-	return _Parameterizer.Contract.GetQuorum(&_Parameterizer.CallOpts)
+// Solidity: function getPlurality() constant returns(out uint256)
+func (_Parameterizer *ParameterizerCallerSession) GetPlurality() (*big.Int, error) {
+	return _Parameterizer.Contract.GetPlurality(&_Parameterizer.CallOpts)
+}
+
+// GetPriceFloor is a free data retrieval call binding the contract method 0x03bca7d3.
+//
+// Solidity: function getPriceFloor() constant returns(out uint256)
+func (_Parameterizer *ParameterizerCaller) GetPriceFloor(opts *bind.CallOpts) (*big.Int, error) {
+	var (
+		ret0 = new(*big.Int)
+	)
+	out := ret0
+	err := _Parameterizer.contract.Call(opts, out, "getPriceFloor")
+	return *ret0, err
+}
+
+// GetPriceFloor is a free data retrieval call binding the contract method 0x03bca7d3.
+//
+// Solidity: function getPriceFloor() constant returns(out uint256)
+func (_Parameterizer *ParameterizerSession) GetPriceFloor() (*big.Int, error) {
+	return _Parameterizer.Contract.GetPriceFloor(&_Parameterizer.CallOpts)
+}
+
+// GetPriceFloor is a free data retrieval call binding the contract method 0x03bca7d3.
+//
+// Solidity: function getPriceFloor() constant returns(out uint256)
+func (_Parameterizer *ParameterizerCallerSession) GetPriceFloor() (*big.Int, error) {
+	return _Parameterizer.Contract.GetPriceFloor(&_Parameterizer.CallOpts)
 }
 
 // GetReparam is a free data retrieval call binding the contract method 0xd90f8f0d.
