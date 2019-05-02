@@ -3,12 +3,12 @@
 # @author Computable
 
 # We refer to any 'params' as integers to avoid conversions to and from strings
-CONVERSION_RATE: constant(uint256) = 2
+PRICE_FLOOR: constant(uint256) = 2
 SPREAD: constant(uint256) = 4
 LIST_REWARD: constant(uint256) = 5
 STAKE: constant(uint256) = 1
 VOTE_BY: constant(uint256) = 7
-QUORUM: constant(uint256) = 6
+PLURALITY: constant(uint256) = 6
 # _PAYMENTs are % based so the sum of both should be < 100 as there is an implicit reserve_payment
 BACKEND_PAYMENT: constant(uint256) = 8
 MAKER_PAYMENT: constant(uint256) = 9
@@ -27,7 +27,7 @@ contract Voting:
   def isCandidate(hash: bytes32) -> bool: constant
   def addCandidate(hash: bytes32, kind: uint256, owner: address, stake: uint256(wei), vote_by: uint256(sec)): modifying
   def removeCandidate(hash: bytes32): modifying
-  def didPass(hash: bytes32, quorum: uint256) -> bool: constant
+  def didPass(hash: bytes32, plurality: uint256) -> bool: constant
   def pollClosed(hash: bytes32) -> bool: constant
 
 ReparamProposed: event({owner: indexed(address), hash: indexed(bytes32), param: indexed(uint256), value: uint256})
@@ -35,29 +35,29 @@ ReparamFailed: event({hash: indexed(bytes32), param: indexed(uint256), value: ui
 ReparamSucceeded: event({hash: indexed(bytes32), param: indexed(uint256), value: uint256})
 
 reparams: map(bytes32, Reparam)
-conversion_rate: wei_value
+price_floor: wei_value
 spread: uint256
 list_reward: wei_value
 stake: wei_value
 vote_by: timedelta
-quorum: uint256
+plurality: uint256
 backend_payment: uint256
 maker_payment: uint256
 cost_per_byte: wei_value
 voting: Voting
 
 @public
-def __init__(voting_addr: address, rate: wei_value, spd: uint256, list_re: wei_value, stk: wei_value,
-  vote_by_del: timedelta, q_pct: uint256, back_pay: uint256, maker_pay: uint256, cost: wei_value):
-    self.voting = Voting(voting_addr)
-    self.conversion_rate = rate
+def __init__(v_addr: address, pr_fl: wei_value, spd: uint256, list_re: wei_value, stk: wei_value,
+  vote_by_d: timedelta, pl: uint256, back_p: uint256, maker_p: uint256, cost: wei_value):
+    self.voting = Voting(v_addr)
+    self.price_floor = pr_fl
     self.spread = spd
     self.list_reward = list_re
     self.stake = stk
-    self.vote_by = vote_by_del
-    self.quorum = q_pct
-    self.backend_payment = back_pay
-    self.maker_payment = maker_pay
+    self.vote_by = vote_by_d
+    self.plurality = pl
+    self.backend_payment = back_p
+    self.maker_payment = maker_p
     self.cost_per_byte = cost
 
 
@@ -109,11 +109,11 @@ def getStake() -> wei_value:
 
 @public
 @constant
-def getConversionRate() -> wei_value:
+def getPriceFloor() -> wei_value:
   """
-  @notice Return the current Ethertoken to MarketToken conversion rate in wei
+  @notice Return the current Ethertoken to MarketToken price floor in wei
   """
-  return self.conversion_rate
+  return self.price_floor
 
 
 @public
@@ -149,11 +149,11 @@ def getListReward() -> wei_value:
 
 @public
 @constant
-def getQuorum() -> uint256:
+def getPlurality() -> uint256:
   """
   @notice Return the percent of 100 needed by a candidate to 'pass' in a poll
   """
-  return self.quorum
+  return self.plurality
 
 
 @public
@@ -203,10 +203,10 @@ def resolveReparam(hash: bytes32):
   # ascertain which param,value we are looking at
   param: uint256 = self.reparams[hash].param
   value: uint256 = self.reparams[hash].value
-  if self.voting.didPass(hash, self.quorum):
+  if self.voting.didPass(hash, self.plurality):
     #TODO in time we can likely tell an optimal order for these...
-    if param == CONVERSION_RATE:
-      self.conversion_rate = value
+    if param == PRICE_FLOOR:
+      self.price_floor = value
     elif param == SPREAD:
       self.spread = value
     elif param == LIST_REWARD:
@@ -215,8 +215,8 @@ def resolveReparam(hash: bytes32):
       self.stake = value
     elif param == VOTE_BY:
       self.vote_by = value
-    elif param == QUORUM:
-      self.quorum = value
+    elif param == PLURALITY:
+      self.plurality = value
     elif param == MAKER_PAYMENT:
       self.maker_payment = value
     elif param == BACKEND_PAYMENT:

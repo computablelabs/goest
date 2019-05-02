@@ -16,7 +16,7 @@ contract MarketToken:
   def transfer(to: address, amount: uint256(wei)) -> bool: modifying
 
 contract Parameterizer:
-  def getConversionRate() -> uint256(wei): constant
+  def getPriceFloor() -> uint256(wei): constant
   def getSpread() -> uint256: constant
 
 # events
@@ -41,14 +41,14 @@ def getInvestmentPrice() -> wei_value:
   """
   @notice Return the amount of Ether token (in wei) needed to purchase one billionth of a Market token
   """
-  rate: wei_value = self.parameterizer.getConversionRate()
+  price_floor: wei_value = self.parameterizer.getPriceFloor()
   spread: uint256 = self.parameterizer.getSpread()
   reserve: wei_value = self.ether_token.balanceOf(self)
   total: wei_value = self.market_token.totalSupply()
   if total < 1000000000000000000: # that is, is total supply less than one token in wei
-    return rate + ((spread * reserve) / 100)
+    return price_floor + ((spread * reserve) / 100)
   else:
-    return rate + ((spread * reserve * 1000000000) / (100 * total)) # NOTE the multiplier ONE_GWEI
+    return price_floor + ((spread * reserve * 1000000000) / (100 * total)) # NOTE the multiplier ONE_GWEI
 
 
 @public
