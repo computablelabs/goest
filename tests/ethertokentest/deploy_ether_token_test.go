@@ -25,7 +25,7 @@ func TestDeployEtherToken(t *testing.T) {
 
 func TestMain(m *testing.M) {
 	context = test.GetContext(big.NewInt(test.ONE_WEI * 2)) // 2 ETH in wei
-	deployed, deployedError = test.Deploy(big.NewInt(test.ONE_WEI*9), big.NewInt(test.ONE_WEI*9), context, &test.Params{
+	deployed, deployedError = test.Deploy(big.NewInt(test.ONE_WEI*9), big.NewInt(test.ONE_WEI*9), context.AuthOwner, context.Blockchain, &test.Params{
 		ConversionRate: big.NewInt(test.ONE_GWEI),
 		Spread:         big.NewInt(110),
 		ListReward:     big.NewInt(test.ONE_WEI),

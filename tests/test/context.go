@@ -26,11 +26,11 @@ type Ctx struct {
 // Given a bal argument, it assigns this as the wallet balance for
 // each authorization object in the Ctx
 func GetContext(bal *big.Int) *Ctx {
-	authOwn := getAuthObject()
-	authBac := getAuthObject()
-	authU1 := getAuthObject()
-	authU2 := getAuthObject()
-	authU3 := getAuthObject()
+	authOwn := GetAuthObject()
+	authBac := GetAuthObject()
+	authU1 := GetAuthObject()
+	authU2 := GetAuthObject()
+	authU3 := GetAuthObject()
 	alloc := make(core.GenesisAlloc)
 	alloc[authOwn.From] = core.GenesisAccount{Balance: bal}
 	alloc[authBac.From] = core.GenesisAccount{Balance: bal}
