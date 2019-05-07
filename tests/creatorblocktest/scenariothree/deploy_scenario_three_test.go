@@ -10,6 +10,7 @@ import (
 	"math/big"
 	"os"
 	"testing"
+	"time"
 )
 
 // ExtendedCtx, holds Auth objects capable of signing transactions.
@@ -80,6 +81,7 @@ func TestMain(m *testing.M) {
 	// need this to create bigger ETH balances (literal will overflow)
 	var x big.Int
 	oneHundredEth := x.Mul(big.NewInt(test.ONE_WEI), big.NewInt(100))
+	//twoHundredEth := x.Mul(big.NewInt(test.ONE_WEI), big.NewInt(200))
 	oneHundredOneEth := x.Add(oneHundredEth, big.NewInt(test.ONE_WEI))
 
 	extContext = GetExtendedContext(oneHundredOneEth) // users have 101 ETH account bal
@@ -103,10 +105,38 @@ func TestMain(m *testing.M) {
 
 	extContext.Blockchain.Commit()
 
-	// vote for the backend candidate, member will likely need funds
-	transErr := test.MaybeTransferMarketToken(extContext.Blockchain, deployed, extContext.AuthOwner,
-		extContext.AuthUser3.From, big.NewInt(test.ONE_GWEI))
-	test.IfNotNil(&logr{}, transErr, "Error transferring tokens")
+	//// vote for the backend candidate, member will likely need funds
+	//transErr := test.MaybeTransferMarketToken(extContext.Blockchain, deployed, extContext.AuthOwner,
+	//	extContext.AuthUser3.From, big.NewInt(test.ONE_GWEI))
+	//test.IfNotNil(&logr{}, transErr, "Error transferring tokens")
+
+	// member will need to have approved the voting contract to spend
+	appErr := test.MaybeIncreaseMarketTokenApproval(extContext.Blockchain, deployed, extContext.AuthUser3,
+		deployed.VotingAddress, big.NewInt(test.ONE_GWEI))
+	test.IfNotNil(&logr{}, appErr, "Error increasing allowance")
+
+	hash, _ := deployed.DatatrustContract.GetHash(nil, "https://www.immabackend.biz")
+	_, voteErr := deployed.VotingContract.Vote(test.GetTxOpts(extContext.AuthUser3, nil,
+		big.NewInt(test.ONE_GWEI*2), 150000), hash, big.NewInt(1))
+	test.IfNotNil(&logr{}, voteErr, fmt.Sprintf("Error voting for candidate: %v", voteErr))
+
+	extContext.Blockchain.Commit()
+
+	// move past the voteBy
+	extContext.Blockchain.AdjustTime(100 * time.Second)
+	extContext.Blockchain.Commit()
+
+	// call for resolution
+	_, resolveErr := deployed.DatatrustContract.ResolveRegistration(test.GetTxOpts(extContext.AuthUser2, nil,
+		big.NewInt(test.ONE_GWEI*2), 1000000), hash)
+	test.IfNotNil(&logr{}, resolveErr, fmt.Sprintf("Error resolving application: %v", resolveErr))
+
+	extContext.Blockchain.Commit()
+
+	// member can unstake now
+	_, unErr := deployed.VotingContract.Unstake(test.GetTxOpts(extContext.AuthUser3, nil,
+		big.NewInt(test.ONE_GWEI*2), 150000), hash)
+	test.IfNotNil(&logr{}, unErr, fmt.Sprintf("Error Unstaking: %v", unErr))
 
 	code := m.Run()
 	os.Exit(code)

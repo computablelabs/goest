@@ -6,6 +6,7 @@ import (
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"math/big"
 	"testing"
+	"time"
 )
 
 func oneHundredOneEth() *big.Int {
@@ -57,13 +58,12 @@ func TestTransferToReserveThenInvest(t *testing.T) {
 
 	t.Logf("Current Reserve balance: %v", test.Commafy(resEthBal))
 
-	var investors [3](*bind.TransactOpts)
+	var investors [5](*bind.TransactOpts)
 	investors[0] = extContext.AuthUser1
 	investors[1] = extContext.AuthUser2
 	investors[2] = extContext.AuthUser3
-	//investors[3] = extContext.AuthUser4
-	//investors[4] = extContext.AuthUser5
-	//investors[5] = extContext.AuthUser6
+	investors[3] = extContext.AuthUser4
+	investors[4] = extContext.AuthUser5
 
 	for ind, investor := range investors {
 
@@ -129,5 +129,70 @@ func TestTransferToReserveThenInvest(t *testing.T) {
 		// invest price should change
 		invPriceNow, _ := deployed.InvestingContract.GetInvestmentPrice(nil)
 		t.Logf("Investment Price post investor %d investment of 100 ETH: %v", (ind + 1), test.Commafy(invPriceNow))
+	}
+
+	// Let's have the maker submit a listing
+	maker := extContext.AuthUser6
+	listingHash := test.GenBytes32("FooMarket, AZ.")
+
+	_, listErr := deployed.ListingContract.List(test.GetTxOpts(maker, nil,
+		big.NewInt(test.ONE_GWEI*2), 250000), listingHash)
+	test.IfNotNil(t, listErr, fmt.Sprintf("Error applying for list status: %v", listErr))
+	extContext.Blockchain.Commit()
+
+	// Check that the submitted listing is now a candidate
+	isCan, _ := deployed.VotingContract.IsCandidate(nil, listingHash)
+
+	if !isCan {
+		t.Errorf("Expected isCandidate to be true, got: %v", isCan)
+	}
+
+	// have the datatrust submit a data_hash for this listing.
+	dataHash, _ := deployed.DatatrustContract.GetHash(nil, "thisissomedata")
+	_, dataErr := deployed.DatatrustContract.SetDataHash(test.GetTxOpts(extContext.AuthBackend, nil,
+		big.NewInt(test.ONE_GWEI*2), 100000), listingHash, dataHash)
+	test.IfNotNil(t, dataErr, "Error setting data hash for listing")
+	extContext.Blockchain.Commit()
+
+	//// check the market's balance as the mint operation should increment it after successful listing
+	//marketBal, _ := deployed.MarketTokenContract.BalanceOf(nil, deployed.ListingAddress)
+
+	// cast a vote for, voter may need funds...
+	transErr := test.MaybeTransferMarketToken(extContext.Blockchain, deployed, extContext.AuthOwner, extContext.AuthUser2.From,
+		big.NewInt(test.ONE_GWEI))
+	test.IfNotNil(t, transErr, fmt.Sprintf("Error transferring tokens to member: %v", transErr))
+	extContext.Blockchain.Commit()
+
+	// member will need to have approved the voting contract to spend
+	appErr := test.MaybeIncreaseMarketTokenApproval(extContext.Blockchain, deployed, extContext.AuthUser2, deployed.VotingAddress,
+		big.NewInt(test.ONE_GWEI))
+	test.IfNotNil(t, appErr, fmt.Sprintf("Error approving market contract to spend: %v", appErr))
+	extContext.Blockchain.Commit()
+
+	_, voteErr := deployed.VotingContract.Vote(test.GetTxOpts(extContext.AuthUser2, nil,
+		big.NewInt(test.ONE_GWEI*2), 150000), listingHash, big.NewInt(1))
+	test.IfNotNil(t, voteErr, fmt.Sprintf("Error voting for candidate: %v", voteErr))
+	extContext.Blockchain.Commit()
+
+	// move past the voteBy
+	extContext.Blockchain.AdjustTime(100 * time.Second)
+	extContext.Blockchain.Commit()
+
+	// any stakeholder can call for resolution
+	_, resolveErr := deployed.ListingContract.ResolveApplication(test.GetTxOpts(extContext.AuthUser2, nil,
+		big.NewInt(test.ONE_GWEI*2), 1000000), listingHash)
+	test.IfNotNil(t, resolveErr, fmt.Sprintf("Error resolving application: %v", resolveErr))
+	extContext.Blockchain.Commit()
+
+	// should be listed now, with a reward
+	owner, supply, _ := deployed.ListingContract.GetListing(nil, listingHash)
+
+	if owner != maker.From {
+		t.Errorf("Expected owner to be %v, got: %v", maker.From, owner)
+	}
+
+	// supply should reflect the list reward
+	if supply.Cmp(big.NewInt(250000000000000)) != 0 {
+		t.Errorf("Exepected supply to be list reward, got: %v", supply)
 	}
 }
