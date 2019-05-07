@@ -57,18 +57,18 @@ type Dep struct {
 
 // Deploy function which, well, deploys our contracts - returning
 // a hydrated Dep object ready for use.
-// The etBal argument is an amount of ether token(in wei) credited to the AuthOwner
-// The mtBal argument is an amount of market token(in wei) credited to the AuthOwner
+// The etBal argument is an amount of ether token(in wei) credited to the authOwner
+// The mtBal argument is an amount of market token(in wei) credited to the authOwner
 // Also passed a hydrated Ctx object, used to aid the deploying.
 // Params arg is hydrated with values for the parameterizer.
 // Returns a hydrated Dep object or any error incurred.
 //func Deploy(etBal *big.Int, mtBal *big.Int, c *Ctx, p *Params) (*Dep, error) {
-func Deploy(etBal *big.Int, mtBal *big.Int, AuthOwner *bind.TransactOpts, Blockchain *backends.SimulatedBackend, p *Params) (*Dep, error) {
+func Deploy(etBal *big.Int, mtBal *big.Int, authOwner *bind.TransactOpts, blockchain *backends.SimulatedBackend, p *Params) (*Dep, error) {
 	// Ether Token: { consumes: [none], privileged: [none] }
 	etherTokenAddr, etherTokenTrans, etherTokenCont, etherTokenErr := ethertoken.DeployEtherToken(
-		AuthOwner,
-		Blockchain,
-		AuthOwner.From,
+		authOwner,
+		blockchain,
+		authOwner.From,
 		etBal,
 	)
 
@@ -78,33 +78,33 @@ func Deploy(etBal *big.Int, mtBal *big.Int, AuthOwner *bind.TransactOpts, Blockc
 
 	// Market Token: { consumes: [none], privileged: [listing, investing] }
 	marketTokenAddr, marketTokenTrans, marketTokenCont, marketTokenErr := markettoken.DeployMarketToken(
-		AuthOwner,
-		Blockchain,
-		AuthOwner.From,
+		authOwner,
+		blockchain,
+		authOwner.From,
 		mtBal,
 	)
 
 	if marketTokenErr != nil {
 		return nil, marketTokenErr
 	}
-	Blockchain.Commit()
+	blockchain.Commit()
 
 	// Voting: { consumes: [market token], privileged:[parameterizer, datatrust, listing, investing] }
 	votingAddr, votingTrans, votingCont, votingErr := voting.DeployVoting(
-		AuthOwner,
-		Blockchain,
+		authOwner,
+		blockchain,
 		marketTokenAddr,
 	)
 
 	if votingErr != nil {
 		return nil, votingErr
 	}
-	Blockchain.Commit()
+	blockchain.Commit()
 
 	// Parameterizer: { consumes: [voting], privileged: [none] }
 	paramAddr, paramTrans, paramCont, paramErr := parameterizer.DeployParameterizer(
-		AuthOwner,
-		Blockchain,
+		authOwner,
+		blockchain,
 		votingAddr,
 		p.ConversionRate,
 		p.Spread,
@@ -120,12 +120,12 @@ func Deploy(etBal *big.Int, mtBal *big.Int, AuthOwner *bind.TransactOpts, Blockc
 	if paramErr != nil {
 		return nil, paramErr
 	}
-	Blockchain.Commit()
+	blockchain.Commit()
 
 	// Investing: { consumes: [ether token, market token, parameterizer], privileged: [none] }
 	investAddr, investTrans, investCont, investErr := investing.DeployInvesting(
-		AuthOwner,
-		Blockchain,
+		authOwner,
+		blockchain,
 		etherTokenAddr,
 		marketTokenAddr,
 		paramAddr,
@@ -134,12 +134,12 @@ func Deploy(etBal *big.Int, mtBal *big.Int, AuthOwner *bind.TransactOpts, Blockc
 	if investErr != nil {
 		return nil, investErr
 	}
-	Blockchain.Commit()
+	blockchain.Commit()
 
 	// Datatrust: { consumes: [ether token, voting, parameterizer], privileged: [listing] }
 	dataAddr, dataTrans, dataCont, dataErr := datatrust.DeployDatatrust(
-		AuthOwner,
-		Blockchain,
+		authOwner,
+		blockchain,
 		etherTokenAddr,
 		votingAddr,
 		paramAddr,
@@ -149,12 +149,12 @@ func Deploy(etBal *big.Int, mtBal *big.Int, AuthOwner *bind.TransactOpts, Blockc
 	if dataErr != nil {
 		return nil, dataErr
 	}
-	Blockchain.Commit()
+	blockchain.Commit()
 
 	// Listing: { consumes: [market token, voting, parameterizer, datatrust, investing], privileged: [none] }
 	listingAddr, listingTrans, listingCont, listingErr := listing.DeployListing(
-		AuthOwner,
-		Blockchain,
+		authOwner,
+		blockchain,
 		marketTokenAddr,
 		votingAddr,
 		paramAddr,
@@ -165,10 +165,10 @@ func Deploy(etBal *big.Int, mtBal *big.Int, AuthOwner *bind.TransactOpts, Blockc
 	if listingErr != nil {
 		return nil, listingErr
 	}
-	Blockchain.Commit()
+	blockchain.Commit()
 
 	// Set privileged addresses now that contracts are deployed. First: Market Token
-	_, mtPrivErr := marketTokenCont.SetPrivileged(GetTxOpts(AuthOwner, nil, big.NewInt(ONE_GWEI*2), 100000),
+	_, mtPrivErr := marketTokenCont.SetPrivileged(GetTxOpts(authOwner, nil, big.NewInt(ONE_GWEI*2), 100000),
 		listingAddr, investAddr)
 
 	if mtPrivErr != nil {
@@ -176,20 +176,20 @@ func Deploy(etBal *big.Int, mtBal *big.Int, AuthOwner *bind.TransactOpts, Blockc
 	}
 
 	// Voting
-	_, vtPrivErr := votingCont.SetPrivileged(GetTxOpts(AuthOwner, nil, big.NewInt(ONE_GWEI*2), 150000),
+	_, vtPrivErr := votingCont.SetPrivileged(GetTxOpts(authOwner, nil, big.NewInt(ONE_GWEI*2), 150000),
 		paramAddr, dataAddr, listingAddr, investAddr)
 
 	if vtPrivErr != nil {
 		return nil, vtPrivErr
 	}
 
-	_, dtPrivErr := dataCont.SetPrivileged(GetTxOpts(AuthOwner, nil, big.NewInt(ONE_GWEI*2), 150000), listingAddr)
+	_, dtPrivErr := dataCont.SetPrivileged(GetTxOpts(authOwner, nil, big.NewInt(ONE_GWEI*2), 150000), listingAddr)
 
 	if dtPrivErr != nil {
 		return nil, dtPrivErr
 	}
 
-	Blockchain.Commit()
+	blockchain.Commit()
 
 	return &Dep{
 		EtherTokenAddress:        etherTokenAddr,

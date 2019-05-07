@@ -1,10 +1,12 @@
 package scenariothree
 
 import (
+	"fmt"
 	"github.com/computablelabs/goest/tests/test"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind/backends"
 	"github.com/ethereum/go-ethereum/core"
+	"log"
 	"math/big"
 	"os"
 	"testing"
@@ -67,6 +69,13 @@ var extContext *ExtendedCtx
 var deployed *test.Dep
 var deployedError error
 
+// assemble an object which implements the helper's loggish interface
+type logr struct{}
+
+func (l *logr) Fatal(a ...interface{}) {
+	log.Fatal(a...)
+}
+
 func TestMain(m *testing.M) {
 	// need this to create bigger ETH balances (literal will overflow)
 	var x big.Int
@@ -86,6 +95,19 @@ func TestMain(m *testing.M) {
 			MakerPct:       big.NewInt(25),
 			CostPerByte:    big.NewInt(test.ONE_GWEI * 100),
 		})
+
+	// setup the datatrust with a backend
+	_, regErr := deployed.DatatrustContract.Register(test.GetTxOpts(extContext.AuthBackend, nil,
+		big.NewInt(test.ONE_GWEI*2), 500000), "https://www.immabackend.biz")
+	test.IfNotNil(&logr{}, regErr, fmt.Sprintf("Error registering for backend status: %v", regErr))
+
+	extContext.Blockchain.Commit()
+
+	// vote for the backend candidate, member will likely need funds
+	transErr := test.MaybeTransferMarketToken(extContext.Blockchain, deployed, extContext.AuthOwner,
+		extContext.AuthUser3.From, big.NewInt(test.ONE_GWEI))
+	test.IfNotNil(&logr{}, transErr, "Error transferring tokens")
+
 	code := m.Run()
 	os.Exit(code)
 }

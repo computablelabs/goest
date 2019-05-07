@@ -57,13 +57,13 @@ func TestTransferToReserveThenInvest(t *testing.T) {
 
 	t.Logf("Current Reserve balance: %v", test.Commafy(resEthBal))
 
-	var investors [6](*bind.TransactOpts)
+	var investors [3](*bind.TransactOpts)
 	investors[0] = extContext.AuthUser1
 	investors[1] = extContext.AuthUser2
 	investors[2] = extContext.AuthUser3
-	investors[3] = extContext.AuthUser4
-	investors[4] = extContext.AuthUser5
-	investors[5] = extContext.AuthUser6
+	//investors[3] = extContext.AuthUser4
+	//investors[4] = extContext.AuthUser5
+	//investors[5] = extContext.AuthUser6
 
 	for ind, investor := range investors {
 
