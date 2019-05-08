@@ -71,10 +71,10 @@ func TestTransferToReserveThenInvest(t *testing.T) {
 		context.Blockchain.Commit()
 
 		//	// snapshot current balances
-		//	etBalNow, _ := deployed.EtherTokenContract.BalanceOf(nil, investor.From)
-		//	if etBalNow.Cmp(oneHundredEth()) != 0 {
-		//		t.Errorf("Expected ether token balance of 100 eth, got: %v", etBalNow)
-		//	}
+		etBalNow, _ := deployed.EtherTokenContract.BalanceOf(nil, investor.From)
+		if etBalNow.Cmp(oneHundredEth()) != 0 {
+			t.Errorf("Expected ether token balance of 100 eth, got: %v", etBalNow)
+		}
 		//	mtBal, _ := deployed.MarketTokenContract.BalanceOf(nil, investor.From)
 		//	if mtBal.Cmp(big.NewInt(0)) != 0 {
 		//		t.Errorf("Expected market token balance of 0, got: %v", mtBal)

@@ -14,6 +14,7 @@ import (
 // rather than scattered about many specs.
 // Also holds the Geth simulated backend.
 type Ctx struct {
+	Alloc       core.GenesisAlloc
 	AuthOwner   *bind.TransactOpts
 	AuthBackend *bind.TransactOpts
 	AuthUser1   *bind.TransactOpts
@@ -41,6 +42,7 @@ func GetContext(bal *big.Int) *Ctx {
 	bc := backends.NewSimulatedBackend(alloc, 4700000)
 
 	return &Ctx{
+		Alloc:       alloc,
 		AuthOwner:   authOwn,
 		AuthBackend: authBac,
 		AuthUser1:   authU1,
