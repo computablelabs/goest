@@ -35,51 +35,18 @@ type Investors struct {
 func getInvestors(bal *big.Int, numInvestors uint64) [](*bind.TransactOpts) {
 	alloc := make(core.GenesisAlloc)
 	investors := make([](*bind.TransactOpts), 0)
-	for i := 0; i < numInvestors; i++ {
+	var i uint64
+	for i = 0; i < numInvestors; i++ {
 		authInvestor := test.GetAuthObject()
 		alloc[authInvestor.From] = core.GenesisAccount{Balance: bal}
-		append(investors, authInvestor)
+		investors = append(investors, authInvestor)
 	}
 	return investors
-	//return investors
-	//authU2 := test.GetAuthObject()
-	//authU3 := test.GetAuthObject()
-	//authU4 := test.GetAuthObject()
-	//authU5 := test.GetAuthObject()
-	//authU6 := test.GetAuthObject()
-	//authU7 := test.GetAuthObject()
-	//authU8 := test.GetAuthObject()
-	//authU9 := test.GetAuthObject()
-	//authU10 := test.GetAuthObject()
-	//alloc := make(core.GenesisAlloc)
-	//alloc[authU1.From] = core.GenesisAccount{Balance: bal}
-	//alloc[authU2.From] = core.GenesisAccount{Balance: bal}
-	//alloc[authU3.From] = core.GenesisAccount{Balance: bal}
-	//alloc[authU4.From] = core.GenesisAccount{Balance: bal}
-	//alloc[authU5.From] = core.GenesisAccount{Balance: bal}
-	//alloc[authU6.From] = core.GenesisAccount{Balance: bal}
-	//alloc[authU7.From] = core.GenesisAccount{Balance: bal}
-	//alloc[authU8.From] = core.GenesisAccount{Balance: bal}
-	//alloc[authU9.From] = core.GenesisAccount{Balance: bal}
-	//alloc[authU10.From] = core.GenesisAccount{Balance: bal}
-
-	//return &Investors{
-	//	AuthInvestor1:  authU1,
-	//	AuthInvestor2:  authU2,
-	//	AuthInvestor3:  authU3,
-	//	AuthInvestor4:  authU4,
-	//	AuthInvestor5:  authU5,
-	//	AuthInvestor6:  authU6,
-	//	AuthInvestor7:  authU7,
-	//	AuthInvestor8:  authU8,
-	//	AuthInvestor9:  authU9,
-	//	AuthInvestor10: authU10,
-	//}
 }
 
 // variables decalred here have package scope
 var context *test.Ctx
-var investors *Investors
+var investors [](*bind.TransactOpts)
 var deployed *test.Dep
 var deployedError error
 
@@ -93,11 +60,11 @@ func (l *logr) Fatal(a ...interface{}) {
 func TestMain(m *testing.M) {
 	// need this to create bigger ETH balances (literal will overflow)
 	var x big.Int
+	var numInvestors uint64 = 10
 	oneHundredEth := x.Mul(big.NewInt(test.ONE_WEI), big.NewInt(100))
 	oneHundredOneEth := x.Add(oneHundredEth, big.NewInt(test.ONE_WEI))
 
-	context = test.GetContext(oneHundredOneEth) // users have 101 ETH account bal
-	numInvestors := 10
+	context = test.GetContext(oneHundredOneEth)              // users have 101 ETH account bal
 	investors = getInvestors(oneHundredOneEth, numInvestors) // investors have 101 ETH account balance
 	deployed, deployedError = test.Deploy(oneHundredOneEth, big.NewInt(test.ONE_WEI),
 		context, &test.Params{
