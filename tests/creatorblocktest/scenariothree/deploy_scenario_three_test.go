@@ -67,46 +67,6 @@ func TestMain(m *testing.M) {
 			CostPerByte:    big.NewInt(test.ONE_GWEI * 100),
 		})
 
-	// setup the datatrust with a backend
-	_, regErr := deployed.DatatrustContract.Register(test.GetTxOpts(context.AuthBackend, nil,
-		big.NewInt(test.ONE_GWEI*2), 500000), "https://www.immabackend.biz")
-	test.IfNotNil(&logr{}, regErr, fmt.Sprintf("Error registering for backend status: %v", regErr))
-
-	context.Blockchain.Commit()
-
-	//// vote for the backend candidate, member will likely need funds
-	//transErr := test.MaybeTransferMarketToken(context.Blockchain, deployed, context.AuthOwner,
-	//	context.AuthUser3.From, big.NewInt(test.ONE_GWEI))
-	//test.IfNotNil(&logr{}, transErr, "Error transferring tokens")
-
-	//// member will need to have approved the voting contract to spend
-	//appErr := test.MaybeIncreaseMarketTokenApproval(context, deployed, context.AuthUser3,
-	//	deployed.VotingAddress, big.NewInt(test.ONE_GWEI))
-	//test.IfNotNil(&logr{}, appErr, "Error increasing allowance")
-
-	//hash, _ := deployed.DatatrustContract.GetHash(nil, "https://www.immabackend.biz")
-	//_, voteErr := deployed.VotingContract.Vote(test.GetTxOpts(context.AuthUser3, nil,
-	//	big.NewInt(test.ONE_GWEI*2), 150000), hash, big.NewInt(1))
-	//test.IfNotNil(&logr{}, voteErr, fmt.Sprintf("Error voting for candidate: %v", voteErr))
-
-	//context.Blockchain.Commit()
-
-	//// move past the voteBy
-	//context.Blockchain.AdjustTime(100 * time.Second)
-	//context.Blockchain.Commit()
-
-	//// call for resolution
-	//_, resolveErr := deployed.DatatrustContract.ResolveRegistration(test.GetTxOpts(context.AuthUser2, nil,
-	//	big.NewInt(test.ONE_GWEI*2), 1000000), hash)
-	//test.IfNotNil(&logr{}, resolveErr, fmt.Sprintf("Error resolving application: %v", resolveErr))
-
-	//context.Blockchain.Commit()
-
-	//// member can unstake now
-	//_, unErr := deployed.VotingContract.Unstake(test.GetTxOpts(context.AuthUser3, nil,
-	//	big.NewInt(test.ONE_GWEI*2), 150000), hash)
-	//test.IfNotNil(&logr{}, unErr, fmt.Sprintf("Error Unstaking: %v", unErr))
-
 	code := m.Run()
 	os.Exit(code)
 }
