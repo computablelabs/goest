@@ -12,26 +12,6 @@ import (
 	"time"
 )
 
-// ExtendedCtx, holds Auth objects capable of signing transactions.
-// We need more users than other tests so added in extra
-// Also holds the Geth simulated backend.
-type Investors struct {
-	AuthInvestor1  *bind.TransactOpts
-	AuthInvestor2  *bind.TransactOpts
-	AuthInvestor3  *bind.TransactOpts
-	AuthInvestor4  *bind.TransactOpts
-	AuthInvestor5  *bind.TransactOpts
-	AuthInvestor6  *bind.TransactOpts
-	AuthInvestor7  *bind.TransactOpts
-	AuthInvestor8  *bind.TransactOpts
-	AuthInvestor9  *bind.TransactOpts
-	AuthInvestor10 *bind.TransactOpts
-}
-
-// GetExtendedContext returns a hydrated ExtendedCtx struct, ready for use.
-// Given a bal argument, it assigns this as the wallet balance for
-// each authorization object in the Ctx
-//func getInvestors(bal *big.Int) *Investors {
 func getInvestors(bal *big.Int, numInvestors uint64) [](*bind.TransactOpts) {
 	alloc := make(core.GenesisAlloc)
 	investors := make([](*bind.TransactOpts), 0)
