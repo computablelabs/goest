@@ -11,7 +11,6 @@ import (
 	"os"
 	"strings"
 	"testing"
-	"time"
 )
 
 // variables decalred here have package scope
@@ -50,7 +49,7 @@ func TestMain(m *testing.M) {
 	oneHundredOneEth := x.Add(oneHundredEth, big.NewInt(test.ONE_WEI))
 
 	context = test.GetContext(oneHundredOneEth) // users have 101 ETH account bal
-	setupInvestors(oneHundredOneEth, 10)        // investors have 101 ETH account balance
+	setupInvestors(oneHundredOneEth, 20)        // investors have 101 ETH account balance
 
 	// override the original simulated backend now that we have appeneded to the allocation
 	context.Blockchain = backends.NewSimulatedBackend(context.Alloc, 4700000)
@@ -80,33 +79,33 @@ func TestMain(m *testing.M) {
 	//	context.AuthUser3.From, big.NewInt(test.ONE_GWEI))
 	//test.IfNotNil(&logr{}, transErr, "Error transferring tokens")
 
-	// member will need to have approved the voting contract to spend
-	appErr := test.MaybeIncreaseMarketTokenApproval(context, deployed, context.AuthUser3,
-		deployed.VotingAddress, big.NewInt(test.ONE_GWEI))
-	test.IfNotNil(&logr{}, appErr, "Error increasing allowance")
+	//// member will need to have approved the voting contract to spend
+	//appErr := test.MaybeIncreaseMarketTokenApproval(context, deployed, context.AuthUser3,
+	//	deployed.VotingAddress, big.NewInt(test.ONE_GWEI))
+	//test.IfNotNil(&logr{}, appErr, "Error increasing allowance")
 
-	hash, _ := deployed.DatatrustContract.GetHash(nil, "https://www.immabackend.biz")
-	_, voteErr := deployed.VotingContract.Vote(test.GetTxOpts(context.AuthUser3, nil,
-		big.NewInt(test.ONE_GWEI*2), 150000), hash, big.NewInt(1))
-	test.IfNotNil(&logr{}, voteErr, fmt.Sprintf("Error voting for candidate: %v", voteErr))
+	//hash, _ := deployed.DatatrustContract.GetHash(nil, "https://www.immabackend.biz")
+	//_, voteErr := deployed.VotingContract.Vote(test.GetTxOpts(context.AuthUser3, nil,
+	//	big.NewInt(test.ONE_GWEI*2), 150000), hash, big.NewInt(1))
+	//test.IfNotNil(&logr{}, voteErr, fmt.Sprintf("Error voting for candidate: %v", voteErr))
 
-	context.Blockchain.Commit()
+	//context.Blockchain.Commit()
 
-	// move past the voteBy
-	context.Blockchain.AdjustTime(100 * time.Second)
-	context.Blockchain.Commit()
+	//// move past the voteBy
+	//context.Blockchain.AdjustTime(100 * time.Second)
+	//context.Blockchain.Commit()
 
-	// call for resolution
-	_, resolveErr := deployed.DatatrustContract.ResolveRegistration(test.GetTxOpts(context.AuthUser2, nil,
-		big.NewInt(test.ONE_GWEI*2), 1000000), hash)
-	test.IfNotNil(&logr{}, resolveErr, fmt.Sprintf("Error resolving application: %v", resolveErr))
+	//// call for resolution
+	//_, resolveErr := deployed.DatatrustContract.ResolveRegistration(test.GetTxOpts(context.AuthUser2, nil,
+	//	big.NewInt(test.ONE_GWEI*2), 1000000), hash)
+	//test.IfNotNil(&logr{}, resolveErr, fmt.Sprintf("Error resolving application: %v", resolveErr))
 
-	context.Blockchain.Commit()
+	//context.Blockchain.Commit()
 
-	// member can unstake now
-	_, unErr := deployed.VotingContract.Unstake(test.GetTxOpts(context.AuthUser3, nil,
-		big.NewInt(test.ONE_GWEI*2), 150000), hash)
-	test.IfNotNil(&logr{}, unErr, fmt.Sprintf("Error Unstaking: %v", unErr))
+	//// member can unstake now
+	//_, unErr := deployed.VotingContract.Unstake(test.GetTxOpts(context.AuthUser3, nil,
+	//	big.NewInt(test.ONE_GWEI*2), 150000), hash)
+	//test.IfNotNil(&logr{}, unErr, fmt.Sprintf("Error Unstaking: %v", unErr))
 
 	code := m.Run()
 	os.Exit(code)
