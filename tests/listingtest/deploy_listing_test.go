@@ -47,7 +47,7 @@ func TestDeployListing(t *testing.T) {
 
 func TestMain(m *testing.M) {
 	context = test.GetContext(big.NewInt(test.ONE_WEI * 3)) // users have 3 ETH
-	deployed, deployedError = test.Deploy(big.NewInt(test.ONE_WEI*6), big.NewInt(test.ONE_WEI*6), context.AuthOwner, context.Blockchain, &test.Params{
+	deployed, deployedError = test.Deploy(big.NewInt(test.ONE_WEI*6), big.NewInt(test.ONE_WEI*6), context, &test.Params{
 		ConversionRate: big.NewInt(test.ONE_GWEI),
 		Spread:         big.NewInt(110),
 		ListReward:     big.NewInt(test.ONE_WEI),
@@ -67,12 +67,12 @@ func TestMain(m *testing.M) {
 	context.Blockchain.Commit()
 
 	// vote for the backend candidate, member will likely need funds
-	transErr := test.MaybeTransferMarketToken(context.Blockchain, deployed, context.AuthOwner,
+	transErr := test.MaybeTransferMarketToken(context, deployed, context.AuthOwner,
 		context.AuthUser3.From, big.NewInt(test.ONE_GWEI))
 	test.IfNotNil(&logr{}, transErr, "Error transferring tokens")
 
 	// member will need to have approved the voting contract to spend
-	appErr := test.MaybeIncreaseMarketTokenApproval(context.Blockchain, deployed, context.AuthUser3,
+	appErr := test.MaybeIncreaseMarketTokenApproval(context, deployed, context.AuthUser3,
 		deployed.VotingAddress, big.NewInt(test.ONE_GWEI))
 	test.IfNotNil(&logr{}, appErr, "Error increasing allowance")
 

@@ -22,7 +22,7 @@ func TestMain(m *testing.M) {
 	context = test.GetContext(elevenEth) // users have 11 ETH account bal
 	// etherToken bal, marketToken bal, ctx, params (args)
 	deployed, deployedError = test.Deploy(oneHundredOneEth, big.NewInt(test.ONE_WEI),
-		context.AuthOwner, context.Blockchain, &test.Params{
+		context, &test.Params{
 			ConversionRate: big.NewInt(test.ONE_SZABO),
 			Spread:         big.NewInt(110),
 			ListReward:     big.NewInt(250000000000000),   // 2.5 x 10**13

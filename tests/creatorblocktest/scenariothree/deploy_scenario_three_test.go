@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/computablelabs/goest/tests/test"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
-	"github.com/ethereum/go-ethereum/accounts/abi/bind/backends"
 	"github.com/ethereum/go-ethereum/core"
 	"log"
 	"math/big"
@@ -16,57 +15,71 @@ import (
 // ExtendedCtx, holds Auth objects capable of signing transactions.
 // We need more users than other tests so added in extra
 // Also holds the Geth simulated backend.
-type ExtendedCtx struct {
-	AuthOwner   *bind.TransactOpts
-	AuthBackend *bind.TransactOpts
-	AuthUser1   *bind.TransactOpts
-	AuthUser2   *bind.TransactOpts
-	AuthUser3   *bind.TransactOpts
-	AuthUser4   *bind.TransactOpts
-	AuthUser5   *bind.TransactOpts
-	AuthUser6   *bind.TransactOpts
-	Blockchain  *backends.SimulatedBackend
+type Investors struct {
+	AuthInvestor1  *bind.TransactOpts
+	AuthInvestor2  *bind.TransactOpts
+	AuthInvestor3  *bind.TransactOpts
+	AuthInvestor4  *bind.TransactOpts
+	AuthInvestor5  *bind.TransactOpts
+	AuthInvestor6  *bind.TransactOpts
+	AuthInvestor7  *bind.TransactOpts
+	AuthInvestor8  *bind.TransactOpts
+	AuthInvestor9  *bind.TransactOpts
+	AuthInvestor10 *bind.TransactOpts
 }
 
 // GetExtendedContext returns a hydrated ExtendedCtx struct, ready for use.
 // Given a bal argument, it assigns this as the wallet balance for
 // each authorization object in the Ctx
-func GetExtendedContext(bal *big.Int) *ExtendedCtx {
-	authOwn := test.GetAuthObject()
-	authBac := test.GetAuthObject()
-	authU1 := test.GetAuthObject()
-	authU2 := test.GetAuthObject()
-	authU3 := test.GetAuthObject()
-	authU4 := test.GetAuthObject()
-	authU5 := test.GetAuthObject()
-	authU6 := test.GetAuthObject()
+//func getInvestors(bal *big.Int) *Investors {
+func getInvestors(bal *big.Int, numInvestors uint64) [](*bind.TransactOpts) {
 	alloc := make(core.GenesisAlloc)
-	alloc[authOwn.From] = core.GenesisAccount{Balance: bal}
-	alloc[authBac.From] = core.GenesisAccount{Balance: bal}
-	alloc[authU1.From] = core.GenesisAccount{Balance: bal}
-	alloc[authU2.From] = core.GenesisAccount{Balance: bal}
-	alloc[authU3.From] = core.GenesisAccount{Balance: bal}
-	alloc[authU4.From] = core.GenesisAccount{Balance: bal}
-	alloc[authU5.From] = core.GenesisAccount{Balance: bal}
-	alloc[authU6.From] = core.GenesisAccount{Balance: bal}
-	// 2nd arg is a gas limit, a uint64. we'll use 4.7 million
-	bc := backends.NewSimulatedBackend(alloc, 4700000)
-
-	return &ExtendedCtx{
-		AuthOwner:   authOwn,
-		AuthBackend: authBac,
-		AuthUser1:   authU1,
-		AuthUser2:   authU2,
-		AuthUser3:   authU3,
-		AuthUser4:   authU4,
-		AuthUser5:   authU5,
-		AuthUser6:   authU6,
-		Blockchain:  bc,
+	investors := make([](*bind.TransactOpts), 0)
+	for i := 0; i < numInvestors; i++ {
+		authInvestor := test.GetAuthObject()
+		alloc[authInvestor.From] = core.GenesisAccount{Balance: bal}
+		append(investors, authInvestor)
 	}
+	return investors
+	//return investors
+	//authU2 := test.GetAuthObject()
+	//authU3 := test.GetAuthObject()
+	//authU4 := test.GetAuthObject()
+	//authU5 := test.GetAuthObject()
+	//authU6 := test.GetAuthObject()
+	//authU7 := test.GetAuthObject()
+	//authU8 := test.GetAuthObject()
+	//authU9 := test.GetAuthObject()
+	//authU10 := test.GetAuthObject()
+	//alloc := make(core.GenesisAlloc)
+	//alloc[authU1.From] = core.GenesisAccount{Balance: bal}
+	//alloc[authU2.From] = core.GenesisAccount{Balance: bal}
+	//alloc[authU3.From] = core.GenesisAccount{Balance: bal}
+	//alloc[authU4.From] = core.GenesisAccount{Balance: bal}
+	//alloc[authU5.From] = core.GenesisAccount{Balance: bal}
+	//alloc[authU6.From] = core.GenesisAccount{Balance: bal}
+	//alloc[authU7.From] = core.GenesisAccount{Balance: bal}
+	//alloc[authU8.From] = core.GenesisAccount{Balance: bal}
+	//alloc[authU9.From] = core.GenesisAccount{Balance: bal}
+	//alloc[authU10.From] = core.GenesisAccount{Balance: bal}
+
+	//return &Investors{
+	//	AuthInvestor1:  authU1,
+	//	AuthInvestor2:  authU2,
+	//	AuthInvestor3:  authU3,
+	//	AuthInvestor4:  authU4,
+	//	AuthInvestor5:  authU5,
+	//	AuthInvestor6:  authU6,
+	//	AuthInvestor7:  authU7,
+	//	AuthInvestor8:  authU8,
+	//	AuthInvestor9:  authU9,
+	//	AuthInvestor10: authU10,
+	//}
 }
 
 // variables decalred here have package scope
-var extContext *ExtendedCtx
+var context *test.Ctx
+var investors *Investors
 var deployed *test.Dep
 var deployedError error
 
@@ -81,12 +94,13 @@ func TestMain(m *testing.M) {
 	// need this to create bigger ETH balances (literal will overflow)
 	var x big.Int
 	oneHundredEth := x.Mul(big.NewInt(test.ONE_WEI), big.NewInt(100))
-	//twoHundredEth := x.Mul(big.NewInt(test.ONE_WEI), big.NewInt(200))
 	oneHundredOneEth := x.Add(oneHundredEth, big.NewInt(test.ONE_WEI))
 
-	extContext = GetExtendedContext(oneHundredOneEth) // users have 101 ETH account bal
+	context = test.GetContext(oneHundredOneEth) // users have 101 ETH account bal
+	numInvestors := 10
+	investors = getInvestors(oneHundredOneEth, numInvestors) // investors have 101 ETH account balance
 	deployed, deployedError = test.Deploy(oneHundredOneEth, big.NewInt(test.ONE_WEI),
-		extContext.AuthOwner, extContext.Blockchain, &test.Params{
+		context, &test.Params{
 			ConversionRate: big.NewInt(test.ONE_SZABO),
 			Spread:         big.NewInt(110),
 			ListReward:     big.NewInt(250000000000000),   // 2.5 x 10**13
@@ -99,42 +113,42 @@ func TestMain(m *testing.M) {
 		})
 
 	// setup the datatrust with a backend
-	_, regErr := deployed.DatatrustContract.Register(test.GetTxOpts(extContext.AuthBackend, nil,
+	_, regErr := deployed.DatatrustContract.Register(test.GetTxOpts(context.AuthBackend, nil,
 		big.NewInt(test.ONE_GWEI*2), 500000), "https://www.immabackend.biz")
 	test.IfNotNil(&logr{}, regErr, fmt.Sprintf("Error registering for backend status: %v", regErr))
 
-	extContext.Blockchain.Commit()
+	context.Blockchain.Commit()
 
 	//// vote for the backend candidate, member will likely need funds
-	//transErr := test.MaybeTransferMarketToken(extContext.Blockchain, deployed, extContext.AuthOwner,
-	//	extContext.AuthUser3.From, big.NewInt(test.ONE_GWEI))
+	//transErr := test.MaybeTransferMarketToken(context.Blockchain, deployed, context.AuthOwner,
+	//	context.AuthUser3.From, big.NewInt(test.ONE_GWEI))
 	//test.IfNotNil(&logr{}, transErr, "Error transferring tokens")
 
 	// member will need to have approved the voting contract to spend
-	appErr := test.MaybeIncreaseMarketTokenApproval(extContext.Blockchain, deployed, extContext.AuthUser3,
+	appErr := test.MaybeIncreaseMarketTokenApproval(context, deployed, context.AuthUser3,
 		deployed.VotingAddress, big.NewInt(test.ONE_GWEI))
 	test.IfNotNil(&logr{}, appErr, "Error increasing allowance")
 
 	hash, _ := deployed.DatatrustContract.GetHash(nil, "https://www.immabackend.biz")
-	_, voteErr := deployed.VotingContract.Vote(test.GetTxOpts(extContext.AuthUser3, nil,
+	_, voteErr := deployed.VotingContract.Vote(test.GetTxOpts(context.AuthUser3, nil,
 		big.NewInt(test.ONE_GWEI*2), 150000), hash, big.NewInt(1))
 	test.IfNotNil(&logr{}, voteErr, fmt.Sprintf("Error voting for candidate: %v", voteErr))
 
-	extContext.Blockchain.Commit()
+	context.Blockchain.Commit()
 
 	// move past the voteBy
-	extContext.Blockchain.AdjustTime(100 * time.Second)
-	extContext.Blockchain.Commit()
+	context.Blockchain.AdjustTime(100 * time.Second)
+	context.Blockchain.Commit()
 
 	// call for resolution
-	_, resolveErr := deployed.DatatrustContract.ResolveRegistration(test.GetTxOpts(extContext.AuthUser2, nil,
+	_, resolveErr := deployed.DatatrustContract.ResolveRegistration(test.GetTxOpts(context.AuthUser2, nil,
 		big.NewInt(test.ONE_GWEI*2), 1000000), hash)
 	test.IfNotNil(&logr{}, resolveErr, fmt.Sprintf("Error resolving application: %v", resolveErr))
 
-	extContext.Blockchain.Commit()
+	context.Blockchain.Commit()
 
 	// member can unstake now
-	_, unErr := deployed.VotingContract.Unstake(test.GetTxOpts(extContext.AuthUser3, nil,
+	_, unErr := deployed.VotingContract.Unstake(test.GetTxOpts(context.AuthUser3, nil,
 		big.NewInt(test.ONE_GWEI*2), 150000), hash)
 	test.IfNotNil(&logr{}, unErr, fmt.Sprintf("Error Unstaking: %v", unErr))
 

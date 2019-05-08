@@ -3,7 +3,6 @@ package test
 import (
 	"fmt"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
-	"github.com/ethereum/go-ethereum/accounts/abi/bind/backends"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
 	"math/big"
@@ -52,7 +51,7 @@ func GetTxOpts(auth *bind.TransactOpts, val *big.Int, price *big.Int, limit uint
 // MaybeApprove is a convenience method that inspects the Market Token Allowance of one address to another.
 // If it is below the given threshold, increase the allowance until it meets said threshold
 // Returns any error incurred.
-func MaybeIncreaseMarketTokenApproval(blockchain *backends.SimulatedBackend, d *Dep, owner *bind.TransactOpts, spender common.Address, thresh *big.Int) error {
+func MaybeIncreaseMarketTokenApproval(c *Ctx, d *Dep, owner *bind.TransactOpts, spender common.Address, thresh *big.Int) error {
 	allowed, _ := d.MarketTokenContract.Allowance(nil, owner.From, spender)
 	if !(allowed.Cmp(thresh) >= 0) {
 		// to keep the allowed from creeping, we'll set the approved to the threshold if less...
@@ -64,7 +63,7 @@ func MaybeIncreaseMarketTokenApproval(blockchain *backends.SimulatedBackend, d *
 			return approveErr
 		}
 
-		blockchain.Commit()
+		c.Blockchain.Commit()
 	}
 	return nil
 }
@@ -72,7 +71,7 @@ func MaybeIncreaseMarketTokenApproval(blockchain *backends.SimulatedBackend, d *
 // MaybeTransferMarketToken is a convenience method that inspects the Market Token balance of a given address.
 // If it is below the given threshold, increase the balance via transfer until it meets said threshold
 // Returns any error incurred.
-func MaybeTransferMarketToken(blockchain *backends.SimulatedBackend, d *Dep, from *bind.TransactOpts, to common.Address, thresh *big.Int) error {
+func MaybeTransferMarketToken(c *Ctx, d *Dep, from *bind.TransactOpts, to common.Address, thresh *big.Int) error {
 	bal, _ := d.MarketTokenContract.BalanceOf(nil, to)
 	if bal.Cmp(thresh) == -1 {
 		delta := thresh.Sub(thresh, bal)
@@ -84,7 +83,7 @@ func MaybeTransferMarketToken(blockchain *backends.SimulatedBackend, d *Dep, fro
 			return transErr
 		}
 
-		blockchain.Commit()
+		c.Blockchain.Commit()
 	}
 	return nil
 }
