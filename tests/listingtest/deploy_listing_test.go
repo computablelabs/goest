@@ -19,7 +19,7 @@ var deployedError error
 type logr struct{}
 
 func (l *logr) Fatal(a ...interface{}) {
-	log.Fatal(a)
+	log.Fatal(a...)
 }
 
 func TestDeployListing(t *testing.T) {

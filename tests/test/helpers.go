@@ -14,8 +14,8 @@ type logish interface {
 	Fatal(...interface{})
 }
 
-// used internally in test package to generate auth objects
-func getAuthObject() *bind.TransactOpts {
+// used to generate auth objects
+func GetAuthObject() *bind.TransactOpts {
 	key, _ := crypto.GenerateKey()
 	return bind.NewKeyedTransactor(key)
 }
