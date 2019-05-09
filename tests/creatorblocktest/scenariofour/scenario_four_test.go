@@ -19,21 +19,6 @@ func oneHundredEth() *big.Int {
 	return one.Mul(one, big.NewInt(100))
 }
 
-func TestInitialBalance(t *testing.T) {
-	// owner has all the eth atm
-	etBal, _ := deployed.EtherTokenContract.BalanceOf(nil, context.AuthOwner.From)
-	// all market tokens that exist atm
-	mtSup, _ := deployed.MarketTokenContract.TotalSupply(nil)
-	if etBal.Cmp(oneHundredOneEth()) != 0 {
-		t.Errorf("Expected ether token balance of %v, got: %v", oneHundredOneEth(), etBal)
-	}
-	if mtSup.Cmp(big.NewInt(test.ONE_WEI)) != 0 {
-		t.Errorf("Expected market token supply of 1wei, got: %v", mtSup)
-	}
-
-	t.Logf("Current Market Token total supply: %v", test.Commafy(mtSup))
-}
-
 func TestTransferToReserveThenMakersMake(t *testing.T) {
 	_, transError := deployed.EtherTokenContract.Transfer(test.GetTxOpts(
 		context.AuthOwner, nil, big.NewInt(test.ONE_GWEI*2), 100000),
@@ -59,8 +44,8 @@ func TestTransferToReserveThenMakersMake(t *testing.T) {
 
 	// Let's have the maker submit a listing
 	for name, maker := range makers {
-		t.Logf("Submitting listing for %s", fmt.Sprintf("%s FooMarket, AZ.", name))
-		listingHash := test.GenBytes32(fmt.Sprintf("%s FooMarket, AZ.", name))
+		t.Logf("Submitting listing for %s", name)
+		listingHash := test.GenBytes32(name)
 		t.Logf("listingHash: %v", listingHash)
 
 		_, listErr := deployed.ListingContract.List(test.GetTxOpts(maker, nil,
@@ -69,29 +54,31 @@ func TestTransferToReserveThenMakersMake(t *testing.T) {
 		context.Blockchain.Commit()
 
 		// Check that the submitted listing is now a candidate
-		isCan, _ := deployed.VotingContract.IsCandidate(nil, listingHash)
+		isCandidate, _ := deployed.VotingContract.IsCandidate(nil, listingHash)
 
-		if !isCan {
-			t.Errorf("Expected isCandidate to be true, got: %v", isCan)
+		if isCandidate == false {
+			t.Error("Submitted listing is not listed as a candidate")
 		}
 
 		// have the datatrust submit a data_hash for this listing.
-		dataHash, _ := deployed.DatatrustContract.GetHash(nil,
-			fmt.Sprintf("%s: thisissomedata", name))
+		dataHash, _ := deployed.DatatrustContract.GetHash(nil, name)
 		_, dataErr := deployed.DatatrustContract.SetDataHash(test.GetTxOpts(context.AuthBackend, nil,
 			big.NewInt(test.ONE_GWEI*2), 100000), listingHash, dataHash)
 		test.IfNotNil(t, dataErr, "Error setting data hash for listing")
 		context.Blockchain.Commit()
 
+		// check the market's balance as the mint operation should increment it after successful listing
+		marketBal, _ := deployed.MarketTokenContract.BalanceOf(nil, deployed.ListingAddress)
+
 		// cast a vote for, voter may need funds...
 		transErr := test.MaybeTransferMarketToken(context, deployed, context.AuthOwner, context.AuthUser2.From,
-			big.NewInt(test.ONE_GWEI))
+			big.NewInt(10000000000000000)) // 1 X 10**16
 		test.IfNotNil(t, transErr, fmt.Sprintf("Error transferring tokens to member: %v", transErr))
 		context.Blockchain.Commit()
 
 		// member will need to have approved the voting contract to spend
 		appErr := test.MaybeIncreaseMarketTokenApproval(context, deployed, context.AuthUser2, deployed.VotingAddress,
-			big.NewInt(test.ONE_GWEI))
+			big.NewInt(10000000000000000)) // 1 X 10**16
 		test.IfNotNil(t, appErr, fmt.Sprintf("Error approving market contract to spend: %v", appErr))
 		context.Blockchain.Commit()
 
@@ -110,6 +97,12 @@ func TestTransferToReserveThenMakersMake(t *testing.T) {
 		test.IfNotNil(t, resolveErr, fmt.Sprintf("Error resolving application: %v", resolveErr))
 		context.Blockchain.Commit()
 
+		// Check that the submitted listing is no longer a candidate
+		isCandidate, _ = deployed.VotingContract.IsCandidate(nil, listingHash)
+		if isCandidate == true {
+			t.Error("Expected approved listing's candidate to have been removed")
+		}
+
 		// should be listed now, with a reward
 		owner, supply, _ := deployed.ListingContract.GetListing(nil, listingHash)
 
@@ -120,6 +113,14 @@ func TestTransferToReserveThenMakersMake(t *testing.T) {
 		// supply should reflect the list reward
 		if supply.Cmp(big.NewInt(250000000000000)) != 0 {
 			t.Errorf("Expected supply to be list reward, got: %v", supply)
+		}
+
+		// marketToken should be banking the minted amount
+		newMarketBal, _ := deployed.MarketTokenContract.BalanceOf(nil, deployed.ListingAddress)
+
+		// we should see new bal being > old one
+		if newMarketBal.Cmp(marketBal) != 1 {
+			t.Errorf("Expected %v to be > %v", newMarketBal, marketBal)
 		}
 	}
 }
