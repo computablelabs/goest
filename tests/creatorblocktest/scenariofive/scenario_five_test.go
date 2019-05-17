@@ -48,6 +48,77 @@ func TestFullSimulation(t *testing.T) {
 	t.Logf("Number Makers: %d", len(makers))
 	t.Logf("Number Investors: %d", len(investors))
 
+	// Let's have the investors invest
+	for name, investor := range investors {
+		t.Logf("%s is investing", name)
+
+		// investor deposits eth in the ethToken
+		etBal, _ := deployed.EtherTokenContract.BalanceOf(nil, investor.From)
+		if etBal.Cmp(big.NewInt(0)) != 0 {
+			t.Errorf("Expected ether token balance of 0, got: %v", etBal)
+		}
+		_, depErr := deployed.EtherTokenContract.Deposit(test.GetTxOpts(investor,
+			oneHundredEth(), big.NewInt(test.ONE_GWEI*2), 100000))
+		test.IfNotNil(t, depErr, "Error depositing ETH")
+		context.Blockchain.Commit()
+
+		// Check that the investor's deposit into ethToken worked
+		etBalNow, _ := deployed.EtherTokenContract.BalanceOf(nil, investor.From)
+		if etBalNow.Cmp(oneHundredEth()) != 0 {
+			t.Errorf("Expected ether token balance of 100 eth, got: %v", etBalNow)
+		}
+
+		// Check that investor currently has no market token
+		mtBal, _ := deployed.MarketTokenContract.BalanceOf(nil, investor.From)
+		if mtBal.Cmp(big.NewInt(0)) != 0 {
+			t.Errorf("Expected market token balance of 0, got: %v", mtBal)
+		}
+		t.Logf("%s current market token balance: %v", name, mtBal)
+
+		// Get current invest price
+		invPrice, _ := deployed.InvestingContract.GetInvestmentPrice(nil)
+		t.Logf("Current invest price: %v", test.Commafy(invPrice))
+
+		// investor wants to invest 100 ETH. Must approve inv contract first...
+		_, approveErr := deployed.EtherTokenContract.Approve(test.GetTxOpts(investor, nil,
+			big.NewInt(test.ONE_GWEI*2), 100000), deployed.InvestingAddress, oneHundredEth()) // up to 100 ETH
+		test.IfNotNil(t, approveErr, fmt.Sprintf("Error approving market contract to spend: %v", approveErr))
+		context.Blockchain.Commit()
+
+		// investing has that allowance now
+		allowed, _ := deployed.EtherTokenContract.Allowance(nil, investor.From, deployed.InvestingAddress)
+		if allowed.Cmp(oneHundredEth()) != 0 {
+			t.Errorf("Expected allowance of 100 ETH, got: %v", allowed)
+		}
+
+		// the actual investment (now that we know we can)
+		_, invErr := deployed.InvestingContract.Invest(test.GetTxOpts(investor, nil,
+			big.NewInt(test.ONE_GWEI*2), 150000), oneHundredEth())
+		test.IfNotNil(t, invErr, "Error investing")
+		context.Blockchain.Commit()
+
+		// check current market token balance
+		mtBalNow, _ := deployed.MarketTokenContract.BalanceOf(nil, investor.From)
+		if mtBalNow.Cmp(mtBal) != 1 {
+			t.Errorf("Expected %v to be > %v", mtBalNow, mtBal)
+		}
+		t.Logf("%s market token balance post 100 ETH investment: %v", name, test.Commafy(mtBalNow))
+
+		// market token total supply should be updated
+		mtSup, _ := deployed.MarketTokenContract.TotalSupply(nil)
+		t.Logf("Market token total supply post %s investment of 100 ETH: %v", name, test.Commafy(mtSup))
+
+		// Get new reserve balance
+		resEthBal, _ = deployed.EtherTokenContract.BalanceOf(nil, deployed.InvestingAddress)
+		// reserve should be updated
+		t.Logf("Reserve balance post %s investment of 100 ETH: %v", name, test.Commafy(resEthBal))
+
+		// invest price should change
+		invPriceNow, _ := deployed.InvestingContract.GetInvestmentPrice(nil)
+		t.Logf("Investment Price post %s investment of 100 ETH: %v", name, test.Commafy(invPriceNow))
+
+	}
+
 	// Let's have the maker submit a listing
 	for name, maker := range makers {
 		t.Logf("Submitting listing for %s", name)
