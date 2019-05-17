@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/computablelabs/goest/tests/test"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
-	//"github.com/ethereum/go-ethereum/accounts/abi/bind/backends"
+	"github.com/ethereum/go-ethereum/accounts/abi/bind/backends"
 	"github.com/ethereum/go-ethereum/core"
 	"log"
 	"math/big"
@@ -83,6 +83,9 @@ func TestMain(m *testing.M) {
 	setupInvestors(oneHundredOneEth, 10)        // investors have 101 ETH account balance
 	setupMakers(big.NewInt(test.ONE_WEI), 10)   // makers have 1 ETH account balance
 	setupBuyers(oneHundredOneEth, 1)            // buyers have 101 ETH account balance
+
+	// override the original simulated backend now that we have appeneded to the allocation
+	context.Blockchain = backends.NewSimulatedBackend(context.Alloc, 4700000)
 
 	deployed, deployedError = test.Deploy(oneHundredOneEth, big.NewInt(test.ONE_WEI), context, &test.Params{
 		ConversionRate: big.NewInt(test.ONE_SZABO),
