@@ -211,4 +211,116 @@ func TestFullSimulation(t *testing.T) {
 		t.Logf("Original Market token total supply post %s listing: %v", name, test.Commafy(mtSup))
 
 	}
+
+	// Let's have the buyers buy
+	for name, buyer := range buyers {
+		t.Logf("%s is buying", name)
+
+		// user has no credits atm
+		purchased, _ := deployed.DatatrustContract.GetBytesPurchased(nil, buyer.From)
+
+		if purchased.Cmp(big.NewInt(0)) != 0 {
+			t.Errorf("Expected number purchased bytes to be 0, got: %v", purchased)
+		}
+
+		// reserve balance atm. This will go up by the res_payment after a request...
+		resBal, _ := deployed.EtherTokenContract.BalanceOf(nil, deployed.InvestingAddress)
+		t.Logf("Reserve balance before purchase: %v", test.Commafy(resBal))
+
+		// make a deposit in ETH, resulting in a 1:1 ethertoken balance
+		_, depErr := deployed.EtherTokenContract.Deposit(test.GetTxOpts(buyer,
+			oneHundredEth(), big.NewInt(test.ONE_GWEI*2), 100000))
+		test.IfNotNil(t, depErr, fmt.Sprintf("Error depositing funds from member to ether token: %v", depErr))
+
+		context.Blockchain.Commit()
+
+		// buyer now has an ether token balance
+		ethBal, _ := deployed.EtherTokenContract.BalanceOf(nil, buyer.From)
+		if ethBal.Cmp(big.NewInt(0)) != 1 {
+			t.Errorf("Expected member bal to be > 0, got: %v", ethBal)
+		}
+
+		// purchase payments are banked by the datatrust contract at the ether token (-res_payment)
+		dataEthBal, _ := deployed.EtherTokenContract.BalanceOf(nil, deployed.DatatrustAddress)
+
+		// buyer needs to have approved datatrust to spend ether token
+		_, approveErr := deployed.EtherTokenContract.Approve(test.GetTxOpts(buyer, nil,
+			big.NewInt(test.ONE_GWEI*2), 100000), deployed.DatatrustAddress, oneHundredEth())
+		test.IfNotNil(t, approveErr, fmt.Sprintf("Error approving spender: %v", approveErr))
+
+		context.Blockchain.Commit()
+
+		// note the allowance as later purchasing should decrease it
+		ethAllow, _ := deployed.EtherTokenContract.Allowance(nil, buyer.From, deployed.DatatrustAddress)
+
+		// when a delivery is requested, a hash of the query datatrust will recieve is expected
+		// TODO(rbharath): This test highlights a bit of funkiness that two people can't make exactly the same query. Might need to prepend queries with names as done here.
+		query := test.GenBytes32(fmt.Sprintf("%s: select * from SPAM where EGGS eq TRUE", name))
+
+		// assure no delivery exists for this query
+		owner, req, _, _ := deployed.DatatrustContract.GetDelivery(nil, query)
+		if owner == buyer.From {
+			t.Error("Expected no delivery object yet")
+		}
+
+		if req.Cmp(big.NewInt(0)) != 0 {
+			t.Errorf("Expected bytes requested to be 0, got: %v", req)
+		}
+
+		// the actual request for a delivery...
+		_, delErr := deployed.DatatrustContract.RequestDelivery(test.GetTxOpts(
+			buyer, nil, big.NewInt(test.ONE_GWEI*2), 250000), query, big.NewInt(1024*1024)) // ~1MB
+		test.IfNotNil(t, delErr, fmt.Sprintf("Error requesting delivery: %v", delErr))
+		context.Blockchain.Commit()
+
+		// user should now have some bytes
+		purchasedNow, _ := deployed.DatatrustContract.GetBytesPurchased(nil, buyer.From)
+		if purchasedNow.Cmp(purchased) != 1 {
+			t.Errorf("Expected byte balance %v to be more than %v", purchasedNow, purchased)
+		}
+
+		// ether token balances should be updated
+		ethBalNow, _ := deployed.EtherTokenContract.BalanceOf(nil, buyer.From)
+		if ethBalNow.Cmp(ethBal) != -1 {
+			t.Errorf("Expected %v to be < %v", ethBalNow, ethBal)
+		}
+
+		// allowances should be lower now to reflect spending...
+		ethAllowNow, _ := deployed.EtherTokenContract.Allowance(nil, buyer.From, deployed.DatatrustAddress)
+		if ethAllowNow.Cmp(ethAllow) != -1 {
+			t.Errorf("Expected %v to be < %v", ethAllowNow, ethAllow)
+		}
+
+		// funds should be banked by the datatrust now
+		dataEthBalNow, _ := deployed.EtherTokenContract.BalanceOf(nil, deployed.DatatrustAddress)
+		if dataEthBalNow.Cmp(dataEthBal) != 1 {
+			t.Errorf("Expected %v to be > %v", dataEthBalNow, dataEthBal)
+		}
+
+		// reserve gets its share when delivery is requested
+		resBalNow, _ := deployed.EtherTokenContract.BalanceOf(nil, deployed.InvestingAddress)
+		if resBalNow.Cmp(resBal) != 1 {
+			t.Errorf("Expected %v to be > %v", resBalNow, resBal)
+		}
+		t.Logf("Current Reserve balance: %v", test.Commafy(resBalNow))
+
+		// at this point the sum of what went into the reserve + the amount locked in datatrust will == bytesPurchased * cost_per_byte
+		toRes := resBalNow.Sub(resBalNow, resBal)
+		summed := toRes.Add(toRes, dataEthBalNow)
+		cost, _ := deployed.ParameterizerContract.GetCostPerByte(nil)
+		bytesCost := purchasedNow.Mul(purchasedNow, cost)
+		if summed.Cmp(bytesCost) != 0 {
+			t.Errorf("Expected %v to be %v", summed, bytesCost)
+		}
+
+		// delivery object should be present
+		ownerNow, reqNow, _, _ := deployed.DatatrustContract.GetDelivery(nil, query)
+		if ownerNow != buyer.From {
+			t.Error("Expected delivery object to be owned by user 3")
+		}
+		if reqNow.Cmp(big.NewInt(1024*1024)) != 0 {
+			t.Errorf("Expected bytes requested to be 1MB, got: %v", reqNow)
+		}
+
+	}
 }
