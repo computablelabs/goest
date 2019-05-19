@@ -329,12 +329,65 @@ func TestFullSimulation(t *testing.T) {
 		creditPerListing := big.NewInt(int64(1024 * 1024 / numListings))
 		// Let's loop over the listings to assign credits
 		for _, listingHash := range listings {
+			// Get the original bytes accessed for this listing
+			accessBal, _ := deployed.DatatrustContract.GetBytesAccessed(nil, listingHash)
+
 			_, accErr := deployed.DatatrustContract.ListingAccessed(test.GetTxOpts(context.AuthBackend, nil,
 				// let's say one listing was used for 1/2 the request
 				big.NewInt(test.ONE_GWEI*2), 150000), listingHash, query, creditPerListing)
 			test.IfNotNil(t, accErr, "Error claiming listing accessed")
 			context.Blockchain.Commit()
+
+			// Check the number of bytes accessed is stored correctly
+			accessBalAfter, _ := deployed.DatatrustContract.GetBytesAccessed(nil, listingHash)
+			accessBalAdded := accessBalAfter.Sub(accessBalAfter, accessBal)
+			if accessBalAdded.Cmp(creditPerListing) != 0 {
+				t.Errorf("Expected %v to be %v", accessBalAdded, creditPerListing)
+			}
+		}
+		// After this credit loop, all byte credits should be used up
+		bytesBalNow, _ := deployed.DatatrustContract.GetBytesPurchased(nil, buyer.From)
+		if bytesBalNow.Cmp(big.NewInt(0)) != 0 {
+			t.Errorf("Expected %v to be 0", bytesBalNow)
 		}
 
+		// we should see a delivery object whose bytes delivered match the bytes requested
+		_, req, del, _ := deployed.DatatrustContract.GetDelivery(nil, query)
+		if req.Cmp(del) != 0 {
+			t.Errorf("Expected %v to be %v", req, del)
+		}
+
+		// the user should have no avail bytes at this time
+		purchased, _ = deployed.DatatrustContract.GetBytesPurchased(nil, buyer.From)
+		if purchased.Cmp(big.NewInt(0)) != 0 {
+			t.Errorf("expected %v to be 0", purchased)
+		}
+
+		// note the ether token balances
+		beAddr, _ := deployed.DatatrustContract.GetBackendAddress(nil)
+		beBal, _ := deployed.EtherTokenContract.BalanceOf(nil, beAddr)
+		dtBal, _ := deployed.EtherTokenContract.BalanceOf(nil, deployed.DatatrustAddress)
+
+		// the backend must show that it put the delivery somewhere (this will be hashed)
+		urlHash := test.GenBytes32("someURL.net/roger/shrubber")
+		// Report delivery
+		_, delErr = deployed.DatatrustContract.Delivered(test.GetTxOpts(context.AuthBackend, nil,
+			big.NewInt(test.ONE_GWEI*2), 250000), query, urlHash)
+		test.IfNotNil(t, delErr, "Error calling delivered")
+		context.Blockchain.Commit()
+
+		// should see balance changes now
+		beBalNow, _ := deployed.EtherTokenContract.BalanceOf(nil, beAddr)
+		dtBalNow, _ := deployed.EtherTokenContract.BalanceOf(nil, deployed.DatatrustAddress)
+
+		// backend bal should have increased
+		if beBalNow.Cmp(beBal) != 1 {
+			t.Errorf("Expected %v to be > %v", beBalNow, beBal)
+		}
+
+		// datatrust contracts bal should have decreased as payments made
+		if dtBalNow.Cmp(dtBal) != -1 {
+			t.Errorf("Expected %v to be < %v", dtBalNow, dtBal)
+		}
 	}
 }
