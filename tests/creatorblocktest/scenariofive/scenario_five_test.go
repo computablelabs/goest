@@ -123,6 +123,7 @@ func TestFullSimulation(t *testing.T) {
 	for name, maker := range makers {
 		t.Logf("Submitting listing for %s", name)
 		listingHash := test.GenBytes32(name)
+		listings[name] = listingHash
 
 		_, listErr := deployed.ListingContract.List(test.GetTxOpts(maker, nil,
 			big.NewInt(test.ONE_GWEI*2), 250000), listingHash)
@@ -306,7 +307,8 @@ func TestFullSimulation(t *testing.T) {
 
 		// at this point the sum of what went into the reserve + the amount locked in datatrust will == bytesPurchased * cost_per_byte
 		toRes := resBalNow.Sub(resBalNow, resBal)
-		summed := toRes.Add(toRes, dataEthBalNow)
+		toData := dataEthBal.Sub(dataEthBalNow, dataEthBal)
+		summed := toRes.Add(toRes, toData)
 		cost, _ := deployed.ParameterizerContract.GetCostPerByte(nil)
 		bytesCost := purchasedNow.Mul(purchasedNow, cost)
 		if summed.Cmp(bytesCost) != 0 {
@@ -320,6 +322,18 @@ func TestFullSimulation(t *testing.T) {
 		}
 		if reqNow.Cmp(big.NewInt(1024*1024)) != 0 {
 			t.Errorf("Expected bytes requested to be 1MB, got: %v", reqNow)
+		}
+
+		// Note that the number of listings has to divide 1024
+		numListings := len(listings)
+		creditPerListing := big.NewInt(int64(1024 * 1024 / numListings))
+		// Let's loop over the listings to assign credits
+		for _, listingHash := range listings {
+			_, accErr := deployed.DatatrustContract.ListingAccessed(test.GetTxOpts(context.AuthBackend, nil,
+				// let's say one listing was used for 1/2 the request
+				big.NewInt(test.ONE_GWEI*2), 150000), listingHash, query, creditPerListing)
+			test.IfNotNil(t, accErr, "Error claiming listing accessed")
+			context.Blockchain.Commit()
 		}
 
 	}

@@ -21,6 +21,7 @@ var context *test.Ctx
 var investors map[string]*bind.TransactOpts
 var makers map[string]*bind.TransactOpts
 var buyers map[string]*bind.TransactOpts
+var listings map[string]([32]byte)
 var deployed *test.Dep
 var deployedError error
 
@@ -81,8 +82,11 @@ func TestMain(m *testing.M) {
 	//context = test.GetContext(big.NewInt(test.ONE_WEI * 3)) // users have 3 ETH
 	context = test.GetContext(oneHundredOneEth) // users have 101 ETH account bal
 	setupInvestors(oneHundredOneEth, 10)        // investors have 101 ETH account balance
-	setupMakers(big.NewInt(test.ONE_WEI), 10)   // makers have 1 ETH account balance
-	setupBuyers(oneHundredOneEth, 1)            // buyers have 101 ETH account balance
+	// The number of makers needs to divide 1024 for test to go through
+	setupMakers(big.NewInt(test.ONE_WEI), 16) // makers have 1 ETH account balance
+	setupBuyers(oneHundredOneEth, 10)         // buyers have 101 ETH account balance
+	// Set up map for listings
+	listings = make(map[string]([32]byte))
 
 	// override the original simulated backend now that we have appeneded to the allocation
 	context.Blockchain = backends.NewSimulatedBackend(context.Alloc, 4700000)
