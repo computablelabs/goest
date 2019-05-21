@@ -123,7 +123,7 @@ func TestFullSimulation(t *testing.T) {
 	for name, maker := range makers {
 		t.Logf("Submitting listing for %s", name)
 		listingHash := test.GenBytes32(name)
-		listings[name] = listingHash
+		listings[maker] = listingHash
 
 		_, listErr := deployed.ListingContract.List(test.GetTxOpts(maker, nil,
 			big.NewInt(test.ONE_GWEI*2), 250000), listingHash)
@@ -389,5 +389,33 @@ func TestFullSimulation(t *testing.T) {
 		if dtBalNow.Cmp(dtBal) != -1 {
 			t.Errorf("Expected %v to be < %v", dtBalNow, dtBal)
 		}
+	}
+
+	for maker, listingHash := range listings {
+		// note the supply of those listings
+		_, supply, _ := deployed.ListingContract.GetListing(nil, listingHash)
+		// claim the listing for 1
+		_, clErr := deployed.ListingContract.ClaimBytesAccessed(test.GetTxOpts(maker, nil,
+			big.NewInt(test.ONE_GWEI*2), 250000), listingHash)
+		test.IfNotNil(t, clErr, "Error claiming access")
+		context.Blockchain.Commit()
+
+		// supply should have increased
+		_, supplyNow, _ := deployed.ListingContract.GetListing(nil, listingHash)
+		if supplyNow.Cmp(supply) != 1 {
+			t.Errorf("Expected %v to be > %v", supplyNow, supply)
+		}
+
+		// access bal should be cleared
+		accessBal, _ := deployed.DatatrustContract.GetBytesAccessed(nil, listingHash)
+		if accessBal.Cmp(big.NewInt(0)) != 0 {
+			t.Errorf("Expected %v to be 0", accessBal)
+		}
+	}
+
+	// datatrust bank should be empty now. TODO: Is this every not the case because of dusting?
+	dataBalAgain, _ := deployed.EtherTokenContract.BalanceOf(nil, deployed.DatatrustAddress)
+	if dataBalAgain.Cmp(big.NewInt(0)) != 0 {
+		t.Errorf("Expected %v to be 0", dataBalAgain)
 	}
 }
