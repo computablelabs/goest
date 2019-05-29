@@ -5,7 +5,7 @@ contract Markettoken:
     def approve(spender: address, amount: uint256(wei)) -> bool: modifying
     def balanceOf(owner: address) -> uint256(wei): constant
     def getPrivileged() -> (address, address): constant
-    def has_privilege(sender: address) -> bool: constant
+    def hasPrivilege(sender: address) -> bool: constant
     def burn(amount: uint256(wei)): modifying
     def burnAll(owner: address): modifying
     def decreaseApproval(spender: address, amount: uint256(wei)): modifying
