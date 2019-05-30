@@ -75,7 +75,7 @@ def getPrivileged() -> (address, address):
 
 @public
 @constant
-def has_privilege(sender: address) -> bool:
+def hasPrivilege(sender: address) -> bool:
   """
   @notice Return a bool indicating whether the given address is a member of this contracts privileged group
   @return bool
@@ -90,7 +90,7 @@ def burn(amount: wei_value):
   @dev We only allow the market contract to call burn
   @param amount The amount to burn
   """
-  assert self.has_privilege(msg.sender)
+  assert self.hasPrivilege(msg.sender)
   self.balances[msg.sender] -= amount
   self.supply -= amount
   log.Burn(msg.sender, amount)
@@ -103,7 +103,7 @@ def burnAll(owner: address):
   @dev We only allow the market contract to call burnAll
   @param address The owner of the tokens being burnt
   """
-  assert self.has_privilege(msg.sender)
+  assert self.hasPrivilege(msg.sender)
   bal: wei_value = self.balances[owner]
   self.supply -= bal
   clear(self.balances[owner])
@@ -140,7 +140,7 @@ def mint(amount: wei_value):
   @notice Create new Market Token funds and add them to the Market Contract balance
   @dev We only allow the Market Contract to call for minting
   """
-  assert self.has_privilege(msg.sender)
+  assert self.hasPrivilege(msg.sender)
   self.supply += amount
   self.balances[msg.sender] += amount
   log.Mint(msg.sender, amount)

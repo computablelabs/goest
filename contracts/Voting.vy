@@ -62,7 +62,7 @@ def setPrivileged(parameterizer: address, datatrust: address, listing: address, 
 
 @public
 @constant
-def has_privilege(sender: address) -> bool:
+def hasPrivilege(sender: address) -> bool:
   """
   @notice Return a bool indicating whether the given address is a member of this contracts privileged group
   @return bool
@@ -125,7 +125,7 @@ def addCandidate(hash: bytes32, kind: uint256, owner: address, stake: wei_value,
   @param stake How much, in wei, must be staked to vote or challenge
   @param vote_by How long into the future until polls for this candidate close
   """
-  assert self.has_privilege(msg.sender)
+  assert self.hasPrivilege(msg.sender)
   assert self.candidates[hash].owner == ZERO_ADDRESS
   if kind == CHALLENGE: # a challenger must successfully stake a challenge
     self.market_token.transferFrom(owner, self, stake)
@@ -144,7 +144,7 @@ def removeCandidate(hash: bytes32):
   @notice Remove a candidate from the current list
   @dev Clears all members from a Candidate pointed to by a hash (enabling re-use)
   """
-  assert self.has_privilege(msg.sender)
+  assert self.hasPrivilege(msg.sender)
   assert self.candidates[hash].owner != ZERO_ADDRESS
   clear(self.candidates[hash]) # TODO assure this works vs individually setting to 0
   log.CandidateRemoved(hash)

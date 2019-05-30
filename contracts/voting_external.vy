@@ -3,7 +3,7 @@
 contract Voting:
     def getPrivileged() -> (address, address, address, address): constant
     def setPrivileged(parameterizer: address, datatrust: address, listing: address, investing: address): modifying
-    def has_privilege(sender: address) -> bool: constant
+    def hasPrivilege(sender: address) -> bool: constant
     def candidateIs(hash: bytes32, kind: uint256) -> bool: constant
     def isCandidate(hash: bytes32) -> bool: constant
     def getCandidate(hash: bytes32) -> (uint256, address, uint256(wei), uint256(sec, positional), uint256, uint256): constant
