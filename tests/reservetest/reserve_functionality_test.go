@@ -1,4 +1,4 @@
-package investingtest
+package reservetest
 
 import (
 	"fmt"
@@ -28,7 +28,7 @@ func buyPrice() uint64 {
 
 func sellPrice(addr common.Address) *big.Int {
 	bal, _ := deployed.MarketTokenContract.BalanceOf(nil, addr)
-	res, _ := deployed.EtherTokenContract.BalanceOf(nil, deployed.InvestingAddress)
+	res, _ := deployed.EtherTokenContract.BalanceOf(nil, deployed.ReserveAddress)
 	tot, _ := deployed.MarketTokenContract.TotalSupply(nil)
 	var x big.Int
 	y := x.Mul(bal, res)
@@ -36,17 +36,17 @@ func sellPrice(addr common.Address) *big.Int {
 	return z
 }
 
-func TestGetInvestmentPrice(t *testing.T) {
-	price, _ := deployed.InvestingContract.GetInvestmentPrice(nil)
+func TestGetSupportPrice(t *testing.T) {
+	price, _ := deployed.ReserveContract.GetSupportPrice(nil)
 	price64 := price.Uint64()
 	calc := buyPrice()
 
 	if price64 != calc {
-		t.Errorf("Expected investment price to be %v, got: %v", calc, price64)
+		t.Errorf("Expected support price to be %v, got: %v", calc, price64)
 	}
 }
 
-func TestInvest(t *testing.T) {
+func TestSupport(t *testing.T) {
 	var x big.Int
 	// member 3 will need to deposit funds into the ether token
 	_, depErr := deployed.EtherTokenContract.Deposit(test.GetTxOpts(context.AuthUser3,
@@ -56,24 +56,22 @@ func TestInvest(t *testing.T) {
 
 	// allow the ether token to spend on user3's behalf
 	_, approveErr := deployed.EtherTokenContract.Approve(test.GetTxOpts(context.AuthUser3, nil,
-		big.NewInt(test.ONE_GWEI*2), 1000000), deployed.InvestingAddress, big.NewInt(test.ONE_WEI*2)) // up to 2 tokens
+		big.NewInt(test.ONE_GWEI*2), 1000000), deployed.ReserveAddress, big.NewInt(test.ONE_WEI*2)) // up to 2 tokens
 	test.IfNotNil(t, approveErr, fmt.Sprintf("Error approving market contract to spend: %v", approveErr))
 	context.Blockchain.Commit()
 
-	// snapshot this user's market token bal as investing will increase by what was minted
+	// snapshot this user's market token bal as reserve will increase by what was minted
 	bal, _ := deployed.MarketTokenContract.BalanceOf(nil, context.AuthUser3.From)
 	// here we will just offer the suggested price
-	price, _ := deployed.InvestingContract.GetInvestmentPrice(nil)
-	// t.Logf("Investment price: %v", price)
+	price, _ := deployed.ReserveContract.GetSupportPrice(nil)
 
-	// investing the asking price will... what?
-	_, investErr := deployed.InvestingContract.Invest(test.GetTxOpts(context.AuthUser3, nil,
+	_, sErr := deployed.ReserveContract.Support(test.GetTxOpts(context.AuthUser3, nil,
 		big.NewInt(test.ONE_GWEI*2), 1000000), price.Mul(price, big.NewInt(10))) // 1e9 * 10
-	test.IfNotNil(t, investErr, fmt.Sprintf("Error investing in market: %v", investErr))
+	test.IfNotNil(t, sErr, fmt.Sprintf("Error supporting market: %v", sErr))
 	context.Blockchain.Commit()
 
 	// if offering the price, you'll always get 1 gwei worth of market token
-	// this will be reflected in the market token balance for this investor
+	// this will be reflected in the market token balance for this supporter
 	newBal, _ := deployed.MarketTokenContract.BalanceOf(nil, context.AuthUser3.From)
 	expectedBal := x.Add(bal, big.NewInt(test.ONE_GWEI*10)) // this is true in a market that had no prior reserve (like this spec)
 
@@ -82,40 +80,38 @@ func TestInvest(t *testing.T) {
 	}
 }
 
-func TestGetDivestmentProceeds(t *testing.T) {
+func TestGetWithdrawalProceeds(t *testing.T) {
 	// user should have a non-zero market token balance
 	marketBal, _ := deployed.MarketTokenContract.BalanceOf(nil, context.AuthUser3.From)
 	if marketBal.Cmp(big.NewInt(0)) != 1 {
 		t.Errorf("Expected user to have a market token balance, got: %v", marketBal)
 	}
 
-	// generate a sale price and compare to the cantract method
+	// generate a sale price and compare to the contract method
 	expectedProceeds := sellPrice(context.AuthUser3.From)
-	proceeds, _ := deployed.InvestingContract.GetDivestmentProceeds(nil, context.AuthUser3.From)
+	proceeds, _ := deployed.ReserveContract.GetWithdrawalProceeds(nil, context.AuthUser3.From)
 
 	if proceeds.Cmp(expectedProceeds) != 0 {
 		t.Errorf("Expected %v to be %v", proceeds, expectedProceeds)
 	}
 }
 
-// this is the divest-path-for-investor. for converted maker divest we will use the
-// respective convert spec...
-func TestDivest(t *testing.T) {
+// this is the withdrawal-path-for-supporter
+func TestWithdraw(t *testing.T) {
 	// the total market balance atm
 	tot, _ := deployed.MarketTokenContract.TotalSupply(nil)
-	// user's ether token bal will go up by the sell price after divesting
+	// user's ether token bal will go up by the sell price after withdrawal
 	etherBal, _ := deployed.EtherTokenContract.BalanceOf(nil, context.AuthUser3.From)
 	expectedProceeds := sellPrice(context.AuthUser3.From)
 
-	_, divestErr := deployed.InvestingContract.Divest(test.GetTxOpts(context.AuthUser3, nil,
+	_, wErr := deployed.ReserveContract.Withdraw(test.GetTxOpts(context.AuthUser3, nil,
 		big.NewInt(test.ONE_GWEI*2), 1000000))
-	test.IfNotNil(t, divestErr, fmt.Sprintf("Error divesting: %v", divestErr))
+	test.IfNotNil(t, wErr, fmt.Sprintf("Error withdrawing: %v", wErr))
 	context.Blockchain.Commit()
 
 	newTot, _ := deployed.MarketTokenContract.TotalSupply(nil)
 	// user should have a non-zero market token balance
 	newMarketBal, _ := deployed.MarketTokenContract.BalanceOf(nil, context.AuthUser3.From)
-	// user's ether token bal will go up by the sell price after divesting
 	newEtherBal, _ := deployed.EtherTokenContract.BalanceOf(nil, context.AuthUser3.From)
 
 	if newTot.Cmp(tot) != -1 {

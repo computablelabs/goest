@@ -1,5 +1,5 @@
-# @title Computable Investing
-# @notice Handle the details of Investing in the Computable Market
+# @title Computable Reserve
+# @notice Handle the details pertaining to the Reserve of a Computable Market
 # @author Computable
 
 # external contracts
@@ -20,8 +20,8 @@ contract Parameterizer:
   def getSpread() -> uint256: constant
 
 # events
-Divested: event({investor: indexed(address), transferred: wei_value})
-Invested: event({investor: indexed(address), offered: wei_value, minted: wei_value})
+Withdrawn: event({owner: indexed(address), transferred: wei_value})
+Supported: event({owner: indexed(address), offered: wei_value, minted: wei_value})
 
 # state vars
 ether_token: EtherToken
@@ -37,7 +37,7 @@ def __init__(ether_token_addr: address, market_token_addr: address, p11r_addr: a
 
 @public
 @constant
-def getInvestmentPrice() -> wei_value:
+def getSupportPrice() -> wei_value:
   """
   @notice Return the amount of Ether token (in wei) needed to purchase one billionth of a Market token
   """
@@ -52,26 +52,25 @@ def getInvestmentPrice() -> wei_value:
 
 
 @public
-def invest(offer: wei_value):
+def support(offer: wei_value):
   """
-  @notice Allow an investor to purchase MarketToken with EtherToken priced according to the "buy-curve"
+  @notice Allow the purchase MarketToken with EtherToken priced according to the "buy-curve"
   @param offer An amount of Ether Token in Wei
   """
-  price: wei_value = self.getInvestmentPrice()
+  price: wei_value = self.getSupportPrice()
   assert offer >= price # you cannot buy less than one billionth of a market token
   self.ether_token.transferFrom(msg.sender, self, offer)
   minted: uint256 = (offer / price) * 1000000000 # NOTE the ONE_GWEI multiplier here as well
   self.market_token.mint(minted) # TODO maybe implement `mintFor()`
   self.market_token.transfer(msg.sender, minted)
-  log.Invested(msg.sender, offer, minted)
+  log.Supported(msg.sender, offer, minted)
 
 
 @public
 @constant
-def getDivestmentProceeds(addr: address) -> wei_value:
+def getWithdrawalProceeds(addr: address) -> wei_value:
   """
-  @notice Return the amount of Ether Token funds an investor would recieve for divestment
-  @dev TBD
+  @notice Return the amount of Ether Token funds a supporter would recieve for withdrawal
   @return Amount in Ether Token Wei
   """
   assert addr != ZERO_ADDRESS
@@ -82,15 +81,15 @@ def getDivestmentProceeds(addr: address) -> wei_value:
 
 
 @public
-def divest():
+def withdraw():
   """
-  @notice Allows a stakeholder to exit the market. Burning any market token owned and
+  @notice Allows a supporter to exit the market. Burning any market token owned and
   withdrawing their share of the reserve.
-  @dev Stakeholder, if owning a challenge, may want to wait until that is over (in case they win)
+  @dev Supporter, if owning a challenge, may want to wait until that is over (in case they win)
   """
-  divested: wei_value = self.getDivestmentProceeds(msg.sender)
-  assert divested > 0
-  # before any transfer, burn their market tokens and remove if an investor
+  withdrawn: wei_value = self.getWithdrawalProceeds(msg.sender)
+  assert withdrawn > 0
+  # before any transfer, burn their market tokens...
   self.market_token.burnAll(msg.sender)
-  self.ether_token.transfer(msg.sender, divested)
-  log.Divested(msg.sender, divested)
+  self.ether_token.transfer(msg.sender, withdrawn)
+  log.Withdrawn(msg.sender, withdrawn)

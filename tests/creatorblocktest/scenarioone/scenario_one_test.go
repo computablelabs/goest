@@ -42,12 +42,12 @@ func TestInitialBalance(t *testing.T) {
 func TestTransferToReserve(t *testing.T) {
 	_, transError := deployed.EtherTokenContract.Transfer(test.GetTxOpts(
 		context.AuthOwner, nil, big.NewInt(test.ONE_GWEI*2), 100000),
-		deployed.InvestingAddress, oneHundredEth())
+		deployed.ReserveAddress, oneHundredEth())
 	test.IfNotNil(t, transError, "Error transferring token")
 	context.Blockchain.Commit()
 
 	ownerEthBal, _ := deployed.EtherTokenContract.BalanceOf(nil, context.AuthOwner.From)
-	resEthBal, _ := deployed.EtherTokenContract.BalanceOf(nil, deployed.InvestingAddress)
+	resEthBal, _ := deployed.EtherTokenContract.BalanceOf(nil, deployed.ReserveAddress)
 
 	// has one wei left
 	if ownerEthBal.Cmp(big.NewInt(test.ONE_WEI)) != 0 {
@@ -62,7 +62,7 @@ func TestTransferToReserve(t *testing.T) {
 	t.Logf("Current Reserve balance: %v", test.Commafy(resEthBal))
 }
 
-func TestOneInvestor(t *testing.T) {
+func TestOneSupporter(t *testing.T) {
 	// user1 deposit eth in the ethToken
 	etBal1, _ := deployed.EtherTokenContract.BalanceOf(nil, context.AuthUser1.From)
 	if etBal1.Cmp(big.NewInt(0)) != 0 {
@@ -82,40 +82,40 @@ func TestOneInvestor(t *testing.T) {
 		t.Errorf("Expected market token balance of 0, got: %v", mtBal)
 	}
 	t.Logf("User1 current market token balance: %v", mtBal)
-	// invest price currently
-	invPrice, _ := deployed.InvestingContract.GetInvestmentPrice(nil)
-	t.Logf("Current invest price: %v", test.Commafy(invPrice))
+	// support price currently
+	invPrice, _ := deployed.ReserveContract.GetSupportPrice(nil)
+	t.Logf("Current support price: %v", test.Commafy(invPrice))
 
-	// user1 wants to invest 10 ETH. Must approve inv contract first...
+	// user1 wants to place 10 ETH. Must approve inv contract first...
 	_, approveErr := deployed.EtherTokenContract.Approve(test.GetTxOpts(context.AuthUser1, nil,
-		big.NewInt(test.ONE_GWEI*2), 100000), deployed.InvestingAddress, tenEth()) // up to 10 ETH
+		big.NewInt(test.ONE_GWEI*2), 100000), deployed.ReserveAddress, tenEth()) // up to 10 ETH
 	test.IfNotNil(t, approveErr, fmt.Sprintf("Error approving market contract to spend: %v", approveErr))
 	context.Blockchain.Commit()
 
-	// investing has that allowance now
-	allowed, _ := deployed.EtherTokenContract.Allowance(nil, context.AuthUser1.From, deployed.InvestingAddress)
+	// reserve has that allowance now
+	allowed, _ := deployed.EtherTokenContract.Allowance(nil, context.AuthUser1.From, deployed.ReserveAddress)
 	if allowed.Cmp(tenEth()) != 0 {
 		t.Errorf("Expected allowance of 10 ETH, got: %v", allowed)
 	}
 
-	// the actual investment (now that we know we can)
-	_, invErr := deployed.InvestingContract.Invest(test.GetTxOpts(context.AuthUser1, nil,
+	// the actual support (now that we know we can)
+	_, invErr := deployed.ReserveContract.Support(test.GetTxOpts(context.AuthUser1, nil,
 		big.NewInt(test.ONE_GWEI*2), 150000), tenEth())
-	test.IfNotNil(t, invErr, "Error investing")
+	test.IfNotNil(t, invErr, "Error supporting")
 	context.Blockchain.Commit()
 	// check current market token balance
 	mtBalNow, _ := deployed.MarketTokenContract.BalanceOf(nil, context.AuthUser1.From)
 	if mtBalNow.Cmp(mtBal) != 1 {
 		t.Errorf("Expected %v to be > %v", mtBalNow, mtBal)
 	}
-	t.Logf("User1 market token balance post 10 ETH investment: %v", test.Commafy(mtBalNow))
+	t.Logf("User1 market token balance post 10 ETH support: %v", test.Commafy(mtBalNow))
 	// market token total supply should be updated
 	mtSup, _ := deployed.MarketTokenContract.TotalSupply(nil)
-	t.Logf("Market token total supply post user1 investment of 10 ETH: %v", test.Commafy(mtSup))
+	t.Logf("Market token total supply post user1 support of 10 ETH: %v", test.Commafy(mtSup))
 	// reserve should be updated
-	resEthBal, _ := deployed.EtherTokenContract.BalanceOf(nil, deployed.InvestingAddress)
-	t.Logf("Reserve balance post user1 investment of 10 ETH: %v", test.Commafy(resEthBal))
-	// invest price should change
-	invPriceNow, _ := deployed.InvestingContract.GetInvestmentPrice(nil)
-	t.Logf("Investment Price post user1 investment of 10 ETH: %v", test.Commafy(invPriceNow))
+	resEthBal, _ := deployed.EtherTokenContract.BalanceOf(nil, deployed.ReserveAddress)
+	t.Logf("Reserve balance post user1 support of 10 ETH: %v", test.Commafy(resEthBal))
+	// support price should change
+	invPriceNow, _ := deployed.ReserveContract.GetSupportPrice(nil)
+	t.Logf("Support Price post user1 support of 10 ETH: %v", test.Commafy(invPriceNow))
 }

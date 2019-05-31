@@ -12,7 +12,7 @@ func TestRequestDelivery(t *testing.T) {
 	// user has no credits atm
 	purchased, _ := deployed.DatatrustContract.GetBytesPurchased(nil, context.AuthUser3.From)
 	// reserve balance atm. This will go up by the res_payment after a request...
-	resBal, _ := deployed.EtherTokenContract.BalanceOf(nil, deployed.InvestingAddress)
+	resBal, _ := deployed.EtherTokenContract.BalanceOf(nil, deployed.ReserveAddress)
 
 	// make a deposit in ETH, resulting in a 1:1 ethertoken balance
 	_, depErr := deployed.EtherTokenContract.Deposit(test.GetTxOpts(context.AuthUser3,
@@ -85,7 +85,7 @@ func TestRequestDelivery(t *testing.T) {
 	}
 
 	// reserve gets its share when delivery is requested
-	resBalNow, _ := deployed.EtherTokenContract.BalanceOf(nil, deployed.InvestingAddress)
+	resBalNow, _ := deployed.EtherTokenContract.BalanceOf(nil, deployed.ReserveAddress)
 	if resBalNow.Cmp(resBal) != 1 {
 		t.Errorf("Expected %v to be > %v", resBalNow, resBal)
 	}
@@ -378,7 +378,7 @@ func TestClaimBytesAccessed(t *testing.T) {
 	}
 
 	// NOTE if cost_per_byte is too low there is a scenario here where the 2nd listing's
-	// maker_fee is too low to invest. Which is _not_ erroneous, but worth noting...
+	// maker_fee is too low for support. Which is _not_ erroneous, but worth noting...
 
 	// claim the other listing access
 	_, clErr2 := deployed.ListingContract.ClaimBytesAccessed(test.GetTxOpts(context.AuthUser1, nil,

@@ -16,10 +16,10 @@ import (
 )
 
 // EtherTokenABI is the input ABI used to generate the binding from.
-const EtherTokenABI = "[{\"name\":\"Approval\",\"inputs\":[{\"type\":\"address\",\"name\":\"owner\",\"indexed\":true},{\"type\":\"address\",\"name\":\"spender\",\"indexed\":true},{\"type\":\"uint256\",\"name\":\"amount\",\"indexed\":false,\"unit\":\"wei\"}],\"anonymous\":false,\"type\":\"event\"},{\"name\":\"Deposit\",\"inputs\":[{\"type\":\"address\",\"name\":\"source\",\"indexed\":true},{\"type\":\"uint256\",\"name\":\"amount\",\"indexed\":false,\"unit\":\"wei\"}],\"anonymous\":false,\"type\":\"event\"},{\"name\":\"Transfer\",\"inputs\":[{\"type\":\"address\",\"name\":\"source\",\"indexed\":true},{\"type\":\"address\",\"name\":\"to\",\"indexed\":true},{\"type\":\"uint256\",\"name\":\"amount\",\"indexed\":false,\"unit\":\"wei\"}],\"anonymous\":false,\"type\":\"event\"},{\"name\":\"Withdraw\",\"inputs\":[{\"type\":\"address\",\"name\":\"to\",\"indexed\":true},{\"type\":\"uint256\",\"name\":\"amount\",\"indexed\":false,\"unit\":\"wei\"}],\"anonymous\":false,\"type\":\"event\"},{\"outputs\":[],\"inputs\":[{\"type\":\"address\",\"name\":\"initial_account\"},{\"type\":\"uint256\",\"name\":\"initial_balance\",\"unit\":\"wei\"}],\"constant\":false,\"payable\":false,\"type\":\"constructor\"},{\"name\":\"allowance\",\"outputs\":[{\"type\":\"uint256\",\"name\":\"out\",\"unit\":\"wei\"}],\"inputs\":[{\"type\":\"address\",\"name\":\"owner\"},{\"type\":\"address\",\"name\":\"spender\"}],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":815},{\"name\":\"approve\",\"outputs\":[{\"type\":\"bool\",\"name\":\"out\"}],\"inputs\":[{\"type\":\"address\",\"name\":\"spender\"},{\"type\":\"uint256\",\"name\":\"amount\",\"unit\":\"wei\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":37719},{\"name\":\"balanceOf\",\"outputs\":[{\"type\":\"uint256\",\"name\":\"out\",\"unit\":\"wei\"}],\"inputs\":[{\"type\":\"address\",\"name\":\"owner\"}],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":715},{\"name\":\"decreaseApproval\",\"outputs\":[],\"inputs\":[{\"type\":\"address\",\"name\":\"spender\"},{\"type\":\"uint256\",\"name\":\"amount\",\"unit\":\"wei\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":38742},{\"name\":\"deposit\",\"outputs\":[],\"inputs\":[],\"constant\":false,\"payable\":true,\"type\":\"function\",\"gas\":73656},{\"name\":\"increaseApproval\",\"outputs\":[],\"inputs\":[{\"type\":\"address\",\"name\":\"spender\"},{\"type\":\"uint256\",\"name\":\"amount\",\"unit\":\"wei\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":39008},{\"name\":\"totalSupply\",\"outputs\":[{\"type\":\"uint256\",\"name\":\"out\",\"unit\":\"wei\"}],\"inputs\":[],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":663},{\"name\":\"transfer\",\"outputs\":[{\"type\":\"bool\",\"name\":\"out\"}],\"inputs\":[{\"type\":\"address\",\"name\":\"to\"},{\"type\":\"uint256\",\"name\":\"amount\",\"unit\":\"wei\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":74321},{\"name\":\"transferFrom\",\"outputs\":[{\"type\":\"bool\",\"name\":\"out\"}],\"inputs\":[{\"type\":\"address\",\"name\":\"source\"},{\"type\":\"address\",\"name\":\"to\"},{\"type\":\"uint256\",\"name\":\"amount\",\"unit\":\"wei\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":110291},{\"name\":\"withdraw\",\"outputs\":[],\"inputs\":[{\"type\":\"uint256\",\"name\":\"amount\",\"unit\":\"wei\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":108330},{\"name\":\"decimals\",\"outputs\":[{\"type\":\"uint256\",\"name\":\"out\"}],\"inputs\":[],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":783}]"
+const EtherTokenABI = "[{\"name\":\"Approval\",\"inputs\":[{\"type\":\"address\",\"name\":\"owner\",\"indexed\":true},{\"type\":\"address\",\"name\":\"spender\",\"indexed\":true},{\"type\":\"uint256\",\"name\":\"amount\",\"indexed\":false,\"unit\":\"wei\"}],\"anonymous\":false,\"type\":\"event\"},{\"name\":\"Deposited\",\"inputs\":[{\"type\":\"address\",\"name\":\"source\",\"indexed\":true},{\"type\":\"uint256\",\"name\":\"amount\",\"indexed\":false,\"unit\":\"wei\"}],\"anonymous\":false,\"type\":\"event\"},{\"name\":\"Transfer\",\"inputs\":[{\"type\":\"address\",\"name\":\"source\",\"indexed\":true},{\"type\":\"address\",\"name\":\"to\",\"indexed\":true},{\"type\":\"uint256\",\"name\":\"amount\",\"indexed\":false,\"unit\":\"wei\"}],\"anonymous\":false,\"type\":\"event\"},{\"name\":\"Withdrawn\",\"inputs\":[{\"type\":\"address\",\"name\":\"to\",\"indexed\":true},{\"type\":\"uint256\",\"name\":\"amount\",\"indexed\":false,\"unit\":\"wei\"}],\"anonymous\":false,\"type\":\"event\"},{\"outputs\":[],\"inputs\":[{\"type\":\"address\",\"name\":\"initial_account\"},{\"type\":\"uint256\",\"name\":\"initial_balance\",\"unit\":\"wei\"}],\"constant\":false,\"payable\":false,\"type\":\"constructor\"},{\"name\":\"allowance\",\"outputs\":[{\"type\":\"uint256\",\"name\":\"out\",\"unit\":\"wei\"}],\"inputs\":[{\"type\":\"address\",\"name\":\"owner\"},{\"type\":\"address\",\"name\":\"spender\"}],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":815},{\"name\":\"approve\",\"outputs\":[{\"type\":\"bool\",\"name\":\"out\"}],\"inputs\":[{\"type\":\"address\",\"name\":\"spender\"},{\"type\":\"uint256\",\"name\":\"amount\",\"unit\":\"wei\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":37719},{\"name\":\"balanceOf\",\"outputs\":[{\"type\":\"uint256\",\"name\":\"out\",\"unit\":\"wei\"}],\"inputs\":[{\"type\":\"address\",\"name\":\"owner\"}],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":715},{\"name\":\"decreaseApproval\",\"outputs\":[],\"inputs\":[{\"type\":\"address\",\"name\":\"spender\"},{\"type\":\"uint256\",\"name\":\"amount\",\"unit\":\"wei\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":38742},{\"name\":\"deposit\",\"outputs\":[],\"inputs\":[],\"constant\":false,\"payable\":true,\"type\":\"function\",\"gas\":73656},{\"name\":\"increaseApproval\",\"outputs\":[],\"inputs\":[{\"type\":\"address\",\"name\":\"spender\"},{\"type\":\"uint256\",\"name\":\"amount\",\"unit\":\"wei\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":39008},{\"name\":\"totalSupply\",\"outputs\":[{\"type\":\"uint256\",\"name\":\"out\",\"unit\":\"wei\"}],\"inputs\":[],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":663},{\"name\":\"transfer\",\"outputs\":[{\"type\":\"bool\",\"name\":\"out\"}],\"inputs\":[{\"type\":\"address\",\"name\":\"to\"},{\"type\":\"uint256\",\"name\":\"amount\",\"unit\":\"wei\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":74321},{\"name\":\"transferFrom\",\"outputs\":[{\"type\":\"bool\",\"name\":\"out\"}],\"inputs\":[{\"type\":\"address\",\"name\":\"source\"},{\"type\":\"address\",\"name\":\"to\"},{\"type\":\"uint256\",\"name\":\"amount\",\"unit\":\"wei\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":110291},{\"name\":\"withdraw\",\"outputs\":[],\"inputs\":[{\"type\":\"uint256\",\"name\":\"amount\",\"unit\":\"wei\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":108330},{\"name\":\"decimals\",\"outputs\":[{\"type\":\"uint256\",\"name\":\"out\"}],\"inputs\":[],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":783}]"
 
 // EtherTokenBin is the compiled bytecode used for deploying new contracts.
-const EtherTokenBin = `0x600035601c52740100000000000000000000000000000000000000006020526f7fffffffffffffffffffffffffffffff6040527fffffffffffffffffffffffffffffffff8000000000000000000000000000000060605274012a05f1fffffffffffffffffffffffffdabf41c006080527ffffffffffffffffffffffffed5fa0e000000000000000000000000000000000060a052604061082c6101403934156100a757600080fd5b602061082c60c03960c05160205181106100c057600080fd5b506101605160016101405160e05260c052604060c0205560126002556101605160035561016051610180526101405160007fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef6020610180a361081456600035601c52740100000000000000000000000000000000000000006020526f7fffffffffffffffffffffffffffffff6040527fffffffffffffffffffffffffffffffff8000000000000000000000000000000060605274012a05f1fffffffffffffffffffffffffdabf41c006080527ffffffffffffffffffffffffed5fa0e000000000000000000000000000000000060a05263dd62ed3e600051141561010357604060046101403734156100b457600080fd5b60043560205181106100c557600080fd5b5060243560205181106100d757600080fd5b5060006101405160e05260c052604060c0206101605160e05260c052604060c0205460005260206000f3005b63095ea7b36000511415610198576040600461014037341561012457600080fd5b600435602051811061013557600080fd5b506101605160003360e05260c052604060c0206101405160e05260c052604060c02055610160516101805261014051337f8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b9256020610180a3600160005260206000f3005b6370a0823160005114156101e757602060046101403734156101b957600080fd5b60043560205181106101ca57600080fd5b5060016101405160e05260c052604060c0205460005260206000f3005b636618846360005114156102a2576040600461014037341561020857600080fd5b600435602051811061021957600080fd5b5060003360e05260c052604060c0206101405160e05260c052604060c020610160518154101561024857600080fd5b6101605181540381555060003360e05260c052604060c0206101405160e05260c052604060c020546101805261014051337f8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b9256020610180a3005b63d0e30db0600051141561031f5760013360e05260c052604060c02080543482540110156102cf57600080fd5b34815401815550600380543482540110156102e957600080fd5b348154018155503461014052337fe1fffcc4923d04b559f4d29a8bfc6cda04eb5b0d3c460751c2402c5c5cc9109c6020610140a2005b63d73dd62360005114156103dd576040600461014037341561034057600080fd5b600435602051811061035157600080fd5b5060003360e05260c052604060c0206101405160e05260c052604060c020805461016051825401101561038357600080fd5b6101605181540181555060003360e05260c052604060c0206101405160e05260c052604060c020546101805261014051337f8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b9256020610180a3005b6318160ddd60005114156104035734156103f657600080fd5b60035460005260206000f3005b63a9059cbb60005114156104de576040600461014037341561042457600080fd5b600435602051811061043557600080fd5b506000610140511861044657600080fd5b60013360e05260c052604060c020610160518154101561046557600080fd5b6101605181540381555060016101405160e05260c052604060c020805461016051825401101561049457600080fd5b61016051815401815550610160516101805261014051337fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef6020610180a3600160005260206000f3005b6323b872dd600051141561061957606060046101403734156104ff57600080fd5b600435602051811061051057600080fd5b50602435602051811061052257600080fd5b506000610140511861053357600080fd5b6000610160511861054357600080fd5b60016101405160e05260c052604060c020610180518154101561056557600080fd5b6101805181540381555060016101605160e05260c052604060c020805461018051825401101561059457600080fd5b6101805181540181555060006101405160e05260c052604060c0203360e05260c052604060c02061018051815410156105cc57600080fd5b61018051815403815550610180516101a05261016051610140517fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef60206101a0a3600160005260206000f3005b632e1a7d4d60005114156106cb576020600461014037341561063a57600080fd5b60013360e05260c052604060c020610140518154101561065957600080fd5b610140518154038155506003610140518154101561067657600080fd5b61014051815403815550600060006000600061014051336000f161069957600080fd5b6101405161016052337f884edad9ce6fa2440d8a54cc123490eb96d2768479d49ff9c7366125a94243646020610160a2005b63313ce56760005114156106f15734156106e457600080fd5b60025460005260206000f3005b60006000fd5b61011d6108140361011d60003961011d610814036000f3`
+const EtherTokenBin = `0x740100000000000000000000000000000000000000006020526f7fffffffffffffffffffffffffffffff6040527fffffffffffffffffffffffffffffffff8000000000000000000000000000000060605274012a05f1fffffffffffffffffffffffffdabf41c006080527ffffffffffffffffffffffffed5fa0e000000000000000000000000000000000060a05260406107f16101403934156100a157600080fd5b60206107f160c03960c05160205181106100ba57600080fd5b506101605160016101405160e05260c052604060c020556012600255610160516003556107d956600035601c52740100000000000000000000000000000000000000006020526f7fffffffffffffffffffffffffffffff6040527fffffffffffffffffffffffffffffffff8000000000000000000000000000000060605274012a05f1fffffffffffffffffffffffffdabf41c006080527ffffffffffffffffffffffffed5fa0e000000000000000000000000000000000060a05263dd62ed3e600051141561010357604060046101403734156100b457600080fd5b60043560205181106100c557600080fd5b5060243560205181106100d757600080fd5b5060006101405160e05260c052604060c0206101605160e05260c052604060c0205460005260206000f3005b63095ea7b36000511415610198576040600461014037341561012457600080fd5b600435602051811061013557600080fd5b506101605160003360e05260c052604060c0206101405160e05260c052604060c02055610160516101805261014051337f8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b9256020610180a3600160005260206000f3005b6370a0823160005114156101e757602060046101403734156101b957600080fd5b60043560205181106101ca57600080fd5b5060016101405160e05260c052604060c0205460005260206000f3005b636618846360005114156102a2576040600461014037341561020857600080fd5b600435602051811061021957600080fd5b5060003360e05260c052604060c0206101405160e05260c052604060c020610160518154101561024857600080fd5b6101605181540381555060003360e05260c052604060c0206101405160e05260c052604060c020546101805261014051337f8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b9256020610180a3005b63d0e30db0600051141561031f5760013360e05260c052604060c02080543482540110156102cf57600080fd5b34815401815550600380543482540110156102e957600080fd5b348154018155503461014052337f2da466a7b24304f47e87fa2e1e5a81b9831ce54fec19055ce277ca2f39ba42c46020610140a2005b63d73dd62360005114156103dd576040600461014037341561034057600080fd5b600435602051811061035157600080fd5b5060003360e05260c052604060c0206101405160e05260c052604060c020805461016051825401101561038357600080fd5b6101605181540181555060003360e05260c052604060c0206101405160e05260c052604060c020546101805261014051337f8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b9256020610180a3005b6318160ddd60005114156104035734156103f657600080fd5b60035460005260206000f3005b63a9059cbb60005114156104de576040600461014037341561042457600080fd5b600435602051811061043557600080fd5b506000610140511861044657600080fd5b60013360e05260c052604060c020610160518154101561046557600080fd5b6101605181540381555060016101405160e05260c052604060c020805461016051825401101561049457600080fd5b61016051815401815550610160516101805261014051337fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef6020610180a3600160005260206000f3005b6323b872dd600051141561061957606060046101403734156104ff57600080fd5b600435602051811061051057600080fd5b50602435602051811061052257600080fd5b506000610140511861053357600080fd5b6000610160511861054357600080fd5b60016101405160e05260c052604060c020610180518154101561056557600080fd5b6101805181540381555060016101605160e05260c052604060c020805461018051825401101561059457600080fd5b6101805181540181555060006101405160e05260c052604060c0203360e05260c052604060c02061018051815410156105cc57600080fd5b61018051815403815550610180516101a05261016051610140517fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef60206101a0a3600160005260206000f3005b632e1a7d4d60005114156106cb576020600461014037341561063a57600080fd5b60013360e05260c052604060c020610140518154101561065957600080fd5b610140518154038155506003610140518154101561067657600080fd5b61014051815403815550600060006000600061014051336000f161069957600080fd5b6101405161016052337f7084f5476618d8e60b11ef0d7d3f06914655adb8793e28ff7f018d4c76d505d56020610160a2005b63313ce56760005114156106f15734156106e457600080fd5b60025460005260206000f3005b60006000fd5b6100e26107d9036100e26000396100e26107d9036000f3`
 
 // DeployEtherToken deploys a new Ethereum contract, binding an instance of EtherToken to it.
 func DeployEtherToken(auth *bind.TransactOpts, backend bind.ContractBackend, initial_account common.Address, initial_balance *big.Int) (common.Address, *types.Transaction, *EtherToken, error) {
@@ -569,9 +569,9 @@ func (_EtherToken *EtherTokenFilterer) WatchApproval(opts *bind.WatchOpts, sink 
 	}), nil
 }
 
-// EtherTokenDepositIterator is returned from FilterDeposit and is used to iterate over the raw logs and unpacked data for Deposit events raised by the EtherToken contract.
-type EtherTokenDepositIterator struct {
-	Event *EtherTokenDeposit // Event containing the contract specifics and raw log
+// EtherTokenDepositedIterator is returned from FilterDeposited and is used to iterate over the raw logs and unpacked data for Deposited events raised by the EtherToken contract.
+type EtherTokenDepositedIterator struct {
+	Event *EtherTokenDeposited // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -585,7 +585,7 @@ type EtherTokenDepositIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *EtherTokenDepositIterator) Next() bool {
+func (it *EtherTokenDepositedIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -594,7 +594,7 @@ func (it *EtherTokenDepositIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(EtherTokenDeposit)
+			it.Event = new(EtherTokenDeposited)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -609,7 +609,7 @@ func (it *EtherTokenDepositIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(EtherTokenDeposit)
+		it.Event = new(EtherTokenDeposited)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -625,52 +625,52 @@ func (it *EtherTokenDepositIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *EtherTokenDepositIterator) Error() error {
+func (it *EtherTokenDepositedIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *EtherTokenDepositIterator) Close() error {
+func (it *EtherTokenDepositedIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// EtherTokenDeposit represents a Deposit event raised by the EtherToken contract.
-type EtherTokenDeposit struct {
+// EtherTokenDeposited represents a Deposited event raised by the EtherToken contract.
+type EtherTokenDeposited struct {
 	Source common.Address
 	Amount *big.Int
 	Raw    types.Log // Blockchain specific contextual infos
 }
 
-// FilterDeposit is a free log retrieval operation binding the contract event 0xe1fffcc4923d04b559f4d29a8bfc6cda04eb5b0d3c460751c2402c5c5cc9109c.
+// FilterDeposited is a free log retrieval operation binding the contract event 0x2da466a7b24304f47e87fa2e1e5a81b9831ce54fec19055ce277ca2f39ba42c4.
 //
-// Solidity: e Deposit(source indexed address, amount uint256)
-func (_EtherToken *EtherTokenFilterer) FilterDeposit(opts *bind.FilterOpts, source []common.Address) (*EtherTokenDepositIterator, error) {
+// Solidity: e Deposited(source indexed address, amount uint256)
+func (_EtherToken *EtherTokenFilterer) FilterDeposited(opts *bind.FilterOpts, source []common.Address) (*EtherTokenDepositedIterator, error) {
 
 	var sourceRule []interface{}
 	for _, sourceItem := range source {
 		sourceRule = append(sourceRule, sourceItem)
 	}
 
-	logs, sub, err := _EtherToken.contract.FilterLogs(opts, "Deposit", sourceRule)
+	logs, sub, err := _EtherToken.contract.FilterLogs(opts, "Deposited", sourceRule)
 	if err != nil {
 		return nil, err
 	}
-	return &EtherTokenDepositIterator{contract: _EtherToken.contract, event: "Deposit", logs: logs, sub: sub}, nil
+	return &EtherTokenDepositedIterator{contract: _EtherToken.contract, event: "Deposited", logs: logs, sub: sub}, nil
 }
 
-// WatchDeposit is a free log subscription operation binding the contract event 0xe1fffcc4923d04b559f4d29a8bfc6cda04eb5b0d3c460751c2402c5c5cc9109c.
+// WatchDeposited is a free log subscription operation binding the contract event 0x2da466a7b24304f47e87fa2e1e5a81b9831ce54fec19055ce277ca2f39ba42c4.
 //
-// Solidity: e Deposit(source indexed address, amount uint256)
-func (_EtherToken *EtherTokenFilterer) WatchDeposit(opts *bind.WatchOpts, sink chan<- *EtherTokenDeposit, source []common.Address) (event.Subscription, error) {
+// Solidity: e Deposited(source indexed address, amount uint256)
+func (_EtherToken *EtherTokenFilterer) WatchDeposited(opts *bind.WatchOpts, sink chan<- *EtherTokenDeposited, source []common.Address) (event.Subscription, error) {
 
 	var sourceRule []interface{}
 	for _, sourceItem := range source {
 		sourceRule = append(sourceRule, sourceItem)
 	}
 
-	logs, sub, err := _EtherToken.contract.WatchLogs(opts, "Deposit", sourceRule)
+	logs, sub, err := _EtherToken.contract.WatchLogs(opts, "Deposited", sourceRule)
 	if err != nil {
 		return nil, err
 	}
@@ -680,8 +680,8 @@ func (_EtherToken *EtherTokenFilterer) WatchDeposit(opts *bind.WatchOpts, sink c
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(EtherTokenDeposit)
-				if err := _EtherToken.contract.UnpackLog(event, "Deposit", log); err != nil {
+				event := new(EtherTokenDeposited)
+				if err := _EtherToken.contract.UnpackLog(event, "Deposited", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -844,9 +844,9 @@ func (_EtherToken *EtherTokenFilterer) WatchTransfer(opts *bind.WatchOpts, sink 
 	}), nil
 }
 
-// EtherTokenWithdrawIterator is returned from FilterWithdraw and is used to iterate over the raw logs and unpacked data for Withdraw events raised by the EtherToken contract.
-type EtherTokenWithdrawIterator struct {
-	Event *EtherTokenWithdraw // Event containing the contract specifics and raw log
+// EtherTokenWithdrawnIterator is returned from FilterWithdrawn and is used to iterate over the raw logs and unpacked data for Withdrawn events raised by the EtherToken contract.
+type EtherTokenWithdrawnIterator struct {
+	Event *EtherTokenWithdrawn // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -860,7 +860,7 @@ type EtherTokenWithdrawIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *EtherTokenWithdrawIterator) Next() bool {
+func (it *EtherTokenWithdrawnIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -869,7 +869,7 @@ func (it *EtherTokenWithdrawIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(EtherTokenWithdraw)
+			it.Event = new(EtherTokenWithdrawn)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -884,7 +884,7 @@ func (it *EtherTokenWithdrawIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(EtherTokenWithdraw)
+		it.Event = new(EtherTokenWithdrawn)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -900,52 +900,52 @@ func (it *EtherTokenWithdrawIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *EtherTokenWithdrawIterator) Error() error {
+func (it *EtherTokenWithdrawnIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *EtherTokenWithdrawIterator) Close() error {
+func (it *EtherTokenWithdrawnIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// EtherTokenWithdraw represents a Withdraw event raised by the EtherToken contract.
-type EtherTokenWithdraw struct {
+// EtherTokenWithdrawn represents a Withdrawn event raised by the EtherToken contract.
+type EtherTokenWithdrawn struct {
 	To     common.Address
 	Amount *big.Int
 	Raw    types.Log // Blockchain specific contextual infos
 }
 
-// FilterWithdraw is a free log retrieval operation binding the contract event 0x884edad9ce6fa2440d8a54cc123490eb96d2768479d49ff9c7366125a9424364.
+// FilterWithdrawn is a free log retrieval operation binding the contract event 0x7084f5476618d8e60b11ef0d7d3f06914655adb8793e28ff7f018d4c76d505d5.
 //
-// Solidity: e Withdraw(to indexed address, amount uint256)
-func (_EtherToken *EtherTokenFilterer) FilterWithdraw(opts *bind.FilterOpts, to []common.Address) (*EtherTokenWithdrawIterator, error) {
+// Solidity: e Withdrawn(to indexed address, amount uint256)
+func (_EtherToken *EtherTokenFilterer) FilterWithdrawn(opts *bind.FilterOpts, to []common.Address) (*EtherTokenWithdrawnIterator, error) {
 
 	var toRule []interface{}
 	for _, toItem := range to {
 		toRule = append(toRule, toItem)
 	}
 
-	logs, sub, err := _EtherToken.contract.FilterLogs(opts, "Withdraw", toRule)
+	logs, sub, err := _EtherToken.contract.FilterLogs(opts, "Withdrawn", toRule)
 	if err != nil {
 		return nil, err
 	}
-	return &EtherTokenWithdrawIterator{contract: _EtherToken.contract, event: "Withdraw", logs: logs, sub: sub}, nil
+	return &EtherTokenWithdrawnIterator{contract: _EtherToken.contract, event: "Withdrawn", logs: logs, sub: sub}, nil
 }
 
-// WatchWithdraw is a free log subscription operation binding the contract event 0x884edad9ce6fa2440d8a54cc123490eb96d2768479d49ff9c7366125a9424364.
+// WatchWithdrawn is a free log subscription operation binding the contract event 0x7084f5476618d8e60b11ef0d7d3f06914655adb8793e28ff7f018d4c76d505d5.
 //
-// Solidity: e Withdraw(to indexed address, amount uint256)
-func (_EtherToken *EtherTokenFilterer) WatchWithdraw(opts *bind.WatchOpts, sink chan<- *EtherTokenWithdraw, to []common.Address) (event.Subscription, error) {
+// Solidity: e Withdrawn(to indexed address, amount uint256)
+func (_EtherToken *EtherTokenFilterer) WatchWithdrawn(opts *bind.WatchOpts, sink chan<- *EtherTokenWithdrawn, to []common.Address) (event.Subscription, error) {
 
 	var toRule []interface{}
 	for _, toItem := range to {
 		toRule = append(toRule, toItem)
 	}
 
-	logs, sub, err := _EtherToken.contract.WatchLogs(opts, "Withdraw", toRule)
+	logs, sub, err := _EtherToken.contract.WatchLogs(opts, "Withdrawn", toRule)
 	if err != nil {
 		return nil, err
 	}
@@ -955,8 +955,8 @@ func (_EtherToken *EtherTokenFilterer) WatchWithdraw(opts *bind.WatchOpts, sink 
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(EtherTokenWithdraw)
-				if err := _EtherToken.contract.UnpackLog(event, "Withdraw", log); err != nil {
+				event := new(EtherTokenWithdrawn)
+				if err := _EtherToken.contract.UnpackLog(event, "Withdrawn", log); err != nil {
 					return err
 				}
 				event.Raw = log

@@ -1,4 +1,4 @@
-package investingtest
+package reservetest
 
 import (
 	"github.com/computablelabs/goest/tests/test"
@@ -12,9 +12,9 @@ var context *test.Ctx
 var deployed *test.Dep
 var deployedError error
 
-func TestDeployInvesting(t *testing.T) {
+func TestDeployReserve(t *testing.T) {
 	if deployedError != nil {
-		t.Fatalf("Failed to deploy the Investing contract or a dependency: %v", deployedError)
+		t.Fatalf("Failed to deploy the Reserve contract or a dependency: %v", deployedError)
 	}
 }
 

@@ -14,7 +14,7 @@ func TestRequestDelivery(t *testing.T) {
 	purchased, _ := deployed.DatatrustContract.GetBytesPurchased(nil, context.AuthUser3.From)
 	t.Logf("User3 current bytes purchased balance: %v", purchased)
 	// reserve balance atm. This will go up by the res_payment after a request...
-	resBal, _ := deployed.EtherTokenContract.BalanceOf(nil, deployed.InvestingAddress)
+	resBal, _ := deployed.EtherTokenContract.BalanceOf(nil, deployed.ReserveAddress)
 	t.Logf("Current reserve balance: %v", resBal)
 
 	// make a deposit in ETH, resulting in a 1:1 ethertoken balance
@@ -94,19 +94,19 @@ func TestRequestDelivery(t *testing.T) {
 	t.Logf("ETH banked by the Datatrust contract post request: %v", test.Commafy(dataEthBalNow))
 
 	// reserve gets its share when delivery is requested
-	resBalNow, _ := deployed.EtherTokenContract.BalanceOf(nil, deployed.InvestingAddress)
+	resBalNow, _ := deployed.EtherTokenContract.BalanceOf(nil, deployed.ReserveAddress)
 	if resBalNow.Cmp(resBal) != 1 {
 		t.Errorf("Expected %v to be > %v", resBalNow, resBal)
 	}
-	t.Logf("Reserve balance post request: %v", test.Commafy(resBalNow))
+	// t.Logf("Reserve balance post request: %v", test.Commafy(resBalNow))
 	// at this point the sum of what went into the reserve + the amount locked in datatrust will == bytesPurchased * cost_per_byte
-	// toRes := resBalNow.Sub(resBalNow, resBal)
-	// summed := toRes.Add(toRes, dataEthBalNow)
-	// cost, _ := deployed.ParameterizerContract.GetCostPerByte(nil)
-	// bytesCost := purchasedNow.Mul(purchasedNow, cost)
-	// if summed.Cmp(bytesCost) != 0 {
-	// t.Errorf("Expected %v to be %v", summed, bytesCost)
-	// }
+	toRes := resBalNow.Sub(resBalNow, resBal)
+	summed := toRes.Add(toRes, dataEthBalNow)
+	cost, _ := deployed.ParameterizerContract.GetCostPerByte(nil)
+	bytesCost := purchasedNow.Mul(purchasedNow, cost)
+	if summed.Cmp(bytesCost) != 0 {
+		t.Errorf("Expected %v to be %v", summed, bytesCost)
+	}
 
 	// delivery object should be present
 	ownerNow, reqNow, deliv, _ := deployed.DatatrustContract.GetDelivery(nil, query)

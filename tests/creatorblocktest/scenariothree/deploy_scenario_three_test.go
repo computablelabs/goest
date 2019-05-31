@@ -16,8 +16,8 @@ import (
 // variables decalred here have package scope
 var context *test.Ctx
 
-// you need a way to refer to the newly created investors
-var investors map[string]*bind.TransactOpts
+// you need a way to refer to the newly created supporters
+var supporters map[string]*bind.TransactOpts
 var deployed *test.Dep
 var deployedError error
 
@@ -28,17 +28,17 @@ func (l *logr) Fatal(a ...interface{}) {
 	log.Fatal(a...)
 }
 
-func setupInvestors(bal *big.Int, numInvestors int) {
-	investors = make(map[string]*bind.TransactOpts)
-	for i := 0; i < numInvestors; i++ {
+func setupSupporters(bal *big.Int, numSupporters int) {
+	supporters = make(map[string]*bind.TransactOpts)
+	for i := 0; i < numSupporters; i++ {
 		var ary []string
-		ary = append(ary, "investor", fmt.Sprintf("%v", (i+1)))
+		ary = append(ary, "supporter", fmt.Sprintf("%v", (i+1)))
 		key := strings.Join(ary, "")
-		authInvestor := test.GetAuthObject()
+		authSupporter := test.GetAuthObject()
 		// add them to the original allocation
-		context.Alloc[authInvestor.From] = core.GenesisAccount{Balance: bal}
+		context.Alloc[authSupporter.From] = core.GenesisAccount{Balance: bal}
 		// add them to the map
-		investors[key] = authInvestor
+		supporters[key] = authSupporter
 	}
 }
 
@@ -49,7 +49,7 @@ func TestMain(m *testing.M) {
 	oneHundredOneEth := x.Add(oneHundredEth, big.NewInt(test.ONE_WEI))
 
 	context = test.GetContext(oneHundredOneEth) // users have 101 ETH account bal
-	setupInvestors(oneHundredOneEth, 20)        // investors have 101 ETH account balance
+	setupSupporters(oneHundredOneEth, 20)       // supporters have 101 ETH account balance
 
 	// override the original simulated backend now that we have appeneded to the allocation
 	context.Blockchain = backends.NewSimulatedBackend(context.Alloc, 4700000)

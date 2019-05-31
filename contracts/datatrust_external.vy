@@ -2,7 +2,7 @@
 # External Contracts
 contract Datatrust:
     def getPrivileged() -> address: constant
-    def getInvesting() -> address: constant
+    def getReserve() -> address: constant
     def setPrivileged(listing: address): modifying
     def getHash(url: string[128]) -> bytes32: constant
     def getBackendAddress() -> address: constant

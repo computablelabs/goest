@@ -41,8 +41,8 @@ contract Datatrust:
   def getBytesAccessed(hash: bytes32) -> uint256: constant
   def bytesAccessedClaimed(hash: bytes32, fee: uint256(wei)): modifying
 
-contract Investing:
-  def getInvestmentPrice() -> uint256(wei): constant
+contract Reserve:
+  def getSupportPrice() -> uint256(wei): constant
 
 # events
 ApplicationFailed: event({hash: indexed(bytes32), applicant: indexed(address)})
@@ -53,7 +53,7 @@ ChallengeFailed: event({hash: indexed(bytes32), challenger: indexed(address)})
 ChallengeSucceeded: event({hash: indexed(bytes32), challenger: indexed(address)})
 Listed: event({hash: indexed(bytes32), owner: indexed(address), reward: wei_value})
 ListingRemoved: event({hash: indexed(bytes32)})
-ListingWithdraw: event({hash: indexed(bytes32), owner: indexed(address), withdrawn: wei_value})
+WithdrawnFromListing: event({hash: indexed(bytes32), owner: indexed(address), withdrawn: wei_value})
 
 # state vars
 listings: map(bytes32, Listing)
@@ -61,16 +61,16 @@ market_token: MarketToken
 voting: Voting
 parameterizer: Parameterizer
 datatrust: Datatrust
-investing: Investing
+reserve: Reserve
 
 @public
 def __init__(market_token_addr: address, voting_addr: address, p11r_addr: address,
-  data_addr: address, inv_addr: address):
+  data_addr: address, res_addr: address):
     self.market_token = MarketToken(market_token_addr)
     self.voting = Voting(voting_addr)
     self.parameterizer = Parameterizer(p11r_addr)
     self.datatrust = Datatrust(data_addr)
-    self.investing = Investing(inv_addr)
+    self.reserve = Reserve(res_addr)
 
 
 @public
@@ -92,7 +92,7 @@ def withdrawFromListing(hash: bytes32, amount: wei_value):
   assert self.listings[hash].owner == msg.sender
   self.listings[hash].supply -= amount
   self.market_token.transfer(msg.sender, amount)
-  log.ListingWithdraw(hash, msg.sender, amount)
+  log.WithdrawnFromListing(hash, msg.sender, amount)
 
 
 @public
@@ -164,20 +164,20 @@ def resolveApplication(hash: bytes32):
 @public
 def claimBytesAccessed(hash: bytes32):
   """
-  @notice Allows a listing owner to claim the rewards of listing access. These are invested
-  into the market and will be noted at the listing.supply (MarketToken)
+  @notice Allows a listing owner to claim the rewards of listing access. These support
+  the market and will be noted at the listing.supply (MarketToken)
   @param hash The listing identifier
   """
   assert msg.sender == self.listings[hash].owner
   # the algo for maker payment is (accessed*cost)/(100/maker_pct)
   accessed: uint256 = self.datatrust.getBytesAccessed(hash)
   maker_fee: wei_value = (self.parameterizer.getCostPerByte() * accessed * self.parameterizer.getMakerPayment()) / 100
-  price: wei_value = self.investing.getInvestmentPrice()
-  # if credits accumulated are too low to invest, exit now
+  price: wei_value = self.reserve.getSupportPrice()
+  # if credits accumulated are too low for support, exit now
   assert maker_fee >= price
   # clear the credits before proceeding (also transfers fee to reserve)
   self.datatrust.bytesAccessedClaimed(hash, maker_fee)
-  # the fee is then invested according to the buy-curve.
+  # support is now called, according to the buy-curve.
   minted: uint256 = (maker_fee * 1000000000) / price # 1Billionth token is the smallest denomination...
   self.market_token.mint(minted)
   self.listings[hash].supply += minted

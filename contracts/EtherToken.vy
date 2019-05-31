@@ -3,10 +3,11 @@
 # @author Computable
 # @dev Implements ERC20 interface
 
+# NOTE: We don't use our own past-tense style event names for Approval && Transfer per ERC20 Standard
 Approval: event({owner: indexed(address), spender: indexed(address), amount: wei_value})
-Deposit: event({source: indexed(address), amount: wei_value})
+Deposited: event({source: indexed(address), amount: wei_value})
 Transfer: event({source: indexed(address), to: indexed(address), amount: wei_value})
-Withdraw: event({to: indexed(address), amount: wei_value})
+Withdrawn: event({to: indexed(address), amount: wei_value})
 
 allowances: map(address, map(address, wei_value))
 balances: map(address, wei_value)
@@ -18,7 +19,6 @@ def __init__(initial_account: address, initial_balance: wei_value):
   self.balances[initial_account] = initial_balance
   self.decimals = 18
   self.supply = initial_balance
-  log.Transfer(ZERO_ADDRESS, initial_account, initial_balance)
 
 
 @public
@@ -78,7 +78,7 @@ def deposit():
   """
   self.balances[msg.sender] += msg.value
   self.supply += msg.value
-  log.Deposit(msg.sender, msg.value)
+  log.Deposited(msg.sender, msg.value)
 
 
 @public
@@ -146,4 +146,4 @@ def withdraw(amount: wei_value):
   self.balances[msg.sender] -= amount
   self.supply -= amount
   send(msg.sender, amount)
-  log.Withdraw(msg.sender, amount)
+  log.Withdrawn(msg.sender, amount)

@@ -22,12 +22,12 @@ func oneHundredEth() *big.Int {
 func TestTransferToReserveThenMakersMake(t *testing.T) {
 	_, transError := deployed.EtherTokenContract.Transfer(test.GetTxOpts(
 		context.AuthOwner, nil, big.NewInt(test.ONE_GWEI*2), 100000),
-		deployed.InvestingAddress, oneHundredEth())
+		deployed.ReserveAddress, oneHundredEth())
 	test.IfNotNil(t, transError, "Error transferring token")
 	context.Blockchain.Commit()
 
 	ownerEthBal, _ := deployed.EtherTokenContract.BalanceOf(nil, context.AuthOwner.From)
-	resEthBal, _ := deployed.EtherTokenContract.BalanceOf(nil, deployed.InvestingAddress)
+	resEthBal, _ := deployed.EtherTokenContract.BalanceOf(nil, deployed.ReserveAddress)
 
 	// has 1 ETH left
 	if ownerEthBal.Cmp(big.NewInt(test.ONE_WEI)) != 0 {
