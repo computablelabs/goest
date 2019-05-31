@@ -11,7 +11,7 @@ contract Markettoken:
     def decreaseApproval(spender: address, amount: uint256(wei)): modifying
     def increaseApproval(spender: address, amount: uint256(wei)): modifying
     def mint(amount: uint256(wei)): modifying
-    def setPrivileged(listing: address, investing: address): modifying
+    def setPrivileged(listing: address, reserve: address): modifying
     def totalSupply() -> uint256(wei): constant
     def transfer(to: address, amount: uint256(wei)) -> bool: modifying
     def transferFrom(source: address, to: address, amount: uint256(wei)) -> bool: modifying

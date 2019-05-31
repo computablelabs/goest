@@ -3,10 +3,10 @@ package test
 import (
 	"github.com/computablelabs/goest/contracts/datatrust"
 	"github.com/computablelabs/goest/contracts/ethertoken"
-	"github.com/computablelabs/goest/contracts/investing"
 	"github.com/computablelabs/goest/contracts/listing"
 	"github.com/computablelabs/goest/contracts/markettoken"
 	"github.com/computablelabs/goest/contracts/parameterizer"
+	"github.com/computablelabs/goest/contracts/reserve"
 	"github.com/computablelabs/goest/contracts/voting"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
@@ -48,9 +48,9 @@ type Dep struct {
 	ListingAddress           common.Address
 	ListingContract          *listing.Listing
 	ListingTransaction       *types.Transaction
-	InvestingAddress         common.Address
-	InvestingContract        *investing.Investing
-	InvestingTransaction     *types.Transaction
+	ReserveAddress           common.Address
+	ReserveContract          *reserve.Reserve
+	ReserveTransaction       *types.Transaction
 }
 
 // Deploy function which, well, deploys our contracts - returning
@@ -73,7 +73,7 @@ func Deploy(etBal *big.Int, mtBal *big.Int, c *Ctx, p *Params) (*Dep, error) {
 		return nil, etherTokenErr
 	}
 
-	// Market Token: { consumes: [none], privileged: [listing, investing] }
+	// Market Token: { consumes: [none], privileged: [listing, reserve] }
 	marketTokenAddr, marketTokenTrans, marketTokenCont, marketTokenErr := markettoken.DeployMarketToken(
 		c.AuthOwner,
 		c.Blockchain,
@@ -86,7 +86,7 @@ func Deploy(etBal *big.Int, mtBal *big.Int, c *Ctx, p *Params) (*Dep, error) {
 	}
 	c.Blockchain.Commit()
 
-	// Voting: { consumes: [market token], privileged:[parameterizer, datatrust, listing, investing] }
+	// Voting: { consumes: [market token], privileged:[parameterizer, datatrust, listing, reserve] }
 	votingAddr, votingTrans, votingCont, votingErr := voting.DeployVoting(
 		c.AuthOwner,
 		c.Blockchain,
@@ -119,8 +119,8 @@ func Deploy(etBal *big.Int, mtBal *big.Int, c *Ctx, p *Params) (*Dep, error) {
 	}
 	c.Blockchain.Commit()
 
-	// Investing: { consumes: [ether token, market token, parameterizer], privileged: [none] }
-	investAddr, investTrans, investCont, investErr := investing.DeployInvesting(
+	// Reserve: { consumes: [ether token, market token, parameterizer], privileged: [none] }
+	resAddr, resTrans, resCont, resErr := reserve.DeployReserve(
 		c.AuthOwner,
 		c.Blockchain,
 		etherTokenAddr,
@@ -128,8 +128,8 @@ func Deploy(etBal *big.Int, mtBal *big.Int, c *Ctx, p *Params) (*Dep, error) {
 		paramAddr,
 	)
 
-	if investErr != nil {
-		return nil, investErr
+	if resErr != nil {
+		return nil, resErr
 	}
 	c.Blockchain.Commit()
 
@@ -140,7 +140,7 @@ func Deploy(etBal *big.Int, mtBal *big.Int, c *Ctx, p *Params) (*Dep, error) {
 		etherTokenAddr,
 		votingAddr,
 		paramAddr,
-		investAddr, // does not consume the investing contract, simply references the address to transfer to reserve
+		resAddr, // does not consume the reserve contract, simply references the address to transfer to reserve
 	)
 
 	if dataErr != nil {
@@ -148,7 +148,7 @@ func Deploy(etBal *big.Int, mtBal *big.Int, c *Ctx, p *Params) (*Dep, error) {
 	}
 	c.Blockchain.Commit()
 
-	// Listing: { consumes: [market token, voting, parameterizer, datatrust, investing], privileged: [none] }
+	// Listing: { consumes: [market token, voting, parameterizer, datatrust, reserve], privileged: [none] }
 	listingAddr, listingTrans, listingCont, listingErr := listing.DeployListing(
 		c.AuthOwner,
 		c.Blockchain,
@@ -156,7 +156,7 @@ func Deploy(etBal *big.Int, mtBal *big.Int, c *Ctx, p *Params) (*Dep, error) {
 		votingAddr,
 		paramAddr,
 		dataAddr,
-		investAddr,
+		resAddr,
 	)
 
 	if listingErr != nil {
@@ -166,7 +166,7 @@ func Deploy(etBal *big.Int, mtBal *big.Int, c *Ctx, p *Params) (*Dep, error) {
 
 	// Set privileged addresses now that contracts are deployed. First: Market Token
 	_, mtPrivErr := marketTokenCont.SetPrivileged(GetTxOpts(c.AuthOwner, nil, big.NewInt(ONE_GWEI*2), 100000),
-		listingAddr, investAddr)
+		listingAddr, resAddr)
 
 	if mtPrivErr != nil {
 		return nil, mtPrivErr
@@ -174,7 +174,7 @@ func Deploy(etBal *big.Int, mtBal *big.Int, c *Ctx, p *Params) (*Dep, error) {
 
 	// Voting
 	_, vtPrivErr := votingCont.SetPrivileged(GetTxOpts(c.AuthOwner, nil, big.NewInt(ONE_GWEI*2), 150000),
-		paramAddr, dataAddr, listingAddr, investAddr)
+		paramAddr, dataAddr, listingAddr, resAddr)
 
 	if vtPrivErr != nil {
 		return nil, vtPrivErr
@@ -207,8 +207,8 @@ func Deploy(etBal *big.Int, mtBal *big.Int, c *Ctx, p *Params) (*Dep, error) {
 		ListingAddress:           listingAddr,
 		ListingContract:          listingCont,
 		ListingTransaction:       listingTrans,
-		InvestingAddress:         investAddr,
-		InvestingContract:        investCont,
-		InvestingTransaction:     investTrans,
+		ReserveAddress:           resAddr,
+		ReserveContract:          resCont,
+		ReserveTransaction:       resTrans,
 	}, nil
 }

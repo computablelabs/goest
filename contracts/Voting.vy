@@ -28,7 +28,7 @@ market_token: MarketToken
 parameterizer_address: address
 datatrust_address: address
 listing_address: address
-investing_address: address
+reserve_address: address
 owner_address: address
 
 @public
@@ -45,11 +45,11 @@ def getPrivileged() -> (address, address, address, address):
   @return privileged addresses
   """
   return (self.parameterizer_address, self.datatrust_address,
-    self.listing_address, self.investing_address)
+    self.listing_address, self.reserve_address)
 
 
 @public
-def setPrivileged(parameterizer: address, datatrust: address, listing: address, investing: address):
+def setPrivileged(parameterizer: address, datatrust: address, listing: address, reserve: address):
   """
   @notice Allow the Market owner to set privileged contract addresses
   """
@@ -57,7 +57,7 @@ def setPrivileged(parameterizer: address, datatrust: address, listing: address, 
   self.parameterizer_address = parameterizer
   self.datatrust_address = datatrust
   self.listing_address = listing
-  self.investing_address = investing
+  self.reserve_address = reserve
 
 
 @public
@@ -68,7 +68,7 @@ def hasPrivilege(sender: address) -> bool:
   @return bool
   """
   return (sender == self.parameterizer_address or sender == self.datatrust_address
-    or sender == self.listing_address or sender == self.investing_address)
+    or sender == self.listing_address or sender == self.reserve_address)
 
 
 @public

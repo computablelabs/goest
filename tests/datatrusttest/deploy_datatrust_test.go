@@ -30,11 +30,11 @@ func TestDatatrustSetPrivileged(t *testing.T) {
 	}
 }
 
-func TestDatatrustGetInvesting(t *testing.T) {
-	inv, _ := deployed.DatatrustContract.GetInvesting(nil)
+func TestDatatrustGetReserve(t *testing.T) {
+	inv, _ := deployed.DatatrustContract.GetReserve(nil)
 
-	if inv != deployed.InvestingAddress {
-		t.Fatalf("Expected Investing address of %v but got %v", deployed.InvestingAddress, inv)
+	if inv != deployed.ReserveAddress {
+		t.Fatalf("Expected Reserve address of %v but got %v", deployed.ReserveAddress, inv)
 	}
 }
 

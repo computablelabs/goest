@@ -35,7 +35,7 @@ func TestBalanceOf(t *testing.T) {
 func TestMint(t *testing.T) {
 	// only a privileged contract may call for mint, have a user pose as Listing
 	_, privErr := deployed.MarketTokenContract.SetPrivileged(test.GetTxOpts(context.AuthOwner, nil, big.NewInt(test.ONE_GWEI*2),
-		100000), context.AuthUser3.From, deployed.InvestingAddress)
+		100000), context.AuthUser3.From, deployed.ReserveAddress)
 	test.IfNotNil(t, privErr, "Error setting Market Token privileged contracts")
 
 	context.Blockchain.Commit()

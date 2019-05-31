@@ -4,8 +4,8 @@
 # @dev Implements the ERC20 interface
 
 Approval: event({owner: indexed(address), spender: indexed(address), amount: wei_value})
-Burn: event({burner: indexed(address), amount: wei_value})
-Mint: event({to: indexed(address), amount: wei_value})
+Burned: event({burner: indexed(address), amount: wei_value})
+Minted: event({to: indexed(address), amount: wei_value})
 Transfer: event({source: indexed(address), to: indexed(address), amount: wei_value})
 
 allowances: map(address, map(address, wei_value))
@@ -13,7 +13,7 @@ balances: map(address, wei_value)
 decimals: public(uint256)
 owner_address: address
 listing_address: address
-investing_address: address
+reserve_address: address
 supply: wei_value
 
 @public
@@ -22,7 +22,6 @@ def __init__(initial_account: address, initial_balance: wei_value):
   self.balances[initial_account] = initial_balance # TODO this _could_ be msg.sender and not need the arg
   self.owner_address = msg.sender
   self.supply = initial_balance
-  log.Transfer(ZERO_ADDRESS, initial_account, initial_balance)
 
 
 @public
@@ -70,7 +69,7 @@ def getPrivileged() -> (address, address):
   @notice return the address(es) of contracts that are recognized as being privileged
   @return The address(es)
   """
-  return (self.listing_address, self.investing_address)
+  return (self.listing_address, self.reserve_address)
 
 
 @public
@@ -80,7 +79,7 @@ def hasPrivilege(sender: address) -> bool:
   @notice Return a bool indicating whether the given address is a member of this contracts privileged group
   @return bool
   """
-  return (sender == self.listing_address or sender == self.investing_address)
+  return (sender == self.listing_address or sender == self.reserve_address)
 
 
 @public
@@ -93,7 +92,7 @@ def burn(amount: wei_value):
   assert self.hasPrivilege(msg.sender)
   self.balances[msg.sender] -= amount
   self.supply -= amount
-  log.Burn(msg.sender, amount)
+  log.Burned(msg.sender, amount)
 
 
 @public
@@ -108,7 +107,7 @@ def burnAll(owner: address):
   self.supply -= bal
   clear(self.balances[owner])
   clear(self.allowances[owner][msg.sender])
-  log.Burn(owner, bal)
+  log.Burned(owner, bal)
 
 
 @public
@@ -143,22 +142,22 @@ def mint(amount: wei_value):
   assert self.hasPrivilege(msg.sender)
   self.supply += amount
   self.balances[msg.sender] += amount
-  log.Mint(msg.sender, amount)
+  log.Minted(msg.sender, amount)
   # TODO look at implementing a mintFor method to avoid mint followed by immediate transfer
 
 
 @public
-def setPrivileged(listing: address, investing: address):
+def setPrivileged(listing: address, reserve: address):
   """
   @notice We restrict some activities to only privileged contracts
   @dev We only allow the owner to set the privileged address(es)
   @param listing The deployed address of the Listing Contract
-  @param investing The deployed address of the Investing Contract
+  @param reserve The deployed address of the reserve Contract
   """
   assert msg.sender == self.owner_address
   # TODO we _could_ also only allow this to occur once
   self.listing_address = listing
-  self.investing_address = investing
+  self.reserve_address = reserve
 
 
 @public

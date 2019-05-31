@@ -51,16 +51,16 @@ ether_token: EtherToken
 voting: Voting
 parameterizer: Parameterizer
 owner_address: address
-investing_address: address
+reserve_address: address
 listing_address: address
 
 @public
-def __init__(ether_token_addr: address, voting_addr: address, p11r_addr: address, inv_addr: address):
+def __init__(ether_token_addr: address, voting_addr: address, p11r_addr: address, res_addr: address):
   self.owner_address = msg.sender
   self.ether_token = EtherToken(ether_token_addr)
   self.voting = Voting(voting_addr)
   self.parameterizer = Parameterizer(p11r_addr)
-  self.investing_address = inv_addr # does not consume the contract, only knows the address
+  self.reserve_address = res_addr # does not consume the contract, only knows the address
 
 
 @public
@@ -75,12 +75,12 @@ def getPrivileged() -> address:
 
 @public
 @constant
-def getInvesting() -> address:
+def getReserve() -> address:
   """
   @notice Return the address at which the datatrust contract transfers reserve payments to
-  @dev This should always be the address of the Investing contract deployed with this market
+  @dev This should always be the address of the Reserve contract deployed with this market
   """
-  return self.investing_address
+  return self.reserve_address
 
 
 @public
@@ -208,7 +208,7 @@ def requestDelivery(hash: bytes32, amount: uint256):
   total: wei_value = self.parameterizer.getCostPerByte() * amount
   res_fee: wei_value = (total * self.parameterizer.getReservePayment()) / 100
   self.ether_token.transferFrom(msg.sender, self, total) # take the total payment
-  self.ether_token.transfer(self.investing_address, res_fee) # transfer res_pct to reserve
+  self.ether_token.transfer(self.reserve_address, res_fee) # transfer res_pct to reserve
   self.bytes_purchased[msg.sender] += amount # all purchases by this user. deducted from via listing access
   self.deliveries[hash].owner = msg.sender
   self.deliveries[hash].bytes_requested = amount
@@ -270,7 +270,7 @@ def bytesAccessedClaimed(hash: bytes32, fee: wei_value):
   """
   assert msg.sender == self.listing_address
   clear(self.bytes_accessed[hash]) # clear before paying
-  self.ether_token.transfer(self.investing_address, fee)
+  self.ether_token.transfer(self.reserve_address, fee)
   # NOTE bytes accessed claimed event published by Listing contract
 
 
