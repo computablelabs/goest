@@ -51,9 +51,13 @@ def getPrivileged() -> (address, address, address, address):
 @public
 def setPrivileged(parameterizer: address, datatrust: address, listing: address, reserve: address):
   """
-  @notice Allow the Market owner to set privileged contract addresses
+  @notice Allow the Market owner to set privileged contract addresses. Can only be called once.
   """
   assert msg.sender == self.owner_address
+  assert self.parameterizer_address == ZERO_ADDRESS
+  assert self.datatrust_address == ZERO_ADDRESS
+  assert self.listing_address == ZERO_ADDRESS
+  assert self.reserve_address == ZERO_ADDRESS
   self.parameterizer_address = parameterizer
   self.datatrust_address = datatrust
   self.listing_address = listing

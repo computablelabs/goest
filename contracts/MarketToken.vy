@@ -149,13 +149,14 @@ def mint(amount: wei_value):
 @public
 def setPrivileged(listing: address, reserve: address):
   """
-  @notice We restrict some activities to only privileged contracts
+  @notice We restrict some activities to only privileged contracts. Can only be called once.
   @dev We only allow the owner to set the privileged address(es)
   @param listing The deployed address of the Listing Contract
   @param reserve The deployed address of the reserve Contract
   """
   assert msg.sender == self.owner_address
-  # TODO we _could_ also only allow this to occur once
+  assert self.listing_address == ZERO_ADDRESS
+  assert self.reserve_address == ZERO_ADDRESS
   self.listing_address = listing
   self.reserve_address = reserve
 
