@@ -34,7 +34,7 @@ func TestBalanceOf(t *testing.T) {
 }
 
 func TestMint(t *testing.T) {
-	// Market Token: { consumes: [none], privileged: [listing, reserve] }
+	// Deploy custom Market Token
 	mtBal := big.NewInt(test.ONE_WEI * 5)
 	_, _, marketTokenCont, marketTokenErr := markettoken.DeployMarketToken(
 		context.AuthOwner,
