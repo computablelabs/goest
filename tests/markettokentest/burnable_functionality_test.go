@@ -48,8 +48,15 @@ func TestBurn(t *testing.T) {
 		t.Errorf("Expected new balance to be %v, got: %v", expectedBal, newBal)
 	}
 
-	// reset the actual listing privileged address
+	// Test that attempting to reset the listing privileged address doesn't work
 	_, privErr2 := marketTokenCont.SetPrivileged(test.GetTxOpts(context.AuthOwner, nil, big.NewInt(test.ONE_GWEI*2),
 		100000), deployed.ListingAddress, deployed.ReserveAddress)
-	test.IfNotNil(t, privErr2, "Error resetting Market Token privileged contracts")
+	test.IfNotNil(t, privErr2, "Error attempting to reset Market Token privileged contracts")
+
+	// Check that the listing address hasn't changed
+	actualListingAddress, _, getErr := marketTokenCont.GetPrivileged(test.GetCallOpts(context.AuthOwner))
+	test.IfNotNil(t, getErr, "Error attempting to get privileged contracts")
+	if actualListingAddress != context.AuthUser3.From {
+		t.Errorf("Listing address has been changed incorrectly")
+	}
 }
