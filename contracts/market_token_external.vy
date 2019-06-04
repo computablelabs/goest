@@ -16,5 +16,6 @@ contract Markettoken:
     def transfer(to: address, amount: uint256(wei)) -> bool: modifying
     def transferFrom(source: address, to: address, amount: uint256(wei)) -> bool: modifying
     def decimals() -> uint256: constant
+    def symbol() -> string[3]: constant
 
 
