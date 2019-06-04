@@ -35,6 +35,15 @@ func GenBytes32(str string) [32]byte {
 	return bytes
 }
 
+//GetCallOpts is a function which allows us to more succinctly place Call options
+func GetCallOpts(auth *bind.TransactOpts) *bind.CallOpts {
+	return &bind.CallOpts{
+		// TODO: Should this be a settable argument?
+		Pending: false,
+		From:    auth.From,
+	}
+}
+
 // GetTxOpts is a function which allows us to more succintly place the transaction options into a "send"
 // type transaction. We do this in place of wrapping our TX in a global session variable, as, we tend to
 // use different values in various places. Returns the assembled Geth TransactOpts
