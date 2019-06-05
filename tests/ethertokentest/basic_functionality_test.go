@@ -44,3 +44,17 @@ func TestBalanceOf(t *testing.T) {
 		t.Errorf("Expected owner balance of 8 tokens in wei, got %v", ownerBal)
 	}
 }
+
+func TestSymbol(t *testing.T) {
+	symbol, _ := deployed.EtherTokenContract.Symbol(nil)
+	if symbol != "CET" {
+		t.Errorf("EtherToken Symbol expected to be CMT, got %v", symbol)
+	}
+}
+
+func TestDecimals(t *testing.T) {
+	decimals, _ := deployed.EtherTokenContract.Decimals(nil)
+	if decimals.Cmp(big.NewInt(18)) != 0 {
+		t.Errorf("EtherToken Decimals expected to be 18, got %v", decimals)
+	}
+}
