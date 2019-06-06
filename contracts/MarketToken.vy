@@ -11,6 +11,7 @@ Transfer: event({source: indexed(address), to: indexed(address), amount: wei_val
 allowances: map(address, map(address, wei_value))
 balances: map(address, wei_value)
 decimals: public(uint256)
+symbol: public(string[3])
 owner_address: address
 listing_address: address
 reserve_address: address
@@ -19,6 +20,7 @@ supply: wei_value
 @public
 def __init__(initial_account: address, initial_balance: wei_value):
   self.decimals = 18
+  self.symbol = "CMT"
   self.balances[initial_account] = initial_balance # TODO this _could_ be msg.sender and not need the arg
   self.owner_address = msg.sender
   self.supply = initial_balance

@@ -33,6 +33,20 @@ func TestBalanceOf(t *testing.T) {
 	}
 }
 
+func TestSymbol(t *testing.T) {
+	symbol, _ := deployed.MarketTokenContract.Symbol(nil)
+	if symbol != "CMT" {
+		t.Errorf("Market Token Symbol expected to be CMT, got %v", symbol)
+	}
+}
+
+func TestDecimals(t *testing.T) {
+	decimals, _ := deployed.MarketTokenContract.Decimals(nil)
+	if decimals.Cmp(big.NewInt(18)) != 0 {
+		t.Errorf("Market Token Decimals expected to be 18, got %v", decimals)
+	}
+}
+
 func TestMint(t *testing.T) {
 	// Deploy custom Market Token
 	mtBal := big.NewInt(test.ONE_WEI * 5)
