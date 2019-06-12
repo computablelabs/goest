@@ -166,7 +166,7 @@ func Deploy(etBal *big.Int, mtBal *big.Int, c *Ctx, p *Params) (*Dep, error) {
 
 	// Set privileged addresses now that contracts are deployed. First: Market Token
 	_, mtPrivErr := marketTokenCont.SetPrivileged(GetTxOpts(c.AuthOwner, nil, big.NewInt(ONE_GWEI*2), 100000),
-		listingAddr, resAddr)
+		resAddr, listingAddr)
 
 	if mtPrivErr != nil {
 		return nil, mtPrivErr
@@ -174,7 +174,7 @@ func Deploy(etBal *big.Int, mtBal *big.Int, c *Ctx, p *Params) (*Dep, error) {
 
 	// Voting
 	_, vtPrivErr := votingCont.SetPrivileged(GetTxOpts(c.AuthOwner, nil, big.NewInt(ONE_GWEI*2), 150000),
-		paramAddr, dataAddr, listingAddr, resAddr)
+		paramAddr, resAddr, dataAddr, listingAddr)
 
 	if vtPrivErr != nil {
 		return nil, vtPrivErr
@@ -201,14 +201,14 @@ func Deploy(etBal *big.Int, mtBal *big.Int, c *Ctx, p *Params) (*Dep, error) {
 		ParameterizerAddress:     paramAddr,
 		ParameterizerContract:    paramCont,
 		ParameterizerTransaction: paramTrans,
+		ReserveAddress:           resAddr,
+		ReserveContract:          resCont,
+		ReserveTransaction:       resTrans,
 		DatatrustAddress:         dataAddr,
 		DatatrustContract:        dataCont,
 		DatatrustTransaction:     dataTrans,
 		ListingAddress:           listingAddr,
 		ListingContract:          listingCont,
 		ListingTransaction:       listingTrans,
-		ReserveAddress:           resAddr,
-		ReserveContract:          resCont,
-		ReserveTransaction:       resTrans,
 	}, nil
 }
