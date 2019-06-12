@@ -23,7 +23,7 @@ func TestDeployVoting(t *testing.T) {
 }
 
 func TestSetPrivileged(t *testing.T) {
-	p11r, data, list, res, _ := deployed.VotingContract.GetPrivileged(nil)
+	p11r, res, data, list, _ := deployed.VotingContract.GetPrivileged(nil)
 
 	if list != deployed.ListingAddress {
 		t.Fatalf("Expected Listing address of %v but got %v", deployed.ListingAddress, list)
