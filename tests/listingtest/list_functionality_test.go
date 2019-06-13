@@ -94,7 +94,7 @@ func TestResolveApplication(t *testing.T) {
 	}
 
 	// supply should reflect the list reward
-	if supply.Cmp(big.NewInt(test.ONE_WEI)) != 0 {
+	if supply.Cmp(big.NewInt(test.ONE_ETH)) != 0 {
 		t.Errorf("Exepected supply to be 0, got: %v", supply)
 	}
 
@@ -175,7 +175,7 @@ func TestWithdrawFromListing(t *testing.T) {
 	_, supply, _ := deployed.ListingContract.GetListing(nil, listingHash)
 	// withdraw that same amt
 	_, withErr := deployed.ListingContract.WithdrawFromListing(test.GetTxOpts(context.AuthUser1, nil,
-		big.NewInt(test.ONE_GWEI*2), 1000000), listingHash, big.NewInt(test.ONE_WEI*0.01))
+		big.NewInt(test.ONE_GWEI*2), 1000000), listingHash, big.NewInt(test.ONE_ETH*0.01))
 	test.IfNotNil(t, withErr, fmt.Sprintf("Error withdrawing from listing: %v", withErr))
 	context.Blockchain.Commit()
 

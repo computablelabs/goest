@@ -12,9 +12,9 @@ var deployed *test.Dep
 var deployedError error
 
 func TestMain(m *testing.M) {
-	context = test.GetContext(big.NewInt(test.ONE_WEI * 9)) // users have 3 ETH account bal
+	context = test.GetContext(big.NewInt(test.ONE_ETH * 9)) // users have 3 ETH account bal
 	// etherToken bal, marketToken bal, ctx, params (args)
-	deployed, deployedError = test.Deploy(big.NewInt(test.ONE_WEI*9), big.NewInt(test.ONE_WEI*9),
+	deployed, deployedError = test.Deploy(big.NewInt(test.ONE_ETH*9), big.NewInt(test.ONE_ETH*9),
 		context, &test.Params{
 			ConversionRate: big.NewInt(test.ONE_SZABO),
 			Spread:         big.NewInt(110),

@@ -75,14 +75,13 @@ func setupBuyers(bal *big.Int, numBuyers int) {
 
 func TestMain(m *testing.M) {
 	var x big.Int
-	oneHundredEth := x.Mul(big.NewInt(test.ONE_WEI), big.NewInt(100))
-	oneHundredOneEth := x.Add(oneHundredEth, big.NewInt(test.ONE_WEI))
+	oneHundredEth := x.Mul(big.NewInt(test.ONE_ETH), big.NewInt(100))
+	oneHundredOneEth := x.Add(oneHundredEth, big.NewInt(test.ONE_ETH))
 
-	//context = test.GetContext(big.NewInt(test.ONE_WEI * 3)) // users have 3 ETH
 	context = test.GetContext(oneHundredOneEth) // users have 101 ETH account bal
 	setupSupporters(oneHundredOneEth, 10)       // supporters have 101 ETH account balance
 	// The number of makers needs to divide 1024 for test to go through
-	setupMakers(big.NewInt(test.ONE_WEI), 16) // makers have 1 ETH account balance
+	setupMakers(big.NewInt(test.ONE_ETH), 16) // makers have 1 ETH account balance
 	setupBuyers(oneHundredOneEth, 10)         // buyers have 101 ETH account balance
 	// Set up map for listings
 	listings = make(map[*bind.TransactOpts]([32]byte))
@@ -90,8 +89,8 @@ func TestMain(m *testing.M) {
 	// override the original simulated backend now that we have appeneded to the allocation
 	context.Blockchain = backends.NewSimulatedBackend(context.Alloc, 4700000)
 
-	deployed, deployedError = test.Deploy(oneHundredOneEth, big.NewInt(test.ONE_WEI), context, &test.Params{
-		ConversionRate: big.NewInt(test.ONE_SZABO),
+	deployed, deployedError = test.Deploy(oneHundredOneEth, big.NewInt(test.ONE_ETH), context, &test.Params{
+		ConversionRate: big.NewInt(test.ONE_MWEI),
 		Spread:         big.NewInt(110),
 		ListReward:     big.NewInt(250000000000000),   // 2.5 x 10**13
 		Stake:          big.NewInt(10000000000000000), // 1 X 10**16

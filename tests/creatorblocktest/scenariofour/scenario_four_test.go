@@ -9,13 +9,13 @@ import (
 )
 
 func oneHundredOneEth() *big.Int {
-	one := big.NewInt(test.ONE_WEI)
+	one := big.NewInt(test.ONE_ETH)
 	oneHundred := one.Mul(one, big.NewInt(100))
-	return oneHundred.Add(oneHundred, big.NewInt(test.ONE_WEI))
+	return oneHundred.Add(oneHundred, big.NewInt(test.ONE_ETH))
 }
 
 func oneHundredEth() *big.Int {
-	one := big.NewInt(test.ONE_WEI)
+	one := big.NewInt(test.ONE_ETH)
 	return one.Mul(one, big.NewInt(100))
 }
 
@@ -30,7 +30,7 @@ func TestTransferToReserveThenMakersMake(t *testing.T) {
 	resEthBal, _ := deployed.EtherTokenContract.BalanceOf(nil, deployed.ReserveAddress)
 
 	// has 1 ETH left
-	if ownerEthBal.Cmp(big.NewInt(test.ONE_WEI)) != 0 {
+	if ownerEthBal.Cmp(big.NewInt(test.ONE_ETH)) != 0 {
 		t.Errorf("Expected ether token balance of 1 ETH, got: %v", ownerEthBal)
 	}
 

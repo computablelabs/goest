@@ -8,18 +8,18 @@ import (
 )
 
 func oneHundredOneEth() *big.Int {
-	one := big.NewInt(test.ONE_WEI)
+	one := big.NewInt(test.ONE_ETH)
 	oneHundred := one.Mul(one, big.NewInt(100))
-	return oneHundred.Add(oneHundred, big.NewInt(test.ONE_WEI))
+	return oneHundred.Add(oneHundred, big.NewInt(test.ONE_ETH))
 }
 
 func oneHundredEth() *big.Int {
-	one := big.NewInt(test.ONE_WEI)
+	one := big.NewInt(test.ONE_ETH)
 	return one.Mul(one, big.NewInt(100))
 }
 
 func tenEth() *big.Int {
-	one := big.NewInt(test.ONE_WEI)
+	one := big.NewInt(test.ONE_ETH)
 	return one.Mul(one, big.NewInt(10))
 }
 
@@ -32,7 +32,7 @@ func TestInitialBalance(t *testing.T) {
 	if etBal.Cmp(oneHundredOneEth()) != 0 {
 		t.Errorf("Expected ether token balance of %v, got: %v", oneHundredOneEth(), etBal)
 	}
-	if mtSup.Cmp(big.NewInt(test.ONE_WEI)) != 0 {
+	if mtSup.Cmp(big.NewInt(test.ONE_ETH)) != 0 {
 		t.Errorf("Expected market token supply of 1wei, got: %v", mtSup)
 	}
 
@@ -50,7 +50,7 @@ func TestTransferToReserve(t *testing.T) {
 	resEthBal, _ := deployed.EtherTokenContract.BalanceOf(nil, deployed.ReserveAddress)
 
 	// has one wei left
-	if ownerEthBal.Cmp(big.NewInt(test.ONE_WEI)) != 0 {
+	if ownerEthBal.Cmp(big.NewInt(test.ONE_ETH)) != 0 {
 		t.Errorf("Expected ether token balance of 0, got: %v", ownerEthBal)
 	}
 
