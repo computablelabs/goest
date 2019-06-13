@@ -4,7 +4,6 @@
   "description": "Golang testing sandbox for the Computable Protocol",
   "main": "index.js",
   "scripts": {
-    "lint:solium": "node_modules/.bin/solium -d contracts",
     "compile:token:network": "~/go/bin/abigen -sol contracts/NetworkToken.sol -pkg networktoken -out contracts/networktoken/networktoken.go",
     "compile:token:market": "~/go/bin/abigen -sol contracts/MarketToken.sol -pkg markettoken -out contracts/markettoken/markettoken.go",
     "precompile:token:market:vyper": "vyper -f abi contracts/MarketToken.vy > contracts/markettoken/markettoken.abi && vyper -f bytecode contracts/MarketToken.vy > contracts/markettoken/markettoken.bin",
@@ -40,7 +39,6 @@
   "keywords": [
     "Go",
     "golang",
-    "Solidity",
     "Vyper",
     "Computable",
     "Badass"
@@ -51,7 +49,4 @@
     "url": "https://github.com/computablelabs/goest/issues"
   },
   "homepage": "https://github.com/computablelabs/goest#readme",
-  "devDependencies": {
-    "solium": "^1.1.8"
-  }
 }
