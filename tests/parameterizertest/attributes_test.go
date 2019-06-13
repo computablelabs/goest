@@ -33,7 +33,7 @@ func TestGetSpread(t *testing.T) {
 func TestGetListReward(t *testing.T) {
 	reward, _ := deployed.ParameterizerContract.GetListReward(nil)
 
-	if reward.Cmp(big.NewInt(test.ONE_WEI)) != 0 {
+	if reward.Cmp(big.NewInt(test.ONE_ETH)) != 0 {
 		t.Errorf("Expected listReward to be 10**18, got: %v", reward)
 	}
 }

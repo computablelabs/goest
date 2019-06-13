@@ -10,7 +10,7 @@ import (
 
 func TestTotalSupply(t *testing.T) {
 	// the supply should have been passed in as initial balance in the deploy spec
-	if supply, _ := deployed.EtherTokenContract.TotalSupply(nil); supply.Cmp(big.NewInt(test.ONE_WEI*9)) != 0 {
+	if supply, _ := deployed.EtherTokenContract.TotalSupply(nil); supply.Cmp(big.NewInt(test.ONE_ETH*9)) != 0 {
 		t.Errorf("Expected total supply to equal initial balance, got %v", supply)
 	}
 }
@@ -21,7 +21,7 @@ func TestTransfer(t *testing.T) {
 
 	// NOTE: if we want to view the transaction itself, it would be the first return arg
 	_, err := deployed.EtherTokenContract.Transfer(test.GetTxOpts(context.AuthOwner, nil,
-		big.NewInt(test.ONE_GWEI*2), 100000), user, big.NewInt(test.ONE_WEI))
+		big.NewInt(test.ONE_GWEI*2), 100000), user, big.NewInt(test.ONE_ETH))
 	test.IfNotNil(t, err, fmt.Sprintf("Error transferring funds to another account: %v", err))
 
 	context.Blockchain.Commit()
@@ -33,14 +33,14 @@ func TestBalanceOf(t *testing.T) {
 	// the user should have been transfered 100000 whatever
 	userBal, _ := deployed.EtherTokenContract.BalanceOf(nil, user)
 
-	if userBal.Cmp(big.NewInt(test.ONE_WEI)) != 0 {
+	if userBal.Cmp(big.NewInt(test.ONE_ETH)) != 0 {
 		t.Errorf("Expected user balance of 1 in wei, got %v", userBal)
 	}
 
 	// that 100000 should have been subtracted from the original owner, Auth.From in this case
 	ownerBal, _ := deployed.EtherTokenContract.BalanceOf(nil, context.AuthOwner.From)
 
-	if ownerBal.Cmp(big.NewInt(test.ONE_WEI*8)) != 0 {
+	if ownerBal.Cmp(big.NewInt(test.ONE_ETH*8)) != 0 {
 		t.Errorf("Expected owner balance of 8 tokens in wei, got %v", ownerBal)
 	}
 }

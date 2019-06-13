@@ -50,13 +50,13 @@ func TestSupport(t *testing.T) {
 	var x big.Int
 	// member 3 will need to deposit funds into the ether token
 	_, depErr := deployed.EtherTokenContract.Deposit(test.GetTxOpts(context.AuthUser3,
-		big.NewInt(test.ONE_WEI*2), big.NewInt(test.ONE_GWEI*2), 1000000)) // deposit 2 tokens
+		big.NewInt(test.ONE_ETH*2), big.NewInt(test.ONE_GWEI*2), 1000000)) // deposit 2 tokens
 	test.IfNotNil(t, depErr, fmt.Sprintf("Error depositing to ethertoken: %v", depErr))
 	context.Blockchain.Commit()
 
 	// allow the ether token to spend on user3's behalf
 	_, approveErr := deployed.EtherTokenContract.Approve(test.GetTxOpts(context.AuthUser3, nil,
-		big.NewInt(test.ONE_GWEI*2), 1000000), deployed.ReserveAddress, big.NewInt(test.ONE_WEI*2)) // up to 2 tokens
+		big.NewInt(test.ONE_GWEI*2), 1000000), deployed.ReserveAddress, big.NewInt(test.ONE_ETH*2)) // up to 2 tokens
 	test.IfNotNil(t, approveErr, fmt.Sprintf("Error approving market contract to spend: %v", approveErr))
 	context.Blockchain.Commit()
 
