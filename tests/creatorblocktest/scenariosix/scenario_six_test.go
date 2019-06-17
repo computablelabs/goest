@@ -5,7 +5,6 @@ import (
 	"github.com/computablelabs/goest/tests/test"
 	"math/big"
 	"testing"
-	//"time"
 )
 
 func oneHundredOneEth() *big.Int {
