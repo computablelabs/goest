@@ -48,15 +48,15 @@ func TestDeployListing(t *testing.T) {
 func TestMain(m *testing.M) {
 	context = test.GetContext(big.NewInt(test.ONE_ETH * 3)) // users have 3 ETH
 	deployed, deployedError = test.Deploy(big.NewInt(test.ONE_ETH*6), big.NewInt(test.ONE_ETH*6), context, &test.Params{
-		ConversionRate: big.NewInt(test.ONE_GWEI),
-		Spread:         big.NewInt(110),
-		ListReward:     big.NewInt(test.ONE_ETH),
-		Stake:          big.NewInt(test.ONE_GWEI),
-		VoteBy:         big.NewInt(100),
-		Quorum:         big.NewInt(50),
-		BackendPct:     big.NewInt(25),
-		MakerPct:       big.NewInt(50),
-		CostPerByte:    big.NewInt(test.ONE_KWEI * 6),
+		PriceFloor:  big.NewInt(test.ONE_GWEI),
+		Spread:      big.NewInt(110),
+		ListReward:  big.NewInt(test.ONE_ETH),
+		Stake:       big.NewInt(test.ONE_GWEI),
+		VoteBy:      big.NewInt(100),
+		Quorum:      big.NewInt(50),
+		BackendPct:  big.NewInt(25),
+		MakerPct:    big.NewInt(50),
+		CostPerByte: big.NewInt(test.ONE_KWEI * 6),
 	})
 
 	// setup the datatrust with a backend

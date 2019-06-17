@@ -15,15 +15,15 @@ import (
 
 // the params struct holds values that will be set in the P11r at init during deploy
 type Params struct {
-	ConversionRate *big.Int
-	Spread         *big.Int
-	ListReward     *big.Int
-	Stake          *big.Int
-	VoteBy         *big.Int
-	Quorum         *big.Int
-	BackendPct     *big.Int
-	MakerPct       *big.Int
-	CostPerByte    *big.Int
+	PriceFloor  *big.Int
+	Spread      *big.Int
+	ListReward  *big.Int
+	Stake       *big.Int
+	VoteBy      *big.Int
+	Quorum      *big.Int
+	BackendPct  *big.Int
+	MakerPct    *big.Int
+	CostPerByte *big.Int
 }
 
 // The deployed struct holds references to the instantiated contracts on the
@@ -103,7 +103,7 @@ func Deploy(etBal *big.Int, mtBal *big.Int, c *Ctx, p *Params) (*Dep, error) {
 		c.AuthOwner,
 		c.Blockchain,
 		votingAddr,
-		p.ConversionRate,
+		p.PriceFloor,
 		p.Spread,
 		p.ListReward,
 		p.Stake,

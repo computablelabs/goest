@@ -1,4 +1,4 @@
-package scenariothree
+package scenariosix
 
 import (
 	"fmt"
@@ -45,16 +45,17 @@ func setupSupporters(bal *big.Int, numSupporters int) {
 func TestMain(m *testing.M) {
 	// need this to create bigger ETH balances (literal will overflow)
 	var x big.Int
+	zeroEth := big.NewInt(0)
 	oneHundredEth := x.Mul(big.NewInt(test.ONE_ETH), big.NewInt(100))
 	oneHundredOneEth := x.Add(oneHundredEth, big.NewInt(test.ONE_ETH))
 
 	context = test.GetContext(oneHundredOneEth) // users have 101 ETH account bal
-	setupSupporters(oneHundredOneEth, 20)       // supporters have 101 ETH account balance
+	setupSupporters(oneHundredOneEth, 10)       // supporters have 101 ETH account balance
 
 	// override the original simulated backend now that we have appeneded to the allocation
 	context.Blockchain = backends.NewSimulatedBackend(context.Alloc, 4700000)
 
-	deployed, deployedError = test.Deploy(oneHundredOneEth, big.NewInt(test.ONE_ETH),
+	deployed, deployedError = test.Deploy(oneHundredOneEth, zeroEth,
 		context, &test.Params{
 			PriceFloor:  big.NewInt(test.ONE_MWEI),
 			Spread:      big.NewInt(110),
