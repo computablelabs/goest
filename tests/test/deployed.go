@@ -155,8 +155,8 @@ func Deploy(etBal *big.Int, mtBal *big.Int, c *Ctx, p *Params) (*Dep, error) {
 		marketTokenAddr,
 		votingAddr,
 		paramAddr,
-		dataAddr,
 		resAddr,
+		dataAddr,
 	)
 
 	if listingErr != nil {
