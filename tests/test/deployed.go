@@ -20,7 +20,7 @@ type Params struct {
 	ListReward  *big.Int
 	Stake       *big.Int
 	VoteBy      *big.Int
-	Quorum      *big.Int
+	Plurality   *big.Int
 	BackendPct  *big.Int
 	MakerPct    *big.Int
 	CostPerByte *big.Int
@@ -108,7 +108,7 @@ func Deploy(etBal *big.Int, mtBal *big.Int, c *Ctx, p *Params) (*Dep, error) {
 		p.ListReward,
 		p.Stake,
 		p.VoteBy,
-		p.Quorum,
+		p.Plurality,
 		p.BackendPct,
 		p.MakerPct,
 		p.CostPerByte,

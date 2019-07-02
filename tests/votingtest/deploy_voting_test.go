@@ -50,7 +50,7 @@ func TestMain(m *testing.M) {
 		ListReward:  big.NewInt(test.ONE_ETH),
 		Stake:       big.NewInt(test.ONE_GWEI),
 		VoteBy:      big.NewInt(100),
-		Quorum:      big.NewInt(50),
+		Plurality:   big.NewInt(50),
 		BackendPct:  big.NewInt(25),
 		MakerPct:    big.NewInt(50),
 		CostPerByte: big.NewInt(test.ONE_KWEI * 6),

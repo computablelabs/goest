@@ -21,7 +21,7 @@ func TestMain(m *testing.M) {
 			ListReward:  big.NewInt(250000000000000),   // 2.5 x 10**13
 			Stake:       big.NewInt(10000000000000000), // 1 X 10**16
 			VoteBy:      big.NewInt(100),               // no need to use a "real" voteBy
-			Quorum:      big.NewInt(50),
+			Plurality:   big.NewInt(50),
 			BackendPct:  big.NewInt(39),
 			MakerPct:    big.NewInt(21),
 			CostPerByte: big.NewInt(test.ONE_GWEI * 100),
