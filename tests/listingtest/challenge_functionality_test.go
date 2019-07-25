@@ -100,8 +100,14 @@ func TestChallenge(t *testing.T) {
 
 func TestResolveChallenge(t *testing.T) {
 	listingHash := test.GenBytes32("BarMarket12345")
-	// the marketBal will decrease as the challenger unstakes post resolution
+	// the listing has some marketToken credited in its supply, note it
+	_, supply, _ := deployed.ListingContract.GetListing(nil, listingHash)
+	if supply.Cmp(big.NewInt(0)) != 1 {
+		t.Errorf("Expected supply to be > 0, got: %v", supply)
+	}
+	// the voting Bal will decrease as the challenger unstakes post resolution
 	votingBal, _ := deployed.MarketTokenContract.BalanceOf(nil, deployed.VotingAddress)
+	ownerBal, _ := deployed.MarketTokenContract.BalanceOf(nil, context.AuthUser1.From)
 	memberBal, _ := deployed.MarketTokenContract.BalanceOf(nil, context.AuthUser2.From)
 
 	// we need to cast a vote for the challenge, or the listing will "win". member3 as voter here
@@ -134,6 +140,18 @@ func TestResolveChallenge(t *testing.T) {
 	listed, _ := deployed.ListingContract.IsListed(nil, listingHash)
 	if listed == true {
 		t.Error("Expected .listed to be false")
+	}
+
+	// the supply is gone of course
+	_, supplyNow, _ := deployed.ListingContract.GetListing(nil, listingHash)
+	if supplyNow.Cmp(big.NewInt(0)) != 0 {
+		t.Errorf("Expected supply to be 0, got: %v", supplyNow)
+	}
+
+	// note that the listing supply was simply burned, not transferred to the owner on removal
+	ownerBalNow, _ := deployed.MarketTokenContract.BalanceOf(nil, context.AuthUser1.From)
+	if ownerBalNow.Cmp(ownerBal) != 0 {
+		t.Errorf("Expected %v to be %v", ownerBalNow, ownerBal)
 	}
 
 	// the candidate should have been pruned
