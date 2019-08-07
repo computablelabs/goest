@@ -23,15 +23,15 @@ func TestMain(m *testing.M) {
 	// etherToken bal, marketToken bal, ctx, params (args)
 	deployed, deployedError = test.Deploy(oneHundredOneEth, big.NewInt(test.ONE_ETH),
 		context, &test.Params{
-			ConversionRate: big.NewInt(test.ONE_MWEI),
-			Spread:         big.NewInt(110),
-			ListReward:     big.NewInt(250000000000000),   // 2.5 x 10**13
-			Stake:          big.NewInt(10000000000000000), // 1 X 10**16
-			VoteBy:         big.NewInt(100),               // no need to use a "real" voteBy
-			Quorum:         big.NewInt(50),
-			BackendPct:     big.NewInt(25),
-			MakerPct:       big.NewInt(25),
-			CostPerByte:    big.NewInt(test.ONE_GWEI * 100),
+			PriceFloor:  big.NewInt(test.ONE_MWEI),
+			Spread:      big.NewInt(110),
+			ListReward:  big.NewInt(250000000000000),   // 2.5 x 10**13
+			Stake:       big.NewInt(10000000000000000), // 1 X 10**16
+			VoteBy:      big.NewInt(100),               // no need to use a "real" voteBy
+			Plurality:   big.NewInt(50),
+			BackendPct:  big.NewInt(25),
+			MakerPct:    big.NewInt(25),
+			CostPerByte: big.NewInt(test.ONE_GWEI * 100),
 		})
 
 	code := m.Run()

@@ -14,7 +14,7 @@ func TestGetStake(t *testing.T) {
 	}
 }
 
-func TestGetConversionRate(t *testing.T) {
+func TestGetPriceFloor(t *testing.T) {
 	floor, _ := deployed.ParameterizerContract.GetPriceFloor(nil)
 
 	if floor.Cmp(big.NewInt(test.ONE_GWEI)) != 0 {

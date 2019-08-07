@@ -90,15 +90,15 @@ func TestMain(m *testing.M) {
 	context.Blockchain = backends.NewSimulatedBackend(context.Alloc, 4700000)
 
 	deployed, deployedError = test.Deploy(oneHundredOneEth, big.NewInt(test.ONE_ETH), context, &test.Params{
-		ConversionRate: big.NewInt(test.ONE_MWEI),
-		Spread:         big.NewInt(110),
-		ListReward:     big.NewInt(250000000000000),   // 2.5 x 10**13
-		Stake:          big.NewInt(10000000000000000), // 1 X 10**16
-		VoteBy:         big.NewInt(100),
-		Quorum:         big.NewInt(50),
-		BackendPct:     big.NewInt(25),
-		MakerPct:       big.NewInt(50),
-		CostPerByte:    big.NewInt(test.ONE_GWEI * 100),
+		PriceFloor:  big.NewInt(test.ONE_MWEI),
+		Spread:      big.NewInt(110),
+		ListReward:  big.NewInt(250000000000000),   // 2.5 x 10**13
+		Stake:       big.NewInt(10000000000000000), // 1 X 10**16
+		VoteBy:      big.NewInt(100),
+		Plurality:   big.NewInt(50),
+		BackendPct:  big.NewInt(25),
+		MakerPct:    big.NewInt(50),
+		CostPerByte: big.NewInt(test.ONE_GWEI * 100),
 	})
 
 	// setup the datatrust with a backend

@@ -26,15 +26,15 @@ func TestDeployEtherToken(t *testing.T) {
 func TestMain(m *testing.M) {
 	context = test.GetContext(big.NewInt(test.ONE_ETH * 2)) // 2 ETH in wei
 	deployed, deployedError = test.Deploy(big.NewInt(test.ONE_ETH*9), big.NewInt(test.ONE_ETH*9), context, &test.Params{
-		ConversionRate: big.NewInt(test.ONE_GWEI),
-		Spread:         big.NewInt(110),
-		ListReward:     big.NewInt(test.ONE_ETH),
-		Stake:          big.NewInt(test.ONE_GWEI),
-		VoteBy:         big.NewInt(100),
-		Quorum:         big.NewInt(50),
-		BackendPct:     big.NewInt(25),
-		MakerPct:       big.NewInt(50),
-		CostPerByte:    big.NewInt(test.ONE_KWEI * 6),
+		PriceFloor:  big.NewInt(test.ONE_GWEI),
+		Spread:      big.NewInt(110),
+		ListReward:  big.NewInt(test.ONE_ETH),
+		Stake:       big.NewInt(test.ONE_GWEI),
+		VoteBy:      big.NewInt(100),
+		Plurality:   big.NewInt(50),
+		BackendPct:  big.NewInt(25),
+		MakerPct:    big.NewInt(50),
+		CostPerByte: big.NewInt(test.ONE_KWEI * 6),
 	})
 	code := m.Run()
 	os.Exit(code)
