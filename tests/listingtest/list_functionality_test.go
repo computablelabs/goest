@@ -66,7 +66,7 @@ func TestResolveApplication(t *testing.T) {
 	test.IfNotNil(t, transErr, fmt.Sprintf("Error transferring tokens to member: %v", transErr))
 	context.Blockchain.Commit()
 	// member will need to have approved the voting contract to spend
-	appErr := test.MaybeIncreaseMarketTokenApproval(context, deployed, context.AuthUser2, deployed.VotingAddress,
+	appErr := test.MaybeIncreaseMarketTokenAllowance(context, deployed, context.AuthUser2, deployed.VotingAddress,
 		big.NewInt(test.ONE_GWEI))
 	test.IfNotNil(t, appErr, fmt.Sprintf("Error approving market contract to spend: %v", appErr))
 	context.Blockchain.Commit()

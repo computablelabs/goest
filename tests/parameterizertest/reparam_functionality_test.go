@@ -52,7 +52,7 @@ func ResolveReparam(t *testing.T) {
 	test.MaybeTransferMarketToken(context, deployed, context.AuthOwner, context.AuthUser3.From, big.NewInt(test.ONE_GWEI))
 
 	// member will need to have approved the voting contract to spend
-	test.MaybeIncreaseMarketTokenApproval(context, deployed, context.AuthUser3, deployed.VotingAddress, big.NewInt(test.ONE_GWEI))
+	test.MaybeIncreaseMarketTokenAllowance(context, deployed, context.AuthUser3, deployed.VotingAddress, big.NewInt(test.ONE_GWEI))
 
 	_, voteErr := deployed.VotingContract.Vote(test.GetTxOpts(context.AuthUser3, nil,
 		big.NewInt(test.ONE_GWEI*2), 150000), paramHash, big.NewInt(1))

@@ -16,11 +16,11 @@ func TestMain(m *testing.M) {
 	// need this to create bigger ETH balances (literal will overflow)
 	var x big.Int
 	oneHundredEth := x.Mul(big.NewInt(test.ONE_ETH), big.NewInt(100))
-	oneHundredOneEth := x.Add(oneHundredEth, big.NewInt(test.ONE_ETH))
+	oneHundredTwoEth := x.Add(oneHundredEth, big.NewInt(test.ONE_ETH*2))
 
-	context = test.GetContext(oneHundredOneEth) // users have 101 ETH account bal
-	// etherToken bal, marketToken bal, ctx, params (args)
-	deployed, deployedError = test.Deploy(oneHundredOneEth, big.NewInt(test.ONE_ETH),
+	context = test.GetContext(oneHundredTwoEth) // users have 102 ETH account bal
+	// marketToken bal, ctx, params (args)
+	deployed, deployedError = test.Deploy(big.NewInt(test.ONE_ETH),
 		context, &test.Params{
 			PriceFloor:  big.NewInt(test.ONE_SZABO),
 			Spread:      big.NewInt(110),

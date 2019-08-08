@@ -46,7 +46,7 @@ func TestResolveRegistration(t *testing.T) {
 		test.IfNotNil(t, transErr, "Error maybe transferring market tokens")
 
 		// member will need to have approved the voting contract to spend at least the stake
-		incErr := test.MaybeIncreaseMarketTokenApproval(context, deployed, context.AuthUser1, deployed.VotingAddress,
+		incErr := test.MaybeIncreaseMarketTokenAllowance(context, deployed, context.AuthUser1, deployed.VotingAddress,
 			big.NewInt(test.ONE_GWEI))
 		test.IfNotNil(t, incErr, "Error maybe transferring market token approval")
 

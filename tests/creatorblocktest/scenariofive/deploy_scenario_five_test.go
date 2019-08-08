@@ -76,20 +76,20 @@ func setupBuyers(bal *big.Int, numBuyers int) {
 func TestMain(m *testing.M) {
 	var x big.Int
 	oneHundredEth := x.Mul(big.NewInt(test.ONE_ETH), big.NewInt(100))
-	oneHundredOneEth := x.Add(oneHundredEth, big.NewInt(test.ONE_ETH))
+	oneHundredTwoEth := x.Add(oneHundredEth, big.NewInt(test.ONE_ETH*2))
 
-	context = test.GetContext(oneHundredOneEth) // users have 101 ETH account bal
-	setupSupporters(oneHundredOneEth, 10)       // supporters have 101 ETH account balance
+	context = test.GetContext(oneHundredTwoEth) // users have 102 ETH account bal
+	setupSupporters(oneHundredTwoEth, 10)       // supporters have 102 ETH account balance
 	// The number of makers needs to divide 1024 for test to go through
 	setupMakers(big.NewInt(test.ONE_ETH), 16) // makers have 1 ETH account balance
-	setupBuyers(oneHundredOneEth, 10)         // buyers have 101 ETH account balance
+	setupBuyers(oneHundredTwoEth, 10)         // buyers have 102 ETH account balance
 	// Set up map for listings
 	listings = make(map[*bind.TransactOpts]([32]byte))
 
 	// override the original simulated backend now that we have appeneded to the allocation
 	context.Blockchain = backends.NewSimulatedBackend(context.Alloc, 4700000)
 
-	deployed, deployedError = test.Deploy(oneHundredOneEth, big.NewInt(test.ONE_ETH), context, &test.Params{
+	deployed, deployedError = test.Deploy(big.NewInt(test.ONE_ETH), context, &test.Params{
 		PriceFloor:  big.NewInt(test.ONE_MWEI),
 		Spread:      big.NewInt(110),
 		ListReward:  big.NewInt(250000000000000),   // 2.5 x 10**13
@@ -114,7 +114,7 @@ func TestMain(m *testing.M) {
 	test.IfNotNil(&logr{}, transErr, "Error transferring tokens")
 
 	// member will need to have approved the voting contract to spend
-	appErr := test.MaybeIncreaseMarketTokenApproval(context, deployed, context.AuthUser3,
+	appErr := test.MaybeIncreaseMarketTokenAllowance(context, deployed, context.AuthUser3,
 		deployed.VotingAddress, big.NewInt(10000000000000000)) // 1 X 10**16
 	test.IfNotNil(&logr{}, appErr, "Error increasing allowance")
 
