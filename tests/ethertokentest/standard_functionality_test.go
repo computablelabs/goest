@@ -15,7 +15,7 @@ func TestTransferFrom(t *testing.T) {
 
 	// transfer from owner to user
 	_, err := deployed.EtherTokenContract.Transfer(test.GetTxOpts(context.AuthOwner, nil,
-		big.NewInt(test.ONE_GWEI*2), 100000), context.AuthUser1.From, big.NewInt(test.ONE_ETH*4))
+		big.NewInt(test.ONE_GWEI*2), 100000), context.AuthUser1.From, big.NewInt(test.ONE_GWEI*3))
 	test.IfNotNil(t, err, fmt.Sprintf("Error transferring funds from owner to user: %v", err))
 
 	// gas cost looking to be around ~50k consistently
@@ -25,28 +25,28 @@ func TestTransferFrom(t *testing.T) {
 
 	// transfer from user to other user
 	_, err2 := deployed.EtherTokenContract.Transfer(test.GetTxOpts(context.AuthUser1, nil,
-		big.NewInt(test.ONE_GWEI*2), 100000), context.AuthUser2.From, big.NewInt(test.ONE_ETH*2))
+		big.NewInt(test.ONE_GWEI*2), 100000), context.AuthUser2.From, big.NewInt(test.ONE_GWEI))
 	test.IfNotNil(t, err2, fmt.Sprintf("Error transferring funds from user to other user: %v", err2))
 
 	context.Blockchain.Commit()
 
-	// owner should have 4 subtracted
-	expectedBal := ownerBal.Sub(ownerBal, big.NewInt(test.ONE_ETH*4))
+	// owner should have less...
+	expectedBal := ownerBal.Sub(ownerBal, big.NewInt(test.ONE_GWEI*3))
 	newOwnerBal, _ := deployed.EtherTokenContract.BalanceOf(nil, context.AuthOwner.From)
 	if newOwnerBal.Cmp(expectedBal) != 0 {
 		t.Errorf("Expected owner balance of %v, got %v", expectedBal, newOwnerBal)
 	}
 
-	// user should have had 2 subtracted from his 4
+	// user should have had 1 subtracted from his 3
 	userBal, _ := deployed.EtherTokenContract.BalanceOf(nil, context.AuthUser1.From)
-	if userBal.Cmp(big.NewInt(test.ONE_ETH*2)) != 0 {
-		t.Errorf("Expected user balance of 2 tokens in wei, got %v", userBal)
+	if userBal.Cmp(big.NewInt(test.ONE_GWEI*2)) != 0 {
+		t.Errorf("Expected user balance of 1 GWEI, got %v", userBal)
 	}
 
 	otherBal, _ := deployed.EtherTokenContract.BalanceOf(nil, context.AuthUser2.From)
-	expectedOtherBal := otherBal.Add(otherBal, big.NewInt(test.ONE_ETH*2))
-	if otherBal.Cmp(expectedOtherBal) != 0 {
-		t.Errorf("Expected other user balance of %v, got %v", expectedOtherBal, otherBal)
+	// also has one GWEI
+	if otherBal.Cmp(big.NewInt(test.ONE_GWEI)) != 0 {
+		t.Errorf("Expected other user balance of one GWEI, got %v", otherBal)
 	}
 }
 
@@ -65,8 +65,8 @@ func TestAllowance(t *testing.T) {
 	}
 }
 
-func TestDecreaseApproval(t *testing.T) {
-	_, err := deployed.EtherTokenContract.DecreaseApproval(test.GetTxOpts(context.AuthUser1, nil,
+func TestDecreaseAllowance(t *testing.T) {
+	_, err := deployed.EtherTokenContract.DecreaseAllowance(test.GetTxOpts(context.AuthUser1, nil,
 		big.NewInt(test.ONE_GWEI*2), 100000), context.AuthUser2.From, big.NewInt(test.ONE_ETH))
 	test.IfNotNil(t, err, fmt.Sprintf("Error decreasing approval for spender: %v", err))
 
@@ -78,8 +78,8 @@ func TestDecreaseApproval(t *testing.T) {
 	}
 }
 
-func TestIncreaseApproval(t *testing.T) {
-	_, err := deployed.EtherTokenContract.IncreaseApproval(test.GetTxOpts(context.AuthUser1, nil,
+func TestIncreaseAllowance(t *testing.T) {
+	_, err := deployed.EtherTokenContract.IncreaseAllowance(test.GetTxOpts(context.AuthUser1, nil,
 		big.NewInt(test.ONE_GWEI*2), 100000), context.AuthUser2.From, big.NewInt(test.ONE_ETH))
 	test.IfNotNil(t, err, fmt.Sprintf("Error increasing approval for spender: %v", err))
 

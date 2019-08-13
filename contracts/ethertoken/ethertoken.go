@@ -15,31 +15,19 @@ import (
 	"github.com/ethereum/go-ethereum/event"
 )
 
-// Reference imports to suppress errors if they are not otherwise used.
-var (
-	_ = big.NewInt
-	_ = strings.NewReader
-	_ = ethereum.NotFound
-	_ = abi.U256
-	_ = bind.Bind
-	_ = common.Big1
-	_ = types.BloomLookup
-	_ = event.NewSubscription
-)
-
 // EtherTokenABI is the input ABI used to generate the binding from.
-const EtherTokenABI = "[{\"name\":\"Approval\",\"inputs\":[{\"type\":\"address\",\"name\":\"owner\",\"indexed\":true},{\"type\":\"address\",\"name\":\"spender\",\"indexed\":true},{\"type\":\"uint256\",\"name\":\"amount\",\"indexed\":false,\"unit\":\"wei\"}],\"anonymous\":false,\"type\":\"event\"},{\"name\":\"Deposited\",\"inputs\":[{\"type\":\"address\",\"name\":\"source\",\"indexed\":true},{\"type\":\"uint256\",\"name\":\"amount\",\"indexed\":false,\"unit\":\"wei\"}],\"anonymous\":false,\"type\":\"event\"},{\"name\":\"Transfer\",\"inputs\":[{\"type\":\"address\",\"name\":\"source\",\"indexed\":true},{\"type\":\"address\",\"name\":\"to\",\"indexed\":true},{\"type\":\"uint256\",\"name\":\"amount\",\"indexed\":false,\"unit\":\"wei\"}],\"anonymous\":false,\"type\":\"event\"},{\"name\":\"Withdrawn\",\"inputs\":[{\"type\":\"address\",\"name\":\"to\",\"indexed\":true},{\"type\":\"uint256\",\"name\":\"amount\",\"indexed\":false,\"unit\":\"wei\"}],\"anonymous\":false,\"type\":\"event\"},{\"outputs\":[],\"inputs\":[{\"type\":\"address\",\"name\":\"initial_account\"},{\"type\":\"uint256\",\"name\":\"initial_balance\",\"unit\":\"wei\"}],\"constant\":false,\"payable\":false,\"type\":\"constructor\"},{\"name\":\"allowance\",\"outputs\":[{\"type\":\"uint256\",\"name\":\"out\",\"unit\":\"wei\"}],\"inputs\":[{\"type\":\"address\",\"name\":\"owner\"},{\"type\":\"address\",\"name\":\"spender\"}],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":815},{\"name\":\"approve\",\"outputs\":[{\"type\":\"bool\",\"name\":\"out\"}],\"inputs\":[{\"type\":\"address\",\"name\":\"spender\"},{\"type\":\"uint256\",\"name\":\"amount\",\"unit\":\"wei\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":37719},{\"name\":\"balanceOf\",\"outputs\":[{\"type\":\"uint256\",\"name\":\"out\",\"unit\":\"wei\"}],\"inputs\":[{\"type\":\"address\",\"name\":\"owner\"}],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":715},{\"name\":\"decreaseApproval\",\"outputs\":[],\"inputs\":[{\"type\":\"address\",\"name\":\"spender\"},{\"type\":\"uint256\",\"name\":\"amount\",\"unit\":\"wei\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":38742},{\"name\":\"deposit\",\"outputs\":[],\"inputs\":[],\"constant\":false,\"payable\":true,\"type\":\"function\",\"gas\":73656},{\"name\":\"increaseApproval\",\"outputs\":[],\"inputs\":[{\"type\":\"address\",\"name\":\"spender\"},{\"type\":\"uint256\",\"name\":\"amount\",\"unit\":\"wei\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":39008},{\"name\":\"totalSupply\",\"outputs\":[{\"type\":\"uint256\",\"name\":\"out\",\"unit\":\"wei\"}],\"inputs\":[],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":663},{\"name\":\"transfer\",\"outputs\":[{\"type\":\"bool\",\"name\":\"out\"}],\"inputs\":[{\"type\":\"address\",\"name\":\"to\"},{\"type\":\"uint256\",\"name\":\"amount\",\"unit\":\"wei\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":74321},{\"name\":\"transferFrom\",\"outputs\":[{\"type\":\"bool\",\"name\":\"out\"}],\"inputs\":[{\"type\":\"address\",\"name\":\"source\"},{\"type\":\"address\",\"name\":\"to\"},{\"type\":\"uint256\",\"name\":\"amount\",\"unit\":\"wei\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":110291},{\"name\":\"withdraw\",\"outputs\":[],\"inputs\":[{\"type\":\"uint256\",\"name\":\"amount\",\"unit\":\"wei\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":108330},{\"name\":\"decimals\",\"outputs\":[{\"type\":\"uint256\",\"name\":\"out\"}],\"inputs\":[],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":783},{\"name\":\"symbol\",\"outputs\":[{\"type\":\"string\",\"name\":\"out\"}],\"inputs\":[],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":2291}]"
+const EtherTokenABI = "[{\"name\":\"Approval\",\"inputs\":[{\"type\":\"address\",\"name\":\"owner\",\"indexed\":true},{\"type\":\"address\",\"name\":\"spender\",\"indexed\":true},{\"type\":\"uint256\",\"name\":\"amount\",\"indexed\":false,\"unit\":\"wei\"}],\"anonymous\":false,\"type\":\"event\"},{\"name\":\"Deposited\",\"inputs\":[{\"type\":\"address\",\"name\":\"source\",\"indexed\":true},{\"type\":\"uint256\",\"name\":\"amount\",\"indexed\":false,\"unit\":\"wei\"}],\"anonymous\":false,\"type\":\"event\"},{\"name\":\"Transfer\",\"inputs\":[{\"type\":\"address\",\"name\":\"source\",\"indexed\":true},{\"type\":\"address\",\"name\":\"to\",\"indexed\":true},{\"type\":\"uint256\",\"name\":\"amount\",\"indexed\":false,\"unit\":\"wei\"}],\"anonymous\":false,\"type\":\"event\"},{\"name\":\"Withdrawn\",\"inputs\":[{\"type\":\"address\",\"name\":\"to\",\"indexed\":true},{\"type\":\"uint256\",\"name\":\"amount\",\"indexed\":false,\"unit\":\"wei\"}],\"anonymous\":false,\"type\":\"event\"},{\"outputs\":[],\"inputs\":[],\"constant\":false,\"payable\":false,\"type\":\"constructor\"},{\"name\":\"allowance\",\"outputs\":[{\"type\":\"uint256\",\"name\":\"out\",\"unit\":\"wei\"}],\"inputs\":[{\"type\":\"address\",\"name\":\"owner\"},{\"type\":\"address\",\"name\":\"spender\"}],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":815},{\"name\":\"approve\",\"outputs\":[{\"type\":\"bool\",\"name\":\"out\"}],\"inputs\":[{\"type\":\"address\",\"name\":\"spender\"},{\"type\":\"uint256\",\"name\":\"amount\",\"unit\":\"wei\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":37719},{\"name\":\"balanceOf\",\"outputs\":[{\"type\":\"uint256\",\"name\":\"out\",\"unit\":\"wei\"}],\"inputs\":[{\"type\":\"address\",\"name\":\"owner\"}],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":715},{\"name\":\"decreaseAllowance\",\"outputs\":[{\"type\":\"bool\",\"name\":\"out\"}],\"inputs\":[{\"type\":\"address\",\"name\":\"spender\"},{\"type\":\"uint256\",\"name\":\"amount\",\"unit\":\"wei\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":38757},{\"name\":\"deposit\",\"outputs\":[],\"inputs\":[],\"constant\":false,\"payable\":true,\"type\":\"function\",\"gas\":73656},{\"name\":\"increaseAllowance\",\"outputs\":[{\"type\":\"bool\",\"name\":\"out\"}],\"inputs\":[{\"type\":\"address\",\"name\":\"spender\"},{\"type\":\"uint256\",\"name\":\"amount\",\"unit\":\"wei\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":39023},{\"name\":\"totalSupply\",\"outputs\":[{\"type\":\"uint256\",\"name\":\"out\",\"unit\":\"wei\"}],\"inputs\":[],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":663},{\"name\":\"transfer\",\"outputs\":[{\"type\":\"bool\",\"name\":\"out\"}],\"inputs\":[{\"type\":\"address\",\"name\":\"to\"},{\"type\":\"uint256\",\"name\":\"amount\",\"unit\":\"wei\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":74321},{\"name\":\"transferFrom\",\"outputs\":[{\"type\":\"bool\",\"name\":\"out\"}],\"inputs\":[{\"type\":\"address\",\"name\":\"source\"},{\"type\":\"address\",\"name\":\"to\"},{\"type\":\"uint256\",\"name\":\"amount\",\"unit\":\"wei\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":110291},{\"name\":\"withdraw\",\"outputs\":[],\"inputs\":[{\"type\":\"uint256\",\"name\":\"amount\",\"unit\":\"wei\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":108330},{\"name\":\"decimals\",\"outputs\":[{\"type\":\"uint256\",\"name\":\"out\"}],\"inputs\":[],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":783},{\"name\":\"symbol\",\"outputs\":[{\"type\":\"string\",\"name\":\"out\"}],\"inputs\":[],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":2291}]"
 
 // EtherTokenBin is the compiled bytecode used for deploying new contracts.
-const EtherTokenBin = `0x740100000000000000000000000000000000000000006020526f7fffffffffffffffffffffffffffffff6040527fffffffffffffffffffffffffffffffff8000000000000000000000000000000060605274012a05f1fffffffffffffffffffffffffdabf41c006080527ffffffffffffffffffffffffed5fa0e000000000000000000000000000000000060a05260406109596101403934156100a157600080fd5b602061095960c03960c05160205181106100ba57600080fd5b506101605160016101405160e05260c052604060c0205560126002556003610180527f43455400000000000000000000000000000000000000000000000000000000006101a05261018080600360c052602060c020602082510161012060006002818352015b8261012051602002111561013357610155565b61012051602002850151610120518501555b8151600101808352811415610120575b5050505050506101605160045561094156600035601c52740100000000000000000000000000000000000000006020526f7fffffffffffffffffffffffffffffff6040527fffffffffffffffffffffffffffffffff8000000000000000000000000000000060605274012a05f1fffffffffffffffffffffffffdabf41c006080527ffffffffffffffffffffffffed5fa0e000000000000000000000000000000000060a05263dd62ed3e600051141561010357604060046101403734156100b457600080fd5b60043560205181106100c557600080fd5b5060243560205181106100d757600080fd5b5060006101405160e05260c052604060c0206101605160e05260c052604060c0205460005260206000f3005b63095ea7b36000511415610198576040600461014037341561012457600080fd5b600435602051811061013557600080fd5b506101605160003360e05260c052604060c0206101405160e05260c052604060c02055610160516101805261014051337f8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b9256020610180a3600160005260206000f3005b6370a0823160005114156101e757602060046101403734156101b957600080fd5b60043560205181106101ca57600080fd5b5060016101405160e05260c052604060c0205460005260206000f3005b636618846360005114156102a2576040600461014037341561020857600080fd5b600435602051811061021957600080fd5b5060003360e05260c052604060c0206101405160e05260c052604060c020610160518154101561024857600080fd5b6101605181540381555060003360e05260c052604060c0206101405160e05260c052604060c020546101805261014051337f8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b9256020610180a3005b63d0e30db0600051141561031f5760013360e05260c052604060c02080543482540110156102cf57600080fd5b34815401815550600480543482540110156102e957600080fd5b348154018155503461014052337f2da466a7b24304f47e87fa2e1e5a81b9831ce54fec19055ce277ca2f39ba42c46020610140a2005b63d73dd62360005114156103dd576040600461014037341561034057600080fd5b600435602051811061035157600080fd5b5060003360e05260c052604060c0206101405160e05260c052604060c020805461016051825401101561038357600080fd5b6101605181540181555060003360e05260c052604060c0206101405160e05260c052604060c020546101805261014051337f8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b9256020610180a3005b6318160ddd60005114156104035734156103f657600080fd5b60045460005260206000f3005b63a9059cbb60005114156104de576040600461014037341561042457600080fd5b600435602051811061043557600080fd5b506000610140511861044657600080fd5b60013360e05260c052604060c020610160518154101561046557600080fd5b6101605181540381555060016101405160e05260c052604060c020805461016051825401101561049457600080fd5b61016051815401815550610160516101805261014051337fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef6020610180a3600160005260206000f3005b6323b872dd600051141561061957606060046101403734156104ff57600080fd5b600435602051811061051057600080fd5b50602435602051811061052257600080fd5b506000610140511861053357600080fd5b6000610160511861054357600080fd5b60016101405160e05260c052604060c020610180518154101561056557600080fd5b6101805181540381555060016101605160e05260c052604060c020805461018051825401101561059457600080fd5b6101805181540181555060006101405160e05260c052604060c0203360e05260c052604060c02061018051815410156105cc57600080fd5b61018051815403815550610180516101a05261016051610140517fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef60206101a0a3600160005260206000f3005b632e1a7d4d60005114156106cb576020600461014037341561063a57600080fd5b60013360e05260c052604060c020610140518154101561065957600080fd5b610140518154038155506004610140518154101561067657600080fd5b61014051815403815550600060006000600061014051336000f161069957600080fd5b6101405161016052337f7084f5476618d8e60b11ef0d7d3f06914655adb8793e28ff7f018d4c76d505d56020610160a2005b63313ce56760005114156106f15734156106e457600080fd5b60025460005260206000f3005b6395d89b4160005114156107d457341561070a57600080fd5b60038060c052602060c020610180602082540161012060006002818352015b8261012051602002111561073c5761075e565b61012051850154610120516020028501525b8151600101808352811415610729575b5050505050506101805160206001820306601f82010390506101e0610180516003818352015b826101e0511115610794576107b0565b60006101e0516101a001535b8151600101808352811415610784575b5050506020610160526040610180510160206001820306601f8201039050610160f3005b60006000fd5b61016761094103610167600039610167610941036000f3`
+const EtherTokenBin = `0x740100000000000000000000000000000000000000006020526f7fffffffffffffffffffffffffffffff6040527fffffffffffffffffffffffffffffffff8000000000000000000000000000000060605274012a05f1fffffffffffffffffffffffffdabf41c006080527ffffffffffffffffffffffffed5fa0e000000000000000000000000000000000060a052341561009857600080fd5b60126002556003610140527f43455400000000000000000000000000000000000000000000000000000000006101605261014080600360c052602060c020602082510161012060006002818352015b826101205160200211156100fa5761011c565b61012051602002850151610120518501555b81516001018083528114156100e7575b50505050505061091556600035601c52740100000000000000000000000000000000000000006020526f7fffffffffffffffffffffffffffffff6040527fffffffffffffffffffffffffffffffff8000000000000000000000000000000060605274012a05f1fffffffffffffffffffffffffdabf41c006080527ffffffffffffffffffffffffed5fa0e000000000000000000000000000000000060a05263dd62ed3e600051141561010357604060046101403734156100b457600080fd5b60043560205181106100c557600080fd5b5060243560205181106100d757600080fd5b5060006101405160e05260c052604060c0206101605160e05260c052604060c0205460005260206000f3005b63095ea7b36000511415610198576040600461014037341561012457600080fd5b600435602051811061013557600080fd5b506101605160003360e05260c052604060c0206101405160e05260c052604060c02055610160516101805261014051337f8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b9256020610180a3600160005260206000f3005b6370a0823160005114156101e757602060046101403734156101b957600080fd5b60043560205181106101ca57600080fd5b5060016101405160e05260c052604060c0205460005260206000f3005b63a457c2d760005114156102ac576040600461014037341561020857600080fd5b600435602051811061021957600080fd5b5060003360e05260c052604060c0206101405160e05260c052604060c020610160518154101561024857600080fd5b6101605181540381555060003360e05260c052604060c0206101405160e05260c052604060c020546101805261014051337f8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b9256020610180a3600160005260206000f3005b63d0e30db060005114156103295760013360e05260c052604060c02080543482540110156102d957600080fd5b34815401815550600480543482540110156102f357600080fd5b348154018155503461014052337f2da466a7b24304f47e87fa2e1e5a81b9831ce54fec19055ce277ca2f39ba42c46020610140a2005b633950935160005114156103f1576040600461014037341561034a57600080fd5b600435602051811061035b57600080fd5b5060003360e05260c052604060c0206101405160e05260c052604060c020805461016051825401101561038d57600080fd5b6101605181540181555060003360e05260c052604060c0206101405160e05260c052604060c020546101805261014051337f8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b9256020610180a3600160005260206000f3005b6318160ddd600051141561041757341561040a57600080fd5b60045460005260206000f3005b63a9059cbb60005114156104f2576040600461014037341561043857600080fd5b600435602051811061044957600080fd5b506000610140511861045a57600080fd5b60013360e05260c052604060c020610160518154101561047957600080fd5b6101605181540381555060016101405160e05260c052604060c02080546101605182540110156104a857600080fd5b61016051815401815550610160516101805261014051337fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef6020610180a3600160005260206000f3005b6323b872dd600051141561062d576060600461014037341561051357600080fd5b600435602051811061052457600080fd5b50602435602051811061053657600080fd5b506000610140511861054757600080fd5b6000610160511861055757600080fd5b60016101405160e05260c052604060c020610180518154101561057957600080fd5b6101805181540381555060016101605160e05260c052604060c02080546101805182540110156105a857600080fd5b6101805181540181555060006101405160e05260c052604060c0203360e05260c052604060c02061018051815410156105e057600080fd5b61018051815403815550610180516101a05261016051610140517fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef60206101a0a3600160005260206000f3005b632e1a7d4d60005114156106df576020600461014037341561064e57600080fd5b60013360e05260c052604060c020610140518154101561066d57600080fd5b610140518154038155506004610140518154101561068a57600080fd5b61014051815403815550600060006000600061014051336000f16106ad57600080fd5b6101405161016052337f7084f5476618d8e60b11ef0d7d3f06914655adb8793e28ff7f018d4c76d505d56020610160a2005b63313ce56760005114156107055734156106f857600080fd5b60025460005260206000f3005b6395d89b4160005114156107e857341561071e57600080fd5b60038060c052602060c020610180602082540161012060006002818352015b8261012051602002111561075057610772565b61012051850154610120516020028501525b815160010180835281141561073d575b5050505050506101805160206001820306601f82010390506101e0610180516003818352015b826101e05111156107a8576107c4565b60006101e0516101a001535b8151600101808352811415610798575b5050506020610160526040610180510160206001820306601f8201039050610160f3005b60006000fd5b61012761091503610127600039610127610915036000f3`
 
 // DeployEtherToken deploys a new Ethereum contract, binding an instance of EtherToken to it.
-func DeployEtherToken(auth *bind.TransactOpts, backend bind.ContractBackend, initial_account common.Address, initial_balance *big.Int) (common.Address, *types.Transaction, *EtherToken, error) {
+func DeployEtherToken(auth *bind.TransactOpts, backend bind.ContractBackend) (common.Address, *types.Transaction, *EtherToken, error) {
 	parsed, err := abi.JSON(strings.NewReader(EtherTokenABI))
 	if err != nil {
 		return common.Address{}, nil, nil, err
 	}
-	address, tx, contract, err := bind.DeployContract(auth, parsed, common.FromHex(EtherTokenBin), backend, initial_account, initial_balance)
+	address, tx, contract, err := bind.DeployContract(auth, parsed, common.FromHex(EtherTokenBin), backend)
 	if err != nil {
 		return common.Address{}, nil, nil, err
 	}
@@ -190,7 +178,7 @@ func (_EtherToken *EtherTokenTransactorRaw) Transact(opts *bind.TransactOpts, me
 
 // Allowance is a free data retrieval call binding the contract method 0xdd62ed3e.
 //
-// Solidity: function allowance(address owner, address spender) constant returns(uint256 out)
+// Solidity: function allowance(owner address, spender address) constant returns(out uint256)
 func (_EtherToken *EtherTokenCaller) Allowance(opts *bind.CallOpts, owner common.Address, spender common.Address) (*big.Int, error) {
 	var (
 		ret0 = new(*big.Int)
@@ -202,21 +190,21 @@ func (_EtherToken *EtherTokenCaller) Allowance(opts *bind.CallOpts, owner common
 
 // Allowance is a free data retrieval call binding the contract method 0xdd62ed3e.
 //
-// Solidity: function allowance(address owner, address spender) constant returns(uint256 out)
+// Solidity: function allowance(owner address, spender address) constant returns(out uint256)
 func (_EtherToken *EtherTokenSession) Allowance(owner common.Address, spender common.Address) (*big.Int, error) {
 	return _EtherToken.Contract.Allowance(&_EtherToken.CallOpts, owner, spender)
 }
 
 // Allowance is a free data retrieval call binding the contract method 0xdd62ed3e.
 //
-// Solidity: function allowance(address owner, address spender) constant returns(uint256 out)
+// Solidity: function allowance(owner address, spender address) constant returns(out uint256)
 func (_EtherToken *EtherTokenCallerSession) Allowance(owner common.Address, spender common.Address) (*big.Int, error) {
 	return _EtherToken.Contract.Allowance(&_EtherToken.CallOpts, owner, spender)
 }
 
 // BalanceOf is a free data retrieval call binding the contract method 0x70a08231.
 //
-// Solidity: function balanceOf(address owner) constant returns(uint256 out)
+// Solidity: function balanceOf(owner address) constant returns(out uint256)
 func (_EtherToken *EtherTokenCaller) BalanceOf(opts *bind.CallOpts, owner common.Address) (*big.Int, error) {
 	var (
 		ret0 = new(*big.Int)
@@ -228,21 +216,21 @@ func (_EtherToken *EtherTokenCaller) BalanceOf(opts *bind.CallOpts, owner common
 
 // BalanceOf is a free data retrieval call binding the contract method 0x70a08231.
 //
-// Solidity: function balanceOf(address owner) constant returns(uint256 out)
+// Solidity: function balanceOf(owner address) constant returns(out uint256)
 func (_EtherToken *EtherTokenSession) BalanceOf(owner common.Address) (*big.Int, error) {
 	return _EtherToken.Contract.BalanceOf(&_EtherToken.CallOpts, owner)
 }
 
 // BalanceOf is a free data retrieval call binding the contract method 0x70a08231.
 //
-// Solidity: function balanceOf(address owner) constant returns(uint256 out)
+// Solidity: function balanceOf(owner address) constant returns(out uint256)
 func (_EtherToken *EtherTokenCallerSession) BalanceOf(owner common.Address) (*big.Int, error) {
 	return _EtherToken.Contract.BalanceOf(&_EtherToken.CallOpts, owner)
 }
 
 // Decimals is a free data retrieval call binding the contract method 0x313ce567.
 //
-// Solidity: function decimals() constant returns(uint256 out)
+// Solidity: function decimals() constant returns(out uint256)
 func (_EtherToken *EtherTokenCaller) Decimals(opts *bind.CallOpts) (*big.Int, error) {
 	var (
 		ret0 = new(*big.Int)
@@ -254,21 +242,21 @@ func (_EtherToken *EtherTokenCaller) Decimals(opts *bind.CallOpts) (*big.Int, er
 
 // Decimals is a free data retrieval call binding the contract method 0x313ce567.
 //
-// Solidity: function decimals() constant returns(uint256 out)
+// Solidity: function decimals() constant returns(out uint256)
 func (_EtherToken *EtherTokenSession) Decimals() (*big.Int, error) {
 	return _EtherToken.Contract.Decimals(&_EtherToken.CallOpts)
 }
 
 // Decimals is a free data retrieval call binding the contract method 0x313ce567.
 //
-// Solidity: function decimals() constant returns(uint256 out)
+// Solidity: function decimals() constant returns(out uint256)
 func (_EtherToken *EtherTokenCallerSession) Decimals() (*big.Int, error) {
 	return _EtherToken.Contract.Decimals(&_EtherToken.CallOpts)
 }
 
 // Symbol is a free data retrieval call binding the contract method 0x95d89b41.
 //
-// Solidity: function symbol() constant returns(string out)
+// Solidity: function symbol() constant returns(out string)
 func (_EtherToken *EtherTokenCaller) Symbol(opts *bind.CallOpts) (string, error) {
 	var (
 		ret0 = new(string)
@@ -280,21 +268,21 @@ func (_EtherToken *EtherTokenCaller) Symbol(opts *bind.CallOpts) (string, error)
 
 // Symbol is a free data retrieval call binding the contract method 0x95d89b41.
 //
-// Solidity: function symbol() constant returns(string out)
+// Solidity: function symbol() constant returns(out string)
 func (_EtherToken *EtherTokenSession) Symbol() (string, error) {
 	return _EtherToken.Contract.Symbol(&_EtherToken.CallOpts)
 }
 
 // Symbol is a free data retrieval call binding the contract method 0x95d89b41.
 //
-// Solidity: function symbol() constant returns(string out)
+// Solidity: function symbol() constant returns(out string)
 func (_EtherToken *EtherTokenCallerSession) Symbol() (string, error) {
 	return _EtherToken.Contract.Symbol(&_EtherToken.CallOpts)
 }
 
 // TotalSupply is a free data retrieval call binding the contract method 0x18160ddd.
 //
-// Solidity: function totalSupply() constant returns(uint256 out)
+// Solidity: function totalSupply() constant returns(out uint256)
 func (_EtherToken *EtherTokenCaller) TotalSupply(opts *bind.CallOpts) (*big.Int, error) {
 	var (
 		ret0 = new(*big.Int)
@@ -306,58 +294,58 @@ func (_EtherToken *EtherTokenCaller) TotalSupply(opts *bind.CallOpts) (*big.Int,
 
 // TotalSupply is a free data retrieval call binding the contract method 0x18160ddd.
 //
-// Solidity: function totalSupply() constant returns(uint256 out)
+// Solidity: function totalSupply() constant returns(out uint256)
 func (_EtherToken *EtherTokenSession) TotalSupply() (*big.Int, error) {
 	return _EtherToken.Contract.TotalSupply(&_EtherToken.CallOpts)
 }
 
 // TotalSupply is a free data retrieval call binding the contract method 0x18160ddd.
 //
-// Solidity: function totalSupply() constant returns(uint256 out)
+// Solidity: function totalSupply() constant returns(out uint256)
 func (_EtherToken *EtherTokenCallerSession) TotalSupply() (*big.Int, error) {
 	return _EtherToken.Contract.TotalSupply(&_EtherToken.CallOpts)
 }
 
 // Approve is a paid mutator transaction binding the contract method 0x095ea7b3.
 //
-// Solidity: function approve(address spender, uint256 amount) returns(bool out)
+// Solidity: function approve(spender address, amount uint256) returns(out bool)
 func (_EtherToken *EtherTokenTransactor) Approve(opts *bind.TransactOpts, spender common.Address, amount *big.Int) (*types.Transaction, error) {
 	return _EtherToken.contract.Transact(opts, "approve", spender, amount)
 }
 
 // Approve is a paid mutator transaction binding the contract method 0x095ea7b3.
 //
-// Solidity: function approve(address spender, uint256 amount) returns(bool out)
+// Solidity: function approve(spender address, amount uint256) returns(out bool)
 func (_EtherToken *EtherTokenSession) Approve(spender common.Address, amount *big.Int) (*types.Transaction, error) {
 	return _EtherToken.Contract.Approve(&_EtherToken.TransactOpts, spender, amount)
 }
 
 // Approve is a paid mutator transaction binding the contract method 0x095ea7b3.
 //
-// Solidity: function approve(address spender, uint256 amount) returns(bool out)
+// Solidity: function approve(spender address, amount uint256) returns(out bool)
 func (_EtherToken *EtherTokenTransactorSession) Approve(spender common.Address, amount *big.Int) (*types.Transaction, error) {
 	return _EtherToken.Contract.Approve(&_EtherToken.TransactOpts, spender, amount)
 }
 
-// DecreaseApproval is a paid mutator transaction binding the contract method 0x66188463.
+// DecreaseAllowance is a paid mutator transaction binding the contract method 0xa457c2d7.
 //
-// Solidity: function decreaseApproval(address spender, uint256 amount) returns()
-func (_EtherToken *EtherTokenTransactor) DecreaseApproval(opts *bind.TransactOpts, spender common.Address, amount *big.Int) (*types.Transaction, error) {
-	return _EtherToken.contract.Transact(opts, "decreaseApproval", spender, amount)
+// Solidity: function decreaseAllowance(spender address, amount uint256) returns(out bool)
+func (_EtherToken *EtherTokenTransactor) DecreaseAllowance(opts *bind.TransactOpts, spender common.Address, amount *big.Int) (*types.Transaction, error) {
+	return _EtherToken.contract.Transact(opts, "decreaseAllowance", spender, amount)
 }
 
-// DecreaseApproval is a paid mutator transaction binding the contract method 0x66188463.
+// DecreaseAllowance is a paid mutator transaction binding the contract method 0xa457c2d7.
 //
-// Solidity: function decreaseApproval(address spender, uint256 amount) returns()
-func (_EtherToken *EtherTokenSession) DecreaseApproval(spender common.Address, amount *big.Int) (*types.Transaction, error) {
-	return _EtherToken.Contract.DecreaseApproval(&_EtherToken.TransactOpts, spender, amount)
+// Solidity: function decreaseAllowance(spender address, amount uint256) returns(out bool)
+func (_EtherToken *EtherTokenSession) DecreaseAllowance(spender common.Address, amount *big.Int) (*types.Transaction, error) {
+	return _EtherToken.Contract.DecreaseAllowance(&_EtherToken.TransactOpts, spender, amount)
 }
 
-// DecreaseApproval is a paid mutator transaction binding the contract method 0x66188463.
+// DecreaseAllowance is a paid mutator transaction binding the contract method 0xa457c2d7.
 //
-// Solidity: function decreaseApproval(address spender, uint256 amount) returns()
-func (_EtherToken *EtherTokenTransactorSession) DecreaseApproval(spender common.Address, amount *big.Int) (*types.Transaction, error) {
-	return _EtherToken.Contract.DecreaseApproval(&_EtherToken.TransactOpts, spender, amount)
+// Solidity: function decreaseAllowance(spender address, amount uint256) returns(out bool)
+func (_EtherToken *EtherTokenTransactorSession) DecreaseAllowance(spender common.Address, amount *big.Int) (*types.Transaction, error) {
+	return _EtherToken.Contract.DecreaseAllowance(&_EtherToken.TransactOpts, spender, amount)
 }
 
 // Deposit is a paid mutator transaction binding the contract method 0xd0e30db0.
@@ -381,86 +369,86 @@ func (_EtherToken *EtherTokenTransactorSession) Deposit() (*types.Transaction, e
 	return _EtherToken.Contract.Deposit(&_EtherToken.TransactOpts)
 }
 
-// IncreaseApproval is a paid mutator transaction binding the contract method 0xd73dd623.
+// IncreaseAllowance is a paid mutator transaction binding the contract method 0x39509351.
 //
-// Solidity: function increaseApproval(address spender, uint256 amount) returns()
-func (_EtherToken *EtherTokenTransactor) IncreaseApproval(opts *bind.TransactOpts, spender common.Address, amount *big.Int) (*types.Transaction, error) {
-	return _EtherToken.contract.Transact(opts, "increaseApproval", spender, amount)
+// Solidity: function increaseAllowance(spender address, amount uint256) returns(out bool)
+func (_EtherToken *EtherTokenTransactor) IncreaseAllowance(opts *bind.TransactOpts, spender common.Address, amount *big.Int) (*types.Transaction, error) {
+	return _EtherToken.contract.Transact(opts, "increaseAllowance", spender, amount)
 }
 
-// IncreaseApproval is a paid mutator transaction binding the contract method 0xd73dd623.
+// IncreaseAllowance is a paid mutator transaction binding the contract method 0x39509351.
 //
-// Solidity: function increaseApproval(address spender, uint256 amount) returns()
-func (_EtherToken *EtherTokenSession) IncreaseApproval(spender common.Address, amount *big.Int) (*types.Transaction, error) {
-	return _EtherToken.Contract.IncreaseApproval(&_EtherToken.TransactOpts, spender, amount)
+// Solidity: function increaseAllowance(spender address, amount uint256) returns(out bool)
+func (_EtherToken *EtherTokenSession) IncreaseAllowance(spender common.Address, amount *big.Int) (*types.Transaction, error) {
+	return _EtherToken.Contract.IncreaseAllowance(&_EtherToken.TransactOpts, spender, amount)
 }
 
-// IncreaseApproval is a paid mutator transaction binding the contract method 0xd73dd623.
+// IncreaseAllowance is a paid mutator transaction binding the contract method 0x39509351.
 //
-// Solidity: function increaseApproval(address spender, uint256 amount) returns()
-func (_EtherToken *EtherTokenTransactorSession) IncreaseApproval(spender common.Address, amount *big.Int) (*types.Transaction, error) {
-	return _EtherToken.Contract.IncreaseApproval(&_EtherToken.TransactOpts, spender, amount)
+// Solidity: function increaseAllowance(spender address, amount uint256) returns(out bool)
+func (_EtherToken *EtherTokenTransactorSession) IncreaseAllowance(spender common.Address, amount *big.Int) (*types.Transaction, error) {
+	return _EtherToken.Contract.IncreaseAllowance(&_EtherToken.TransactOpts, spender, amount)
 }
 
 // Transfer is a paid mutator transaction binding the contract method 0xa9059cbb.
 //
-// Solidity: function transfer(address to, uint256 amount) returns(bool out)
+// Solidity: function transfer(to address, amount uint256) returns(out bool)
 func (_EtherToken *EtherTokenTransactor) Transfer(opts *bind.TransactOpts, to common.Address, amount *big.Int) (*types.Transaction, error) {
 	return _EtherToken.contract.Transact(opts, "transfer", to, amount)
 }
 
 // Transfer is a paid mutator transaction binding the contract method 0xa9059cbb.
 //
-// Solidity: function transfer(address to, uint256 amount) returns(bool out)
+// Solidity: function transfer(to address, amount uint256) returns(out bool)
 func (_EtherToken *EtherTokenSession) Transfer(to common.Address, amount *big.Int) (*types.Transaction, error) {
 	return _EtherToken.Contract.Transfer(&_EtherToken.TransactOpts, to, amount)
 }
 
 // Transfer is a paid mutator transaction binding the contract method 0xa9059cbb.
 //
-// Solidity: function transfer(address to, uint256 amount) returns(bool out)
+// Solidity: function transfer(to address, amount uint256) returns(out bool)
 func (_EtherToken *EtherTokenTransactorSession) Transfer(to common.Address, amount *big.Int) (*types.Transaction, error) {
 	return _EtherToken.Contract.Transfer(&_EtherToken.TransactOpts, to, amount)
 }
 
 // TransferFrom is a paid mutator transaction binding the contract method 0x23b872dd.
 //
-// Solidity: function transferFrom(address source, address to, uint256 amount) returns(bool out)
+// Solidity: function transferFrom(source address, to address, amount uint256) returns(out bool)
 func (_EtherToken *EtherTokenTransactor) TransferFrom(opts *bind.TransactOpts, source common.Address, to common.Address, amount *big.Int) (*types.Transaction, error) {
 	return _EtherToken.contract.Transact(opts, "transferFrom", source, to, amount)
 }
 
 // TransferFrom is a paid mutator transaction binding the contract method 0x23b872dd.
 //
-// Solidity: function transferFrom(address source, address to, uint256 amount) returns(bool out)
+// Solidity: function transferFrom(source address, to address, amount uint256) returns(out bool)
 func (_EtherToken *EtherTokenSession) TransferFrom(source common.Address, to common.Address, amount *big.Int) (*types.Transaction, error) {
 	return _EtherToken.Contract.TransferFrom(&_EtherToken.TransactOpts, source, to, amount)
 }
 
 // TransferFrom is a paid mutator transaction binding the contract method 0x23b872dd.
 //
-// Solidity: function transferFrom(address source, address to, uint256 amount) returns(bool out)
+// Solidity: function transferFrom(source address, to address, amount uint256) returns(out bool)
 func (_EtherToken *EtherTokenTransactorSession) TransferFrom(source common.Address, to common.Address, amount *big.Int) (*types.Transaction, error) {
 	return _EtherToken.Contract.TransferFrom(&_EtherToken.TransactOpts, source, to, amount)
 }
 
 // Withdraw is a paid mutator transaction binding the contract method 0x2e1a7d4d.
 //
-// Solidity: function withdraw(uint256 amount) returns()
+// Solidity: function withdraw(amount uint256) returns()
 func (_EtherToken *EtherTokenTransactor) Withdraw(opts *bind.TransactOpts, amount *big.Int) (*types.Transaction, error) {
 	return _EtherToken.contract.Transact(opts, "withdraw", amount)
 }
 
 // Withdraw is a paid mutator transaction binding the contract method 0x2e1a7d4d.
 //
-// Solidity: function withdraw(uint256 amount) returns()
+// Solidity: function withdraw(amount uint256) returns()
 func (_EtherToken *EtherTokenSession) Withdraw(amount *big.Int) (*types.Transaction, error) {
 	return _EtherToken.Contract.Withdraw(&_EtherToken.TransactOpts, amount)
 }
 
 // Withdraw is a paid mutator transaction binding the contract method 0x2e1a7d4d.
 //
-// Solidity: function withdraw(uint256 amount) returns()
+// Solidity: function withdraw(amount uint256) returns()
 func (_EtherToken *EtherTokenTransactorSession) Withdraw(amount *big.Int) (*types.Transaction, error) {
 	return _EtherToken.Contract.Withdraw(&_EtherToken.TransactOpts, amount)
 }
@@ -542,7 +530,7 @@ type EtherTokenApproval struct {
 
 // FilterApproval is a free log retrieval operation binding the contract event 0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925.
 //
-// Solidity: event Approval(address indexed owner, address indexed spender, uint256 amount)
+// Solidity: e Approval(owner indexed address, spender indexed address, amount uint256)
 func (_EtherToken *EtherTokenFilterer) FilterApproval(opts *bind.FilterOpts, owner []common.Address, spender []common.Address) (*EtherTokenApprovalIterator, error) {
 
 	var ownerRule []interface{}
@@ -563,7 +551,7 @@ func (_EtherToken *EtherTokenFilterer) FilterApproval(opts *bind.FilterOpts, own
 
 // WatchApproval is a free log subscription operation binding the contract event 0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925.
 //
-// Solidity: event Approval(address indexed owner, address indexed spender, uint256 amount)
+// Solidity: e Approval(owner indexed address, spender indexed address, amount uint256)
 func (_EtherToken *EtherTokenFilterer) WatchApproval(opts *bind.WatchOpts, sink chan<- *EtherTokenApproval, owner []common.Address, spender []common.Address) (event.Subscription, error) {
 
 	var ownerRule []interface{}
@@ -683,7 +671,7 @@ type EtherTokenDeposited struct {
 
 // FilterDeposited is a free log retrieval operation binding the contract event 0x2da466a7b24304f47e87fa2e1e5a81b9831ce54fec19055ce277ca2f39ba42c4.
 //
-// Solidity: event Deposited(address indexed source, uint256 amount)
+// Solidity: e Deposited(source indexed address, amount uint256)
 func (_EtherToken *EtherTokenFilterer) FilterDeposited(opts *bind.FilterOpts, source []common.Address) (*EtherTokenDepositedIterator, error) {
 
 	var sourceRule []interface{}
@@ -700,7 +688,7 @@ func (_EtherToken *EtherTokenFilterer) FilterDeposited(opts *bind.FilterOpts, so
 
 // WatchDeposited is a free log subscription operation binding the contract event 0x2da466a7b24304f47e87fa2e1e5a81b9831ce54fec19055ce277ca2f39ba42c4.
 //
-// Solidity: event Deposited(address indexed source, uint256 amount)
+// Solidity: e Deposited(source indexed address, amount uint256)
 func (_EtherToken *EtherTokenFilterer) WatchDeposited(opts *bind.WatchOpts, sink chan<- *EtherTokenDeposited, source []common.Address) (event.Subscription, error) {
 
 	var sourceRule []interface{}
@@ -817,7 +805,7 @@ type EtherTokenTransfer struct {
 
 // FilterTransfer is a free log retrieval operation binding the contract event 0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef.
 //
-// Solidity: event Transfer(address indexed source, address indexed to, uint256 amount)
+// Solidity: e Transfer(source indexed address, to indexed address, amount uint256)
 func (_EtherToken *EtherTokenFilterer) FilterTransfer(opts *bind.FilterOpts, source []common.Address, to []common.Address) (*EtherTokenTransferIterator, error) {
 
 	var sourceRule []interface{}
@@ -838,7 +826,7 @@ func (_EtherToken *EtherTokenFilterer) FilterTransfer(opts *bind.FilterOpts, sou
 
 // WatchTransfer is a free log subscription operation binding the contract event 0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef.
 //
-// Solidity: event Transfer(address indexed source, address indexed to, uint256 amount)
+// Solidity: e Transfer(source indexed address, to indexed address, amount uint256)
 func (_EtherToken *EtherTokenFilterer) WatchTransfer(opts *bind.WatchOpts, sink chan<- *EtherTokenTransfer, source []common.Address, to []common.Address) (event.Subscription, error) {
 
 	var sourceRule []interface{}
@@ -958,7 +946,7 @@ type EtherTokenWithdrawn struct {
 
 // FilterWithdrawn is a free log retrieval operation binding the contract event 0x7084f5476618d8e60b11ef0d7d3f06914655adb8793e28ff7f018d4c76d505d5.
 //
-// Solidity: event Withdrawn(address indexed to, uint256 amount)
+// Solidity: e Withdrawn(to indexed address, amount uint256)
 func (_EtherToken *EtherTokenFilterer) FilterWithdrawn(opts *bind.FilterOpts, to []common.Address) (*EtherTokenWithdrawnIterator, error) {
 
 	var toRule []interface{}
@@ -975,7 +963,7 @@ func (_EtherToken *EtherTokenFilterer) FilterWithdrawn(opts *bind.FilterOpts, to
 
 // WatchWithdrawn is a free log subscription operation binding the contract event 0x7084f5476618d8e60b11ef0d7d3f06914655adb8793e28ff7f018d4c76d505d5.
 //
-// Solidity: event Withdrawn(address indexed to, uint256 amount)
+// Solidity: e Withdrawn(to indexed address, amount uint256)
 func (_EtherToken *EtherTokenFilterer) WatchWithdrawn(opts *bind.WatchOpts, sink chan<- *EtherTokenWithdrawn, to []common.Address) (event.Subscription, error) {
 
 	var toRule []interface{}

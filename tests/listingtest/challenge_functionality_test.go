@@ -29,7 +29,7 @@ func TestChallenge(t *testing.T) {
 		context.AuthUser3.From, big.NewInt(test.ONE_GWEI))
 	test.IfNotNil(t, transErr, "Error transferring market token")
 	// member will need to have approved the voting contract to spend
-	appErr := test.MaybeIncreaseMarketTokenApproval(context, deployed,
+	appErr := test.MaybeIncreaseMarketTokenAllowance(context, deployed,
 		context.AuthUser3, deployed.VotingAddress, big.NewInt(test.ONE_GWEI))
 	test.IfNotNil(t, appErr, "Error increasing allowance")
 
@@ -66,7 +66,7 @@ func TestChallenge(t *testing.T) {
 		context.AuthUser2.From, big.NewInt(test.ONE_GWEI))
 	test.IfNotNil(t, transErr2, "Error transferring market token")
 	// member will need to have approved the voting contract to spend
-	appErr2 := test.MaybeIncreaseMarketTokenApproval(context, deployed,
+	appErr2 := test.MaybeIncreaseMarketTokenAllowance(context, deployed,
 		context.AuthUser2, deployed.VotingAddress, big.NewInt(test.ONE_GWEI))
 	test.IfNotNil(t, appErr2, "Error increasing allowance")
 
@@ -111,7 +111,7 @@ func TestResolveChallenge(t *testing.T) {
 	memberBal, _ := deployed.MarketTokenContract.BalanceOf(nil, context.AuthUser2.From)
 
 	// we need to cast a vote for the challenge, or the listing will "win". member3 as voter here
-	appErr := test.MaybeIncreaseMarketTokenApproval(context, deployed, context.AuthUser3,
+	appErr := test.MaybeIncreaseMarketTokenAllowance(context, deployed, context.AuthUser3,
 		deployed.VotingAddress, big.NewInt(test.ONE_GWEI))
 	test.IfNotNil(t, appErr, fmt.Sprintf("Error approving voting contract to spend: %v", appErr))
 	context.Blockchain.Commit()
@@ -211,7 +211,7 @@ func TestLosingChallenge(t *testing.T) {
 	context.Blockchain.Commit()
 
 	// user 3 as voter
-	appErr := test.MaybeIncreaseMarketTokenApproval(context, deployed,
+	appErr := test.MaybeIncreaseMarketTokenAllowance(context, deployed,
 		context.AuthUser3, deployed.VotingAddress, big.NewInt(test.ONE_GWEI))
 	test.IfNotNil(t, appErr, "Error increasing allowance")
 
@@ -231,7 +231,7 @@ func TestLosingChallenge(t *testing.T) {
 	context.Blockchain.Commit()
 
 	// challenge it -- we won't vote for the chall so that it loses...
-	appErr2 := test.MaybeIncreaseMarketTokenApproval(context, deployed,
+	appErr2 := test.MaybeIncreaseMarketTokenAllowance(context, deployed,
 		context.AuthUser2, deployed.VotingAddress, big.NewInt(test.ONE_GWEI))
 	test.IfNotNil(t, appErr2, "Error increasing allowance")
 
@@ -342,7 +342,7 @@ func TestStakeOverwrite(t *testing.T) {
 		context.AuthUser2.From, big.NewInt(test.ONE_GWEI))
 	test.IfNotNil(t, transErr2, "Error transferring market token")
 	// member will need to have approved the voting contract to spend
-	appErr2 := test.MaybeIncreaseMarketTokenApproval(context, deployed,
+	appErr2 := test.MaybeIncreaseMarketTokenAllowance(context, deployed,
 		context.AuthUser2, deployed.VotingAddress, big.NewInt(test.ONE_GWEI))
 	test.IfNotNil(t, appErr2, "Error increasing allowance")
 
@@ -414,7 +414,7 @@ func TestVoteStakeOverwrite(t *testing.T) {
 		context.AuthUser3.From, big.NewInt(test.ONE_GWEI))
 	test.IfNotNil(t, transErr, "Error transferring market token")
 	// member will need to have approved the voting contract to spend
-	appErr := test.MaybeIncreaseMarketTokenApproval(context, deployed,
+	appErr := test.MaybeIncreaseMarketTokenAllowance(context, deployed,
 		context.AuthUser3, deployed.VotingAddress, big.NewInt(test.ONE_GWEI))
 	test.IfNotNil(t, appErr, "Error increasing allowance")
 
@@ -453,7 +453,7 @@ func TestVoteStakeOverwrite(t *testing.T) {
 		context.AuthUser3.From, big.NewInt(test.ONE_GWEI))
 	test.IfNotNil(t, transErr2, "Error transferring market token")
 	// member will need to have approved the voting contract to spend
-	appErr2 := test.MaybeIncreaseMarketTokenApproval(context, deployed,
+	appErr2 := test.MaybeIncreaseMarketTokenAllowance(context, deployed,
 		context.AuthUser3, deployed.VotingAddress, big.NewInt(test.ONE_GWEI))
 	test.IfNotNil(t, appErr2, "Error increasing allowance")
 

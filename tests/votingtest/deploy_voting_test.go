@@ -40,7 +40,7 @@ func TestSetPrivileged(t *testing.T) {
 
 func TestMain(m *testing.M) {
 	context = test.GetContext(big.NewInt(test.ONE_ETH))
-	deployed, deployedError = test.Deploy(big.NewInt(test.ONE_ETH*5), big.NewInt(test.ONE_ETH*5), context, &test.Params{
+	deployed, deployedError = test.Deploy(big.NewInt(test.ONE_ETH*5), context, &test.Params{
 		PriceFloor:  big.NewInt(test.ONE_GWEI),
 		Spread:      big.NewInt(110),
 		ListReward:  big.NewInt(test.ONE_ETH),

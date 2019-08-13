@@ -55,18 +55,15 @@ type Dep struct {
 
 // Deploy function which, well, deploys our contracts - returning
 // a hydrated Dep object ready for use.
-// The etBal argument is an amount of ether token(in wei) credited to the AuthOwner
 // The mtBal argument is an amount of market token(in wei) credited to the AuthOwner
 // Also passed a hydrated Ctx object, used to aid the deploying.
 // Params arg is hydrated with values for the parameterizer.
 // Returns a hydrated Dep object or any error incurred.
-func Deploy(etBal *big.Int, mtBal *big.Int, c *Ctx, p *Params) (*Dep, error) {
+func Deploy(mtBal *big.Int, c *Ctx, p *Params) (*Dep, error) {
 	// Ether Token: { consumes: [none], privileged: [none] }
 	etherTokenAddr, etherTokenTrans, etherTokenCont, etherTokenErr := ethertoken.DeployEtherToken(
 		c.AuthOwner,
 		c.Blockchain,
-		c.AuthOwner.From,
-		etBal,
 	)
 
 	if etherTokenErr != nil {

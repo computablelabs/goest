@@ -23,6 +23,20 @@ func tenEth() *big.Int {
 	return one.Mul(one, big.NewInt(10))
 }
 
+// as we start with 0 supply and balances, we'll need authOwner to deposit some
+func TestDeposit(t *testing.T) {
+	_, depErr := deployed.EtherTokenContract.Deposit(test.GetTxOpts(context.AuthOwner, oneHundredOneEth(),
+		big.NewInt(test.ONE_GWEI*2), 100000))
+	test.IfNotNil(t, depErr, fmt.Sprintf("Error depositing funds from owner to ether token: %v", depErr))
+
+	context.Blockchain.Commit()
+
+	ownerBal, _ := deployed.EtherTokenContract.BalanceOf(nil, context.AuthOwner.From)
+	if ownerBal.Cmp(big.NewInt(0)) != 1 {
+		t.Errorf("Expected %v to be > 0", ownerBal)
+	}
+}
+
 func TestInitialBalance(t *testing.T) {
 	// owner has all the eth atm
 	etBal, _ := deployed.EtherTokenContract.BalanceOf(nil, context.AuthOwner.From)

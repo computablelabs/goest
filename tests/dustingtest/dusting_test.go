@@ -135,7 +135,7 @@ func TestListingAccessed(t *testing.T) {
 	test.IfNotNil(t, transErr, "Error maybe transferring market tokens")
 
 	// member will need to have approved the voting contract to spend at least the stake
-	incErr := test.MaybeIncreaseMarketTokenApproval(context, deployed, context.AuthUser1, deployed.VotingAddress,
+	incErr := test.MaybeIncreaseMarketTokenAllowance(context, deployed, context.AuthUser1, deployed.VotingAddress,
 		big.NewInt(test.ONE_ETH))
 	test.IfNotNil(t, incErr, "Error maybe transferring market token approval")
 
@@ -181,7 +181,7 @@ func TestListingAccessed(t *testing.T) {
 	test.IfNotNil(t, transErr2, fmt.Sprintf("Error transferring tokens to member: %v", transErr2))
 	context.Blockchain.Commit()
 	// member will need to have approved the voting contract to spend
-	appErr := test.MaybeIncreaseMarketTokenApproval(context, deployed, context.AuthUser1,
+	appErr := test.MaybeIncreaseMarketTokenAllowance(context, deployed, context.AuthUser1,
 		deployed.VotingAddress, big.NewInt(test.ONE_ETH))
 	test.IfNotNil(t, appErr, fmt.Sprintf("Error approving market contract to spend: %v", appErr))
 	context.Blockchain.Commit()
@@ -265,7 +265,7 @@ func TestDelivered(t *testing.T) {
 	test.IfNotNil(t, transErr, fmt.Sprintf("Error transferring tokens to member: %v", transErr))
 	context.Blockchain.Commit()
 	// member will need to have approved the voting contract to spend
-	appErr := test.MaybeIncreaseMarketTokenApproval(context, deployed, context.AuthUser2,
+	appErr := test.MaybeIncreaseMarketTokenAllowance(context, deployed, context.AuthUser2,
 		deployed.VotingAddress, big.NewInt(test.ONE_ETH))
 	test.IfNotNil(t, appErr, fmt.Sprintf("Error approving market contract to spend: %v", appErr))
 	context.Blockchain.Commit()

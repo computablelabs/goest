@@ -113,26 +113,30 @@ def burnAll(owner: address):
 
 
 @public
-def decreaseApproval(spender: address, amount: wei_value):
+def decreaseAllowance(spender: address, amount: wei_value) -> bool:
   """
   @notice Decrement the amount allowed to a spender by the given amount
   @dev If the given amount is > the actual allowance we set it to 0
   @param spender The spender of the funds
   @param amount The amount to decrease a previous allowance by
+  @return True if successful
   """
   self.allowances[msg.sender][spender] -= amount
   log.Approval(msg.sender, spender, self.allowances[msg.sender][spender])
+  return True
 
 
 @public
-def increaseApproval(spender: address, amount: wei_value):
+def increaseAllowance(spender: address, amount: wei_value) -> bool:
   """
   @notice Increase the amount a spender has allotted to them, by the owner, by the given amount
   @param spender The address whose allowance to increase
   @param amount The amount to increase by
+  return True if successful
   """
   self.allowances[msg.sender][spender] += amount
   log.Approval(msg.sender, spender, self.allowances[msg.sender][spender])
+  return True
 
 
 @public

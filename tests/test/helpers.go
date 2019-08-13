@@ -60,12 +60,12 @@ func GetTxOpts(auth *bind.TransactOpts, val *big.Int, price *big.Int, limit uint
 // MaybeApprove is a convenience method that inspects the Market Token Allowance of one address to another.
 // If it is below the given threshold, increase the allowance until it meets said threshold
 // Returns any error incurred.
-func MaybeIncreaseMarketTokenApproval(c *Ctx, d *Dep, owner *bind.TransactOpts, spender common.Address, thresh *big.Int) error {
+func MaybeIncreaseMarketTokenAllowance(c *Ctx, d *Dep, owner *bind.TransactOpts, spender common.Address, thresh *big.Int) error {
 	allowed, _ := d.MarketTokenContract.Allowance(nil, owner.From, spender)
 	if !(allowed.Cmp(thresh) >= 0) {
 		// to keep the allowed from creeping, we'll set the approved to the threshold if less...
 		delta := thresh.Sub(thresh, allowed)
-		_, approveErr := d.MarketTokenContract.IncreaseApproval(GetTxOpts(owner, nil,
+		_, approveErr := d.MarketTokenContract.IncreaseAllowance(GetTxOpts(owner, nil,
 			big.NewInt(ONE_GWEI*2), 1000000), spender, delta)
 
 		if approveErr != nil {
