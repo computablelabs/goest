@@ -166,7 +166,7 @@ def didPass(hash: bytes32, plurality: uint256) -> bool:
   @return bool
   """
   assert self.candidates[hash].owner != ZERO_ADDRESS
-  assert self.candidates[hash].vote_by < block.timestamp
+  # assert self.candidates[hash].vote_by < block.timestamp
   yea: uint256 = self.candidates[hash].yea
   total: uint256 = yea + self.candidates[hash].nay
   # edge case that no one voted
@@ -184,8 +184,8 @@ def pollClosed(hash: bytes32) -> bool:
   @notice Check to see if a given candidate's polling has closed
   @return bool
   """
-  assert self.candidates[hash].owner != ZERO_ADDRESS
-  return self.candidates[hash].vote_by < block.timestamp
+  return self.candidates[hash].owner != ZERO_ADDRESS
+  # return self.candidates[hash].vote_by < block.timestamp
 
 
 @public
