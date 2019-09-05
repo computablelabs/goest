@@ -72,7 +72,6 @@ func TestFailedChallenge(t *testing.T) {
 	test.IfNotNil(t, appErr2, "Error increasing allowance")
 
 	// note our balances right now as challenging will change them
-	//member1Bal, _ := deployed.MarketTokenContract.BalanceOf(nil, context.AuthUser2.From)
 	member2Bal, _ := deployed.MarketTokenContract.BalanceOf(nil, context.AuthUser2.From)
 	marketBal, _ := deployed.MarketTokenContract.BalanceOf(nil, deployed.VotingAddress)
 
@@ -101,7 +100,7 @@ func TestFailedChallenge(t *testing.T) {
 	}
 }
 
-func TestResolveFailedChallenge(t *testing.T) {
+func TestResolveFirstFailedChallenge(t *testing.T) {
 
 	listingHash := test.GenBytes32("FooMarket12345")
 	// the listing has some marketToken credited in its supply, note it
@@ -111,10 +110,19 @@ func TestResolveFailedChallenge(t *testing.T) {
 	}
 	t.Log(fmt.Sprintf("supply is %v", supply))
 
-	// the voting Bal will decrease as the challenger unstakes post resolution
-	//votingBal, _ := deployed.MarketTokenContract.BalanceOf(nil, deployed.VotingAddress)
-	//ownerBal, _ := deployed.MarketTokenContract.BalanceOf(nil, context.AuthUser1.From)
-	//member2Bal, _ := deployed.MarketTokenContract.BalanceOf(nil, context.AuthUser2.From)
+	// The challenger stake should not be 0 now
+	challengerStake, _ := deployed.VotingContract.GetStake(nil, listingHash, context.AuthUser2.From)
+	if challengerStake.Cmp(big.NewInt(0)) != 1 {
+		t.Errorf("Expected challengerStake to be > 0, got: %v", challengerStake)
+	}
+	t.Log(fmt.Sprintf("challengerStake is %v", challengerStake))
+
+	// The listing owner stake should be 0 now
+	ownerStake, _ := deployed.VotingContract.GetStake(nil, listingHash, context.AuthUser1.From)
+	t.Log(fmt.Sprintf("ownerStake is %v", ownerStake))
+	if ownerStake.Cmp(big.NewInt(0)) != 0 {
+		t.Errorf("Expected ownerStake to be 0, got: %v", ownerStake)
+	}
 
 	// Let's cast a vote against the challenge, so the listing will "win". member3 here. (Note that not voting would result in the listing winning just as well)
 	appErr := test.MaybeIncreaseMarketTokenAllowance(context, deployed, context.AuthUser3,
@@ -144,16 +152,99 @@ func TestResolveFailedChallenge(t *testing.T) {
 	}
 
 	// The challenger stake should be 0 now
+	challengerStakeNow, _ := deployed.VotingContract.GetStake(nil, listingHash, context.AuthUser2.From)
+	if challengerStakeNow.Cmp(big.NewInt(0)) != 0 {
+		t.Errorf("Expected challengerStakeNow to be 0, got: %v", challengerStakeNow)
+	}
+	t.Log(fmt.Sprintf("challengerStakeNow is %v", challengerStakeNow))
+
+	// The listing owner stake should be > 0 now
+	ownerStakeNow, _ := deployed.VotingContract.GetStake(nil, listingHash, context.AuthUser1.From)
+	t.Log(fmt.Sprintf("ownerStakeNow is %v", ownerStakeNow))
+	if ownerStakeNow.Cmp(big.NewInt(0)) != 1 {
+		t.Errorf("Expected ownerStake to be > 0, got: %v", ownerStakeNow)
+	}
+}
+
+func TestResolveSecondFailedChallenge(t *testing.T) {
+	// Now let's have a second challenge fail.
+	listingHash := test.GenBytes32("FooMarket12345")
+	// the listing has some marketToken credited in its supply, note it
+	_, supply, _ := deployed.ListingContract.GetListing(nil, listingHash)
+	if supply.Cmp(big.NewInt(0)) != 1 {
+		t.Errorf("Expected supply to be > 0, got: %v", supply)
+	}
+	t.Log(fmt.Sprintf("supply is %v", supply))
+
+	// member 2 as repeat challenger here, may need funds
+	transErr2 := test.MaybeTransferMarketToken(context, deployed, context.AuthOwner,
+		context.AuthUser2.From, big.NewInt(test.ONE_GWEI))
+	test.IfNotNil(t, transErr2, "Error transferring market token")
+	// member will need to have approved the voting contract to spend
+	appErr2 := test.MaybeIncreaseMarketTokenAllowance(context, deployed,
+		context.AuthUser2, deployed.VotingAddress, big.NewInt(test.ONE_GWEI))
+	test.IfNotNil(t, appErr2, "Error increasing allowance")
+
+	// member2 issues second challenge
+	_, challengeErr := deployed.ListingContract.Challenge(test.GetTxOpts(context.AuthUser2,
+		nil, big.NewInt(test.ONE_GWEI*2), 1000000), listingHash)
+	test.IfNotNil(t, challengeErr, fmt.Sprintf("Error challenging listing: %v", challengeErr))
+	context.Blockchain.Commit()
+
+	// The challenger stake should not be 0 now
 	challengerStake, _ := deployed.VotingContract.GetStake(nil, listingHash, context.AuthUser2.From)
-	if challengerStake.Cmp(big.NewInt(0)) != 0 {
-		t.Errorf("Expected challengerStake to be 0, got: %v", challengerStake)
+	if challengerStake.Cmp(big.NewInt(0)) != 1 {
+		t.Errorf("Expected challengerStake to be > 0, got: %v", challengerStake)
+	}
+	t.Log(fmt.Sprintf("challengerStake is %v", challengerStake))
+
+	// The listing owner stake should not be 0 now
+	// (since we haven't unstaked proceeds from last failed challenge)
+	ownerStake, _ := deployed.VotingContract.GetStake(nil, listingHash, context.AuthUser1.From)
+	t.Log(fmt.Sprintf("ownerStake is %v", ownerStake))
+	if ownerStake.Cmp(big.NewInt(0)) != 1 {
+		t.Errorf("Expected ownerStake to be > 0, got: %v", ownerStake)
 	}
 
-	// TODO: Why is this failing?
-	//// The supply in the listing should have gone up
-	_, supplyNow, _ := deployed.ListingContract.GetListing(nil, listingHash)
-	t.Log(fmt.Sprintf("supplyNow is %v", supplyNow))
-	//if supplyNow.Cmp(supply) != 1 {
-	//	t.Errorf("Expected supply to have increased after challenge, got: %v", supply)
-	//}
+	// Let's cast a vote against the challenge, so the listing will "win". member3 here. (Note that not voting would result in the listing winning just as well)
+	appErr := test.MaybeIncreaseMarketTokenAllowance(context, deployed, context.AuthUser3,
+		deployed.VotingAddress, big.NewInt(test.ONE_GWEI))
+	test.IfNotNil(t, appErr, fmt.Sprintf("Error approving voting contract to spend: %v", appErr))
+	context.Blockchain.Commit()
+
+	_, voteErr := deployed.VotingContract.Vote(test.GetTxOpts(context.AuthUser3, nil,
+		big.NewInt(test.ONE_GWEI*2), 150000), listingHash, big.NewInt(0))
+	test.IfNotNil(t, voteErr, fmt.Sprintf("Error voting for candidate: %v", voteErr))
+	context.Blockchain.Commit()
+
+	// the vote is recorded now, and the challenge should be ready to be resolved once we pass the voteBy
+	context.Blockchain.AdjustTime(100 * time.Second)
+	context.Blockchain.Commit()
+
+	// Let's now resolve the challenge
+	_, resolveErr := deployed.ListingContract.ResolveChallenge(test.GetTxOpts(context.AuthUser1, nil,
+		big.NewInt(test.ONE_GWEI*2), 1000000), listingHash)
+	test.IfNotNil(t, resolveErr, fmt.Sprintf("Error resolving challenge: %v", resolveErr))
+	context.Blockchain.Commit()
+
+	// should still be a listing
+	listed, _ := deployed.ListingContract.IsListed(nil, listingHash)
+	if listed == false {
+		t.Error("Expected .listed to be true")
+	}
+
+	// The challenger stake should be 0 now
+	challengerStakeNow, _ := deployed.VotingContract.GetStake(nil, listingHash, context.AuthUser2.From)
+	if challengerStakeNow.Cmp(big.NewInt(0)) != 0 {
+		t.Errorf("Expected challengerStakeNow to be 0, got: %v", challengerStakeNow)
+	}
+	t.Log(fmt.Sprintf("challengerStakeNow is %v", challengerStakeNow))
+
+	// The listing owner stake should have increased now
+	ownerStakeNow, _ := deployed.VotingContract.GetStake(nil, listingHash, context.AuthUser1.From)
+	t.Log(fmt.Sprintf("ownerStakeNow is %v", ownerStakeNow))
+	if ownerStakeNow.Cmp(ownerStake) != 1 {
+		t.Errorf("Expected ownerStake to increment, got: %v", ownerStakeNow)
+	}
+
 }
