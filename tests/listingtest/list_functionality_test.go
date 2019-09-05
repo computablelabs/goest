@@ -80,7 +80,7 @@ func TestResolveApplication(t *testing.T) {
 	context.Blockchain.AdjustTime(100 * time.Second)
 	context.Blockchain.Commit()
 
-	// any council member can call for resolution
+	// any stakeholder can call for resolution
 	_, resolveErr := deployed.ListingContract.ResolveApplication(test.GetTxOpts(context.AuthUser2, nil,
 		big.NewInt(test.ONE_GWEI*2), 1000000), listingHash)
 	test.IfNotNil(t, resolveErr, fmt.Sprintf("Error resolving application: %v", resolveErr))
