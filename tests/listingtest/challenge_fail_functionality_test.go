@@ -51,7 +51,6 @@ func TestFailedChallenge(t *testing.T) {
 
 	// should be listed now
 	owner, _, _ := deployed.ListingContract.GetListing(nil, listingHash)
-
 	if owner != context.AuthUser1.From {
 		t.Errorf("Exepected listing to be owned by member 1, got: %v", owner)
 	}
@@ -124,7 +123,9 @@ func TestResolveFirstFailedChallenge(t *testing.T) {
 		t.Errorf("Expected ownerStake to be 0, got: %v", ownerStake)
 	}
 
-	// Let's cast a vote against the challenge, so the listing will "win". member3 here. (Note that not voting would result in the listing winning just as well)
+	// Let's cast a vote against the challenge, so the listing will "win".
+	// member3 here. (Note that not voting would result in the listing winning
+	// just as well)
 	appErr := test.MaybeIncreaseMarketTokenAllowance(context, deployed, context.AuthUser3,
 		deployed.VotingAddress, big.NewInt(test.ONE_GWEI))
 	test.IfNotNil(t, appErr, fmt.Sprintf("Error approving voting contract to spend: %v", appErr))
@@ -166,7 +167,7 @@ func TestResolveFirstFailedChallenge(t *testing.T) {
 	}
 }
 
-func TestResolveSecondFailedChallenge(t *testing.T) {
+func TestSecondFailedChallenge(t *testing.T) {
 	// Now let's have a second challenge fail.
 	listingHash := test.GenBytes32("FooMarket12345")
 	// the listing has some marketToken credited in its supply, note it
@@ -206,7 +207,9 @@ func TestResolveSecondFailedChallenge(t *testing.T) {
 		t.Errorf("Expected ownerStake to be > 0, got: %v", ownerStake)
 	}
 
-	// Let's cast a vote against the challenge, so the listing will "win". member3 here. (Note that not voting would result in the listing winning just as well)
+	// Let's cast a vote against the challenge, so the listing will "win".
+	// member3 here. (Note that not voting would result in the listing winning
+	// just as well)
 	appErr := test.MaybeIncreaseMarketTokenAllowance(context, deployed, context.AuthUser3,
 		deployed.VotingAddress, big.NewInt(test.ONE_GWEI))
 	test.IfNotNil(t, appErr, fmt.Sprintf("Error approving voting contract to spend: %v", appErr))
