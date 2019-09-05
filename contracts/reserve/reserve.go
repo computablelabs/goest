@@ -15,6 +15,18 @@ import (
 	"github.com/ethereum/go-ethereum/event"
 )
 
+// Reference imports to suppress errors if they are not otherwise used.
+var (
+	_ = big.NewInt
+	_ = strings.NewReader
+	_ = ethereum.NotFound
+	_ = abi.U256
+	_ = bind.Bind
+	_ = common.Big1
+	_ = types.BloomLookup
+	_ = event.NewSubscription
+)
+
 // ReserveABI is the input ABI used to generate the binding from.
 const ReserveABI = "[{\"name\":\"Withdrawn\",\"inputs\":[{\"type\":\"address\",\"name\":\"owner\",\"indexed\":true},{\"type\":\"uint256\",\"name\":\"transferred\",\"indexed\":false,\"unit\":\"wei\"}],\"anonymous\":false,\"type\":\"event\"},{\"name\":\"Supported\",\"inputs\":[{\"type\":\"address\",\"name\":\"owner\",\"indexed\":true},{\"type\":\"uint256\",\"name\":\"offered\",\"indexed\":false,\"unit\":\"wei\"},{\"type\":\"uint256\",\"name\":\"minted\",\"indexed\":false,\"unit\":\"wei\"}],\"anonymous\":false,\"type\":\"event\"},{\"outputs\":[],\"inputs\":[{\"type\":\"address\",\"name\":\"ether_token_addr\"},{\"type\":\"address\",\"name\":\"market_token_addr\"},{\"type\":\"address\",\"name\":\"p11r_addr\"}],\"constant\":false,\"payable\":false,\"type\":\"constructor\"},{\"name\":\"getSupportPrice\",\"outputs\":[{\"type\":\"uint256\",\"name\":\"out\",\"unit\":\"wei\"}],\"inputs\":[],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":10492},{\"name\":\"support\",\"outputs\":[],\"inputs\":[{\"type\":\"uint256\",\"name\":\"offer\",\"unit\":\"wei\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":22186},{\"name\":\"getWithdrawalProceeds\",\"outputs\":[{\"type\":\"uint256\",\"name\":\"out\",\"unit\":\"wei\"}],\"inputs\":[{\"type\":\"address\",\"name\":\"addr\"}],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":6038},{\"name\":\"withdraw\",\"outputs\":[],\"inputs\":[],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":13931}]"
 
@@ -178,7 +190,7 @@ func (_Reserve *ReserveTransactorRaw) Transact(opts *bind.TransactOpts, method s
 
 // GetSupportPrice is a free data retrieval call binding the contract method 0xa056a5b9.
 //
-// Solidity: function getSupportPrice() constant returns(out uint256)
+// Solidity: function getSupportPrice() constant returns(uint256 out)
 func (_Reserve *ReserveCaller) GetSupportPrice(opts *bind.CallOpts) (*big.Int, error) {
 	var (
 		ret0 = new(*big.Int)
@@ -190,21 +202,21 @@ func (_Reserve *ReserveCaller) GetSupportPrice(opts *bind.CallOpts) (*big.Int, e
 
 // GetSupportPrice is a free data retrieval call binding the contract method 0xa056a5b9.
 //
-// Solidity: function getSupportPrice() constant returns(out uint256)
+// Solidity: function getSupportPrice() constant returns(uint256 out)
 func (_Reserve *ReserveSession) GetSupportPrice() (*big.Int, error) {
 	return _Reserve.Contract.GetSupportPrice(&_Reserve.CallOpts)
 }
 
 // GetSupportPrice is a free data retrieval call binding the contract method 0xa056a5b9.
 //
-// Solidity: function getSupportPrice() constant returns(out uint256)
+// Solidity: function getSupportPrice() constant returns(uint256 out)
 func (_Reserve *ReserveCallerSession) GetSupportPrice() (*big.Int, error) {
 	return _Reserve.Contract.GetSupportPrice(&_Reserve.CallOpts)
 }
 
 // GetWithdrawalProceeds is a free data retrieval call binding the contract method 0x4633020d.
 //
-// Solidity: function getWithdrawalProceeds(addr address) constant returns(out uint256)
+// Solidity: function getWithdrawalProceeds(address addr) constant returns(uint256 out)
 func (_Reserve *ReserveCaller) GetWithdrawalProceeds(opts *bind.CallOpts, addr common.Address) (*big.Int, error) {
 	var (
 		ret0 = new(*big.Int)
@@ -216,35 +228,35 @@ func (_Reserve *ReserveCaller) GetWithdrawalProceeds(opts *bind.CallOpts, addr c
 
 // GetWithdrawalProceeds is a free data retrieval call binding the contract method 0x4633020d.
 //
-// Solidity: function getWithdrawalProceeds(addr address) constant returns(out uint256)
+// Solidity: function getWithdrawalProceeds(address addr) constant returns(uint256 out)
 func (_Reserve *ReserveSession) GetWithdrawalProceeds(addr common.Address) (*big.Int, error) {
 	return _Reserve.Contract.GetWithdrawalProceeds(&_Reserve.CallOpts, addr)
 }
 
 // GetWithdrawalProceeds is a free data retrieval call binding the contract method 0x4633020d.
 //
-// Solidity: function getWithdrawalProceeds(addr address) constant returns(out uint256)
+// Solidity: function getWithdrawalProceeds(address addr) constant returns(uint256 out)
 func (_Reserve *ReserveCallerSession) GetWithdrawalProceeds(addr common.Address) (*big.Int, error) {
 	return _Reserve.Contract.GetWithdrawalProceeds(&_Reserve.CallOpts, addr)
 }
 
 // Support is a paid mutator transaction binding the contract method 0x56c9493f.
 //
-// Solidity: function support(offer uint256) returns()
+// Solidity: function support(uint256 offer) returns()
 func (_Reserve *ReserveTransactor) Support(opts *bind.TransactOpts, offer *big.Int) (*types.Transaction, error) {
 	return _Reserve.contract.Transact(opts, "support", offer)
 }
 
 // Support is a paid mutator transaction binding the contract method 0x56c9493f.
 //
-// Solidity: function support(offer uint256) returns()
+// Solidity: function support(uint256 offer) returns()
 func (_Reserve *ReserveSession) Support(offer *big.Int) (*types.Transaction, error) {
 	return _Reserve.Contract.Support(&_Reserve.TransactOpts, offer)
 }
 
 // Support is a paid mutator transaction binding the contract method 0x56c9493f.
 //
-// Solidity: function support(offer uint256) returns()
+// Solidity: function support(uint256 offer) returns()
 func (_Reserve *ReserveTransactorSession) Support(offer *big.Int) (*types.Transaction, error) {
 	return _Reserve.Contract.Support(&_Reserve.TransactOpts, offer)
 }
@@ -347,7 +359,7 @@ type ReserveSupported struct {
 
 // FilterSupported is a free log retrieval operation binding the contract event 0xb19981ad2efd084bc7ddcdc94541b38fd493a1c176ffe2cd1e512e6ee0c34fe9.
 //
-// Solidity: e Supported(owner indexed address, offered uint256, minted uint256)
+// Solidity: event Supported(address indexed owner, uint256 offered, uint256 minted)
 func (_Reserve *ReserveFilterer) FilterSupported(opts *bind.FilterOpts, owner []common.Address) (*ReserveSupportedIterator, error) {
 
 	var ownerRule []interface{}
@@ -364,7 +376,7 @@ func (_Reserve *ReserveFilterer) FilterSupported(opts *bind.FilterOpts, owner []
 
 // WatchSupported is a free log subscription operation binding the contract event 0xb19981ad2efd084bc7ddcdc94541b38fd493a1c176ffe2cd1e512e6ee0c34fe9.
 //
-// Solidity: e Supported(owner indexed address, offered uint256, minted uint256)
+// Solidity: event Supported(address indexed owner, uint256 offered, uint256 minted)
 func (_Reserve *ReserveFilterer) WatchSupported(opts *bind.WatchOpts, sink chan<- *ReserveSupported, owner []common.Address) (event.Subscription, error) {
 
 	var ownerRule []interface{}
@@ -480,7 +492,7 @@ type ReserveWithdrawn struct {
 
 // FilterWithdrawn is a free log retrieval operation binding the contract event 0x7084f5476618d8e60b11ef0d7d3f06914655adb8793e28ff7f018d4c76d505d5.
 //
-// Solidity: e Withdrawn(owner indexed address, transferred uint256)
+// Solidity: event Withdrawn(address indexed owner, uint256 transferred)
 func (_Reserve *ReserveFilterer) FilterWithdrawn(opts *bind.FilterOpts, owner []common.Address) (*ReserveWithdrawnIterator, error) {
 
 	var ownerRule []interface{}
@@ -497,7 +509,7 @@ func (_Reserve *ReserveFilterer) FilterWithdrawn(opts *bind.FilterOpts, owner []
 
 // WatchWithdrawn is a free log subscription operation binding the contract event 0x7084f5476618d8e60b11ef0d7d3f06914655adb8793e28ff7f018d4c76d505d5.
 //
-// Solidity: e Withdrawn(owner indexed address, transferred uint256)
+// Solidity: event Withdrawn(address indexed owner, uint256 transferred)
 func (_Reserve *ReserveFilterer) WatchWithdrawn(opts *bind.WatchOpts, sink chan<- *ReserveWithdrawn, owner []common.Address) (event.Subscription, error) {
 
 	var ownerRule []interface{}
