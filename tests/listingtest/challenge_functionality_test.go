@@ -148,10 +148,11 @@ func TestResolveChallenge(t *testing.T) {
 		t.Errorf("Expected supply to be 0, got: %v", supplyNow)
 	}
 
-	// note that the listing supply was simply burned, not transferred to the owner on removal
+	// note that the listing supply was not burned, and instead transferred
+	// to the owner on removal
 	ownerBalNow, _ := deployed.MarketTokenContract.BalanceOf(nil, context.AuthUser1.From)
-	if ownerBalNow.Cmp(ownerBal) != 0 {
-		t.Errorf("Expected %v to be %v", ownerBalNow, ownerBal)
+	if ownerBalNow.Cmp(ownerBal) != 1 {
+		t.Errorf("Expected %v to be > %v", ownerBalNow, ownerBal)
 	}
 
 	// the candidate should have been pruned
