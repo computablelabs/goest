@@ -397,6 +397,7 @@ func TestVoteStakeOverwrite(t *testing.T) {
 	if user3Stake.Cmp(big.NewInt(0)) != 0 {
 		t.Errorf("Expected user 3 stake to be 0, got: %v", user3Stake)
 	}
+	t.Log(fmt.Sprintf("user3 stake is %v", user3Stake))
 	// get that hash up as a listing
 	_, listErr := deployed.ListingContract.List(test.GetTxOpts(context.AuthUser1, nil,
 		big.NewInt(test.ONE_GWEI*2), 250000), listingHash)
@@ -443,11 +444,13 @@ func TestVoteStakeOverwrite(t *testing.T) {
 
 	// the current stake amt
 	pStake, _ := deployed.ParameterizerContract.GetStake(nil)
+	t.Log(fmt.Sprintf("pstake is now %v", pStake))
 	// we'll leave user 3's stake in place...
 	user3StakeNow, _ := deployed.VotingContract.GetStake(nil, listingHash, context.AuthUser3.From)
 	if user3StakeNow.Cmp(pStake) != 0 {
 		t.Errorf("Expected %v to be %v", user3StakeNow, pStake)
 	}
+	t.Log(fmt.Sprintf("user3 stake is now %v", user3StakeNow))
 
 	// user3 decides to challenge the listing
 	transErr2 := test.MaybeTransferMarketToken(context, deployed, context.AuthOwner,
@@ -477,7 +480,8 @@ func TestVoteStakeOverwrite(t *testing.T) {
 
 	// note that the stake is present, but did not aggregate
 	user3StakeAgain, _ := deployed.VotingContract.GetStake(nil, listingHash, context.AuthUser3.From)
-	if user3StakeNow.Cmp(pStake) != 0 {
-		t.Errorf("Expected %v to be %v", user3StakeAgain, pStake)
+	if user3StakeAgain.Cmp(pStake) != 1 {
+		t.Errorf("Expected %v to be > %v", user3StakeAgain, pStake)
 	}
+	t.Log(fmt.Sprintf("user3 stake after challenge is %v", user3StakeAgain))
 }
