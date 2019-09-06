@@ -13,17 +13,19 @@ import (
 func TestRegister(t *testing.T) {
 	// we may already have a backend registered
 	preUrl, _ := deployed.DatatrustContract.GetBackendUrl(nil)
+	t.Log(fmt.Sprintf("preUrl is: %v", preUrl))
 	if len(preUrl) == 0 {
 		_, regErr := deployed.DatatrustContract.Register(test.GetTxOpts(context.AuthBackend, nil,
 			big.NewInt(test.ONE_GWEI*2), 500000), "http://www.icanhazbackend.com")
 		test.IfNotNil(t, regErr, fmt.Sprintf("Error registering for backend status: %v", regErr))
 		context.Blockchain.Commit()
 
-		// url will be stored as we wait on the voting
+		// url will not be stored as we wait on the voting
 		url, _ := deployed.DatatrustContract.GetBackendUrl(nil)
-		if !strings.Contains(url, "icanhazbackend") {
-			t.Errorf("expected url to be %v, got: %v", "http://www.icanhazbackend.com", url)
+		if strings.Contains(url, "icanhazbackend") {
+			t.Errorf("Url was improperly updated to: %v", url)
 		}
+		t.Log(fmt.Sprintf("url is: %v", url))
 
 		// we should have the candidate
 		hash, _ := deployed.DatatrustContract.GetHash(nil, "http://www.icanhazbackend.com")
