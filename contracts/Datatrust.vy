@@ -186,11 +186,13 @@ def resolveRegistration(hash: bytes32):
   owner: address = self.voting.getCandidateOwner(hash)
   # case: listing accepted
   if self.voting.didPass(hash, self.parameterizer.getPlurality()):
+    # A new datatrust operator is authorized. Remove old backend_url
+    clear(self.backend_url)
     self.backend_address = owner
     log.RegistrationSucceeded(hash, owner)
   else: # application did not pass vote
+    # No changes to make since current datatrust operator continues
     log.RegistrationFailed(hash, owner)
-    clear(self.backend_url)
   # regardless, the candidate is pruned
   self.voting.removeCandidate(hash)
 
