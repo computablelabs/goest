@@ -190,7 +190,6 @@ def resolveRegistration(hash: bytes32):
     log.RegistrationSucceeded(hash, owner)
     # A new datatrust operator is authorized. Remove old backend_url
     clear(self.backend_url)
-    #clear(self.backend_url)
     # No changes to make since current datatrust operator continues
     log.RegistrationFailed(hash, owner)
   # regardless, the candidate is pruned
