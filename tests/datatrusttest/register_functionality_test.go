@@ -24,8 +24,7 @@ func TestRegister(t *testing.T) {
 		test.IfNotNil(t, setErr, fmt.Sprintf("Error setting backend url: %v", setErr))
 		context.Blockchain.Commit()
 	} else {
-		// we may already have a backend registered, but we re-register
-		// regardless
+		// The backend is not yet registered
 		preUrl, _ := deployed.DatatrustContract.GetBackendUrl(nil)
 		t.Log(fmt.Sprintf("preUrl is: %v", preUrl))
 
