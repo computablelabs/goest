@@ -124,8 +124,7 @@ func TestTransferToReserveThenMakersMake(t *testing.T) {
 		owner, supply, _ := deployed.ListingContract.GetListing(nil, listingHash)
 
 		if owner != maker.From {
-			t.Errorf("Owner of listing is not maker!")
-			//t.Errorf("Expected owner to be %v, got: %v", maker.From, owner)
+			t.Errorf("Expected owner to be %v, got: %v", maker.From, owner)
 		}
 		t.Logf("Listing supply: %v", test.Commafy(supply))
 
