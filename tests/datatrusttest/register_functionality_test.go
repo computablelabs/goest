@@ -45,10 +45,6 @@ func TestRegister(t *testing.T) {
 func TestReRegister(t *testing.T) {
 	// Test what happens when a new party tries to register as datatrust
 
-	// The backend is not yet registered
-	preUrl, _ := deployed.DatatrustContract.GetBackendUrl(nil)
-	t.Log(fmt.Sprintf("preUrl is: %v", preUrl))
-
 	// Try registering a new datatrust by a different user
 	_, regErr := deployed.DatatrustContract.Register(test.GetTxOpts(context.AuthUser1, nil,
 		big.NewInt(test.ONE_GWEI*2), 500000), "http://www.thenewbackend.com")
@@ -60,7 +56,6 @@ func TestReRegister(t *testing.T) {
 	if strings.Contains(url, "thenewbackend") {
 		t.Errorf("Url was improperly updated to: %v", url)
 	}
-	t.Log(fmt.Sprintf("url was not updated and is still: %v", url))
 
 	// we should have the candidate
 	hash, _ := deployed.DatatrustContract.GetHash(nil, "http://www.thenewbackend.com")
