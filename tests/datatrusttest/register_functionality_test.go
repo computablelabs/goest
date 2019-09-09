@@ -12,22 +12,15 @@ import (
 
 func TestRegister(t *testing.T) {
 	preAddress, _ := deployed.DatatrustContract.GetBackendAddress(nil)
-	t.Log(fmt.Sprintf("preAddress is: %v", preAddress))
 	backend_address := context.AuthBackend.From
-	t.Log(fmt.Sprintf("backend_address is: %v", backend_address))
 	// The backend is already registered
 	if preAddress == backend_address {
-		t.Log(fmt.Sprintf("Addresses match!"))
 		// Set datatrust utl
 		_, setErr := deployed.DatatrustContract.SetBackendUrl(test.GetTxOpts(context.AuthBackend, nil,
 			big.NewInt(test.ONE_GWEI*2), 500000), "http://www.icanhazbackend.com")
 		test.IfNotNil(t, setErr, fmt.Sprintf("Error setting backend url: %v", setErr))
 		context.Blockchain.Commit()
 	} else {
-		// The backend is not yet registered
-		preUrl, _ := deployed.DatatrustContract.GetBackendUrl(nil)
-		t.Log(fmt.Sprintf("preUrl is: %v", preUrl))
-
 		// Register the datatrust
 		_, regErr := deployed.DatatrustContract.Register(test.GetTxOpts(context.AuthBackend, nil,
 			big.NewInt(test.ONE_GWEI*2), 500000), "http://www.icanhazbackend.com")
@@ -39,7 +32,6 @@ func TestRegister(t *testing.T) {
 		if strings.Contains(url, "icanhazbackend") {
 			t.Errorf("Url was improperly updated to: %v", url)
 		}
-		t.Log(fmt.Sprintf("url was not updated and is still: %v", url))
 
 		// we should have the candidate
 		hash, _ := deployed.DatatrustContract.GetHash(nil, "http://www.icanhazbackend.com")
