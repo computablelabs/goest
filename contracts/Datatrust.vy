@@ -169,7 +169,6 @@ def register(url: string[128]):
   @param url The location of this backend
   """
   assert msg.sender != self.backend_address # don't register 2x
-  self.backend_url = url # we'll clear this if the registration fails
   hash: bytes32 = keccak256(url)
   assert not self.voting.isCandidate(hash)
   self.voting.addCandidate(hash, REGISTRATION, msg.sender, self.parameterizer.getStake(), self.parameterizer.getVoteBy())
@@ -189,9 +188,11 @@ def resolveRegistration(hash: bytes32):
   if self.voting.didPass(hash, self.parameterizer.getPlurality()):
     self.backend_address = owner
     log.RegistrationSucceeded(hash, owner)
-  else: # application did not pass vote
-    log.RegistrationFailed(hash, owner)
+    # A new datatrust operator is authorized. Remove old backend_url
     clear(self.backend_url)
+  else:
+    # No changes to make since current datatrust operator continues
+    log.RegistrationFailed(hash, owner)
   # regardless, the candidate is pruned
   self.voting.removeCandidate(hash)
 
