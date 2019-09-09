@@ -86,7 +86,7 @@ func TestCandidateIs(t *testing.T) {
 func TestRemoveCandidate(t *testing.T) {
 	// only privileged contracts can call for candidate removal, move past the vote by and call for resolution.
 	// this should trigger the candidate removal as there were no votes (and no datatrust hash)
-	context.Blockchain.AdjustTime(100 * time.Second)
+	context.Blockchain.AdjustTime(test.MIN_VOTE_BY * time.Second)
 	context.Blockchain.Commit()
 
 	bytes := test.GenBytes32("Voting Candidate Test")

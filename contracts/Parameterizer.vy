@@ -17,6 +17,8 @@ COST_PER_BYTE: constant(uint256) = 11
 # The sole Candidate 'kind' known to the Parameterizer
 REPARAM: constant(uint256) = 3
 
+# The number of seconds in a day
+SECONDS_IN_DAY: constant(uint256) = 86400 
 # The number of seconds in a week.
 SECONDS_IN_WEEK: constant(uint256) = 604800
 
@@ -72,6 +74,8 @@ uint256, back_p: uint256, maker_p: uint256, cost: wei_value):
     # yet)
     assert stk <= (self.market_token.totalSupply()/3) 
     self.stake = stk
+    # There are 86400 seconds in a day
+    assert vote_by_d >= SECONDS_IN_DAY
     # There are 604800 seconds in a week, 1209600 in 2 weeks
     assert vote_by_d <= 2 * SECONDS_IN_WEEK 
     self.vote_by = vote_by_d
@@ -225,7 +229,7 @@ def reparameterize(param: uint256, value: uint256):
   elif param == STAKE:
     assert value <= self.getMaxStake() 
   elif param == VOTE_BY:
-    # There are 604800 seconds in a week, 1209600 in 2 weeks
+    assert value >= SECONDS_IN_DAY
     assert value <= 2 * SECONDS_IN_WEEK 
   elif param == PLURALITY:
     assert value <= 100

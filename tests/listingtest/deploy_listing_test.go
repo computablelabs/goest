@@ -52,7 +52,7 @@ func TestMain(m *testing.M) {
 		Spread:      big.NewInt(110),
 		ListReward:  big.NewInt(test.ONE_ETH),
 		Stake:       big.NewInt(test.ONE_GWEI),
-		VoteBy:      big.NewInt(100),
+		VoteBy:      big.NewInt(test.MIN_VOTE_BY),
 		Plurality:   big.NewInt(50),
 		BackendPct:  big.NewInt(25),
 		MakerPct:    big.NewInt(50),
@@ -84,7 +84,7 @@ func TestMain(m *testing.M) {
 	context.Blockchain.Commit()
 
 	// move past the voteBy
-	context.Blockchain.AdjustTime(100 * time.Second)
+	context.Blockchain.AdjustTime(86400 * time.Second)
 	context.Blockchain.Commit()
 
 	// call for resolution
