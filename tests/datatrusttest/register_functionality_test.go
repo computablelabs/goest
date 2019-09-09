@@ -11,18 +11,26 @@ import (
 )
 
 func TestRegister(t *testing.T) {
-	// we may already have a backend registered
-	preUrl, _ := deployed.DatatrustContract.GetBackendUrl(nil)
-	if len(preUrl) == 0 {
+	preAddress, _ := deployed.DatatrustContract.GetBackendAddress(nil)
+	backend_address := context.AuthBackend.From
+	// The backend is already registered
+	if preAddress == backend_address {
+		// Set datatrust utl
+		_, setErr := deployed.DatatrustContract.SetBackendUrl(test.GetTxOpts(context.AuthBackend, nil,
+			big.NewInt(test.ONE_GWEI*2), 500000), "http://www.icanhazbackend.com")
+		test.IfNotNil(t, setErr, fmt.Sprintf("Error setting backend url: %v", setErr))
+		context.Blockchain.Commit()
+	} else {
+		// Register the datatrust
 		_, regErr := deployed.DatatrustContract.Register(test.GetTxOpts(context.AuthBackend, nil,
 			big.NewInt(test.ONE_GWEI*2), 500000), "http://www.icanhazbackend.com")
 		test.IfNotNil(t, regErr, fmt.Sprintf("Error registering for backend status: %v", regErr))
 		context.Blockchain.Commit()
 
-		// url will be stored as we wait on the voting
+		// url will not be stored as we wait on the voting
 		url, _ := deployed.DatatrustContract.GetBackendUrl(nil)
-		if !strings.Contains(url, "icanhazbackend") {
-			t.Errorf("expected url to be %v, got: %v", "http://www.icanhazbackend.com", url)
+		if strings.Contains(url, "icanhazbackend") {
+			t.Errorf("Url was improperly updated to: %v", url)
 		}
 
 		// we should have the candidate
@@ -31,6 +39,29 @@ func TestRegister(t *testing.T) {
 		if isReg != true {
 			t.Errorf("Expected is registered to be true, got: %v", isReg)
 		}
+	}
+}
+
+func TestReRegister(t *testing.T) {
+	// Test what happens when a new party tries to register as datatrust
+
+	// Try registering a new datatrust by a different user
+	_, regErr := deployed.DatatrustContract.Register(test.GetTxOpts(context.AuthUser1, nil,
+		big.NewInt(test.ONE_GWEI*2), 500000), "http://www.thenewbackend.com")
+	test.IfNotNil(t, regErr, fmt.Sprintf("Error registering for backend status: %v", regErr))
+	context.Blockchain.Commit()
+
+	// url will not be stored as we wait on the voting
+	url, _ := deployed.DatatrustContract.GetBackendUrl(nil)
+	if strings.Contains(url, "thenewbackend") {
+		t.Errorf("Url was improperly updated to: %v", url)
+	}
+
+	// we should have the candidate
+	hash, _ := deployed.DatatrustContract.GetHash(nil, "http://www.thenewbackend.com")
+	isReg, _ := deployed.VotingContract.CandidateIs(nil, hash, test.REGISTRATION)
+	if isReg != true {
+		t.Errorf("Expected is registered to be true, got: %v", isReg)
 	}
 }
 
