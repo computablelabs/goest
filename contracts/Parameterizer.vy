@@ -230,7 +230,7 @@ def resolveReparam(hash: bytes32):
   value: uint256 = self.reparams[hash].value
   if self.voting.didPass(hash, self.plurality):
     #TODO in time we can likely tell an optimal order for these...
-    # Check validity or cases where other parameters could have changed
+    # Check validity for cases where other parameters could have changed
     if param == PRICE_FLOOR:
       self.price_floor = value
     elif param == SPREAD:
