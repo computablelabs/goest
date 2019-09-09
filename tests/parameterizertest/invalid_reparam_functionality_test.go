@@ -25,7 +25,7 @@ func TestInvalidSpread(t *testing.T) {
 }
 
 func TestInvalidStake(t *testing.T) {
-	// Spread must be >= 100
+	// Stake must be <= 1/3 of MarketToken supply
 	_, err := deployed.ParameterizerContract.Reparameterize(test.GetTxOpts(context.AuthUser1, nil,
 		// Attempt to set the stake to 2 MarketToken, greater than 1/3 of
 		// existing market cap of 5 MarketToken
