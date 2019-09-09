@@ -126,7 +126,7 @@ func TestMain(m *testing.M) {
 	context.Blockchain.Commit()
 
 	// move past the voteBy
-	context.Blockchain.AdjustTime(100 * time.Second)
+	context.Blockchain.AdjustTime(test.MIN_VOTE_BY * time.Second)
 	context.Blockchain.Commit()
 
 	// call for resolution

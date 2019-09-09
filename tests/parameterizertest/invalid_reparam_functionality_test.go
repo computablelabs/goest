@@ -60,22 +60,22 @@ func TestInvalidVoteByTooLong(t *testing.T) {
 	}
 }
 
-//func TestInvalidVoteByTooShort(t *testing.T) {
-//	// Vote_by must be >= test.MIN_VOTE_BY. We'll try setting it to 5000
-//	_, err := deployed.ParameterizerContract.Reparameterize(test.GetTxOpts(context.AuthUser1, nil,
-//		big.NewInt(test.ONE_GWEI*2), 200000), test.VOTE_BY, big.NewInt(5000))
-//	test.IfNotNil(t, err, fmt.Sprintf("Error creating proposal: %v", err))
-//
-//	context.Blockchain.Commit()
-//
-//	// we should not see a candidate now
-//	paramHash, _ := deployed.ParameterizerContract.GetHash(nil, big.NewInt(7), big.NewInt(5000))
-//	isCan, _ := deployed.VotingContract.IsCandidate(nil, paramHash)
-//
-//	if isCan {
-//		t.Errorf("Expected isCandidate to be false, got: %v", isCan)
-//	}
-//}
+func TestInvalidVoteByTooShort(t *testing.T) {
+	// Vote_by must be >= test.MIN_VOTE_BY. We'll try setting it to half that
+	_, err := deployed.ParameterizerContract.Reparameterize(test.GetTxOpts(context.AuthUser1, nil,
+		big.NewInt(test.ONE_GWEI*2), 200000), test.VOTE_BY, big.NewInt(test.MIN_VOTE_BY/2))
+	test.IfNotNil(t, err, fmt.Sprintf("Error creating proposal: %v", err))
+
+	context.Blockchain.Commit()
+
+	// we should not see a candidate now
+	paramHash, _ := deployed.ParameterizerContract.GetHash(nil, big.NewInt(7), big.NewInt(test.MIN_VOTE_BY/2))
+	isCan, _ := deployed.VotingContract.IsCandidate(nil, paramHash)
+
+	if isCan {
+		t.Errorf("Expected isCandidate to be false, got: %v", isCan)
+	}
+}
 
 func TestInvalidPluraity(t *testing.T) {
 	// Pluraity must be <= 100
