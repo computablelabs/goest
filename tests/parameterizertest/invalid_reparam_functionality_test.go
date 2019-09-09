@@ -77,7 +77,7 @@ func TestInvalidVoteByTooShort(t *testing.T) {
 	}
 }
 
-func TestInvalidPluraity(t *testing.T) {
+func TestInvalidPlurality(t *testing.T) {
 	// Pluraity must be <= 100
 	_, err := deployed.ParameterizerContract.Reparameterize(test.GetTxOpts(context.AuthUser1, nil,
 		big.NewInt(test.ONE_GWEI*2), 200000), test.PLURALITY, big.NewInt(150))
