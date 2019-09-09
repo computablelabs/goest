@@ -100,6 +100,7 @@ func Deploy(mtBal *big.Int, c *Ctx, p *Params) (*Dep, error) {
 		c.AuthOwner,
 		c.Blockchain,
 		votingAddr,
+		marketTokenAddr,
 		p.PriceFloor,
 		p.Spread,
 		p.ListReward,
