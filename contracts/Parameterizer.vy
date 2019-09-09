@@ -17,6 +17,9 @@ COST_PER_BYTE: constant(uint256) = 11
 # The sole Candidate 'kind' known to the Parameterizer
 REPARAM: constant(uint256) = 3
 
+# The number of seconds in a week.
+SECONDS_IN_WEEK: constant(uint256) = 604800
+
 struct Reparam:
   param: uint256
   value: uint256
@@ -54,21 +57,23 @@ voting: Voting
 market_token: MarketToken 
 
 @public
-def __init__(v_addr: address, mkt_addr: address, pr_fl: wei_value, spd:
+def __init__(mkt_addr: address, v_addr: address, pr_fl: wei_value, spd:
 uint256, list_re: wei_value, stk: wei_value, vote_by_d: timedelta, pl:
 uint256, back_p: uint256, maker_p: uint256, cost: wei_value):
-    self.voting = Voting(v_addr)
     self.market_token = MarketToken(mkt_addr)
+    self.voting = Voting(v_addr)
     self.price_floor = pr_fl
     # The spread is a percentage >= 100%
     assert spd >= 100 
     self.spread = spd
     self.list_reward = list_re
     # The stake can't exceed 1/3 of MarketToken supply
-    assert stk <= (self.market_token.totalSupply()/3)
+    # (We can't call getMaxStake() here since the function isn't declared
+    # yet)
+    assert stk <= (self.market_token.totalSupply()/3) 
     self.stake = stk
     # There are 604800 seconds in a week, 1209600 in 2 weeks
-    assert vote_by_d <= 1209600 
+    assert vote_by_d <= 2 * SECONDS_IN_WEEK 
     self.vote_by = vote_by_d
     self.plurality = pl
     # Backend percent + Maker percent should be <= 100
@@ -77,6 +82,15 @@ uint256, back_p: uint256, maker_p: uint256, cost: wei_value):
     self.maker_payment = maker_p
     self.cost_per_byte = cost
 
+@public
+@constant
+def getMaxStake() -> wei_value:
+  """
+  @notice Returns the maximum stake possible given current market token
+  supply. This is set to 1/3rd of market token supply so that there are
+  always 3 votes possible (in principle)
+  """
+  return (self.market_token.totalSupply()/3)
 
 @public
 @constant
@@ -209,10 +223,10 @@ def reparameterize(param: uint256, value: uint256):
     # The spread is a percentage >= 100%
     assert value >= 100 
   elif param == STAKE:
-    assert value <= (self.market_token.totalSupply()/3)
+    assert value <= self.getMaxStake() 
   elif param == VOTE_BY:
     # There are 604800 seconds in a week, 1209600 in 2 weeks
-    assert value <= 1209600 
+    assert value <= 2 * SECONDS_IN_WEEK 
   elif param == PLURALITY:
     assert value <= 100
   elif param == MAKER_PAYMENT:
@@ -247,7 +261,7 @@ def resolveReparam(hash: bytes32):
       self.list_reward = value
     elif param == STAKE:
       # Recheck validity in case MarketToken supply changed
-      assert value <= (self.market_token.totalSupply()/3)
+      assert value <= self.getMaxStake() 
       self.stake = value
     elif param == VOTE_BY:
       self.vote_by = value
