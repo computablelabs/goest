@@ -78,7 +78,7 @@ func TestPollClosed(t *testing.T) {
 	}
 
 	// now move time forward so that voteBy has elapsed
-	context.Blockchain.AdjustTime(test.MIN_VOTE_BY * time.Second)
+	context.Blockchain.AdjustTime(100 * time.Second)
 	context.Blockchain.Commit()
 
 	updated, _ := deployed.VotingContract.PollClosed(nil, reparamHash)
@@ -100,7 +100,7 @@ func TestDidPass(t *testing.T) {
 
 // test that the voting stake remains after reparam is resolved...
 func TestResolveReparam(t *testing.T) {
-	bytes, _ := deployed.ParameterizerContract.GetHash(nil, big.NewInt(7), big.NewInt(2*test.MIN_VOTE_BY))
+	bytes, _ := deployed.ParameterizerContract.GetHash(nil, big.NewInt(7), big.NewInt(99))
 
 	// does not matter who calls for the resolution
 	_, err := deployed.ParameterizerContract.ResolveReparam(test.GetTxOpts(context.AuthUser2, nil,
@@ -117,8 +117,8 @@ func TestResolveReparam(t *testing.T) {
 	}
 
 	voteBy, _ := deployed.ParameterizerContract.GetVoteBy(nil)
-	if voteBy.Cmp(big.NewInt(2*test.MIN_VOTE_BY)) != 0 {
-		t.Errorf("Expected voteBy to be %v, got: %v", 2*test.MIN_VOTE_BY, voteBy)
+	if voteBy.Cmp(big.NewInt(99)) != 0 {
+		t.Errorf("Expected voteBy to be 99, got: %v", voteBy)
 	}
 
 	stake, _ := deployed.VotingContract.GetStake(nil, bytes, context.AuthUser1.From)
