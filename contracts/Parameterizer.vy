@@ -70,8 +70,6 @@ uint256, back_p: uint256, maker_p: uint256, cost: wei_value):
     self.spread = spd
     self.list_reward = list_re
     # The stake can't exceed 1/3 of MarketToken supply
-    # (We can't call getMaxStake() here since the function isn't declared
-    # yet)
     assert stk <= (self.market_token.totalSupply()/3) 
     self.stake = stk
     # There are 86400 seconds in a day
@@ -79,22 +77,14 @@ uint256, back_p: uint256, maker_p: uint256, cost: wei_value):
     # There are 604800 seconds in a week, 1209600 in 2 weeks
     assert vote_by_d <= 2 * SECONDS_IN_WEEK 
     self.vote_by = vote_by_d
+    # Plurality can be at most 100
+    assert pl <= 100
     self.plurality = pl
     # Backend percent + Maker percent should be <= 100
     assert (back_p + maker_p) <= 100
     self.backend_payment = back_p
     self.maker_payment = maker_p
     self.cost_per_byte = cost
-
-@public
-@constant
-def getMaxStake() -> wei_value:
-  """
-  @notice Returns the maximum stake possible given current market token
-  supply. This is set to 1/3rd of market token supply so that there are
-  always 3 votes possible (in principle)
-  """
-  return (self.market_token.totalSupply()/3)
 
 @public
 @constant
@@ -221,22 +211,6 @@ def reparameterize(param: uint256, value: uint256):
   # hashed identifier made up of the prop and its proposed value
   hash: bytes32 = keccak256(concat(convert(param, bytes32), convert(value, bytes32)))
   assert not self.voting.isCandidate(hash)
-  # Check for validity of params to prevent frivolous reparameterization
-  # requests.
-  if param == SPREAD:
-    # The spread is a percentage >= 100%
-    assert value >= 100 
-  elif param == STAKE:
-    assert value <= self.getMaxStake() 
-  elif param == VOTE_BY:
-    assert value >= SECONDS_IN_DAY
-    assert value <= 2 * SECONDS_IN_WEEK 
-  elif param == PLURALITY:
-    assert value <= 100
-  elif param == MAKER_PAYMENT:
-    assert (value + self.backend_payment) <= 100
-  elif param == BACKEND_PAYMENT:
-    assert (value + self.maker_payment) <= 100
   self.reparams[hash] = Reparam({param: param, value:value})
   self.voting.addCandidate(hash, REPARAM, msg.sender, self.stake, self.vote_by)
   log.ReparamProposed(msg.sender, hash, param, value)
@@ -260,23 +234,28 @@ def resolveReparam(hash: bytes32):
     if param == PRICE_FLOOR:
       self.price_floor = value
     elif param == SPREAD:
+      # The spread is a percentage >= 100%
+      assert value >= 100 
       self.spread = value
     elif param == LIST_REWARD:
       self.list_reward = value
     elif param == STAKE:
-      # Recheck validity in case MarketToken supply changed
-      assert value <= self.getMaxStake() 
+      # The stake can't exceed 1/3 of MarketToken supply
+      assert value <= (self.market_token.totalSupply()/3) 
       self.stake = value
     elif param == VOTE_BY:
+      assert value >= SECONDS_IN_DAY
+      assert value <= 2 * SECONDS_IN_WEEK 
       self.vote_by = value
     elif param == PLURALITY:
+      # Plurality can be at most 100
+      assert value <= 100
       self.plurality = value
+    # Backend percent + Maker percent should be <= 100
     elif param == MAKER_PAYMENT:
-      # recheck validity in case self.backend_payment changed
       assert (value + self.backend_payment) <= 100
       self.maker_payment = value
     elif param == BACKEND_PAYMENT:
-      # recheck validity in case self.maker_payment changed
       assert (value + self.maker_payment) <= 100
       self.backend_payment = value
     elif param == COST_PER_BYTE:

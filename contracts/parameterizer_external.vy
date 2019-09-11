@@ -1,7 +1,6 @@
 
 # External Contracts
 contract Parameterizer:
-    def getMaxStake() -> uint256(wei): constant
     def getBackendPayment() -> uint256: constant
     def getMakerPayment() -> uint256: constant
     def getReservePayment() -> uint256: constant

@@ -67,7 +67,7 @@ func ResolveReparam(t *testing.T) {
 	}
 
 	// move time forward so the poll is closed
-	context.Blockchain.AdjustTime(100 * time.Second)
+	context.Blockchain.AdjustTime(test.MIN_VOTE_BY * time.Second)
 	context.Blockchain.Commit()
 
 	// make sure its closed now
