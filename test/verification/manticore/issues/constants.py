@@ -1,0 +1,3 @@
+ONE_ETH = 10**18
+ONE_GWEI = 10**9
+ONE_KWEI = 10**3
