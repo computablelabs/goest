@@ -21,7 +21,6 @@ func TestVote(t *testing.T) {
 
 	// Get the hash
 	reparamHash, _ := deployed.ParameterizerContract.GetHash(nil, test.VOTE_BY, big.NewInt(100000))
-	t.Logf("reparamHash is %v", reparamHash)
 
 	// Check that there is not a candidate now
 	isCan, _ := deployed.VotingContract.IsCandidate(nil, reparamHash)
