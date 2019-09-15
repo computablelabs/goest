@@ -65,23 +65,11 @@ uint256, back_p: uint256, maker_p: uint256, cost: wei_value):
     self.market_token = MarketToken(mkt_addr)
     self.voting = Voting(v_addr)
     self.price_floor = pr_fl
-    # The spread is a percentage >= 100%
-    assert spd >= 100 
     self.spread = spd
     self.list_reward = list_re
-    # The stake can't exceed 1/3 of MarketToken supply
-    assert stk <= (self.market_token.totalSupply()/3) 
     self.stake = stk
-    # There are 86400 seconds in a day
-    assert vote_by_d >= SECONDS_IN_DAY
-    # There are 604800 seconds in a week, 1209600 in 2 weeks
-    assert vote_by_d <= 2 * SECONDS_IN_WEEK 
     self.vote_by = vote_by_d
-    # Plurality can be at most 100
-    assert pl <= 100
     self.plurality = pl
-    # Backend percent + Maker percent should be <= 100
-    assert (back_p + maker_p) <= 100
     self.backend_payment = back_p
     self.maker_payment = maker_p
     self.cost_per_byte = cost
