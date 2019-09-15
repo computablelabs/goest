@@ -24,6 +24,7 @@ contract Voting:
   def removeCandidate(hash: bytes32): modifying
   def didPass(hash: bytes32, plurality: uint256) -> bool: constant
   def pollClosed(hash: bytes32) -> bool: constant
+  def transferStake(hash: bytes32, addr: address): modifying
 
 contract Parameterizer:
   def getBackendPayment() -> uint256: constant
@@ -193,6 +194,8 @@ def resolveRegistration(hash: bytes32):
   else:
     # No changes to make since current datatrust operator continues
     log.RegistrationFailed(hash, owner)
+  # Allow the candidate creator to unstake either way 
+  self.voting.transferStake(hash, owner)
   # regardless, the candidate is pruned
   self.voting.removeCandidate(hash)
 

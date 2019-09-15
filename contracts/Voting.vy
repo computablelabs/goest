@@ -3,7 +3,7 @@
 # @author Computable
 
 # constants
-CHALLENGE: constant(uint256) = 2 # candidate.kind that voting knows about
+APPLICATION: constant(uint256) = 1 # candidate.kind
 
 struct Candidate:
   kind: uint256 # one of [1,2,3,4] representing an application, challenge, reparam or registration respectively
@@ -126,7 +126,7 @@ def addCandidate(hash: bytes32, kind: uint256, owner: address, stake: wei_value,
   """
   assert self.hasPrivilege(msg.sender)
   assert self.candidates[hash].owner == ZERO_ADDRESS
-  if kind == CHALLENGE: # a challenger must successfully stake a challenge
+  if kind != APPLICATION: # Only listing candidates don't require staking 
     self.market_token.transferFrom(owner, self, stake)
     self.stakes[owner][hash] += stake
   end: timestamp = block.timestamp + vote_by
@@ -207,7 +207,8 @@ def transferStake(hash: bytes32, addr: address):
   @param hash The Candidate identifier
   @param addr The Address recieving the credit
   """
-  assert msg.sender == self.listing_address # only the listing contract will call this
+  # The caller must be privileged 
+  assert self.hasPrivilege(msg.sender)
   staked: wei_value = self.stakes[self.candidates[hash].owner][hash]
   clear(self.stakes[self.candidates[hash].owner][hash])
   self.stakes[addr][hash] += staked

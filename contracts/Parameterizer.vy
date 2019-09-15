@@ -25,10 +25,12 @@ struct Reparam:
 contract Voting:
   def candidateIs(hash: bytes32, kind: uint256) -> bool: constant
   def isCandidate(hash: bytes32) -> bool: constant
+  def getCandidateOwner(hash: bytes32) -> address: constant
   def addCandidate(hash: bytes32, kind: uint256, owner: address, stake: uint256(wei), vote_by: uint256(sec)): modifying
   def removeCandidate(hash: bytes32): modifying
   def didPass(hash: bytes32, plurality: uint256) -> bool: constant
   def pollClosed(hash: bytes32) -> bool: constant
+  def transferStake(hash: bytes32, addr: address): modifying
 
 ReparamProposed: event({owner: indexed(address), hash: indexed(bytes32), param: indexed(uint256), value: uint256})
 ReparamFailed: event({hash: indexed(bytes32), param: indexed(uint256), value: uint256})
@@ -226,6 +228,9 @@ def resolveReparam(hash: bytes32):
     log.ReparamSucceeded(hash, param, value)
   else: # did not get enough votes...
     log.ReparamFailed(hash, param, value)
+  # Allow the candidate creator to unstake either way 
+  owner: address = self.voting.getCandidateOwner(hash) 
+  self.voting.transferStake(hash, owner)
   # regardless, cleanup the reparam and candidate
   self.voting.removeCandidate(hash)
   # TODO make sure this works as expected
