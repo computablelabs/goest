@@ -9,8 +9,18 @@ import (
 )
 
 func TestParameterize(t *testing.T) {
+	// auth member will need at least the stake
+	transErr := test.MaybeTransferMarketToken(context, deployed, context.AuthOwner, context.AuthUser1.From,
+		big.NewInt(2*test.ONE_GWEI))
+	test.IfNotNil(t, transErr, "Error maybe transferring market tokens")
+
+	// member will need to have approved the voting contract to spend at least the stake
+	incErr := test.MaybeIncreaseMarketTokenAllowance(context, deployed, context.AuthUser1, deployed.VotingAddress,
+		big.NewInt(2*test.ONE_GWEI))
+	test.IfNotNil(t, incErr, "Error maybe transferring market token approval")
+
 	_, err := deployed.ParameterizerContract.Reparameterize(test.GetTxOpts(context.AuthUser1, nil,
-		big.NewInt(test.ONE_GWEI*2), 200000), test.VOTE_BY, big.NewInt(25))
+		big.NewInt(test.ONE_GWEI*2), 1000000), test.VOTE_BY, big.NewInt(25))
 	test.IfNotNil(t, err, fmt.Sprintf("Error creating proposal: %v", err))
 
 	context.Blockchain.Commit()
