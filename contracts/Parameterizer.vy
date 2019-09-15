@@ -26,6 +26,11 @@ struct Reparam:
   param: uint256
   value: uint256
 
+# Parameterizer has access to the MarketToken contract in order to query
+# for the total number of market tokens
+contract MarketToken:
+  def totalSupply() -> uint256(wei): constant
+
 # Parameterizer has access to the Voting contract, being recognized by it as privileged
 contract Voting:
   def candidateIs(hash: bytes32, kind: uint256) -> bool: constant
@@ -34,12 +39,6 @@ contract Voting:
   def removeCandidate(hash: bytes32): modifying
   def didPass(hash: bytes32, plurality: uint256) -> bool: constant
   def pollClosed(hash: bytes32) -> bool: constant
-
-# Parameterizer has access to the MarketToken contract in order to query
-# for the total number of market tokens
-
-contract MarketToken:
-  def totalSupply() -> uint256(wei): constant
 
 ReparamProposed: event({owner: indexed(address), hash: indexed(bytes32), param: indexed(uint256), value: uint256})
 ReparamFailed: event({hash: indexed(bytes32), param: indexed(uint256), value: uint256})
@@ -55,8 +54,8 @@ plurality: uint256
 backend_payment: uint256
 maker_payment: uint256
 cost_per_byte: wei_value
-voting: Voting
 market_token: MarketToken 
+voting: Voting
 
 @public
 def __init__(mkt_addr: address, v_addr: address, pr_fl: wei_value, spd:
