@@ -226,6 +226,8 @@ def resolveReparam(hash: bytes32):
     elif param == LIST_REWARD:
       self.list_reward = value
     elif param == STAKE:
+      # The stake can't be zero
+      assert value > 0
       # The stake can't exceed 1/3 of MarketToken supply
       assert value <= (self.market_token.totalSupply()/3) 
       self.stake = value
