@@ -52,7 +52,7 @@ func TestMain(m *testing.M) {
 	context = test.GetContext(oneHundredTwoEth) // users have 102 ETH account bal
 	setupMakers(big.NewInt(test.ONE_ETH), 10)   // Makers have 1 ETH account balance
 
-	// override the original simulated backend now that we have appeneded to the allocation
+	// override the original simulated backend now that we have appended to the allocation
 	context.Blockchain = backends.NewSimulatedBackend(context.Alloc, 4700000)
 
 	deployed, deployedError = test.Deploy(big.NewInt(test.ONE_ETH), context, &test.Params{
@@ -69,17 +69,17 @@ func TestMain(m *testing.M) {
 
 	// auth backend will need at least the stake
 	transErr := test.MaybeTransferMarketToken(context, deployed, context.AuthOwner, context.AuthBackend.From,
-		big.NewInt(2*test.ONE_GWEI))
+		big.NewInt(10000000000000000))
 	test.IfNotNil(&logr{}, transErr, "Error maybe transferring market tokens")
 
 	// backend will need to have approved the voting contract to spend at least the stake
 	incErr := test.MaybeIncreaseMarketTokenAllowance(context, deployed, context.AuthBackend, deployed.VotingAddress,
-		big.NewInt(2*test.ONE_GWEI))
+		big.NewInt(10000000000000000))
 	test.IfNotNil(&logr{}, incErr, "Error maybe transferring market token approval")
 
 	// setup the datatrust with a backend
 	_, regErr := deployed.DatatrustContract.Register(test.GetTxOpts(context.AuthBackend, nil,
-		big.NewInt(test.ONE_GWEI*2), 500000), "https://www.immabackend.biz")
+		big.NewInt(test.ONE_GWEI*2), 1000000), "https://www.immabackend.biz")
 	test.IfNotNil(&logr{}, regErr, fmt.Sprintf("Error registering for backend status: %v", regErr))
 
 	context.Blockchain.Commit()

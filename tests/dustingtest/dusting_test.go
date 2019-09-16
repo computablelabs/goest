@@ -121,6 +121,17 @@ func TestRequestDelivery(t *testing.T) {
 }
 
 func TestListingAccessed(t *testing.T) {
+
+	// auth backend will need at least the stake
+	transErr := test.MaybeTransferMarketToken(context, deployed, context.AuthOwner, context.AuthBackend.From,
+		big.NewInt(10000000000000000))
+	test.IfNotNil(t, transErr, "Error maybe transferring market tokens")
+
+	// backend will need to have approved the voting contract to spend at least the stake
+	incErr := test.MaybeIncreaseMarketTokenAllowance(context, deployed, context.AuthBackend, deployed.VotingAddress,
+		big.NewInt(10000000000000000))
+	test.IfNotNil(t, incErr, "Error maybe transferring market token approval")
+
 	// a backend must be registered
 	_, regErr := deployed.DatatrustContract.Register(test.GetTxOpts(context.AuthBackend, nil,
 		big.NewInt(test.ONE_GWEI*2), 500000), "https://www.yermomsbackend.io")
@@ -130,14 +141,14 @@ func TestListingAccessed(t *testing.T) {
 	hash, _ := deployed.DatatrustContract.GetHash(nil, "https://www.yermomsbackend.io")
 
 	// auth member will need at least the stake
-	transErr := test.MaybeTransferMarketToken(context, deployed, context.AuthOwner, context.AuthUser1.From,
+	transErrVote := test.MaybeTransferMarketToken(context, deployed, context.AuthOwner, context.AuthUser1.From,
 		big.NewInt(test.ONE_ETH))
-	test.IfNotNil(t, transErr, "Error maybe transferring market tokens")
+	test.IfNotNil(t, transErrVote, "Error maybe transferring market tokens")
 
 	// member will need to have approved the voting contract to spend at least the stake
-	incErr := test.MaybeIncreaseMarketTokenAllowance(context, deployed, context.AuthUser1, deployed.VotingAddress,
+	incErrVote := test.MaybeIncreaseMarketTokenAllowance(context, deployed, context.AuthUser1, deployed.VotingAddress,
 		big.NewInt(test.ONE_ETH))
-	test.IfNotNil(t, incErr, "Error maybe transferring market token approval")
+	test.IfNotNil(t, incErrVote, "Error maybe transferring market token approval")
 
 	// vote to approve the backend
 	_, voteErr := deployed.VotingContract.Vote(test.GetTxOpts(context.AuthUser1, nil,
