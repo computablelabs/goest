@@ -355,10 +355,10 @@ func TestDelivered(t *testing.T) {
 
 // testing bytes access claiming here as it is, technically, part of the delivery flow.
 func TestClaimBytesAccessed(t *testing.T) {
-	//// get the current accumulated byte access balance for the listings used
+	// get the current accumulated byte access balance for the listings used
 	listingHash1 := test.GenBytes32("LookAtMyJunk")
 	listingHash2 := test.GenBytes32("LookAtMyJunkToo")
-	//// note the supply of those listings
+	// note the supply of those listings
 	_, supply1, _ := deployed.ListingContract.GetListing(nil, listingHash1)
 	_, supply2, _ := deployed.ListingContract.GetListing(nil, listingHash2)
 	// note the current datatrust banked eth token amount, at this point it should only be the maker split(s) from the outstanding bytes accessed

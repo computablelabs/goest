@@ -125,9 +125,9 @@ func TestResolveRegistration(t *testing.T) {
 }
 
 func TestSetDataHash(t *testing.T) {
-	//// create a bogus listing hash, we can use datatrust's method for this
+	// create a bogus listing hash, we can use datatrust's method for this
 	listing_hash, _ := deployed.DatatrustContract.GetHash(nil, "look-at-me-im-a-listing")
-	//// it's empty atm
+	// it's empty atm
 	no_hash, _ := deployed.DatatrustContract.GetDataHash(nil, listing_hash)
 	// make a dummy data_hash
 	data_hash, _ := deployed.DatatrustContract.GetHash(nil, "look-at-me-im-data")
