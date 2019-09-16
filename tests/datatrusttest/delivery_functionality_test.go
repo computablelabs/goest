@@ -356,61 +356,61 @@ func TestDelivered(t *testing.T) {
 // testing bytes access claiming here as it is, technically, part of the delivery flow.
 func TestClaimBytesAccessed(t *testing.T) {
 	//// get the current accumulated byte access balance for the listings used
-	//listingHash1 := test.GenBytes32("LookAtMyJunk")
-	//listingHash2 := test.GenBytes32("LookAtMyJunkToo")
+	listingHash1 := test.GenBytes32("LookAtMyJunk")
+	listingHash2 := test.GenBytes32("LookAtMyJunkToo")
 	//// note the supply of those listings
-	//_, supply1, _ := deployed.ListingContract.GetListing(nil, listingHash1)
-	//_, supply2, _ := deployed.ListingContract.GetListing(nil, listingHash2)
-	//// note the current datatrust banked eth token amount, at this point it should only be the maker split(s) from the outstanding bytes accessed
-	//dataBal, _ := deployed.EtherTokenContract.BalanceOf(nil, deployed.DatatrustAddress)
-	//// claim the listing for 1
-	//_, clErr := deployed.ListingContract.ClaimBytesAccessed(test.GetTxOpts(context.AuthUser2, nil,
-	//	big.NewInt(test.ONE_GWEI*2), 250000), listingHash1)
-	//test.IfNotNil(t, clErr, "Error claiming access")
-	//context.Blockchain.Commit()
+	_, supply1, _ := deployed.ListingContract.GetListing(nil, listingHash1)
+	_, supply2, _ := deployed.ListingContract.GetListing(nil, listingHash2)
+	// note the current datatrust banked eth token amount, at this point it should only be the maker split(s) from the outstanding bytes accessed
+	dataBal, _ := deployed.EtherTokenContract.BalanceOf(nil, deployed.DatatrustAddress)
+	// claim the listing for 1
+	_, clErr := deployed.ListingContract.ClaimBytesAccessed(test.GetTxOpts(context.AuthUser2, nil,
+		big.NewInt(test.ONE_GWEI*2), 250000), listingHash1)
+	test.IfNotNil(t, clErr, "Error claiming access")
+	context.Blockchain.Commit()
 
-	//// supply should have increased
-	//_, supply1Now, _ := deployed.ListingContract.GetListing(nil, listingHash1)
-	//if supply1Now.Cmp(supply1) != 1 {
-	//	t.Errorf("Expected %v to be > %v", supply1Now, supply1)
-	//}
+	// supply should have increased
+	_, supply1Now, _ := deployed.ListingContract.GetListing(nil, listingHash1)
+	if supply1Now.Cmp(supply1) != 1 {
+		t.Errorf("Expected %v to be > %v", supply1Now, supply1)
+	}
 
-	//// access bal should be cleared
-	//accessBal1, _ := deployed.DatatrustContract.GetBytesAccessed(nil, listingHash1)
-	//if accessBal1.Cmp(big.NewInt(0)) != 0 {
-	//	t.Errorf("Expected %v to be 0", accessBal1)
-	//}
+	// access bal should be cleared
+	accessBal1, _ := deployed.DatatrustContract.GetBytesAccessed(nil, listingHash1)
+	if accessBal1.Cmp(big.NewInt(0)) != 0 {
+		t.Errorf("Expected %v to be 0", accessBal1)
+	}
 
-	//// datatrust bank should be lower
-	//dataBalNow, _ := deployed.EtherTokenContract.BalanceOf(nil, deployed.DatatrustAddress)
-	//if dataBalNow.Cmp(dataBal) != -1 {
-	//	t.Errorf("Expected %v to be < %v", dataBalNow, dataBal)
-	//}
+	// datatrust bank should be lower
+	dataBalNow, _ := deployed.EtherTokenContract.BalanceOf(nil, deployed.DatatrustAddress)
+	if dataBalNow.Cmp(dataBal) != -1 {
+		t.Errorf("Expected %v to be < %v", dataBalNow, dataBal)
+	}
 
-	//// NOTE if cost_per_byte is too low there is a scenario here where the 2nd listing's
-	//// maker_fee is too low for support. Which is _not_ erroneous, but worth noting...
+	// NOTE if cost_per_byte is too low there is a scenario here where the 2nd listing's
+	// maker_fee is too low for support. Which is _not_ erroneous, but worth noting...
 
-	//// claim the other listing access
-	//_, clErr2 := deployed.ListingContract.ClaimBytesAccessed(test.GetTxOpts(context.AuthUser1, nil,
-	//	big.NewInt(test.ONE_GWEI*2), 250000), listingHash2)
-	//test.IfNotNil(t, clErr2, "Error claiming access")
-	//context.Blockchain.Commit()
+	// claim the other listing access
+	_, clErr2 := deployed.ListingContract.ClaimBytesAccessed(test.GetTxOpts(context.AuthUser1, nil,
+		big.NewInt(test.ONE_GWEI*2), 250000), listingHash2)
+	test.IfNotNil(t, clErr2, "Error claiming access")
+	context.Blockchain.Commit()
 
-	//// supply should have increased
-	//_, supply2Now, _ := deployed.ListingContract.GetListing(nil, listingHash2)
-	//if supply2Now.Cmp(supply2) != 1 {
-	//	t.Errorf("Expected %v to be > %v", supply2Now, supply2)
-	//}
+	// supply should have increased
+	_, supply2Now, _ := deployed.ListingContract.GetListing(nil, listingHash2)
+	if supply2Now.Cmp(supply2) != 1 {
+		t.Errorf("Expected %v to be > %v", supply2Now, supply2)
+	}
 
-	//// access bal should be cleared
-	//accessBal2, _ := deployed.DatatrustContract.GetBytesAccessed(nil, listingHash2)
-	//if accessBal2.Cmp(big.NewInt(0)) != 0 {
-	//	t.Errorf("Expected %v to be 0", accessBal2)
-	//}
+	// access bal should be cleared
+	accessBal2, _ := deployed.DatatrustContract.GetBytesAccessed(nil, listingHash2)
+	if accessBal2.Cmp(big.NewInt(0)) != 0 {
+		t.Errorf("Expected %v to be 0", accessBal2)
+	}
 
-	//// datatrust bank should be empty now. NOTE this will not always be the case #dusting TODO
-	//dataBalAgain, _ := deployed.EtherTokenContract.BalanceOf(nil, deployed.DatatrustAddress)
-	//if dataBalAgain.Cmp(big.NewInt(0)) != 0 {
-	//	t.Errorf("Expected %v to be 0", dataBalAgain)
-	//}
+	// datatrust bank should be empty now. NOTE this will not always be the case #dusting TODO
+	dataBalAgain, _ := deployed.EtherTokenContract.BalanceOf(nil, deployed.DatatrustAddress)
+	if dataBalAgain.Cmp(big.NewInt(0)) != 0 {
+		t.Errorf("Expected %v to be 0", dataBalAgain)
+	}
 }
