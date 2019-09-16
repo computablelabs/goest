@@ -107,18 +107,15 @@ func TestResolveFirstFailedChallenge(t *testing.T) {
 	if supply.Cmp(big.NewInt(0)) != 1 {
 		t.Errorf("Expected supply to be > 0, got: %v", supply)
 	}
-	t.Log(fmt.Sprintf("supply is %v", supply))
 
 	// The challenger stake should not be 0 now
 	challengerStake, _ := deployed.VotingContract.GetStake(nil, listingHash, context.AuthUser2.From)
 	if challengerStake.Cmp(big.NewInt(0)) != 1 {
 		t.Errorf("Expected challengerStake to be > 0, got: %v", challengerStake)
 	}
-	t.Log(fmt.Sprintf("challengerStake is %v", challengerStake))
 
 	// The listing owner stake should be 0 now
 	ownerStake, _ := deployed.VotingContract.GetStake(nil, listingHash, context.AuthUser1.From)
-	t.Log(fmt.Sprintf("ownerStake is %v", ownerStake))
 	if ownerStake.Cmp(big.NewInt(0)) != 0 {
 		t.Errorf("Expected ownerStake to be 0, got: %v", ownerStake)
 	}
@@ -157,11 +154,9 @@ func TestResolveFirstFailedChallenge(t *testing.T) {
 	if challengerStakeNow.Cmp(big.NewInt(0)) != 0 {
 		t.Errorf("Expected challengerStakeNow to be 0, got: %v", challengerStakeNow)
 	}
-	t.Log(fmt.Sprintf("challengerStakeNow is %v", challengerStakeNow))
 
 	// The listing owner stake should be > 0 now
 	ownerStakeNow, _ := deployed.VotingContract.GetStake(nil, listingHash, context.AuthUser1.From)
-	t.Log(fmt.Sprintf("ownerStakeNow is %v", ownerStakeNow))
 	if ownerStakeNow.Cmp(big.NewInt(0)) != 1 {
 		t.Errorf("Expected ownerStake to be > 0, got: %v", ownerStakeNow)
 	}
@@ -175,7 +170,6 @@ func TestSecondFailedChallenge(t *testing.T) {
 	if supply.Cmp(big.NewInt(0)) != 1 {
 		t.Errorf("Expected supply to be > 0, got: %v", supply)
 	}
-	t.Log(fmt.Sprintf("supply is %v", supply))
 
 	// member 2 as repeat challenger here, may need funds
 	transErr2 := test.MaybeTransferMarketToken(context, deployed, context.AuthOwner,
@@ -197,12 +191,10 @@ func TestSecondFailedChallenge(t *testing.T) {
 	if challengerStake.Cmp(big.NewInt(0)) != 1 {
 		t.Errorf("Expected challengerStake to be > 0, got: %v", challengerStake)
 	}
-	t.Log(fmt.Sprintf("challengerStake is %v", challengerStake))
 
 	// The listing owner stake should not be 0 now
 	// (since we haven't unstaked proceeds from last failed challenge)
 	ownerStake, _ := deployed.VotingContract.GetStake(nil, listingHash, context.AuthUser1.From)
-	t.Log(fmt.Sprintf("ownerStake is %v", ownerStake))
 	if ownerStake.Cmp(big.NewInt(0)) != 1 {
 		t.Errorf("Expected ownerStake to be > 0, got: %v", ownerStake)
 	}
@@ -241,11 +233,9 @@ func TestSecondFailedChallenge(t *testing.T) {
 	if challengerStakeNow.Cmp(big.NewInt(0)) != 0 {
 		t.Errorf("Expected challengerStakeNow to be 0, got: %v", challengerStakeNow)
 	}
-	t.Log(fmt.Sprintf("challengerStakeNow is %v", challengerStakeNow))
 
 	// The listing owner stake should have increased now
 	ownerStakeNow, _ := deployed.VotingContract.GetStake(nil, listingHash, context.AuthUser1.From)
-	t.Log(fmt.Sprintf("ownerStakeNow is %v", ownerStakeNow))
 	if ownerStakeNow.Cmp(ownerStake) != 1 {
 		t.Errorf("Expected ownerStake to increment, got: %v", ownerStakeNow)
 	}

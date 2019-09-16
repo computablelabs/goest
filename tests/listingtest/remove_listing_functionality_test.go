@@ -81,11 +81,9 @@ func TestRemoveList(t *testing.T) {
 
 	// Let's note the owner's balance
 	ownerBal, _ := deployed.MarketTokenContract.BalanceOf(nil, context.AuthUser1.From)
-	t.Log(fmt.Sprintf("ownerBal is %v", ownerBal))
 
 	// Let's note the market balance now
 	marketBal, _ := deployed.MarketTokenContract.BalanceOf(nil, deployed.ListingAddress)
-	t.Log(fmt.Sprintf("marketBal is %v", marketBal))
 
 	// Now let's actually remove the listing
 	_, exitErr := deployed.ListingContract.Exit(test.GetTxOpts(context.AuthUser1, nil,
@@ -101,7 +99,6 @@ func TestRemoveList(t *testing.T) {
 	// Let's note the owner's balance after the listing was removed. This
 	// should have gone up.
 	ownerBalNow, _ := deployed.MarketTokenContract.BalanceOf(nil, context.AuthUser1.From)
-	t.Log(fmt.Sprintf("ownerBalNow is %v", ownerBalNow))
 	if ownerBalNow.Cmp(ownerBal) != 1 {
 		t.Errorf("Exepected new owner balance %v to be > old owner balance %v", ownerBalNow, ownerBal)
 	}
@@ -111,6 +108,5 @@ func TestRemoveList(t *testing.T) {
 	if updatedMarketBal.Cmp(marketBal) != -1 {
 		t.Errorf("Expected %v to be > %v", marketBal, updatedMarketBal)
 	}
-	t.Log(fmt.Sprintf("updatedMarketBal is %v", updatedMarketBal))
 
 }
