@@ -20,7 +20,7 @@ func TestParameterize(t *testing.T) {
 	test.IfNotNil(t, incErr, "Error maybe transferring market token approval")
 
 	_, err := deployed.ParameterizerContract.Reparameterize(test.GetTxOpts(context.AuthUser1, nil,
-		big.NewInt(test.ONE_GWEI*2), 200000), test.VOTE_BY, big.NewInt(2*test.MIN_VOTE_BY))
+		big.NewInt(test.ONE_GWEI*2), 1000000), test.VOTE_BY, big.NewInt(2*test.MIN_VOTE_BY))
 	test.IfNotNil(t, err, fmt.Sprintf("Error creating proposal: %v", err))
 
 	context.Blockchain.Commit()
@@ -35,28 +35,28 @@ func TestParameterize(t *testing.T) {
 }
 
 func GetReparam(t *testing.T) {
-	paramHash, _ := deployed.ParameterizerContract.GetHash(nil, big.NewInt(7), big.NewInt(25))
+	paramHash, _ := deployed.ParameterizerContract.GetHash(nil, big.NewInt(7), big.NewInt(2*test.MIN_VOTE_BY))
 	name, val, _ := deployed.ParameterizerContract.GetReparam(nil, paramHash)
 
 	if name.Cmp(test.VOTE_BY) != 0 {
 		t.Errorf("Expected name to be 'voteBy', got: %v", name)
 	}
 
-	if val.Cmp(big.NewInt(25)) != 0 {
-		t.Errorf("Expected value to be 25, got: %v", val)
+	if val.Cmp(big.NewInt(2*test.MIN_VOTE_BY)) != 0 {
+		t.Errorf("Expected value to be %v, got: %v", 2*test.MIN_VOTE_BY, val)
 	}
 }
 
 func ResolveReparam(t *testing.T) {
 	oldVoteBy, _ := deployed.ParameterizerContract.GetVoteBy(nil)
 
-	// make sure its not the proposed candidate's amount (25)
-	if oldVoteBy.Cmp(big.NewInt(25)) == 0 {
-		t.Errorf("Expected the old voteBy param to not be 25, got: %v", oldVoteBy)
+	// make sure its not the proposed candidate's amount (2*test.MIN_VOTE_BY)
+	if oldVoteBy.Cmp(big.NewInt(2*test.MIN_VOTE_BY)) == 0 {
+		t.Errorf("Expected the old voteBy param to not be %v, got: %v", 2*test.MIN_VOTE_BY, oldVoteBy)
 	}
 
 	// how we will fetch this proposal
-	paramHash, _ := deployed.ParameterizerContract.GetHash(nil, big.NewInt(7), big.NewInt(25))
+	paramHash, _ := deployed.ParameterizerContract.GetHash(nil, big.NewInt(7), big.NewInt(2*test.MIN_VOTE_BY))
 
 	// cast a vote, member may need funding...
 	test.MaybeTransferMarketToken(context, deployed, context.AuthOwner, context.AuthUser3.From, big.NewInt(test.ONE_GWEI))
@@ -97,8 +97,8 @@ func ResolveReparam(t *testing.T) {
 	// voteBy should be changed now
 	newVoteBy, _ := deployed.ParameterizerContract.GetVoteBy(nil)
 
-	if newVoteBy.Cmp(big.NewInt(25)) != 0 {
-		t.Errorf("Expected the new voteBy param to be 25, got: %v", newVoteBy)
+	if newVoteBy.Cmp(big.NewInt(2*test.MIN_VOTE_BY)) != 0 {
+		t.Errorf("Expected the new voteBy param to be %v, got: %v", 2*test.MIN_VOTE_BY, newVoteBy)
 	}
 
 	// should have cleaned up the voting candidate

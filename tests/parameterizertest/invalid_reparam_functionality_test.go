@@ -9,9 +9,19 @@ import (
 )
 
 func TestInvalidSpread(t *testing.T) {
+	// auth member will need at least the stake
+	transErr := test.MaybeTransferMarketToken(context, deployed, context.AuthOwner, context.AuthUser1.From,
+		big.NewInt(2*test.ONE_GWEI))
+	test.IfNotNil(t, transErr, "Error maybe transferring market tokens")
+
+	// member will need to have approved the voting contract to spend at least the stake
+	incErr := test.MaybeIncreaseMarketTokenAllowance(context, deployed, context.AuthUser1, deployed.VotingAddress,
+		big.NewInt(2*test.ONE_GWEI))
+	test.IfNotNil(t, incErr, "Error maybe transferring market token approval")
+
 	// Spread must be >= 100
 	_, err := deployed.ParameterizerContract.Reparameterize(test.GetTxOpts(context.AuthUser1, nil,
-		big.NewInt(test.ONE_GWEI*2), 200000), test.SPREAD, big.NewInt(50))
+		big.NewInt(test.ONE_GWEI*2), 1000000), test.SPREAD, big.NewInt(50))
 	test.IfNotNil(t, err, fmt.Sprintf("Error creating proposal: %v", err))
 
 	context.Blockchain.Commit()
@@ -69,13 +79,22 @@ func TestInvalidSpread(t *testing.T) {
 }
 
 func TestInvalidStake(t *testing.T) {
+	// auth member will need at least the stake
+	transErr := test.MaybeTransferMarketToken(context, deployed, context.AuthOwner, context.AuthUser1.From,
+		big.NewInt(2*test.ONE_GWEI))
+	test.IfNotNil(t, transErr, "Error maybe transferring market tokens")
+
+	// member will need to have approved the voting contract to spend at least the stake
+	incErr := test.MaybeIncreaseMarketTokenAllowance(context, deployed, context.AuthUser1, deployed.VotingAddress,
+		big.NewInt(2*test.ONE_GWEI))
+	test.IfNotNil(t, incErr, "Error maybe transferring market token approval")
+
 	// Stake must be <= 1/3 of MarketToken supply
 	_, err := deployed.ParameterizerContract.Reparameterize(test.GetTxOpts(context.AuthUser1, nil,
 		// Attempt to set the stake to 2 MarketToken, greater than 1/3 of
 		// existing market cap of 5 MarketToken
-		big.NewInt(test.ONE_GWEI*2), 200000), test.STAKE, big.NewInt(test.ONE_ETH*2))
+		big.NewInt(test.ONE_GWEI*2), 1000000), test.STAKE, big.NewInt(test.ONE_ETH*2))
 	test.IfNotNil(t, err, fmt.Sprintf("Error creating proposal: %v", err))
-
 	context.Blockchain.Commit()
 
 	// we should see a candidate now
@@ -131,9 +150,19 @@ func TestInvalidStake(t *testing.T) {
 }
 
 func TestInvalidVoteByTooLong(t *testing.T) {
+	// auth member will need at least the stake
+	transErr := test.MaybeTransferMarketToken(context, deployed, context.AuthOwner, context.AuthUser1.From,
+		big.NewInt(2*test.ONE_GWEI))
+	test.IfNotNil(t, transErr, "Error maybe transferring market tokens")
+
+	// member will need to have approved the voting contract to spend at least the stake
+	incErr := test.MaybeIncreaseMarketTokenAllowance(context, deployed, context.AuthUser1, deployed.VotingAddress,
+		big.NewInt(2*test.ONE_GWEI))
+	test.IfNotNil(t, incErr, "Error maybe transferring market token approval")
+
 	// Vote_by must be <= 1209600. We'll try setting it to 1500000
 	_, err := deployed.ParameterizerContract.Reparameterize(test.GetTxOpts(context.AuthUser1, nil,
-		big.NewInt(test.ONE_GWEI*2), 200000), test.VOTE_BY, big.NewInt(1500000))
+		big.NewInt(test.ONE_GWEI*2), 1000000), test.VOTE_BY, big.NewInt(1500000))
 	test.IfNotNil(t, err, fmt.Sprintf("Error creating proposal: %v", err))
 
 	context.Blockchain.Commit()
@@ -191,9 +220,19 @@ func TestInvalidVoteByTooLong(t *testing.T) {
 }
 
 func TestInvalidVoteByTooShort(t *testing.T) {
+	// auth member will need at least the stake
+	transErr := test.MaybeTransferMarketToken(context, deployed, context.AuthOwner, context.AuthUser1.From,
+		big.NewInt(2*test.ONE_GWEI))
+	test.IfNotNil(t, transErr, "Error maybe transferring market tokens")
+
+	// member will need to have approved the voting contract to spend at least the stake
+	incErr := test.MaybeIncreaseMarketTokenAllowance(context, deployed, context.AuthUser1, deployed.VotingAddress,
+		big.NewInt(2*test.ONE_GWEI))
+	test.IfNotNil(t, incErr, "Error maybe transferring market token approval")
+
 	// Vote_by must be >= test.MIN_VOTE_BY. We'll try setting it to half that
 	_, err := deployed.ParameterizerContract.Reparameterize(test.GetTxOpts(context.AuthUser1, nil,
-		big.NewInt(test.ONE_GWEI*2), 200000), test.VOTE_BY, big.NewInt(test.MIN_VOTE_BY/2))
+		big.NewInt(test.ONE_GWEI*2), 1000000), test.VOTE_BY, big.NewInt(test.MIN_VOTE_BY/2))
 	test.IfNotNil(t, err, fmt.Sprintf("Error creating proposal: %v", err))
 
 	context.Blockchain.Commit()
@@ -251,9 +290,19 @@ func TestInvalidVoteByTooShort(t *testing.T) {
 }
 
 func TestInvalidPlurality(t *testing.T) {
+	// auth member will need at least the stake
+	transErr := test.MaybeTransferMarketToken(context, deployed, context.AuthOwner, context.AuthUser1.From,
+		big.NewInt(2*test.ONE_GWEI))
+	test.IfNotNil(t, transErr, "Error maybe transferring market tokens")
+
+	// member will need to have approved the voting contract to spend at least the stake
+	incErr := test.MaybeIncreaseMarketTokenAllowance(context, deployed, context.AuthUser1, deployed.VotingAddress,
+		big.NewInt(2*test.ONE_GWEI))
+	test.IfNotNil(t, incErr, "Error maybe transferring market token approval")
+
 	// Plurality must be <= 100
 	_, err := deployed.ParameterizerContract.Reparameterize(test.GetTxOpts(context.AuthUser1, nil,
-		big.NewInt(test.ONE_GWEI*2), 200000), test.PLURALITY, big.NewInt(150))
+		big.NewInt(test.ONE_GWEI*2), 1000000), test.PLURALITY, big.NewInt(150))
 	test.IfNotNil(t, err, fmt.Sprintf("Error creating proposal: %v", err))
 
 	context.Blockchain.Commit()
@@ -311,10 +360,20 @@ func TestInvalidPlurality(t *testing.T) {
 }
 
 func TestInvalidMakerPayment(t *testing.T) {
+	// auth member will need at least the stake
+	transErr := test.MaybeTransferMarketToken(context, deployed, context.AuthOwner, context.AuthUser1.From,
+		big.NewInt(2*test.ONE_GWEI))
+	test.IfNotNil(t, transErr, "Error maybe transferring market tokens")
+
+	// member will need to have approved the voting contract to spend at least the stake
+	incErr := test.MaybeIncreaseMarketTokenAllowance(context, deployed, context.AuthUser1, deployed.VotingAddress,
+		big.NewInt(2*test.ONE_GWEI))
+	test.IfNotNil(t, incErr, "Error maybe transferring market token approval")
+
 	// maker_payment + backend_payment must be <= 100. backend_payment is 25.
 	// Let's try setting maker_payment to 90
 	_, err := deployed.ParameterizerContract.Reparameterize(test.GetTxOpts(context.AuthUser1, nil,
-		big.NewInt(test.ONE_GWEI*2), 200000), test.MAKER_PAYMENT, big.NewInt(90))
+		big.NewInt(test.ONE_GWEI*2), 1000000), test.MAKER_PAYMENT, big.NewInt(90))
 	test.IfNotNil(t, err, fmt.Sprintf("Error creating proposal: %v", err))
 
 	context.Blockchain.Commit()
@@ -371,10 +430,20 @@ func TestInvalidMakerPayment(t *testing.T) {
 }
 
 func TestInvalidBackendPayment(t *testing.T) {
+	// auth member will need at least the stake
+	transErr := test.MaybeTransferMarketToken(context, deployed, context.AuthOwner, context.AuthUser1.From,
+		big.NewInt(2*test.ONE_GWEI))
+	test.IfNotNil(t, transErr, "Error maybe transferring market tokens")
+
+	// member will need to have approved the voting contract to spend at least the stake
+	incErr := test.MaybeIncreaseMarketTokenAllowance(context, deployed, context.AuthUser1, deployed.VotingAddress,
+		big.NewInt(2*test.ONE_GWEI))
+	test.IfNotNil(t, incErr, "Error maybe transferring market token approval")
+
 	// maker_payment + backend_payment must be <= 100. maker is 50.
 	// Let's try setting backend to 60
 	_, err := deployed.ParameterizerContract.Reparameterize(test.GetTxOpts(context.AuthUser1, nil,
-		big.NewInt(test.ONE_GWEI*2), 200000), test.BACKEND_PAYMENT, big.NewInt(60))
+		big.NewInt(test.ONE_GWEI*2), 1000000), test.BACKEND_PAYMENT, big.NewInt(60))
 	test.IfNotNil(t, err, fmt.Sprintf("Error creating proposal: %v", err))
 
 	context.Blockchain.Commit()
