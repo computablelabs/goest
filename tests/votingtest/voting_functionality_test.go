@@ -30,7 +30,7 @@ func TestVote(t *testing.T) {
 
 	// we need a candidate, a privileged contract must add it...
 	_, candErr := deployed.ParameterizerContract.Reparameterize(test.GetTxOpts(context.AuthUser1, nil,
-		big.NewInt(test.ONE_GWEI*2), 200000), test.VOTE_BY, big.NewInt(2*test.MIN_VOTE_BY))
+		big.NewInt(test.ONE_GWEI*2), 1000000), test.VOTE_BY, big.NewInt(2*test.MIN_VOTE_BY))
 	test.IfNotNil(t, candErr, fmt.Sprintf("Error adding candidate: %v", candErr))
 	context.Blockchain.Commit()
 
