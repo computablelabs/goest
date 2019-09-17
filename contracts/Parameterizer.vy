@@ -19,8 +19,6 @@ REPARAM: constant(uint256) = 3
 
 # The number of seconds in a day
 SECONDS_IN_DAY: constant(uint256) = 86400 
-# The number of seconds in a week.
-SECONDS_IN_WEEK: constant(uint256) = 604800
 
 struct Reparam:
   param: uint256
@@ -231,7 +229,7 @@ def resolveReparam(hash: bytes32):
       self.stake = value
     elif param == VOTE_BY:
       assert value >= SECONDS_IN_DAY
-      assert value <= 2 * SECONDS_IN_WEEK 
+      assert value <= 2 * (7 * SECONDS_IN_DAY)
       self.vote_by = value
     elif param == PLURALITY:
       # Plurality can be at most 100
