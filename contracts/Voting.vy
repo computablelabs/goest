@@ -207,8 +207,7 @@ def transferStake(hash: bytes32, addr: address):
   @param hash The Candidate identifier
   @param addr The Address recieving the credit
   """
-  # The caller must be privileged 
-  assert self.hasPrivilege(msg.sender)
+  assert msg.sender == self.listing_address # only the listing contract will call this
   staked: wei_value = self.stakes[self.candidates[hash].owner][hash]
   clear(self.stakes[self.candidates[hash].owner][hash])
   self.stakes[addr][hash] += staked

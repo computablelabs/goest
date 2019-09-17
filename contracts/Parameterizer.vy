@@ -249,9 +249,6 @@ def resolveReparam(hash: bytes32):
     log.ReparamSucceeded(hash, param, value)
   else: # did not get enough votes...
     log.ReparamFailed(hash, param, value)
-  # Allow the candidate creator to unstake either way 
-  owner: address = self.voting.getCandidateOwner(hash) 
-  self.voting.transferStake(hash, owner)
   # regardless, cleanup the reparam and candidate
   self.voting.removeCandidate(hash)
   # TODO make sure this works as expected
