@@ -39,7 +39,7 @@ func TestChallenge(t *testing.T) {
 	context.Blockchain.Commit()
 
 	// move past the voteBy
-	context.Blockchain.AdjustTime(100 * time.Second)
+	context.Blockchain.AdjustTime(test.MIN_VOTE_BY * time.Second)
 	context.Blockchain.Commit()
 
 	// call for resolution
@@ -128,7 +128,7 @@ func TestResolveChallenge(t *testing.T) {
 	}
 
 	// the vote is recorded now, and the challenge should be ready to be resolved once we pass the voteBy
-	context.Blockchain.AdjustTime(100 * time.Second)
+	context.Blockchain.AdjustTime(test.MIN_VOTE_BY * time.Second)
 	context.Blockchain.Commit()
 
 	_, resolveErr := deployed.ListingContract.ResolveChallenge(test.GetTxOpts(context.AuthUser1, nil,
@@ -222,7 +222,7 @@ func TestLosingChallenge(t *testing.T) {
 	context.Blockchain.Commit()
 
 	// move past the voteBy
-	context.Blockchain.AdjustTime(100 * time.Second)
+	context.Blockchain.AdjustTime(test.MIN_VOTE_BY * time.Second)
 	context.Blockchain.Commit()
 
 	// call for resolution
@@ -263,7 +263,7 @@ func TestLosingChallenge(t *testing.T) {
 	}
 
 	// move past  the vote by
-	context.Blockchain.AdjustTime(100 * time.Second)
+	context.Blockchain.AdjustTime(test.MIN_VOTE_BY * time.Second)
 	context.Blockchain.Commit()
 
 	_, resolveChallErr := deployed.ListingContract.ResolveChallenge(test.GetTxOpts(context.AuthUser1, nil,
@@ -367,7 +367,7 @@ func TestStakeOverwrite(t *testing.T) {
 	}
 
 	// move past  the vote by
-	context.Blockchain.AdjustTime(100 * time.Second)
+	context.Blockchain.AdjustTime(test.MIN_VOTE_BY * time.Second)
 	context.Blockchain.Commit()
 
 	_, resolveChallErr := deployed.ListingContract.ResolveChallenge(test.GetTxOpts(context.AuthUser1, nil,
@@ -426,7 +426,7 @@ func TestVoteStakeOverwrite(t *testing.T) {
 	context.Blockchain.Commit()
 
 	// move past the voteBy
-	context.Blockchain.AdjustTime(100 * time.Second)
+	context.Blockchain.AdjustTime(test.MIN_VOTE_BY * time.Second)
 	context.Blockchain.Commit()
 
 	// call for resolution

@@ -40,7 +40,7 @@ func TestFailedChallenge(t *testing.T) {
 	context.Blockchain.Commit()
 
 	// move past the voteBy
-	context.Blockchain.AdjustTime(100 * time.Second)
+	context.Blockchain.AdjustTime(test.MIN_VOTE_BY * time.Second)
 	context.Blockchain.Commit()
 
 	// call for resolution
@@ -137,7 +137,7 @@ func TestResolveFirstFailedChallenge(t *testing.T) {
 	context.Blockchain.Commit()
 
 	// the vote is recorded now, and the challenge should be ready to be resolved once we pass the voteBy
-	context.Blockchain.AdjustTime(100 * time.Second)
+	context.Blockchain.AdjustTime(test.MIN_VOTE_BY * time.Second)
 	context.Blockchain.Commit()
 
 	// Let's now resolve the challenge
@@ -221,7 +221,7 @@ func TestSecondFailedChallenge(t *testing.T) {
 	context.Blockchain.Commit()
 
 	// the vote is recorded now, and the challenge should be ready to be resolved once we pass the voteBy
-	context.Blockchain.AdjustTime(100 * time.Second)
+	context.Blockchain.AdjustTime(test.MIN_VOTE_BY * time.Second)
 	context.Blockchain.Commit()
 
 	// Let's now resolve the challenge

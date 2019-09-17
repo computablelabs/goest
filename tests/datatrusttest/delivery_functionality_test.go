@@ -135,7 +135,7 @@ func TestListingAccessed(t *testing.T) {
 	context.Blockchain.Commit()
 
 	// move past the voteBy
-	context.Blockchain.AdjustTime(100 * time.Second)
+	context.Blockchain.AdjustTime(test.MIN_VOTE_BY * time.Second)
 	context.Blockchain.Commit()
 
 	// make it official
@@ -176,7 +176,7 @@ func TestListingAccessed(t *testing.T) {
 	context.Blockchain.Commit()
 
 	// move past the voteBy
-	context.Blockchain.AdjustTime(100 * time.Second)
+	context.Blockchain.AdjustTime(test.MIN_VOTE_BY * time.Second)
 	context.Blockchain.Commit()
 
 	// any council member can call for resolution - now it becomes a listing
@@ -280,7 +280,7 @@ func TestDelivered(t *testing.T) {
 	context.Blockchain.Commit()
 
 	// move past the voteBy
-	context.Blockchain.AdjustTime(100 * time.Second)
+	context.Blockchain.AdjustTime(test.MIN_VOTE_BY * time.Second)
 	context.Blockchain.Commit()
 
 	// any council member can call for resolution

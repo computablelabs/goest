@@ -22,6 +22,10 @@ func zeroEth() *big.Int {
 	return big.NewInt(0)
 }
 
+func oneEth() *big.Int {
+	return big.NewInt(test.ONE_ETH)
+}
+
 // as we start with 0 supply and balances, we'll need authOwner to deposit some
 func TestDeposit(t *testing.T) {
 	_, depErr := deployed.EtherTokenContract.Deposit(test.GetTxOpts(context.AuthOwner, oneHundredOneEth(),
@@ -44,8 +48,8 @@ func TestInitialBalance(t *testing.T) {
 	if etBal.Cmp(oneHundredOneEth()) != 0 {
 		t.Errorf("Expected ether token balance of %v, got: %v", oneHundredOneEth(), etBal)
 	}
-	if mtSup.Cmp(big.NewInt(0)) != 0 {
-		t.Errorf("Expected market token supply of 1 wei, got: %v", mtSup)
+	if mtSup.Cmp(oneEth()) != 0 {
+		t.Errorf("Expected market token supply of 1 whole, got: %v", mtSup)
 	}
 
 	t.Logf("Current Market Token total supply: %v", test.Commafy(mtSup))
@@ -54,18 +58,16 @@ func TestInitialBalance(t *testing.T) {
 // This differs from test in scenario-two since it has more supporters
 func TestTransferToReserveThenSupport(t *testing.T) {
 
-	//ownerEthBal, _ := deployed.EtherTokenContract.BalanceOf(nil, context.AuthOwner.From)
 	resEthBal, _ := deployed.EtherTokenContract.BalanceOf(nil, deployed.ReserveAddress)
 
-	// got the 100
+	t.Logf("Current reserve balance: %v", resEthBal)
 	if resEthBal.Cmp(zeroEth()) != 0 {
-		t.Errorf("Expected reserve of 100 Eth, got: %v", resEthBal)
+		t.Errorf("Expected reserve of 0 Eth, got: %v", resEthBal)
 	}
 
 	t.Logf("Current Reserve balance: %v", test.Commafy(resEthBal))
 	t.Logf("Number supporters: %d", len(supporters))
 
-	//for name, supporter := range supporters {
 	for name, supporter := range supporters {
 
 		etBal, _ := deployed.EtherTokenContract.BalanceOf(nil, supporter.From)
@@ -77,7 +79,7 @@ func TestTransferToReserveThenSupport(t *testing.T) {
 		test.IfNotNil(t, depErr, "Error depositing ETH")
 		context.Blockchain.Commit()
 
-		//	// snapshot current balances
+		// snapshot current balances
 		etBalNow, _ := deployed.EtherTokenContract.BalanceOf(nil, supporter.From)
 		if etBalNow.Cmp(oneHundredEth()) != 0 {
 			t.Errorf("Expected ether token balance of 100 eth, got: %v", etBalNow)
