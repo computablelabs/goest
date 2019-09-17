@@ -60,7 +60,7 @@ func TestMain(m *testing.M) {
 		Spread:      big.NewInt(110),
 		ListReward:  big.NewInt(250000000000000),   // 2.5 x 10**13
 		Stake:       big.NewInt(10000000000000000), // 1 X 10**16
-		VoteBy:      big.NewInt(100),
+		VoteBy:      big.NewInt(test.MIN_VOTE_BY),
 		Plurality:   big.NewInt(50),
 		BackendPct:  big.NewInt(25),
 		MakerPct:    big.NewInt(25),
@@ -102,7 +102,7 @@ func TestMain(m *testing.M) {
 	context.Blockchain.Commit()
 
 	// move past the voteBy
-	context.Blockchain.AdjustTime(100 * time.Second)
+	context.Blockchain.AdjustTime(test.MIN_VOTE_BY * time.Second)
 	context.Blockchain.Commit()
 
 	// call for resolution

@@ -49,8 +49,8 @@ func TestGetPlurality(t *testing.T) {
 func TestGetVoteBy(t *testing.T) {
 	voteBy, _ := deployed.ParameterizerContract.GetVoteBy(nil)
 
-	if voteBy.Cmp(big.NewInt(100)) != 0 {
-		t.Errorf("Expected voteBy to be 20, got: %v", voteBy)
+	if voteBy.Cmp(big.NewInt(test.MIN_VOTE_BY)) != 0 {
+		t.Errorf("Expected voteBy to be %v, got: %v", test.MIN_VOTE_BY, voteBy)
 	}
 }
 
