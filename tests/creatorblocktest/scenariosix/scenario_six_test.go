@@ -103,28 +103,28 @@ func TestTransferToReserveThenSupport(t *testing.T) {
 			t.Errorf("Expected allowance of 100 ETH, got: %v", allowed)
 		}
 
-		_, sErr := deployed.ReserveContract.Support(test.GetTxOpts(supporter, nil,
-			big.NewInt(test.ONE_GWEI*2), 150000), oneHundredEth())
-		test.IfNotNil(t, sErr, "Error supporting")
-		context.Blockchain.Commit()
+		// _, sErr := deployed.ReserveContract.Support(test.GetTxOpts(supporter, nil,
+		// big.NewInt(test.ONE_GWEI*2), 150000), oneHundredEth())
+		// test.IfNotNil(t, sErr, "Error supporting")
+		// context.Blockchain.Commit()
 
 		// check current market token balance
-		mtBalNow, _ := deployed.MarketTokenContract.BalanceOf(nil, supporter.From)
-		if mtBalNow.Cmp(mtBal) != 1 {
-			t.Errorf("Expected %v to be > %v", mtBalNow, mtBal)
-		}
-		t.Logf("%s market token balance post 100 ETH support: %v", name, test.Commafy(mtBalNow))
+		// mtBalNow, _ := deployed.MarketTokenContract.BalanceOf(nil, supporter.From)
+		// if mtBalNow.Cmp(mtBal) != 1 {
+		// t.Errorf("Expected %v to be > %v", mtBalNow, mtBal)
+		// }
+		// t.Logf("%s market token balance post 100 ETH support: %v", name, test.Commafy(mtBalNow))
 
 		// market token total supply should be updated
-		mtSup, _ := deployed.MarketTokenContract.TotalSupply(nil)
-		t.Logf("Market token total supply post %s support of 100 ETH: %v", name, test.Commafy(mtSup))
+		// mtSup, _ := deployed.MarketTokenContract.TotalSupply(nil)
+		// t.Logf("Market token total supply post %s support of 100 ETH: %v", name, test.Commafy(mtSup))
 
 		// Get new reserve balance
-		resEthBal, _ = deployed.EtherTokenContract.BalanceOf(nil, deployed.ReserveAddress)
+		// resEthBal, _ = deployed.EtherTokenContract.BalanceOf(nil, deployed.ReserveAddress)
 		// reserve should be updated
-		t.Logf("Reserve balance post %s support of 100 ETH: %v", name, test.Commafy(resEthBal))
+		// t.Logf("Reserve balance post %s support of 100 ETH: %v", name, test.Commafy(resEthBal))
 
-		sPriceNow, _ := deployed.ReserveContract.GetSupportPrice(nil)
-		t.Logf("Support Price post %s support of 100 ETH: %v", name, test.Commafy(sPriceNow))
+		// sPriceNow, _ := deployed.ReserveContract.GetSupportPrice(nil)
+		// t.Logf("Support Price post %s support of 100 ETH: %v", name, test.Commafy(sPriceNow))
 	}
 }
