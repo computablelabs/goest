@@ -48,7 +48,7 @@ func TestInitialBalance(t *testing.T) {
 	if etBal.Cmp(oneHundredOneEth()) != 0 {
 		t.Errorf("Expected ether token balance of %v, got: %v", oneHundredOneEth(), etBal)
 	}
-	if mtSup.Cmp(oneEth()) != 0 {
+	if mtSup.Cmp(oneEth()) != 0 { // need this file to change
 		t.Errorf("Expected market token supply of 1 whole, got: %v", mtSup)
 	}
 
