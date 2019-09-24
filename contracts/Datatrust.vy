@@ -10,6 +10,9 @@ struct Delivery:
   owner:address
   bytes_requested: uint256
   bytes_delivered: uint256
+  cost_per_byte: wei_value
+  backend_payment: uint256
+  maker_payment: uint256
 
 # external contracts
 contract EtherToken:
@@ -28,6 +31,7 @@ contract Voting:
 contract Parameterizer:
   def getBackendPayment() -> uint256: constant
   def getReservePayment() -> uint256: constant
+  def getMakerPayment() -> uint256: constant
   def getCostPerByte() -> wei_value: constant
   def getStake() -> uint256(wei): constant
   def getPlurality() -> uint256: constant
@@ -45,6 +49,7 @@ data_hashes: map(bytes32, bytes32) # listing_hash -> data_hash
 bytes_purchased: map(address, uint256) # maps user-address to total amount of bytes purchased
 bytes_accessed: map(bytes32, uint256) # maps a listing to its currently unclaimed bytes accessed
 deliveries: map(bytes32, Delivery) # maps delivery_hash -> delivery
+access_reward_earned: map(bytes32, wei_value) # maps a listing owner user-address to total amount of access rewards earned
 backend_url: string[128]
 backend_address: address
 ether_token: EtherToken
@@ -214,6 +219,9 @@ def requestDelivery(hash: bytes32, amount: uint256):
   self.bytes_purchased[msg.sender] += amount # all purchases by this user. deducted from via listing access
   self.deliveries[hash].owner = msg.sender
   self.deliveries[hash].bytes_requested = amount
+  self.deliveries[hash].cost_per_byte = self.parameterizer.getCostPerByte()
+  self.deliveries[hash].backend_payment = self.parameterizer.getBackendPayment()
+  self.deliveries[hash].maker_payment = self.parameterizer.getMakerPayment()
 
 
 @public
@@ -235,6 +243,15 @@ def getDelivery(hash: bytes32) -> (address, uint256, uint256):
   return (self.deliveries[hash].owner, self.deliveries[hash].bytes_requested,
     self.deliveries[hash].bytes_delivered)
 
+@public
+@constant
+def getAccessRewardForAmount(delivery: bytes32, amount: uint256) -> wei_value:
+  cost_per_byte: wei_value = self.deliveries[delivery].cost_per_byte
+  maker_payment: uint256 = self.deliveries[delivery].maker_payment
+  # The rounding issues are fine since at most 99 wei can be lost in
+  # rounding
+  access_reward: wei_value = (cost_per_byte * amount * maker_payment) / 100
+  return access_reward
 
 @public
 def listingAccessed(listing: bytes32, delivery: bytes32, amount: uint256):
@@ -252,6 +269,9 @@ def listingAccessed(listing: bytes32, delivery: bytes32, amount: uint256):
   self.bytes_purchased[self.deliveries[delivery].owner] -= amount
   # bytes_delivered must eq (or exceed) bytes_requested in order for a datatrust to claim delivery
   self.deliveries[delivery].bytes_delivered += amount
+  # Compute the maker fee earned
+  access_reward: wei_value = self.getAccessRewardForAmount(delivery, amount)
+  self.access_reward_earned[listing] += access_reward
 
 
 @public
@@ -262,6 +282,13 @@ def getBytesAccessed(hash: bytes32) -> uint256:
   """
   return self.bytes_accessed[hash]
 
+@public
+@constant
+def getAccessRewardEarned(hash: bytes32) -> wei_value:
+  """
+  @notice return the current unclaimed amount of access reward a listing has accumulated.
+  """
+  return self.access_reward_earned[hash]
 
 @public
 def bytesAccessedClaimed(hash: bytes32, fee: wei_value):
@@ -272,9 +299,20 @@ def bytesAccessedClaimed(hash: bytes32, fee: wei_value):
   """
   assert msg.sender == self.listing_address
   clear(self.bytes_accessed[hash]) # clear before paying
+  clear(self.access_reward_earned[hash]) # clear before paying
   self.ether_token.transfer(self.reserve_address, fee)
   # NOTE bytes accessed claimed event published by Listing contract
 
+@public
+@constant
+def getDatatrustFee(delivery: bytes32) -> wei_value:
+  cost_per_byte: wei_value = self.deliveries[delivery].cost_per_byte
+  backend_payment: uint256 = self.deliveries[delivery].backend_payment
+  requested: uint256 = self.deliveries[delivery].bytes_requested
+  # The rounding issues are fine since at most 99 wei can be lost in
+  # rounding
+  back_fee: wei_value = (cost_per_byte * requested * backend_payment) / 100
+  return back_fee 
 
 @public
 def delivered(delivery: bytes32, url: bytes32):
@@ -289,9 +327,9 @@ def delivered(delivery: bytes32, url: bytes32):
   owner: address = self.deliveries[delivery].owner
   requested: uint256 = self.deliveries[delivery].bytes_requested
   assert self.deliveries[delivery].bytes_delivered >= requested
-  # clear the delivery record first
+  back_fee: wei_value = self.getDatatrustFee(delivery)
+  # clear the delivery record now that we have the fee
   clear(self.deliveries[delivery])
   # now pay the datatrust from the banked delivery request
-  back_fee: wei_value = (self.parameterizer.getCostPerByte() * requested * self.parameterizer.getBackendPayment()) / 100
   self.ether_token.transfer(self.backend_address, back_fee)
   log.Delivered(delivery, owner, url)

@@ -39,6 +39,7 @@ contract Datatrust:
   def getDataHash(hash: bytes32) -> bytes32: constant
   def removeDataHash(hash: bytes32): modifying
   def getBytesAccessed(hash: bytes32) -> uint256: constant
+  def getAccessRewardEarned(hash: bytes32) -> wei_value: constant
   def bytesAccessedClaimed(hash: bytes32, fee: uint256(wei)): modifying
 
 contract Reserve:
@@ -171,7 +172,7 @@ def claimBytesAccessed(hash: bytes32):
   assert msg.sender == self.listings[hash].owner
   # the algo for maker payment is (accessed*cost)/(100/maker_pct)
   accessed: uint256 = self.datatrust.getBytesAccessed(hash)
-  maker_fee: wei_value = (self.parameterizer.getCostPerByte() * accessed * self.parameterizer.getMakerPayment()) / 100
+  maker_fee: wei_value = self.datatrust.getAccessRewardEarned(hash)
   price: wei_value = self.reserve.getSupportPrice()
   # if credits accumulated are too low for support, exit now
   assert maker_fee >= price
