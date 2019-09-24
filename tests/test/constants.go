@@ -11,6 +11,9 @@ const ONE_GWEI = 1000000000
 const ONE_MWEI = 1000000
 const ONE_KWEI = 1000
 
+// MIN_VOTE_BY is one day, in seconds
+const MIN_VOTE_BY = 86400
+
 // const ONE_SZABO = 1000000
 // const ONE_FINNEY = 1000
 
