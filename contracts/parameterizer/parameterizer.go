@@ -15,6 +15,18 @@ import (
 	"github.com/ethereum/go-ethereum/event"
 )
 
+// Reference imports to suppress errors if they are not otherwise used.
+var (
+	_ = big.NewInt
+	_ = strings.NewReader
+	_ = ethereum.NotFound
+	_ = abi.U256
+	_ = bind.Bind
+	_ = common.Big1
+	_ = types.BloomLookup
+	_ = event.NewSubscription
+)
+
 // ParameterizerABI is the input ABI used to generate the binding from.
 const ParameterizerABI = "[{\"name\":\"ReparamProposed\",\"inputs\":[{\"type\":\"address\",\"name\":\"owner\",\"indexed\":true},{\"type\":\"bytes32\",\"name\":\"hash\",\"indexed\":true},{\"type\":\"uint256\",\"name\":\"param\",\"indexed\":true},{\"type\":\"uint256\",\"name\":\"value\",\"indexed\":false}],\"anonymous\":false,\"type\":\"event\"},{\"name\":\"ReparamFailed\",\"inputs\":[{\"type\":\"bytes32\",\"name\":\"hash\",\"indexed\":true},{\"type\":\"uint256\",\"name\":\"param\",\"indexed\":true},{\"type\":\"uint256\",\"name\":\"value\",\"indexed\":false}],\"anonymous\":false,\"type\":\"event\"},{\"name\":\"ReparamSucceeded\",\"inputs\":[{\"type\":\"bytes32\",\"name\":\"hash\",\"indexed\":true},{\"type\":\"uint256\",\"name\":\"param\",\"indexed\":true},{\"type\":\"uint256\",\"name\":\"value\",\"indexed\":false}],\"anonymous\":false,\"type\":\"event\"},{\"outputs\":[],\"inputs\":[{\"type\":\"address\",\"name\":\"mkt_addr\"},{\"type\":\"address\",\"name\":\"v_addr\"},{\"type\":\"uint256\",\"name\":\"pr_fl\",\"unit\":\"wei\"},{\"type\":\"uint256\",\"name\":\"spd\"},{\"type\":\"uint256\",\"name\":\"list_re\",\"unit\":\"wei\"},{\"type\":\"uint256\",\"name\":\"stk\",\"unit\":\"wei\"},{\"type\":\"uint256\",\"name\":\"vote_by_d\",\"unit\":\"sec\"},{\"type\":\"uint256\",\"name\":\"pl\"},{\"type\":\"uint256\",\"name\":\"back_p\"},{\"type\":\"uint256\",\"name\":\"maker_p\"},{\"type\":\"uint256\",\"name\":\"cost\",\"unit\":\"wei\"}],\"constant\":false,\"payable\":false,\"type\":\"constructor\"},{\"name\":\"getBackendPayment\",\"outputs\":[{\"type\":\"uint256\",\"name\":\"out\"}],\"inputs\":[],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":483},{\"name\":\"getMakerPayment\",\"outputs\":[{\"type\":\"uint256\",\"name\":\"out\"}],\"inputs\":[],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":513},{\"name\":\"getReservePayment\",\"outputs\":[{\"type\":\"uint256\",\"name\":\"out\"}],\"inputs\":[],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":2766},{\"name\":\"getCostPerByte\",\"outputs\":[{\"type\":\"uint256\",\"name\":\"out\",\"unit\":\"wei\"}],\"inputs\":[],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":573},{\"name\":\"getStake\",\"outputs\":[{\"type\":\"uint256\",\"name\":\"out\",\"unit\":\"wei\"}],\"inputs\":[],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":603},{\"name\":\"getPriceFloor\",\"outputs\":[{\"type\":\"uint256\",\"name\":\"out\",\"unit\":\"wei\"}],\"inputs\":[],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":633},{\"name\":\"getHash\",\"outputs\":[{\"type\":\"bytes32\",\"name\":\"out\"}],\"inputs\":[{\"type\":\"uint256\",\"name\":\"param\"},{\"type\":\"uint256\",\"name\":\"value\"}],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":722},{\"name\":\"getSpread\",\"outputs\":[{\"type\":\"uint256\",\"name\":\"out\"}],\"inputs\":[],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":693},{\"name\":\"getListReward\",\"outputs\":[{\"type\":\"uint256\",\"name\":\"out\",\"unit\":\"wei\"}],\"inputs\":[],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":723},{\"name\":\"getPlurality\",\"outputs\":[{\"type\":\"uint256\",\"name\":\"out\"}],\"inputs\":[],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":753},{\"name\":\"getReparam\",\"outputs\":[{\"type\":\"uint256\",\"name\":\"out\"},{\"type\":\"uint256\",\"name\":\"out\"}],\"inputs\":[{\"type\":\"bytes32\",\"name\":\"hash\"}],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":1459},{\"name\":\"getVoteBy\",\"outputs\":[{\"type\":\"uint256\",\"name\":\"out\",\"unit\":\"sec\"}],\"inputs\":[],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":813},{\"name\":\"reparameterize\",\"outputs\":[],\"inputs\":[{\"type\":\"uint256\",\"name\":\"param\"},{\"type\":\"uint256\",\"name\":\"value\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":78259},{\"name\":\"resolveReparam\",\"outputs\":[],\"inputs\":[{\"type\":\"bytes32\",\"name\":\"hash\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":88970}]"
 
@@ -178,7 +190,7 @@ func (_Parameterizer *ParameterizerTransactorRaw) Transact(opts *bind.TransactOp
 
 // GetBackendPayment is a free data retrieval call binding the contract method 0x4b8b7dce.
 //
-// Solidity: function getBackendPayment() constant returns(out uint256)
+// Solidity: function getBackendPayment() constant returns(uint256 out)
 func (_Parameterizer *ParameterizerCaller) GetBackendPayment(opts *bind.CallOpts) (*big.Int, error) {
 	var (
 		ret0 = new(*big.Int)
@@ -190,21 +202,21 @@ func (_Parameterizer *ParameterizerCaller) GetBackendPayment(opts *bind.CallOpts
 
 // GetBackendPayment is a free data retrieval call binding the contract method 0x4b8b7dce.
 //
-// Solidity: function getBackendPayment() constant returns(out uint256)
+// Solidity: function getBackendPayment() constant returns(uint256 out)
 func (_Parameterizer *ParameterizerSession) GetBackendPayment() (*big.Int, error) {
 	return _Parameterizer.Contract.GetBackendPayment(&_Parameterizer.CallOpts)
 }
 
 // GetBackendPayment is a free data retrieval call binding the contract method 0x4b8b7dce.
 //
-// Solidity: function getBackendPayment() constant returns(out uint256)
+// Solidity: function getBackendPayment() constant returns(uint256 out)
 func (_Parameterizer *ParameterizerCallerSession) GetBackendPayment() (*big.Int, error) {
 	return _Parameterizer.Contract.GetBackendPayment(&_Parameterizer.CallOpts)
 }
 
 // GetCostPerByte is a free data retrieval call binding the contract method 0xcd2d5438.
 //
-// Solidity: function getCostPerByte() constant returns(out uint256)
+// Solidity: function getCostPerByte() constant returns(uint256 out)
 func (_Parameterizer *ParameterizerCaller) GetCostPerByte(opts *bind.CallOpts) (*big.Int, error) {
 	var (
 		ret0 = new(*big.Int)
@@ -216,21 +228,21 @@ func (_Parameterizer *ParameterizerCaller) GetCostPerByte(opts *bind.CallOpts) (
 
 // GetCostPerByte is a free data retrieval call binding the contract method 0xcd2d5438.
 //
-// Solidity: function getCostPerByte() constant returns(out uint256)
+// Solidity: function getCostPerByte() constant returns(uint256 out)
 func (_Parameterizer *ParameterizerSession) GetCostPerByte() (*big.Int, error) {
 	return _Parameterizer.Contract.GetCostPerByte(&_Parameterizer.CallOpts)
 }
 
 // GetCostPerByte is a free data retrieval call binding the contract method 0xcd2d5438.
 //
-// Solidity: function getCostPerByte() constant returns(out uint256)
+// Solidity: function getCostPerByte() constant returns(uint256 out)
 func (_Parameterizer *ParameterizerCallerSession) GetCostPerByte() (*big.Int, error) {
 	return _Parameterizer.Contract.GetCostPerByte(&_Parameterizer.CallOpts)
 }
 
 // GetHash is a free data retrieval call binding the contract method 0x1b855044.
 //
-// Solidity: function getHash(param uint256, value uint256) constant returns(out bytes32)
+// Solidity: function getHash(uint256 param, uint256 value) constant returns(bytes32 out)
 func (_Parameterizer *ParameterizerCaller) GetHash(opts *bind.CallOpts, param *big.Int, value *big.Int) ([32]byte, error) {
 	var (
 		ret0 = new([32]byte)
@@ -242,21 +254,21 @@ func (_Parameterizer *ParameterizerCaller) GetHash(opts *bind.CallOpts, param *b
 
 // GetHash is a free data retrieval call binding the contract method 0x1b855044.
 //
-// Solidity: function getHash(param uint256, value uint256) constant returns(out bytes32)
+// Solidity: function getHash(uint256 param, uint256 value) constant returns(bytes32 out)
 func (_Parameterizer *ParameterizerSession) GetHash(param *big.Int, value *big.Int) ([32]byte, error) {
 	return _Parameterizer.Contract.GetHash(&_Parameterizer.CallOpts, param, value)
 }
 
 // GetHash is a free data retrieval call binding the contract method 0x1b855044.
 //
-// Solidity: function getHash(param uint256, value uint256) constant returns(out bytes32)
+// Solidity: function getHash(uint256 param, uint256 value) constant returns(bytes32 out)
 func (_Parameterizer *ParameterizerCallerSession) GetHash(param *big.Int, value *big.Int) ([32]byte, error) {
 	return _Parameterizer.Contract.GetHash(&_Parameterizer.CallOpts, param, value)
 }
 
 // GetListReward is a free data retrieval call binding the contract method 0xdc2b2853.
 //
-// Solidity: function getListReward() constant returns(out uint256)
+// Solidity: function getListReward() constant returns(uint256 out)
 func (_Parameterizer *ParameterizerCaller) GetListReward(opts *bind.CallOpts) (*big.Int, error) {
 	var (
 		ret0 = new(*big.Int)
@@ -268,21 +280,21 @@ func (_Parameterizer *ParameterizerCaller) GetListReward(opts *bind.CallOpts) (*
 
 // GetListReward is a free data retrieval call binding the contract method 0xdc2b2853.
 //
-// Solidity: function getListReward() constant returns(out uint256)
+// Solidity: function getListReward() constant returns(uint256 out)
 func (_Parameterizer *ParameterizerSession) GetListReward() (*big.Int, error) {
 	return _Parameterizer.Contract.GetListReward(&_Parameterizer.CallOpts)
 }
 
 // GetListReward is a free data retrieval call binding the contract method 0xdc2b2853.
 //
-// Solidity: function getListReward() constant returns(out uint256)
+// Solidity: function getListReward() constant returns(uint256 out)
 func (_Parameterizer *ParameterizerCallerSession) GetListReward() (*big.Int, error) {
 	return _Parameterizer.Contract.GetListReward(&_Parameterizer.CallOpts)
 }
 
 // GetMakerPayment is a free data retrieval call binding the contract method 0xccc3412f.
 //
-// Solidity: function getMakerPayment() constant returns(out uint256)
+// Solidity: function getMakerPayment() constant returns(uint256 out)
 func (_Parameterizer *ParameterizerCaller) GetMakerPayment(opts *bind.CallOpts) (*big.Int, error) {
 	var (
 		ret0 = new(*big.Int)
@@ -294,21 +306,21 @@ func (_Parameterizer *ParameterizerCaller) GetMakerPayment(opts *bind.CallOpts) 
 
 // GetMakerPayment is a free data retrieval call binding the contract method 0xccc3412f.
 //
-// Solidity: function getMakerPayment() constant returns(out uint256)
+// Solidity: function getMakerPayment() constant returns(uint256 out)
 func (_Parameterizer *ParameterizerSession) GetMakerPayment() (*big.Int, error) {
 	return _Parameterizer.Contract.GetMakerPayment(&_Parameterizer.CallOpts)
 }
 
 // GetMakerPayment is a free data retrieval call binding the contract method 0xccc3412f.
 //
-// Solidity: function getMakerPayment() constant returns(out uint256)
+// Solidity: function getMakerPayment() constant returns(uint256 out)
 func (_Parameterizer *ParameterizerCallerSession) GetMakerPayment() (*big.Int, error) {
 	return _Parameterizer.Contract.GetMakerPayment(&_Parameterizer.CallOpts)
 }
 
 // GetPlurality is a free data retrieval call binding the contract method 0x3d1e37d5.
 //
-// Solidity: function getPlurality() constant returns(out uint256)
+// Solidity: function getPlurality() constant returns(uint256 out)
 func (_Parameterizer *ParameterizerCaller) GetPlurality(opts *bind.CallOpts) (*big.Int, error) {
 	var (
 		ret0 = new(*big.Int)
@@ -320,21 +332,21 @@ func (_Parameterizer *ParameterizerCaller) GetPlurality(opts *bind.CallOpts) (*b
 
 // GetPlurality is a free data retrieval call binding the contract method 0x3d1e37d5.
 //
-// Solidity: function getPlurality() constant returns(out uint256)
+// Solidity: function getPlurality() constant returns(uint256 out)
 func (_Parameterizer *ParameterizerSession) GetPlurality() (*big.Int, error) {
 	return _Parameterizer.Contract.GetPlurality(&_Parameterizer.CallOpts)
 }
 
 // GetPlurality is a free data retrieval call binding the contract method 0x3d1e37d5.
 //
-// Solidity: function getPlurality() constant returns(out uint256)
+// Solidity: function getPlurality() constant returns(uint256 out)
 func (_Parameterizer *ParameterizerCallerSession) GetPlurality() (*big.Int, error) {
 	return _Parameterizer.Contract.GetPlurality(&_Parameterizer.CallOpts)
 }
 
 // GetPriceFloor is a free data retrieval call binding the contract method 0x03bca7d3.
 //
-// Solidity: function getPriceFloor() constant returns(out uint256)
+// Solidity: function getPriceFloor() constant returns(uint256 out)
 func (_Parameterizer *ParameterizerCaller) GetPriceFloor(opts *bind.CallOpts) (*big.Int, error) {
 	var (
 		ret0 = new(*big.Int)
@@ -346,21 +358,21 @@ func (_Parameterizer *ParameterizerCaller) GetPriceFloor(opts *bind.CallOpts) (*
 
 // GetPriceFloor is a free data retrieval call binding the contract method 0x03bca7d3.
 //
-// Solidity: function getPriceFloor() constant returns(out uint256)
+// Solidity: function getPriceFloor() constant returns(uint256 out)
 func (_Parameterizer *ParameterizerSession) GetPriceFloor() (*big.Int, error) {
 	return _Parameterizer.Contract.GetPriceFloor(&_Parameterizer.CallOpts)
 }
 
 // GetPriceFloor is a free data retrieval call binding the contract method 0x03bca7d3.
 //
-// Solidity: function getPriceFloor() constant returns(out uint256)
+// Solidity: function getPriceFloor() constant returns(uint256 out)
 func (_Parameterizer *ParameterizerCallerSession) GetPriceFloor() (*big.Int, error) {
 	return _Parameterizer.Contract.GetPriceFloor(&_Parameterizer.CallOpts)
 }
 
 // GetReparam is a free data retrieval call binding the contract method 0xd90f8f0d.
 //
-// Solidity: function getReparam(hash bytes32) constant returns(out uint256, out uint256)
+// Solidity: function getReparam(bytes32 hash) constant returns(uint256 out, uint256 out)
 func (_Parameterizer *ParameterizerCaller) GetReparam(opts *bind.CallOpts, hash [32]byte) (*big.Int, *big.Int, error) {
 	var (
 		ret0 = new(*big.Int)
@@ -376,21 +388,21 @@ func (_Parameterizer *ParameterizerCaller) GetReparam(opts *bind.CallOpts, hash 
 
 // GetReparam is a free data retrieval call binding the contract method 0xd90f8f0d.
 //
-// Solidity: function getReparam(hash bytes32) constant returns(out uint256, out uint256)
+// Solidity: function getReparam(bytes32 hash) constant returns(uint256 out, uint256 out)
 func (_Parameterizer *ParameterizerSession) GetReparam(hash [32]byte) (*big.Int, *big.Int, error) {
 	return _Parameterizer.Contract.GetReparam(&_Parameterizer.CallOpts, hash)
 }
 
 // GetReparam is a free data retrieval call binding the contract method 0xd90f8f0d.
 //
-// Solidity: function getReparam(hash bytes32) constant returns(out uint256, out uint256)
+// Solidity: function getReparam(bytes32 hash) constant returns(uint256 out, uint256 out)
 func (_Parameterizer *ParameterizerCallerSession) GetReparam(hash [32]byte) (*big.Int, *big.Int, error) {
 	return _Parameterizer.Contract.GetReparam(&_Parameterizer.CallOpts, hash)
 }
 
 // GetReservePayment is a free data retrieval call binding the contract method 0xffe44da8.
 //
-// Solidity: function getReservePayment() constant returns(out uint256)
+// Solidity: function getReservePayment() constant returns(uint256 out)
 func (_Parameterizer *ParameterizerCaller) GetReservePayment(opts *bind.CallOpts) (*big.Int, error) {
 	var (
 		ret0 = new(*big.Int)
@@ -402,21 +414,21 @@ func (_Parameterizer *ParameterizerCaller) GetReservePayment(opts *bind.CallOpts
 
 // GetReservePayment is a free data retrieval call binding the contract method 0xffe44da8.
 //
-// Solidity: function getReservePayment() constant returns(out uint256)
+// Solidity: function getReservePayment() constant returns(uint256 out)
 func (_Parameterizer *ParameterizerSession) GetReservePayment() (*big.Int, error) {
 	return _Parameterizer.Contract.GetReservePayment(&_Parameterizer.CallOpts)
 }
 
 // GetReservePayment is a free data retrieval call binding the contract method 0xffe44da8.
 //
-// Solidity: function getReservePayment() constant returns(out uint256)
+// Solidity: function getReservePayment() constant returns(uint256 out)
 func (_Parameterizer *ParameterizerCallerSession) GetReservePayment() (*big.Int, error) {
 	return _Parameterizer.Contract.GetReservePayment(&_Parameterizer.CallOpts)
 }
 
 // GetSpread is a free data retrieval call binding the contract method 0x7b3cee60.
 //
-// Solidity: function getSpread() constant returns(out uint256)
+// Solidity: function getSpread() constant returns(uint256 out)
 func (_Parameterizer *ParameterizerCaller) GetSpread(opts *bind.CallOpts) (*big.Int, error) {
 	var (
 		ret0 = new(*big.Int)
@@ -428,21 +440,21 @@ func (_Parameterizer *ParameterizerCaller) GetSpread(opts *bind.CallOpts) (*big.
 
 // GetSpread is a free data retrieval call binding the contract method 0x7b3cee60.
 //
-// Solidity: function getSpread() constant returns(out uint256)
+// Solidity: function getSpread() constant returns(uint256 out)
 func (_Parameterizer *ParameterizerSession) GetSpread() (*big.Int, error) {
 	return _Parameterizer.Contract.GetSpread(&_Parameterizer.CallOpts)
 }
 
 // GetSpread is a free data retrieval call binding the contract method 0x7b3cee60.
 //
-// Solidity: function getSpread() constant returns(out uint256)
+// Solidity: function getSpread() constant returns(uint256 out)
 func (_Parameterizer *ParameterizerCallerSession) GetSpread() (*big.Int, error) {
 	return _Parameterizer.Contract.GetSpread(&_Parameterizer.CallOpts)
 }
 
 // GetStake is a free data retrieval call binding the contract method 0xfc0e3d90.
 //
-// Solidity: function getStake() constant returns(out uint256)
+// Solidity: function getStake() constant returns(uint256 out)
 func (_Parameterizer *ParameterizerCaller) GetStake(opts *bind.CallOpts) (*big.Int, error) {
 	var (
 		ret0 = new(*big.Int)
@@ -454,21 +466,21 @@ func (_Parameterizer *ParameterizerCaller) GetStake(opts *bind.CallOpts) (*big.I
 
 // GetStake is a free data retrieval call binding the contract method 0xfc0e3d90.
 //
-// Solidity: function getStake() constant returns(out uint256)
+// Solidity: function getStake() constant returns(uint256 out)
 func (_Parameterizer *ParameterizerSession) GetStake() (*big.Int, error) {
 	return _Parameterizer.Contract.GetStake(&_Parameterizer.CallOpts)
 }
 
 // GetStake is a free data retrieval call binding the contract method 0xfc0e3d90.
 //
-// Solidity: function getStake() constant returns(out uint256)
+// Solidity: function getStake() constant returns(uint256 out)
 func (_Parameterizer *ParameterizerCallerSession) GetStake() (*big.Int, error) {
 	return _Parameterizer.Contract.GetStake(&_Parameterizer.CallOpts)
 }
 
 // GetVoteBy is a free data retrieval call binding the contract method 0x2d0d2bc6.
 //
-// Solidity: function getVoteBy() constant returns(out uint256)
+// Solidity: function getVoteBy() constant returns(uint256 out)
 func (_Parameterizer *ParameterizerCaller) GetVoteBy(opts *bind.CallOpts) (*big.Int, error) {
 	var (
 		ret0 = new(*big.Int)
@@ -480,56 +492,56 @@ func (_Parameterizer *ParameterizerCaller) GetVoteBy(opts *bind.CallOpts) (*big.
 
 // GetVoteBy is a free data retrieval call binding the contract method 0x2d0d2bc6.
 //
-// Solidity: function getVoteBy() constant returns(out uint256)
+// Solidity: function getVoteBy() constant returns(uint256 out)
 func (_Parameterizer *ParameterizerSession) GetVoteBy() (*big.Int, error) {
 	return _Parameterizer.Contract.GetVoteBy(&_Parameterizer.CallOpts)
 }
 
 // GetVoteBy is a free data retrieval call binding the contract method 0x2d0d2bc6.
 //
-// Solidity: function getVoteBy() constant returns(out uint256)
+// Solidity: function getVoteBy() constant returns(uint256 out)
 func (_Parameterizer *ParameterizerCallerSession) GetVoteBy() (*big.Int, error) {
 	return _Parameterizer.Contract.GetVoteBy(&_Parameterizer.CallOpts)
 }
 
 // Reparameterize is a paid mutator transaction binding the contract method 0xc1836218.
 //
-// Solidity: function reparameterize(param uint256, value uint256) returns()
+// Solidity: function reparameterize(uint256 param, uint256 value) returns()
 func (_Parameterizer *ParameterizerTransactor) Reparameterize(opts *bind.TransactOpts, param *big.Int, value *big.Int) (*types.Transaction, error) {
 	return _Parameterizer.contract.Transact(opts, "reparameterize", param, value)
 }
 
 // Reparameterize is a paid mutator transaction binding the contract method 0xc1836218.
 //
-// Solidity: function reparameterize(param uint256, value uint256) returns()
+// Solidity: function reparameterize(uint256 param, uint256 value) returns()
 func (_Parameterizer *ParameterizerSession) Reparameterize(param *big.Int, value *big.Int) (*types.Transaction, error) {
 	return _Parameterizer.Contract.Reparameterize(&_Parameterizer.TransactOpts, param, value)
 }
 
 // Reparameterize is a paid mutator transaction binding the contract method 0xc1836218.
 //
-// Solidity: function reparameterize(param uint256, value uint256) returns()
+// Solidity: function reparameterize(uint256 param, uint256 value) returns()
 func (_Parameterizer *ParameterizerTransactorSession) Reparameterize(param *big.Int, value *big.Int) (*types.Transaction, error) {
 	return _Parameterizer.Contract.Reparameterize(&_Parameterizer.TransactOpts, param, value)
 }
 
 // ResolveReparam is a paid mutator transaction binding the contract method 0x435c709a.
 //
-// Solidity: function resolveReparam(hash bytes32) returns()
+// Solidity: function resolveReparam(bytes32 hash) returns()
 func (_Parameterizer *ParameterizerTransactor) ResolveReparam(opts *bind.TransactOpts, hash [32]byte) (*types.Transaction, error) {
 	return _Parameterizer.contract.Transact(opts, "resolveReparam", hash)
 }
 
 // ResolveReparam is a paid mutator transaction binding the contract method 0x435c709a.
 //
-// Solidity: function resolveReparam(hash bytes32) returns()
+// Solidity: function resolveReparam(bytes32 hash) returns()
 func (_Parameterizer *ParameterizerSession) ResolveReparam(hash [32]byte) (*types.Transaction, error) {
 	return _Parameterizer.Contract.ResolveReparam(&_Parameterizer.TransactOpts, hash)
 }
 
 // ResolveReparam is a paid mutator transaction binding the contract method 0x435c709a.
 //
-// Solidity: function resolveReparam(hash bytes32) returns()
+// Solidity: function resolveReparam(bytes32 hash) returns()
 func (_Parameterizer *ParameterizerTransactorSession) ResolveReparam(hash [32]byte) (*types.Transaction, error) {
 	return _Parameterizer.Contract.ResolveReparam(&_Parameterizer.TransactOpts, hash)
 }
@@ -611,7 +623,7 @@ type ParameterizerReparamFailed struct {
 
 // FilterReparamFailed is a free log retrieval operation binding the contract event 0x1f050cdbc74210070c4a499a73459732a158933d789331de2757eb4d35630253.
 //
-// Solidity: e ReparamFailed(hash indexed bytes32, param indexed uint256, value uint256)
+// Solidity: event ReparamFailed(bytes32 indexed hash, uint256 indexed param, uint256 value)
 func (_Parameterizer *ParameterizerFilterer) FilterReparamFailed(opts *bind.FilterOpts, hash [][32]byte, param []*big.Int) (*ParameterizerReparamFailedIterator, error) {
 
 	var hashRule []interface{}
@@ -632,7 +644,7 @@ func (_Parameterizer *ParameterizerFilterer) FilterReparamFailed(opts *bind.Filt
 
 // WatchReparamFailed is a free log subscription operation binding the contract event 0x1f050cdbc74210070c4a499a73459732a158933d789331de2757eb4d35630253.
 //
-// Solidity: e ReparamFailed(hash indexed bytes32, param indexed uint256, value uint256)
+// Solidity: event ReparamFailed(bytes32 indexed hash, uint256 indexed param, uint256 value)
 func (_Parameterizer *ParameterizerFilterer) WatchReparamFailed(opts *bind.WatchOpts, sink chan<- *ParameterizerReparamFailed, hash [][32]byte, param []*big.Int) (event.Subscription, error) {
 
 	var hashRule []interface{}
@@ -754,7 +766,7 @@ type ParameterizerReparamProposed struct {
 
 // FilterReparamProposed is a free log retrieval operation binding the contract event 0xb38eb1d14189ba2de4ca92c3ead8d4c2a61d566d266d46b487c4fa82ae732842.
 //
-// Solidity: e ReparamProposed(owner indexed address, hash indexed bytes32, param indexed uint256, value uint256)
+// Solidity: event ReparamProposed(address indexed owner, bytes32 indexed hash, uint256 indexed param, uint256 value)
 func (_Parameterizer *ParameterizerFilterer) FilterReparamProposed(opts *bind.FilterOpts, owner []common.Address, hash [][32]byte, param []*big.Int) (*ParameterizerReparamProposedIterator, error) {
 
 	var ownerRule []interface{}
@@ -779,7 +791,7 @@ func (_Parameterizer *ParameterizerFilterer) FilterReparamProposed(opts *bind.Fi
 
 // WatchReparamProposed is a free log subscription operation binding the contract event 0xb38eb1d14189ba2de4ca92c3ead8d4c2a61d566d266d46b487c4fa82ae732842.
 //
-// Solidity: e ReparamProposed(owner indexed address, hash indexed bytes32, param indexed uint256, value uint256)
+// Solidity: event ReparamProposed(address indexed owner, bytes32 indexed hash, uint256 indexed param, uint256 value)
 func (_Parameterizer *ParameterizerFilterer) WatchReparamProposed(opts *bind.WatchOpts, sink chan<- *ParameterizerReparamProposed, owner []common.Address, hash [][32]byte, param []*big.Int) (event.Subscription, error) {
 
 	var ownerRule []interface{}
@@ -904,7 +916,7 @@ type ParameterizerReparamSucceeded struct {
 
 // FilterReparamSucceeded is a free log retrieval operation binding the contract event 0xe6f29ce1d705c668b223a35e77096d95bbd994c121503fba4b29e65be92bc7e8.
 //
-// Solidity: e ReparamSucceeded(hash indexed bytes32, param indexed uint256, value uint256)
+// Solidity: event ReparamSucceeded(bytes32 indexed hash, uint256 indexed param, uint256 value)
 func (_Parameterizer *ParameterizerFilterer) FilterReparamSucceeded(opts *bind.FilterOpts, hash [][32]byte, param []*big.Int) (*ParameterizerReparamSucceededIterator, error) {
 
 	var hashRule []interface{}
@@ -925,7 +937,7 @@ func (_Parameterizer *ParameterizerFilterer) FilterReparamSucceeded(opts *bind.F
 
 // WatchReparamSucceeded is a free log subscription operation binding the contract event 0xe6f29ce1d705c668b223a35e77096d95bbd994c121503fba4b29e65be92bc7e8.
 //
-// Solidity: e ReparamSucceeded(hash indexed bytes32, param indexed uint256, value uint256)
+// Solidity: event ReparamSucceeded(bytes32 indexed hash, uint256 indexed param, uint256 value)
 func (_Parameterizer *ParameterizerFilterer) WatchReparamSucceeded(opts *bind.WatchOpts, sink chan<- *ParameterizerReparamSucceeded, hash [][32]byte, param []*big.Int) (event.Subscription, error) {
 
 	var hashRule []interface{}
