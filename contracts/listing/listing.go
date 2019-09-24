@@ -15,18 +15,6 @@ import (
 	"github.com/ethereum/go-ethereum/event"
 )
 
-// Reference imports to suppress errors if they are not otherwise used.
-var (
-	_ = big.NewInt
-	_ = strings.NewReader
-	_ = ethereum.NotFound
-	_ = abi.U256
-	_ = bind.Bind
-	_ = common.Big1
-	_ = types.BloomLookup
-	_ = event.NewSubscription
-)
-
 // ListingABI is the input ABI used to generate the binding from.
 const ListingABI = "[{\"name\":\"ApplicationFailed\",\"inputs\":[{\"type\":\"bytes32\",\"name\":\"hash\",\"indexed\":true},{\"type\":\"address\",\"name\":\"applicant\",\"indexed\":true}],\"anonymous\":false,\"type\":\"event\"},{\"name\":\"Applied\",\"inputs\":[{\"type\":\"bytes32\",\"name\":\"hash\",\"indexed\":true},{\"type\":\"address\",\"name\":\"applicant\",\"indexed\":true}],\"anonymous\":false,\"type\":\"event\"},{\"name\":\"BytesAccessedClaimed\",\"inputs\":[{\"type\":\"bytes32\",\"name\":\"hash\",\"indexed\":true},{\"type\":\"uint256\",\"name\":\"claimed\",\"indexed\":false},{\"type\":\"uint256\",\"name\":\"minted\",\"indexed\":false}],\"anonymous\":false,\"type\":\"event\"},{\"name\":\"Challenged\",\"inputs\":[{\"type\":\"bytes32\",\"name\":\"hash\",\"indexed\":true},{\"type\":\"address\",\"name\":\"challenger\",\"indexed\":true}],\"anonymous\":false,\"type\":\"event\"},{\"name\":\"ChallengeFailed\",\"inputs\":[{\"type\":\"bytes32\",\"name\":\"hash\",\"indexed\":true},{\"type\":\"address\",\"name\":\"challenger\",\"indexed\":true}],\"anonymous\":false,\"type\":\"event\"},{\"name\":\"ChallengeSucceeded\",\"inputs\":[{\"type\":\"bytes32\",\"name\":\"hash\",\"indexed\":true},{\"type\":\"address\",\"name\":\"challenger\",\"indexed\":true}],\"anonymous\":false,\"type\":\"event\"},{\"name\":\"Listed\",\"inputs\":[{\"type\":\"bytes32\",\"name\":\"hash\",\"indexed\":true},{\"type\":\"address\",\"name\":\"owner\",\"indexed\":true},{\"type\":\"uint256\",\"name\":\"reward\",\"indexed\":false,\"unit\":\"wei\"}],\"anonymous\":false,\"type\":\"event\"},{\"name\":\"ListingRemoved\",\"inputs\":[{\"type\":\"bytes32\",\"name\":\"hash\",\"indexed\":true}],\"anonymous\":false,\"type\":\"event\"},{\"name\":\"WithdrawnFromListing\",\"inputs\":[{\"type\":\"bytes32\",\"name\":\"hash\",\"indexed\":true},{\"type\":\"address\",\"name\":\"owner\",\"indexed\":true},{\"type\":\"uint256\",\"name\":\"withdrawn\",\"indexed\":false,\"unit\":\"wei\"}],\"anonymous\":false,\"type\":\"event\"},{\"outputs\":[],\"inputs\":[{\"type\":\"address\",\"name\":\"market_token_addr\"},{\"type\":\"address\",\"name\":\"voting_addr\"},{\"type\":\"address\",\"name\":\"p11r_addr\"},{\"type\":\"address\",\"name\":\"res_addr\"},{\"type\":\"address\",\"name\":\"data_addr\"}],\"constant\":false,\"payable\":false,\"type\":\"constructor\"},{\"name\":\"isListed\",\"outputs\":[{\"type\":\"bool\",\"name\":\"out\"}],\"inputs\":[{\"type\":\"bytes32\",\"name\":\"hash\"}],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":697},{\"name\":\"withdrawFromListing\",\"outputs\":[],\"inputs\":[{\"type\":\"bytes32\",\"name\":\"hash\"},{\"type\":\"uint256\",\"name\":\"amount\",\"unit\":\"wei\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":41040},{\"name\":\"list\",\"outputs\":[],\"inputs\":[{\"type\":\"bytes32\",\"name\":\"hash\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":9981},{\"name\":\"getListing\",\"outputs\":[{\"type\":\"address\",\"name\":\"out\"},{\"type\":\"uint256\",\"name\":\"out\",\"unit\":\"wei\"}],\"inputs\":[{\"type\":\"bytes32\",\"name\":\"hash\"}],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":1249},{\"name\":\"resolveApplication\",\"outputs\":[],\"inputs\":[{\"type\":\"bytes32\",\"name\":\"hash\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":90043},{\"name\":\"claimBytesAccessed\",\"outputs\":[],\"inputs\":[{\"type\":\"bytes32\",\"name\":\"hash\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":57613},{\"name\":\"challenge\",\"outputs\":[],\"inputs\":[{\"type\":\"bytes32\",\"name\":\"hash\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":10134},{\"name\":\"resolveChallenge\",\"outputs\":[],\"inputs\":[{\"type\":\"bytes32\",\"name\":\"hash\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":61296},{\"name\":\"exit\",\"outputs\":[],\"inputs\":[{\"type\":\"bytes32\",\"name\":\"hash\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":50540}]"
 
@@ -190,7 +178,7 @@ func (_Listing *ListingTransactorRaw) Transact(opts *bind.TransactOpts, method s
 
 // GetListing is a free data retrieval call binding the contract method 0x175c0d16.
 //
-// Solidity: function getListing(bytes32 hash) constant returns(address out, uint256 out)
+// Solidity: function getListing(hash bytes32) constant returns(out address, out uint256)
 func (_Listing *ListingCaller) GetListing(opts *bind.CallOpts, hash [32]byte) (common.Address, *big.Int, error) {
 	var (
 		ret0 = new(common.Address)
@@ -206,21 +194,21 @@ func (_Listing *ListingCaller) GetListing(opts *bind.CallOpts, hash [32]byte) (c
 
 // GetListing is a free data retrieval call binding the contract method 0x175c0d16.
 //
-// Solidity: function getListing(bytes32 hash) constant returns(address out, uint256 out)
+// Solidity: function getListing(hash bytes32) constant returns(out address, out uint256)
 func (_Listing *ListingSession) GetListing(hash [32]byte) (common.Address, *big.Int, error) {
 	return _Listing.Contract.GetListing(&_Listing.CallOpts, hash)
 }
 
 // GetListing is a free data retrieval call binding the contract method 0x175c0d16.
 //
-// Solidity: function getListing(bytes32 hash) constant returns(address out, uint256 out)
+// Solidity: function getListing(hash bytes32) constant returns(out address, out uint256)
 func (_Listing *ListingCallerSession) GetListing(hash [32]byte) (common.Address, *big.Int, error) {
 	return _Listing.Contract.GetListing(&_Listing.CallOpts, hash)
 }
 
 // IsListed is a free data retrieval call binding the contract method 0xecefbdc6.
 //
-// Solidity: function isListed(bytes32 hash) constant returns(bool out)
+// Solidity: function isListed(hash bytes32) constant returns(out bool)
 func (_Listing *ListingCaller) IsListed(opts *bind.CallOpts, hash [32]byte) (bool, error) {
 	var (
 		ret0 = new(bool)
@@ -232,161 +220,161 @@ func (_Listing *ListingCaller) IsListed(opts *bind.CallOpts, hash [32]byte) (boo
 
 // IsListed is a free data retrieval call binding the contract method 0xecefbdc6.
 //
-// Solidity: function isListed(bytes32 hash) constant returns(bool out)
+// Solidity: function isListed(hash bytes32) constant returns(out bool)
 func (_Listing *ListingSession) IsListed(hash [32]byte) (bool, error) {
 	return _Listing.Contract.IsListed(&_Listing.CallOpts, hash)
 }
 
 // IsListed is a free data retrieval call binding the contract method 0xecefbdc6.
 //
-// Solidity: function isListed(bytes32 hash) constant returns(bool out)
+// Solidity: function isListed(hash bytes32) constant returns(out bool)
 func (_Listing *ListingCallerSession) IsListed(hash [32]byte) (bool, error) {
 	return _Listing.Contract.IsListed(&_Listing.CallOpts, hash)
 }
 
 // Challenge is a paid mutator transaction binding the contract method 0xcffd46dc.
 //
-// Solidity: function challenge(bytes32 hash) returns()
+// Solidity: function challenge(hash bytes32) returns()
 func (_Listing *ListingTransactor) Challenge(opts *bind.TransactOpts, hash [32]byte) (*types.Transaction, error) {
 	return _Listing.contract.Transact(opts, "challenge", hash)
 }
 
 // Challenge is a paid mutator transaction binding the contract method 0xcffd46dc.
 //
-// Solidity: function challenge(bytes32 hash) returns()
+// Solidity: function challenge(hash bytes32) returns()
 func (_Listing *ListingSession) Challenge(hash [32]byte) (*types.Transaction, error) {
 	return _Listing.Contract.Challenge(&_Listing.TransactOpts, hash)
 }
 
 // Challenge is a paid mutator transaction binding the contract method 0xcffd46dc.
 //
-// Solidity: function challenge(bytes32 hash) returns()
+// Solidity: function challenge(hash bytes32) returns()
 func (_Listing *ListingTransactorSession) Challenge(hash [32]byte) (*types.Transaction, error) {
 	return _Listing.Contract.Challenge(&_Listing.TransactOpts, hash)
 }
 
 // ClaimBytesAccessed is a paid mutator transaction binding the contract method 0x4c181757.
 //
-// Solidity: function claimBytesAccessed(bytes32 hash) returns()
+// Solidity: function claimBytesAccessed(hash bytes32) returns()
 func (_Listing *ListingTransactor) ClaimBytesAccessed(opts *bind.TransactOpts, hash [32]byte) (*types.Transaction, error) {
 	return _Listing.contract.Transact(opts, "claimBytesAccessed", hash)
 }
 
 // ClaimBytesAccessed is a paid mutator transaction binding the contract method 0x4c181757.
 //
-// Solidity: function claimBytesAccessed(bytes32 hash) returns()
+// Solidity: function claimBytesAccessed(hash bytes32) returns()
 func (_Listing *ListingSession) ClaimBytesAccessed(hash [32]byte) (*types.Transaction, error) {
 	return _Listing.Contract.ClaimBytesAccessed(&_Listing.TransactOpts, hash)
 }
 
 // ClaimBytesAccessed is a paid mutator transaction binding the contract method 0x4c181757.
 //
-// Solidity: function claimBytesAccessed(bytes32 hash) returns()
+// Solidity: function claimBytesAccessed(hash bytes32) returns()
 func (_Listing *ListingTransactorSession) ClaimBytesAccessed(hash [32]byte) (*types.Transaction, error) {
 	return _Listing.Contract.ClaimBytesAccessed(&_Listing.TransactOpts, hash)
 }
 
 // Exit is a paid mutator transaction binding the contract method 0x0ca36263.
 //
-// Solidity: function exit(bytes32 hash) returns()
+// Solidity: function exit(hash bytes32) returns()
 func (_Listing *ListingTransactor) Exit(opts *bind.TransactOpts, hash [32]byte) (*types.Transaction, error) {
 	return _Listing.contract.Transact(opts, "exit", hash)
 }
 
 // Exit is a paid mutator transaction binding the contract method 0x0ca36263.
 //
-// Solidity: function exit(bytes32 hash) returns()
+// Solidity: function exit(hash bytes32) returns()
 func (_Listing *ListingSession) Exit(hash [32]byte) (*types.Transaction, error) {
 	return _Listing.Contract.Exit(&_Listing.TransactOpts, hash)
 }
 
 // Exit is a paid mutator transaction binding the contract method 0x0ca36263.
 //
-// Solidity: function exit(bytes32 hash) returns()
+// Solidity: function exit(hash bytes32) returns()
 func (_Listing *ListingTransactorSession) Exit(hash [32]byte) (*types.Transaction, error) {
 	return _Listing.Contract.Exit(&_Listing.TransactOpts, hash)
 }
 
 // List is a paid mutator transaction binding the contract method 0x13d49a8b.
 //
-// Solidity: function list(bytes32 hash) returns()
+// Solidity: function list(hash bytes32) returns()
 func (_Listing *ListingTransactor) List(opts *bind.TransactOpts, hash [32]byte) (*types.Transaction, error) {
 	return _Listing.contract.Transact(opts, "list", hash)
 }
 
 // List is a paid mutator transaction binding the contract method 0x13d49a8b.
 //
-// Solidity: function list(bytes32 hash) returns()
+// Solidity: function list(hash bytes32) returns()
 func (_Listing *ListingSession) List(hash [32]byte) (*types.Transaction, error) {
 	return _Listing.Contract.List(&_Listing.TransactOpts, hash)
 }
 
 // List is a paid mutator transaction binding the contract method 0x13d49a8b.
 //
-// Solidity: function list(bytes32 hash) returns()
+// Solidity: function list(hash bytes32) returns()
 func (_Listing *ListingTransactorSession) List(hash [32]byte) (*types.Transaction, error) {
 	return _Listing.Contract.List(&_Listing.TransactOpts, hash)
 }
 
 // ResolveApplication is a paid mutator transaction binding the contract method 0x18e28e1c.
 //
-// Solidity: function resolveApplication(bytes32 hash) returns()
+// Solidity: function resolveApplication(hash bytes32) returns()
 func (_Listing *ListingTransactor) ResolveApplication(opts *bind.TransactOpts, hash [32]byte) (*types.Transaction, error) {
 	return _Listing.contract.Transact(opts, "resolveApplication", hash)
 }
 
 // ResolveApplication is a paid mutator transaction binding the contract method 0x18e28e1c.
 //
-// Solidity: function resolveApplication(bytes32 hash) returns()
+// Solidity: function resolveApplication(hash bytes32) returns()
 func (_Listing *ListingSession) ResolveApplication(hash [32]byte) (*types.Transaction, error) {
 	return _Listing.Contract.ResolveApplication(&_Listing.TransactOpts, hash)
 }
 
 // ResolveApplication is a paid mutator transaction binding the contract method 0x18e28e1c.
 //
-// Solidity: function resolveApplication(bytes32 hash) returns()
+// Solidity: function resolveApplication(hash bytes32) returns()
 func (_Listing *ListingTransactorSession) ResolveApplication(hash [32]byte) (*types.Transaction, error) {
 	return _Listing.Contract.ResolveApplication(&_Listing.TransactOpts, hash)
 }
 
 // ResolveChallenge is a paid mutator transaction binding the contract method 0xd32c943a.
 //
-// Solidity: function resolveChallenge(bytes32 hash) returns()
+// Solidity: function resolveChallenge(hash bytes32) returns()
 func (_Listing *ListingTransactor) ResolveChallenge(opts *bind.TransactOpts, hash [32]byte) (*types.Transaction, error) {
 	return _Listing.contract.Transact(opts, "resolveChallenge", hash)
 }
 
 // ResolveChallenge is a paid mutator transaction binding the contract method 0xd32c943a.
 //
-// Solidity: function resolveChallenge(bytes32 hash) returns()
+// Solidity: function resolveChallenge(hash bytes32) returns()
 func (_Listing *ListingSession) ResolveChallenge(hash [32]byte) (*types.Transaction, error) {
 	return _Listing.Contract.ResolveChallenge(&_Listing.TransactOpts, hash)
 }
 
 // ResolveChallenge is a paid mutator transaction binding the contract method 0xd32c943a.
 //
-// Solidity: function resolveChallenge(bytes32 hash) returns()
+// Solidity: function resolveChallenge(hash bytes32) returns()
 func (_Listing *ListingTransactorSession) ResolveChallenge(hash [32]byte) (*types.Transaction, error) {
 	return _Listing.Contract.ResolveChallenge(&_Listing.TransactOpts, hash)
 }
 
 // WithdrawFromListing is a paid mutator transaction binding the contract method 0xa7e78675.
 //
-// Solidity: function withdrawFromListing(bytes32 hash, uint256 amount) returns()
+// Solidity: function withdrawFromListing(hash bytes32, amount uint256) returns()
 func (_Listing *ListingTransactor) WithdrawFromListing(opts *bind.TransactOpts, hash [32]byte, amount *big.Int) (*types.Transaction, error) {
 	return _Listing.contract.Transact(opts, "withdrawFromListing", hash, amount)
 }
 
 // WithdrawFromListing is a paid mutator transaction binding the contract method 0xa7e78675.
 //
-// Solidity: function withdrawFromListing(bytes32 hash, uint256 amount) returns()
+// Solidity: function withdrawFromListing(hash bytes32, amount uint256) returns()
 func (_Listing *ListingSession) WithdrawFromListing(hash [32]byte, amount *big.Int) (*types.Transaction, error) {
 	return _Listing.Contract.WithdrawFromListing(&_Listing.TransactOpts, hash, amount)
 }
 
 // WithdrawFromListing is a paid mutator transaction binding the contract method 0xa7e78675.
 //
-// Solidity: function withdrawFromListing(bytes32 hash, uint256 amount) returns()
+// Solidity: function withdrawFromListing(hash bytes32, amount uint256) returns()
 func (_Listing *ListingTransactorSession) WithdrawFromListing(hash [32]byte, amount *big.Int) (*types.Transaction, error) {
 	return _Listing.Contract.WithdrawFromListing(&_Listing.TransactOpts, hash, amount)
 }
@@ -467,7 +455,7 @@ type ListingApplicationFailed struct {
 
 // FilterApplicationFailed is a free log retrieval operation binding the contract event 0x163b66974440f1696d484dfc777282273c42ff2fa247d72dbdbb3510d92cbda6.
 //
-// Solidity: event ApplicationFailed(bytes32 indexed hash, address indexed applicant)
+// Solidity: e ApplicationFailed(hash indexed bytes32, applicant indexed address)
 func (_Listing *ListingFilterer) FilterApplicationFailed(opts *bind.FilterOpts, hash [][32]byte, applicant []common.Address) (*ListingApplicationFailedIterator, error) {
 
 	var hashRule []interface{}
@@ -488,7 +476,7 @@ func (_Listing *ListingFilterer) FilterApplicationFailed(opts *bind.FilterOpts, 
 
 // WatchApplicationFailed is a free log subscription operation binding the contract event 0x163b66974440f1696d484dfc777282273c42ff2fa247d72dbdbb3510d92cbda6.
 //
-// Solidity: event ApplicationFailed(bytes32 indexed hash, address indexed applicant)
+// Solidity: e ApplicationFailed(hash indexed bytes32, applicant indexed address)
 func (_Listing *ListingFilterer) WatchApplicationFailed(opts *bind.WatchOpts, sink chan<- *ListingApplicationFailed, hash [][32]byte, applicant []common.Address) (event.Subscription, error) {
 
 	var hashRule []interface{}
@@ -608,7 +596,7 @@ type ListingApplied struct {
 
 // FilterApplied is a free log retrieval operation binding the contract event 0x26f7438941d95dc8495c99ef33fac91b2b04f98c73290027562cd3e612a3c85f.
 //
-// Solidity: event Applied(bytes32 indexed hash, address indexed applicant)
+// Solidity: e Applied(hash indexed bytes32, applicant indexed address)
 func (_Listing *ListingFilterer) FilterApplied(opts *bind.FilterOpts, hash [][32]byte, applicant []common.Address) (*ListingAppliedIterator, error) {
 
 	var hashRule []interface{}
@@ -629,7 +617,7 @@ func (_Listing *ListingFilterer) FilterApplied(opts *bind.FilterOpts, hash [][32
 
 // WatchApplied is a free log subscription operation binding the contract event 0x26f7438941d95dc8495c99ef33fac91b2b04f98c73290027562cd3e612a3c85f.
 //
-// Solidity: event Applied(bytes32 indexed hash, address indexed applicant)
+// Solidity: e Applied(hash indexed bytes32, applicant indexed address)
 func (_Listing *ListingFilterer) WatchApplied(opts *bind.WatchOpts, sink chan<- *ListingApplied, hash [][32]byte, applicant []common.Address) (event.Subscription, error) {
 
 	var hashRule []interface{}
@@ -750,7 +738,7 @@ type ListingBytesAccessedClaimed struct {
 
 // FilterBytesAccessedClaimed is a free log retrieval operation binding the contract event 0x7c1433a9e9fd39ffa255d336186d89f2ce40982e309daf08e9828bbecaf525d6.
 //
-// Solidity: event BytesAccessedClaimed(bytes32 indexed hash, uint256 claimed, uint256 minted)
+// Solidity: e BytesAccessedClaimed(hash indexed bytes32, claimed uint256, minted uint256)
 func (_Listing *ListingFilterer) FilterBytesAccessedClaimed(opts *bind.FilterOpts, hash [][32]byte) (*ListingBytesAccessedClaimedIterator, error) {
 
 	var hashRule []interface{}
@@ -767,7 +755,7 @@ func (_Listing *ListingFilterer) FilterBytesAccessedClaimed(opts *bind.FilterOpt
 
 // WatchBytesAccessedClaimed is a free log subscription operation binding the contract event 0x7c1433a9e9fd39ffa255d336186d89f2ce40982e309daf08e9828bbecaf525d6.
 //
-// Solidity: event BytesAccessedClaimed(bytes32 indexed hash, uint256 claimed, uint256 minted)
+// Solidity: e BytesAccessedClaimed(hash indexed bytes32, claimed uint256, minted uint256)
 func (_Listing *ListingFilterer) WatchBytesAccessedClaimed(opts *bind.WatchOpts, sink chan<- *ListingBytesAccessedClaimed, hash [][32]byte) (event.Subscription, error) {
 
 	var hashRule []interface{}
@@ -883,7 +871,7 @@ type ListingChallengeFailed struct {
 
 // FilterChallengeFailed is a free log retrieval operation binding the contract event 0xa0e6c0bd204f59362c8b2ebdf77c63242bf779d8ac30c347933db099abcc0370.
 //
-// Solidity: event ChallengeFailed(bytes32 indexed hash, address indexed challenger)
+// Solidity: e ChallengeFailed(hash indexed bytes32, challenger indexed address)
 func (_Listing *ListingFilterer) FilterChallengeFailed(opts *bind.FilterOpts, hash [][32]byte, challenger []common.Address) (*ListingChallengeFailedIterator, error) {
 
 	var hashRule []interface{}
@@ -904,7 +892,7 @@ func (_Listing *ListingFilterer) FilterChallengeFailed(opts *bind.FilterOpts, ha
 
 // WatchChallengeFailed is a free log subscription operation binding the contract event 0xa0e6c0bd204f59362c8b2ebdf77c63242bf779d8ac30c347933db099abcc0370.
 //
-// Solidity: event ChallengeFailed(bytes32 indexed hash, address indexed challenger)
+// Solidity: e ChallengeFailed(hash indexed bytes32, challenger indexed address)
 func (_Listing *ListingFilterer) WatchChallengeFailed(opts *bind.WatchOpts, sink chan<- *ListingChallengeFailed, hash [][32]byte, challenger []common.Address) (event.Subscription, error) {
 
 	var hashRule []interface{}
@@ -1024,7 +1012,7 @@ type ListingChallengeSucceeded struct {
 
 // FilterChallengeSucceeded is a free log retrieval operation binding the contract event 0xb7e10908a54924c8e096789495f5a4958fed82b49d856d22b208a23b398306bb.
 //
-// Solidity: event ChallengeSucceeded(bytes32 indexed hash, address indexed challenger)
+// Solidity: e ChallengeSucceeded(hash indexed bytes32, challenger indexed address)
 func (_Listing *ListingFilterer) FilterChallengeSucceeded(opts *bind.FilterOpts, hash [][32]byte, challenger []common.Address) (*ListingChallengeSucceededIterator, error) {
 
 	var hashRule []interface{}
@@ -1045,7 +1033,7 @@ func (_Listing *ListingFilterer) FilterChallengeSucceeded(opts *bind.FilterOpts,
 
 // WatchChallengeSucceeded is a free log subscription operation binding the contract event 0xb7e10908a54924c8e096789495f5a4958fed82b49d856d22b208a23b398306bb.
 //
-// Solidity: event ChallengeSucceeded(bytes32 indexed hash, address indexed challenger)
+// Solidity: e ChallengeSucceeded(hash indexed bytes32, challenger indexed address)
 func (_Listing *ListingFilterer) WatchChallengeSucceeded(opts *bind.WatchOpts, sink chan<- *ListingChallengeSucceeded, hash [][32]byte, challenger []common.Address) (event.Subscription, error) {
 
 	var hashRule []interface{}
@@ -1165,7 +1153,7 @@ type ListingChallenged struct {
 
 // FilterChallenged is a free log retrieval operation binding the contract event 0xe9479421670c3425a1497ce47a53af8bd96ce5bd0741e96221ba0acace3f7d47.
 //
-// Solidity: event Challenged(bytes32 indexed hash, address indexed challenger)
+// Solidity: e Challenged(hash indexed bytes32, challenger indexed address)
 func (_Listing *ListingFilterer) FilterChallenged(opts *bind.FilterOpts, hash [][32]byte, challenger []common.Address) (*ListingChallengedIterator, error) {
 
 	var hashRule []interface{}
@@ -1186,7 +1174,7 @@ func (_Listing *ListingFilterer) FilterChallenged(opts *bind.FilterOpts, hash []
 
 // WatchChallenged is a free log subscription operation binding the contract event 0xe9479421670c3425a1497ce47a53af8bd96ce5bd0741e96221ba0acace3f7d47.
 //
-// Solidity: event Challenged(bytes32 indexed hash, address indexed challenger)
+// Solidity: e Challenged(hash indexed bytes32, challenger indexed address)
 func (_Listing *ListingFilterer) WatchChallenged(opts *bind.WatchOpts, sink chan<- *ListingChallenged, hash [][32]byte, challenger []common.Address) (event.Subscription, error) {
 
 	var hashRule []interface{}
@@ -1307,7 +1295,7 @@ type ListingListed struct {
 
 // FilterListed is a free log retrieval operation binding the contract event 0x7f1a2c3e2883554425dc0f9f24dcfcdf54213b186c550080373dcc65813aa8d0.
 //
-// Solidity: event Listed(bytes32 indexed hash, address indexed owner, uint256 reward)
+// Solidity: e Listed(hash indexed bytes32, owner indexed address, reward uint256)
 func (_Listing *ListingFilterer) FilterListed(opts *bind.FilterOpts, hash [][32]byte, owner []common.Address) (*ListingListedIterator, error) {
 
 	var hashRule []interface{}
@@ -1328,7 +1316,7 @@ func (_Listing *ListingFilterer) FilterListed(opts *bind.FilterOpts, hash [][32]
 
 // WatchListed is a free log subscription operation binding the contract event 0x7f1a2c3e2883554425dc0f9f24dcfcdf54213b186c550080373dcc65813aa8d0.
 //
-// Solidity: event Listed(bytes32 indexed hash, address indexed owner, uint256 reward)
+// Solidity: e Listed(hash indexed bytes32, owner indexed address, reward uint256)
 func (_Listing *ListingFilterer) WatchListed(opts *bind.WatchOpts, sink chan<- *ListingListed, hash [][32]byte, owner []common.Address) (event.Subscription, error) {
 
 	var hashRule []interface{}
@@ -1447,7 +1435,7 @@ type ListingListingRemoved struct {
 
 // FilterListingRemoved is a free log retrieval operation binding the contract event 0x50425cae216bd151d26c8e8bb9779cc899c99d72f78081f2ceec9a99f001ff79.
 //
-// Solidity: event ListingRemoved(bytes32 indexed hash)
+// Solidity: e ListingRemoved(hash indexed bytes32)
 func (_Listing *ListingFilterer) FilterListingRemoved(opts *bind.FilterOpts, hash [][32]byte) (*ListingListingRemovedIterator, error) {
 
 	var hashRule []interface{}
@@ -1464,7 +1452,7 @@ func (_Listing *ListingFilterer) FilterListingRemoved(opts *bind.FilterOpts, has
 
 // WatchListingRemoved is a free log subscription operation binding the contract event 0x50425cae216bd151d26c8e8bb9779cc899c99d72f78081f2ceec9a99f001ff79.
 //
-// Solidity: event ListingRemoved(bytes32 indexed hash)
+// Solidity: e ListingRemoved(hash indexed bytes32)
 func (_Listing *ListingFilterer) WatchListingRemoved(opts *bind.WatchOpts, sink chan<- *ListingListingRemoved, hash [][32]byte) (event.Subscription, error) {
 
 	var hashRule []interface{}
@@ -1581,7 +1569,7 @@ type ListingWithdrawnFromListing struct {
 
 // FilterWithdrawnFromListing is a free log retrieval operation binding the contract event 0x80c60c72ccf40c5034d79902057aa92a89ffffda44f36fc89355c808e8106adf.
 //
-// Solidity: event WithdrawnFromListing(bytes32 indexed hash, address indexed owner, uint256 withdrawn)
+// Solidity: e WithdrawnFromListing(hash indexed bytes32, owner indexed address, withdrawn uint256)
 func (_Listing *ListingFilterer) FilterWithdrawnFromListing(opts *bind.FilterOpts, hash [][32]byte, owner []common.Address) (*ListingWithdrawnFromListingIterator, error) {
 
 	var hashRule []interface{}
@@ -1602,7 +1590,7 @@ func (_Listing *ListingFilterer) FilterWithdrawnFromListing(opts *bind.FilterOpt
 
 // WatchWithdrawnFromListing is a free log subscription operation binding the contract event 0x80c60c72ccf40c5034d79902057aa92a89ffffda44f36fc89355c808e8106adf.
 //
-// Solidity: event WithdrawnFromListing(bytes32 indexed hash, address indexed owner, uint256 withdrawn)
+// Solidity: e WithdrawnFromListing(hash indexed bytes32, owner indexed address, withdrawn uint256)
 func (_Listing *ListingFilterer) WatchWithdrawnFromListing(opts *bind.WatchOpts, sink chan<- *ListingWithdrawnFromListing, hash [][32]byte, owner []common.Address) (event.Subscription, error) {
 
 	var hashRule []interface{}
