@@ -52,7 +52,7 @@ func TestMain(m *testing.M) {
 	context = test.GetContext(oneHundredTwoEth) // users have 102 ETH account bal
 	setupMakers(big.NewInt(test.ONE_ETH), 10)   // Makers have 1 ETH account balance
 
-	// override the original simulated backend now that we have appeneded to the allocation
+	// override the original simulated backend now that we have appended to the allocation
 	context.Blockchain = backends.NewSimulatedBackend(context.Alloc, 4700000)
 
 	deployed, deployedError = test.Deploy(big.NewInt(test.ONE_ETH), context, &test.Params{
@@ -67,17 +67,27 @@ func TestMain(m *testing.M) {
 		CostPerByte: big.NewInt(test.ONE_GWEI * 100),
 	})
 
+	// auth backend will need at least the stake
+	transErr := test.MaybeTransferMarketToken(context, deployed, context.AuthOwner, context.AuthBackend.From,
+		big.NewInt(10000000000000000))
+	test.IfNotNil(&logr{}, transErr, "Error maybe transferring market tokens")
+
+	// backend will need to have approved the voting contract to spend at least the stake
+	incErr := test.MaybeIncreaseMarketTokenAllowance(context, deployed, context.AuthBackend, deployed.VotingAddress,
+		big.NewInt(10000000000000000))
+	test.IfNotNil(&logr{}, incErr, "Error maybe transferring market token approval")
+
 	// setup the datatrust with a backend
 	_, regErr := deployed.DatatrustContract.Register(test.GetTxOpts(context.AuthBackend, nil,
-		big.NewInt(test.ONE_GWEI*2), 500000), "https://www.immabackend.biz")
+		big.NewInt(test.ONE_GWEI*2), 1000000), "https://www.immabackend.biz")
 	test.IfNotNil(&logr{}, regErr, fmt.Sprintf("Error registering for backend status: %v", regErr))
 
 	context.Blockchain.Commit()
 
 	// vote for the backend candidate, member will likely need funds
-	transErr := test.MaybeTransferMarketToken(context, deployed, context.AuthOwner,
+	transErrVote := test.MaybeTransferMarketToken(context, deployed, context.AuthOwner,
 		context.AuthUser3.From, big.NewInt(10000000000000000)) // 1 X 10**16
-	test.IfNotNil(&logr{}, transErr, "Error transferring tokens")
+	test.IfNotNil(&logr{}, transErrVote, "Error transferring tokens")
 
 	// member will need to have approved the voting contract to spend
 	appErr := test.MaybeIncreaseMarketTokenAllowance(context, deployed, context.AuthUser3,

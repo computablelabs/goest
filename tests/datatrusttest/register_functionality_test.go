@@ -21,6 +21,16 @@ func TestRegister(t *testing.T) {
 		test.IfNotNil(t, setErr, fmt.Sprintf("Error setting backend url: %v", setErr))
 		context.Blockchain.Commit()
 	} else {
+		// auth backend will need at least the stake
+		transErr := test.MaybeTransferMarketToken(context, deployed, context.AuthOwner, context.AuthBackend.From,
+			big.NewInt(2*test.ONE_GWEI))
+		test.IfNotNil(t, transErr, "Error maybe transferring market tokens")
+
+		// backend will need to have approved the voting contract to spend at least the stake
+		incErr := test.MaybeIncreaseMarketTokenAllowance(context, deployed, context.AuthBackend, deployed.VotingAddress,
+			big.NewInt(2*test.ONE_GWEI))
+		test.IfNotNil(t, incErr, "Error maybe transferring market token approval")
+
 		// Register the datatrust
 		_, regErr := deployed.DatatrustContract.Register(test.GetTxOpts(context.AuthBackend, nil,
 			big.NewInt(test.ONE_GWEI*2), 500000), "http://www.icanhazbackend.com")
@@ -44,6 +54,15 @@ func TestRegister(t *testing.T) {
 
 func TestReRegister(t *testing.T) {
 	// Test what happens when a new party tries to register as datatrust
+	// auth user will need at least the stake
+	transErr := test.MaybeTransferMarketToken(context, deployed, context.AuthOwner, context.AuthUser1.From,
+		big.NewInt(2*test.ONE_GWEI))
+	test.IfNotNil(t, transErr, "Error maybe transferring market tokens")
+
+	// backend will need to have approved the voting contract to spend at least the stake
+	incErr := test.MaybeIncreaseMarketTokenAllowance(context, deployed, context.AuthUser1, deployed.VotingAddress,
+		big.NewInt(2*test.ONE_GWEI))
+	test.IfNotNil(t, incErr, "Error maybe transferring market token approval")
 
 	// Try registering a new datatrust by a different user
 	_, regErr := deployed.DatatrustContract.Register(test.GetTxOpts(context.AuthUser1, nil,

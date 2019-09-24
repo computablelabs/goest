@@ -53,16 +53,8 @@ func TestTransferToReserveThenMakersMake(t *testing.T) {
 		t.Errorf("Expected reserve of 100 Eth, got: %v", resEthBal)
 	}
 
-	t.Logf("Current Reserve balance: %v", test.Commafy(resEthBal))
-	// Original market token supply
-	mtSup, _ := deployed.MarketTokenContract.TotalSupply(nil)
-	t.Logf("Original Market token total supply post creation: %v", test.Commafy(mtSup))
-
-	t.Logf("Number Makers: %d", len(makers))
-
 	// Let's have the maker submit a listing
 	for name, maker := range makers {
-		t.Logf("Submitting listing for %s", name)
 		listingHash := test.GenBytes32(name)
 
 		_, listErr := deployed.ListingContract.List(test.GetTxOpts(maker, nil,
@@ -126,12 +118,6 @@ func TestTransferToReserveThenMakersMake(t *testing.T) {
 		if owner != maker.From {
 			t.Errorf("Expected owner to be %v, got: %v", maker.From, owner)
 		}
-		t.Logf("Listing supply: %v", test.Commafy(supply))
-
-		// makerMarketBal should be 0 since the balance has not been withdrawn yet
-		makerMarketBal, _ := deployed.MarketTokenContract.BalanceOf(nil, maker.From)
-		t.Logf("%s MarketToken balance: %v", name, test.Commafy(makerMarketBal))
-
 		// supply should reflect the list reward
 		if supply.Cmp(big.NewInt(250000000000000)) != 0 {
 			t.Errorf("Expected supply to be list reward, got: %v", supply)
@@ -144,9 +130,5 @@ func TestTransferToReserveThenMakersMake(t *testing.T) {
 		if newMarketBal.Cmp(marketBal) != 1 {
 			t.Errorf("Expected %v to be > %v", newMarketBal, marketBal)
 		}
-
-		// Market Token supply post listing
-		mtSup, _ := deployed.MarketTokenContract.TotalSupply(nil)
-		t.Logf("Original Market token total supply post %s listing: %v", name, test.Commafy(mtSup))
 	}
 }

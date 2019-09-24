@@ -59,6 +59,16 @@ func TestMain(m *testing.M) {
 		CostPerByte: big.NewInt(test.ONE_KWEI * 6),
 	})
 
+	// auth backend will need at least the stake
+	transErr := test.MaybeTransferMarketToken(context, deployed, context.AuthOwner, context.AuthBackend.From,
+		big.NewInt(2*test.ONE_GWEI))
+	test.IfNotNil(&logr{}, transErr, "Error maybe transferring market tokens")
+
+	// backend will need to have approved the voting contract to spend at least the stake
+	incErr := test.MaybeIncreaseMarketTokenAllowance(context, deployed, context.AuthBackend, deployed.VotingAddress,
+		big.NewInt(2*test.ONE_GWEI))
+	test.IfNotNil(&logr{}, incErr, "Error maybe transferring market token approval")
+
 	// setup the datatrust with a backend
 	_, regErr := deployed.DatatrustContract.Register(test.GetTxOpts(context.AuthBackend, nil,
 		big.NewInt(test.ONE_GWEI*2), 500000), "https://www.immabackend.biz")
@@ -67,9 +77,9 @@ func TestMain(m *testing.M) {
 	context.Blockchain.Commit()
 
 	// vote for the backend candidate, member will likely need funds
-	transErr := test.MaybeTransferMarketToken(context, deployed, context.AuthOwner,
+	transErrVote := test.MaybeTransferMarketToken(context, deployed, context.AuthOwner,
 		context.AuthUser3.From, big.NewInt(test.ONE_GWEI))
-	test.IfNotNil(&logr{}, transErr, "Error transferring tokens")
+	test.IfNotNil(&logr{}, transErrVote, "Error transferring tokens")
 
 	// member will need to have approved the voting contract to spend
 	appErr := test.MaybeIncreaseMarketTokenAllowance(context, deployed, context.AuthUser3,
