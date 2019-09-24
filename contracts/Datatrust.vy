@@ -30,8 +30,8 @@ contract Voting:
 
 contract Parameterizer:
   def getBackendPayment() -> uint256: constant
-  def getReservePayment() -> uint256: constant
   def getMakerPayment() -> uint256: constant
+  def getReservePayment() -> uint256: constant
   def getCostPerByte() -> wei_value: constant
   def getStake() -> uint256(wei): constant
   def getPlurality() -> uint256: constant
