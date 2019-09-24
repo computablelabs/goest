@@ -15,18 +15,6 @@ import (
 	"github.com/ethereum/go-ethereum/event"
 )
 
-// Reference imports to suppress errors if they are not otherwise used.
-var (
-	_ = big.NewInt
-	_ = strings.NewReader
-	_ = ethereum.NotFound
-	_ = abi.U256
-	_ = bind.Bind
-	_ = common.Big1
-	_ = types.BloomLookup
-	_ = event.NewSubscription
-)
-
 // VotingABI is the input ABI used to generate the binding from.
 const VotingABI = "[{\"name\":\"CandidateAdded\",\"inputs\":[{\"type\":\"bytes32\",\"name\":\"hash\",\"indexed\":true},{\"type\":\"uint256\",\"name\":\"kind\",\"indexed\":true},{\"type\":\"address\",\"name\":\"owner\",\"indexed\":true},{\"type\":\"uint256\",\"name\":\"voteBy\",\"indexed\":false,\"unit\":\"sec\"}],\"anonymous\":false,\"type\":\"event\"},{\"name\":\"CandidateRemoved\",\"inputs\":[{\"type\":\"bytes32\",\"name\":\"hash\",\"indexed\":true}],\"anonymous\":false,\"type\":\"event\"},{\"name\":\"Voted\",\"inputs\":[{\"type\":\"bytes32\",\"name\":\"hash\",\"indexed\":true},{\"type\":\"address\",\"name\":\"voter\",\"indexed\":true}],\"anonymous\":false,\"type\":\"event\"},{\"outputs\":[],\"inputs\":[{\"type\":\"address\",\"name\":\"market_token_addr\"}],\"constant\":false,\"payable\":false,\"type\":\"constructor\"},{\"name\":\"getPrivileged\",\"outputs\":[{\"type\":\"address\",\"name\":\"out\"},{\"type\":\"address\",\"name\":\"out\"},{\"type\":\"address\",\"name\":\"out\"}],\"inputs\":[],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":976},{\"name\":\"setPrivileged\",\"outputs\":[],\"inputs\":[{\"type\":\"address\",\"name\":\"parameterizer\"},{\"type\":\"address\",\"name\":\"datatrust\"},{\"type\":\"address\",\"name\":\"listing\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":106638},{\"name\":\"hasPrivilege\",\"outputs\":[{\"type\":\"bool\",\"name\":\"out\"}],\"inputs\":[{\"type\":\"address\",\"name\":\"sender\"}],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":1069},{\"name\":\"candidateIs\",\"outputs\":[{\"type\":\"bool\",\"name\":\"out\"}],\"inputs\":[{\"type\":\"bytes32\",\"name\":\"hash\"},{\"type\":\"uint256\",\"name\":\"kind\"}],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":793},{\"name\":\"isCandidate\",\"outputs\":[{\"type\":\"bool\",\"name\":\"out\"}],\"inputs\":[{\"type\":\"bytes32\",\"name\":\"hash\"}],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":823},{\"name\":\"getCandidate\",\"outputs\":[{\"type\":\"uint256\",\"name\":\"out\"},{\"type\":\"address\",\"name\":\"out\"},{\"type\":\"uint256\",\"name\":\"out\",\"unit\":\"wei\"},{\"type\":\"uint256\",\"name\":\"out\",\"unit\":\"sec\"},{\"type\":\"uint256\",\"name\":\"out\"},{\"type\":\"uint256\",\"name\":\"out\"}],\"inputs\":[{\"type\":\"bytes32\",\"name\":\"hash\"}],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":2941},{\"name\":\"getCandidateOwner\",\"outputs\":[{\"type\":\"address\",\"name\":\"out\"}],\"inputs\":[{\"type\":\"bytes32\",\"name\":\"hash\"}],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":874},{\"name\":\"addCandidate\",\"outputs\":[],\"inputs\":[{\"type\":\"bytes32\",\"name\":\"hash\"},{\"type\":\"uint256\",\"name\":\"kind\"},{\"type\":\"address\",\"name\":\"owner\"},{\"type\":\"uint256\",\"name\":\"stake\",\"unit\":\"wei\"},{\"type\":\"uint256\",\"name\":\"vote_by\",\"unit\":\"sec\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":185038},{\"name\":\"removeCandidate\",\"outputs\":[],\"inputs\":[{\"type\":\"bytes32\",\"name\":\"hash\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":124543},{\"name\":\"didPass\",\"outputs\":[{\"type\":\"bool\",\"name\":\"out\"}],\"inputs\":[{\"type\":\"bytes32\",\"name\":\"hash\"},{\"type\":\"uint256\",\"name\":\"plurality\"}],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":3298},{\"name\":\"pollClosed\",\"outputs\":[{\"type\":\"bool\",\"name\":\"out\"}],\"inputs\":[{\"type\":\"bytes32\",\"name\":\"hash\"}],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":1486},{\"name\":\"vote\",\"outputs\":[],\"inputs\":[{\"type\":\"bytes32\",\"name\":\"hash\"},{\"type\":\"uint256\",\"name\":\"option\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":77901},{\"name\":\"transferStake\",\"outputs\":[],\"inputs\":[{\"type\":\"bytes32\",\"name\":\"hash\"},{\"type\":\"address\",\"name\":\"addr\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":58442},{\"name\":\"getStake\",\"outputs\":[{\"type\":\"uint256\",\"name\":\"out\",\"unit\":\"wei\"}],\"inputs\":[{\"type\":\"bytes32\",\"name\":\"hash\"},{\"type\":\"address\",\"name\":\"addr\"}],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":1166},{\"name\":\"unstake\",\"outputs\":[],\"inputs\":[{\"type\":\"bytes32\",\"name\":\"hash\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":24233}]"
 
@@ -190,7 +178,7 @@ func (_Voting *VotingTransactorRaw) Transact(opts *bind.TransactOpts, method str
 
 // CandidateIs is a free data retrieval call binding the contract method 0xaf61f760.
 //
-// Solidity: function candidateIs(bytes32 hash, uint256 kind) constant returns(bool out)
+// Solidity: function candidateIs(hash bytes32, kind uint256) constant returns(out bool)
 func (_Voting *VotingCaller) CandidateIs(opts *bind.CallOpts, hash [32]byte, kind *big.Int) (bool, error) {
 	var (
 		ret0 = new(bool)
@@ -202,21 +190,21 @@ func (_Voting *VotingCaller) CandidateIs(opts *bind.CallOpts, hash [32]byte, kin
 
 // CandidateIs is a free data retrieval call binding the contract method 0xaf61f760.
 //
-// Solidity: function candidateIs(bytes32 hash, uint256 kind) constant returns(bool out)
+// Solidity: function candidateIs(hash bytes32, kind uint256) constant returns(out bool)
 func (_Voting *VotingSession) CandidateIs(hash [32]byte, kind *big.Int) (bool, error) {
 	return _Voting.Contract.CandidateIs(&_Voting.CallOpts, hash, kind)
 }
 
 // CandidateIs is a free data retrieval call binding the contract method 0xaf61f760.
 //
-// Solidity: function candidateIs(bytes32 hash, uint256 kind) constant returns(bool out)
+// Solidity: function candidateIs(hash bytes32, kind uint256) constant returns(out bool)
 func (_Voting *VotingCallerSession) CandidateIs(hash [32]byte, kind *big.Int) (bool, error) {
 	return _Voting.Contract.CandidateIs(&_Voting.CallOpts, hash, kind)
 }
 
 // DidPass is a free data retrieval call binding the contract method 0x8f354b79.
 //
-// Solidity: function didPass(bytes32 hash, uint256 plurality) constant returns(bool out)
+// Solidity: function didPass(hash bytes32, plurality uint256) constant returns(out bool)
 func (_Voting *VotingCaller) DidPass(opts *bind.CallOpts, hash [32]byte, plurality *big.Int) (bool, error) {
 	var (
 		ret0 = new(bool)
@@ -228,21 +216,21 @@ func (_Voting *VotingCaller) DidPass(opts *bind.CallOpts, hash [32]byte, plurali
 
 // DidPass is a free data retrieval call binding the contract method 0x8f354b79.
 //
-// Solidity: function didPass(bytes32 hash, uint256 plurality) constant returns(bool out)
+// Solidity: function didPass(hash bytes32, plurality uint256) constant returns(out bool)
 func (_Voting *VotingSession) DidPass(hash [32]byte, plurality *big.Int) (bool, error) {
 	return _Voting.Contract.DidPass(&_Voting.CallOpts, hash, plurality)
 }
 
 // DidPass is a free data retrieval call binding the contract method 0x8f354b79.
 //
-// Solidity: function didPass(bytes32 hash, uint256 plurality) constant returns(bool out)
+// Solidity: function didPass(hash bytes32, plurality uint256) constant returns(out bool)
 func (_Voting *VotingCallerSession) DidPass(hash [32]byte, plurality *big.Int) (bool, error) {
 	return _Voting.Contract.DidPass(&_Voting.CallOpts, hash, plurality)
 }
 
 // GetCandidate is a free data retrieval call binding the contract method 0xdfb6419f.
 //
-// Solidity: function getCandidate(bytes32 hash) constant returns(uint256 out, address out, uint256 out, uint256 out, uint256 out, uint256 out)
+// Solidity: function getCandidate(hash bytes32) constant returns(out uint256, out address, out uint256, out uint256, out uint256, out uint256)
 func (_Voting *VotingCaller) GetCandidate(opts *bind.CallOpts, hash [32]byte) (*big.Int, common.Address, *big.Int, *big.Int, *big.Int, *big.Int, error) {
 	var (
 		ret0 = new(*big.Int)
@@ -266,21 +254,21 @@ func (_Voting *VotingCaller) GetCandidate(opts *bind.CallOpts, hash [32]byte) (*
 
 // GetCandidate is a free data retrieval call binding the contract method 0xdfb6419f.
 //
-// Solidity: function getCandidate(bytes32 hash) constant returns(uint256 out, address out, uint256 out, uint256 out, uint256 out, uint256 out)
+// Solidity: function getCandidate(hash bytes32) constant returns(out uint256, out address, out uint256, out uint256, out uint256, out uint256)
 func (_Voting *VotingSession) GetCandidate(hash [32]byte) (*big.Int, common.Address, *big.Int, *big.Int, *big.Int, *big.Int, error) {
 	return _Voting.Contract.GetCandidate(&_Voting.CallOpts, hash)
 }
 
 // GetCandidate is a free data retrieval call binding the contract method 0xdfb6419f.
 //
-// Solidity: function getCandidate(bytes32 hash) constant returns(uint256 out, address out, uint256 out, uint256 out, uint256 out, uint256 out)
+// Solidity: function getCandidate(hash bytes32) constant returns(out uint256, out address, out uint256, out uint256, out uint256, out uint256)
 func (_Voting *VotingCallerSession) GetCandidate(hash [32]byte) (*big.Int, common.Address, *big.Int, *big.Int, *big.Int, *big.Int, error) {
 	return _Voting.Contract.GetCandidate(&_Voting.CallOpts, hash)
 }
 
 // GetCandidateOwner is a free data retrieval call binding the contract method 0xeb3014fd.
 //
-// Solidity: function getCandidateOwner(bytes32 hash) constant returns(address out)
+// Solidity: function getCandidateOwner(hash bytes32) constant returns(out address)
 func (_Voting *VotingCaller) GetCandidateOwner(opts *bind.CallOpts, hash [32]byte) (common.Address, error) {
 	var (
 		ret0 = new(common.Address)
@@ -292,21 +280,21 @@ func (_Voting *VotingCaller) GetCandidateOwner(opts *bind.CallOpts, hash [32]byt
 
 // GetCandidateOwner is a free data retrieval call binding the contract method 0xeb3014fd.
 //
-// Solidity: function getCandidateOwner(bytes32 hash) constant returns(address out)
+// Solidity: function getCandidateOwner(hash bytes32) constant returns(out address)
 func (_Voting *VotingSession) GetCandidateOwner(hash [32]byte) (common.Address, error) {
 	return _Voting.Contract.GetCandidateOwner(&_Voting.CallOpts, hash)
 }
 
 // GetCandidateOwner is a free data retrieval call binding the contract method 0xeb3014fd.
 //
-// Solidity: function getCandidateOwner(bytes32 hash) constant returns(address out)
+// Solidity: function getCandidateOwner(hash bytes32) constant returns(out address)
 func (_Voting *VotingCallerSession) GetCandidateOwner(hash [32]byte) (common.Address, error) {
 	return _Voting.Contract.GetCandidateOwner(&_Voting.CallOpts, hash)
 }
 
 // GetPrivileged is a free data retrieval call binding the contract method 0xd4c17539.
 //
-// Solidity: function getPrivileged() constant returns(address out, address out, address out)
+// Solidity: function getPrivileged() constant returns(out address, out address, out address)
 func (_Voting *VotingCaller) GetPrivileged(opts *bind.CallOpts) (common.Address, common.Address, common.Address, error) {
 	var (
 		ret0 = new(common.Address)
@@ -324,21 +312,21 @@ func (_Voting *VotingCaller) GetPrivileged(opts *bind.CallOpts) (common.Address,
 
 // GetPrivileged is a free data retrieval call binding the contract method 0xd4c17539.
 //
-// Solidity: function getPrivileged() constant returns(address out, address out, address out)
+// Solidity: function getPrivileged() constant returns(out address, out address, out address)
 func (_Voting *VotingSession) GetPrivileged() (common.Address, common.Address, common.Address, error) {
 	return _Voting.Contract.GetPrivileged(&_Voting.CallOpts)
 }
 
 // GetPrivileged is a free data retrieval call binding the contract method 0xd4c17539.
 //
-// Solidity: function getPrivileged() constant returns(address out, address out, address out)
+// Solidity: function getPrivileged() constant returns(out address, out address, out address)
 func (_Voting *VotingCallerSession) GetPrivileged() (common.Address, common.Address, common.Address, error) {
 	return _Voting.Contract.GetPrivileged(&_Voting.CallOpts)
 }
 
 // GetStake is a free data retrieval call binding the contract method 0x5399ab4c.
 //
-// Solidity: function getStake(bytes32 hash, address addr) constant returns(uint256 out)
+// Solidity: function getStake(hash bytes32, addr address) constant returns(out uint256)
 func (_Voting *VotingCaller) GetStake(opts *bind.CallOpts, hash [32]byte, addr common.Address) (*big.Int, error) {
 	var (
 		ret0 = new(*big.Int)
@@ -350,21 +338,21 @@ func (_Voting *VotingCaller) GetStake(opts *bind.CallOpts, hash [32]byte, addr c
 
 // GetStake is a free data retrieval call binding the contract method 0x5399ab4c.
 //
-// Solidity: function getStake(bytes32 hash, address addr) constant returns(uint256 out)
+// Solidity: function getStake(hash bytes32, addr address) constant returns(out uint256)
 func (_Voting *VotingSession) GetStake(hash [32]byte, addr common.Address) (*big.Int, error) {
 	return _Voting.Contract.GetStake(&_Voting.CallOpts, hash, addr)
 }
 
 // GetStake is a free data retrieval call binding the contract method 0x5399ab4c.
 //
-// Solidity: function getStake(bytes32 hash, address addr) constant returns(uint256 out)
+// Solidity: function getStake(hash bytes32, addr address) constant returns(out uint256)
 func (_Voting *VotingCallerSession) GetStake(hash [32]byte, addr common.Address) (*big.Int, error) {
 	return _Voting.Contract.GetStake(&_Voting.CallOpts, hash, addr)
 }
 
 // HasPrivilege is a free data retrieval call binding the contract method 0xb7bf210c.
 //
-// Solidity: function hasPrivilege(address sender) constant returns(bool out)
+// Solidity: function hasPrivilege(sender address) constant returns(out bool)
 func (_Voting *VotingCaller) HasPrivilege(opts *bind.CallOpts, sender common.Address) (bool, error) {
 	var (
 		ret0 = new(bool)
@@ -376,21 +364,21 @@ func (_Voting *VotingCaller) HasPrivilege(opts *bind.CallOpts, sender common.Add
 
 // HasPrivilege is a free data retrieval call binding the contract method 0xb7bf210c.
 //
-// Solidity: function hasPrivilege(address sender) constant returns(bool out)
+// Solidity: function hasPrivilege(sender address) constant returns(out bool)
 func (_Voting *VotingSession) HasPrivilege(sender common.Address) (bool, error) {
 	return _Voting.Contract.HasPrivilege(&_Voting.CallOpts, sender)
 }
 
 // HasPrivilege is a free data retrieval call binding the contract method 0xb7bf210c.
 //
-// Solidity: function hasPrivilege(address sender) constant returns(bool out)
+// Solidity: function hasPrivilege(sender address) constant returns(out bool)
 func (_Voting *VotingCallerSession) HasPrivilege(sender common.Address) (bool, error) {
 	return _Voting.Contract.HasPrivilege(&_Voting.CallOpts, sender)
 }
 
 // IsCandidate is a free data retrieval call binding the contract method 0xb89694c6.
 //
-// Solidity: function isCandidate(bytes32 hash) constant returns(bool out)
+// Solidity: function isCandidate(hash bytes32) constant returns(out bool)
 func (_Voting *VotingCaller) IsCandidate(opts *bind.CallOpts, hash [32]byte) (bool, error) {
 	var (
 		ret0 = new(bool)
@@ -402,21 +390,21 @@ func (_Voting *VotingCaller) IsCandidate(opts *bind.CallOpts, hash [32]byte) (bo
 
 // IsCandidate is a free data retrieval call binding the contract method 0xb89694c6.
 //
-// Solidity: function isCandidate(bytes32 hash) constant returns(bool out)
+// Solidity: function isCandidate(hash bytes32) constant returns(out bool)
 func (_Voting *VotingSession) IsCandidate(hash [32]byte) (bool, error) {
 	return _Voting.Contract.IsCandidate(&_Voting.CallOpts, hash)
 }
 
 // IsCandidate is a free data retrieval call binding the contract method 0xb89694c6.
 //
-// Solidity: function isCandidate(bytes32 hash) constant returns(bool out)
+// Solidity: function isCandidate(hash bytes32) constant returns(out bool)
 func (_Voting *VotingCallerSession) IsCandidate(hash [32]byte) (bool, error) {
 	return _Voting.Contract.IsCandidate(&_Voting.CallOpts, hash)
 }
 
 // PollClosed is a free data retrieval call binding the contract method 0x327322c8.
 //
-// Solidity: function pollClosed(bytes32 hash) constant returns(bool out)
+// Solidity: function pollClosed(hash bytes32) constant returns(out bool)
 func (_Voting *VotingCaller) PollClosed(opts *bind.CallOpts, hash [32]byte) (bool, error) {
 	var (
 		ret0 = new(bool)
@@ -428,140 +416,140 @@ func (_Voting *VotingCaller) PollClosed(opts *bind.CallOpts, hash [32]byte) (boo
 
 // PollClosed is a free data retrieval call binding the contract method 0x327322c8.
 //
-// Solidity: function pollClosed(bytes32 hash) constant returns(bool out)
+// Solidity: function pollClosed(hash bytes32) constant returns(out bool)
 func (_Voting *VotingSession) PollClosed(hash [32]byte) (bool, error) {
 	return _Voting.Contract.PollClosed(&_Voting.CallOpts, hash)
 }
 
 // PollClosed is a free data retrieval call binding the contract method 0x327322c8.
 //
-// Solidity: function pollClosed(bytes32 hash) constant returns(bool out)
+// Solidity: function pollClosed(hash bytes32) constant returns(out bool)
 func (_Voting *VotingCallerSession) PollClosed(hash [32]byte) (bool, error) {
 	return _Voting.Contract.PollClosed(&_Voting.CallOpts, hash)
 }
 
 // AddCandidate is a paid mutator transaction binding the contract method 0xbb12c49e.
 //
-// Solidity: function addCandidate(bytes32 hash, uint256 kind, address owner, uint256 stake, uint256 vote_by) returns()
+// Solidity: function addCandidate(hash bytes32, kind uint256, owner address, stake uint256, vote_by uint256) returns()
 func (_Voting *VotingTransactor) AddCandidate(opts *bind.TransactOpts, hash [32]byte, kind *big.Int, owner common.Address, stake *big.Int, vote_by *big.Int) (*types.Transaction, error) {
 	return _Voting.contract.Transact(opts, "addCandidate", hash, kind, owner, stake, vote_by)
 }
 
 // AddCandidate is a paid mutator transaction binding the contract method 0xbb12c49e.
 //
-// Solidity: function addCandidate(bytes32 hash, uint256 kind, address owner, uint256 stake, uint256 vote_by) returns()
+// Solidity: function addCandidate(hash bytes32, kind uint256, owner address, stake uint256, vote_by uint256) returns()
 func (_Voting *VotingSession) AddCandidate(hash [32]byte, kind *big.Int, owner common.Address, stake *big.Int, vote_by *big.Int) (*types.Transaction, error) {
 	return _Voting.Contract.AddCandidate(&_Voting.TransactOpts, hash, kind, owner, stake, vote_by)
 }
 
 // AddCandidate is a paid mutator transaction binding the contract method 0xbb12c49e.
 //
-// Solidity: function addCandidate(bytes32 hash, uint256 kind, address owner, uint256 stake, uint256 vote_by) returns()
+// Solidity: function addCandidate(hash bytes32, kind uint256, owner address, stake uint256, vote_by uint256) returns()
 func (_Voting *VotingTransactorSession) AddCandidate(hash [32]byte, kind *big.Int, owner common.Address, stake *big.Int, vote_by *big.Int) (*types.Transaction, error) {
 	return _Voting.Contract.AddCandidate(&_Voting.TransactOpts, hash, kind, owner, stake, vote_by)
 }
 
 // RemoveCandidate is a paid mutator transaction binding the contract method 0x89bb617c.
 //
-// Solidity: function removeCandidate(bytes32 hash) returns()
+// Solidity: function removeCandidate(hash bytes32) returns()
 func (_Voting *VotingTransactor) RemoveCandidate(opts *bind.TransactOpts, hash [32]byte) (*types.Transaction, error) {
 	return _Voting.contract.Transact(opts, "removeCandidate", hash)
 }
 
 // RemoveCandidate is a paid mutator transaction binding the contract method 0x89bb617c.
 //
-// Solidity: function removeCandidate(bytes32 hash) returns()
+// Solidity: function removeCandidate(hash bytes32) returns()
 func (_Voting *VotingSession) RemoveCandidate(hash [32]byte) (*types.Transaction, error) {
 	return _Voting.Contract.RemoveCandidate(&_Voting.TransactOpts, hash)
 }
 
 // RemoveCandidate is a paid mutator transaction binding the contract method 0x89bb617c.
 //
-// Solidity: function removeCandidate(bytes32 hash) returns()
+// Solidity: function removeCandidate(hash bytes32) returns()
 func (_Voting *VotingTransactorSession) RemoveCandidate(hash [32]byte) (*types.Transaction, error) {
 	return _Voting.Contract.RemoveCandidate(&_Voting.TransactOpts, hash)
 }
 
 // SetPrivileged is a paid mutator transaction binding the contract method 0x89015c73.
 //
-// Solidity: function setPrivileged(address parameterizer, address datatrust, address listing) returns()
+// Solidity: function setPrivileged(parameterizer address, datatrust address, listing address) returns()
 func (_Voting *VotingTransactor) SetPrivileged(opts *bind.TransactOpts, parameterizer common.Address, datatrust common.Address, listing common.Address) (*types.Transaction, error) {
 	return _Voting.contract.Transact(opts, "setPrivileged", parameterizer, datatrust, listing)
 }
 
 // SetPrivileged is a paid mutator transaction binding the contract method 0x89015c73.
 //
-// Solidity: function setPrivileged(address parameterizer, address datatrust, address listing) returns()
+// Solidity: function setPrivileged(parameterizer address, datatrust address, listing address) returns()
 func (_Voting *VotingSession) SetPrivileged(parameterizer common.Address, datatrust common.Address, listing common.Address) (*types.Transaction, error) {
 	return _Voting.Contract.SetPrivileged(&_Voting.TransactOpts, parameterizer, datatrust, listing)
 }
 
 // SetPrivileged is a paid mutator transaction binding the contract method 0x89015c73.
 //
-// Solidity: function setPrivileged(address parameterizer, address datatrust, address listing) returns()
+// Solidity: function setPrivileged(parameterizer address, datatrust address, listing address) returns()
 func (_Voting *VotingTransactorSession) SetPrivileged(parameterizer common.Address, datatrust common.Address, listing common.Address) (*types.Transaction, error) {
 	return _Voting.Contract.SetPrivileged(&_Voting.TransactOpts, parameterizer, datatrust, listing)
 }
 
 // TransferStake is a paid mutator transaction binding the contract method 0xb6b69206.
 //
-// Solidity: function transferStake(bytes32 hash, address addr) returns()
+// Solidity: function transferStake(hash bytes32, addr address) returns()
 func (_Voting *VotingTransactor) TransferStake(opts *bind.TransactOpts, hash [32]byte, addr common.Address) (*types.Transaction, error) {
 	return _Voting.contract.Transact(opts, "transferStake", hash, addr)
 }
 
 // TransferStake is a paid mutator transaction binding the contract method 0xb6b69206.
 //
-// Solidity: function transferStake(bytes32 hash, address addr) returns()
+// Solidity: function transferStake(hash bytes32, addr address) returns()
 func (_Voting *VotingSession) TransferStake(hash [32]byte, addr common.Address) (*types.Transaction, error) {
 	return _Voting.Contract.TransferStake(&_Voting.TransactOpts, hash, addr)
 }
 
 // TransferStake is a paid mutator transaction binding the contract method 0xb6b69206.
 //
-// Solidity: function transferStake(bytes32 hash, address addr) returns()
+// Solidity: function transferStake(hash bytes32, addr address) returns()
 func (_Voting *VotingTransactorSession) TransferStake(hash [32]byte, addr common.Address) (*types.Transaction, error) {
 	return _Voting.Contract.TransferStake(&_Voting.TransactOpts, hash, addr)
 }
 
 // Unstake is a paid mutator transaction binding the contract method 0x71ed5d1a.
 //
-// Solidity: function unstake(bytes32 hash) returns()
+// Solidity: function unstake(hash bytes32) returns()
 func (_Voting *VotingTransactor) Unstake(opts *bind.TransactOpts, hash [32]byte) (*types.Transaction, error) {
 	return _Voting.contract.Transact(opts, "unstake", hash)
 }
 
 // Unstake is a paid mutator transaction binding the contract method 0x71ed5d1a.
 //
-// Solidity: function unstake(bytes32 hash) returns()
+// Solidity: function unstake(hash bytes32) returns()
 func (_Voting *VotingSession) Unstake(hash [32]byte) (*types.Transaction, error) {
 	return _Voting.Contract.Unstake(&_Voting.TransactOpts, hash)
 }
 
 // Unstake is a paid mutator transaction binding the contract method 0x71ed5d1a.
 //
-// Solidity: function unstake(bytes32 hash) returns()
+// Solidity: function unstake(hash bytes32) returns()
 func (_Voting *VotingTransactorSession) Unstake(hash [32]byte) (*types.Transaction, error) {
 	return _Voting.Contract.Unstake(&_Voting.TransactOpts, hash)
 }
 
 // Vote is a paid mutator transaction binding the contract method 0x9ef1204c.
 //
-// Solidity: function vote(bytes32 hash, uint256 option) returns()
+// Solidity: function vote(hash bytes32, option uint256) returns()
 func (_Voting *VotingTransactor) Vote(opts *bind.TransactOpts, hash [32]byte, option *big.Int) (*types.Transaction, error) {
 	return _Voting.contract.Transact(opts, "vote", hash, option)
 }
 
 // Vote is a paid mutator transaction binding the contract method 0x9ef1204c.
 //
-// Solidity: function vote(bytes32 hash, uint256 option) returns()
+// Solidity: function vote(hash bytes32, option uint256) returns()
 func (_Voting *VotingSession) Vote(hash [32]byte, option *big.Int) (*types.Transaction, error) {
 	return _Voting.Contract.Vote(&_Voting.TransactOpts, hash, option)
 }
 
 // Vote is a paid mutator transaction binding the contract method 0x9ef1204c.
 //
-// Solidity: function vote(bytes32 hash, uint256 option) returns()
+// Solidity: function vote(hash bytes32, option uint256) returns()
 func (_Voting *VotingTransactorSession) Vote(hash [32]byte, option *big.Int) (*types.Transaction, error) {
 	return _Voting.Contract.Vote(&_Voting.TransactOpts, hash, option)
 }
@@ -644,7 +632,7 @@ type VotingCandidateAdded struct {
 
 // FilterCandidateAdded is a free log retrieval operation binding the contract event 0x51baeaa00f5969dc416d8e5299022ac3886d317d13685d1c6906ced9bac71b02.
 //
-// Solidity: event CandidateAdded(bytes32 indexed hash, uint256 indexed kind, address indexed owner, uint256 voteBy)
+// Solidity: e CandidateAdded(hash indexed bytes32, kind indexed uint256, owner indexed address, voteBy uint256)
 func (_Voting *VotingFilterer) FilterCandidateAdded(opts *bind.FilterOpts, hash [][32]byte, kind []*big.Int, owner []common.Address) (*VotingCandidateAddedIterator, error) {
 
 	var hashRule []interface{}
@@ -669,7 +657,7 @@ func (_Voting *VotingFilterer) FilterCandidateAdded(opts *bind.FilterOpts, hash 
 
 // WatchCandidateAdded is a free log subscription operation binding the contract event 0x51baeaa00f5969dc416d8e5299022ac3886d317d13685d1c6906ced9bac71b02.
 //
-// Solidity: event CandidateAdded(bytes32 indexed hash, uint256 indexed kind, address indexed owner, uint256 voteBy)
+// Solidity: e CandidateAdded(hash indexed bytes32, kind indexed uint256, owner indexed address, voteBy uint256)
 func (_Voting *VotingFilterer) WatchCandidateAdded(opts *bind.WatchOpts, sink chan<- *VotingCandidateAdded, hash [][32]byte, kind []*big.Int, owner []common.Address) (event.Subscription, error) {
 
 	var hashRule []interface{}
@@ -792,7 +780,7 @@ type VotingCandidateRemoved struct {
 
 // FilterCandidateRemoved is a free log retrieval operation binding the contract event 0xb314642ce4aa3156c1090458cfccabff50f32bc85d110d7799c369e1a660bcf4.
 //
-// Solidity: event CandidateRemoved(bytes32 indexed hash)
+// Solidity: e CandidateRemoved(hash indexed bytes32)
 func (_Voting *VotingFilterer) FilterCandidateRemoved(opts *bind.FilterOpts, hash [][32]byte) (*VotingCandidateRemovedIterator, error) {
 
 	var hashRule []interface{}
@@ -809,7 +797,7 @@ func (_Voting *VotingFilterer) FilterCandidateRemoved(opts *bind.FilterOpts, has
 
 // WatchCandidateRemoved is a free log subscription operation binding the contract event 0xb314642ce4aa3156c1090458cfccabff50f32bc85d110d7799c369e1a660bcf4.
 //
-// Solidity: event CandidateRemoved(bytes32 indexed hash)
+// Solidity: e CandidateRemoved(hash indexed bytes32)
 func (_Voting *VotingFilterer) WatchCandidateRemoved(opts *bind.WatchOpts, sink chan<- *VotingCandidateRemoved, hash [][32]byte) (event.Subscription, error) {
 
 	var hashRule []interface{}
@@ -925,7 +913,7 @@ type VotingVoted struct {
 
 // FilterVoted is a free log retrieval operation binding the contract event 0x0b2f654b7e608ce51a82ce8157e79c350ed670605e8985266ad89fc85060e749.
 //
-// Solidity: event Voted(bytes32 indexed hash, address indexed voter)
+// Solidity: e Voted(hash indexed bytes32, voter indexed address)
 func (_Voting *VotingFilterer) FilterVoted(opts *bind.FilterOpts, hash [][32]byte, voter []common.Address) (*VotingVotedIterator, error) {
 
 	var hashRule []interface{}
@@ -946,7 +934,7 @@ func (_Voting *VotingFilterer) FilterVoted(opts *bind.FilterOpts, hash [][32]byt
 
 // WatchVoted is a free log subscription operation binding the contract event 0x0b2f654b7e608ce51a82ce8157e79c350ed670605e8985266ad89fc85060e749.
 //
-// Solidity: event Voted(bytes32 indexed hash, address indexed voter)
+// Solidity: e Voted(hash indexed bytes32, voter indexed address)
 func (_Voting *VotingFilterer) WatchVoted(opts *bind.WatchOpts, sink chan<- *VotingVoted, hash [][32]byte, voter []common.Address) (event.Subscription, error) {
 
 	var hashRule []interface{}
