@@ -77,7 +77,7 @@ func TestTransferToReserveThenSupport(t *testing.T) {
 		test.IfNotNil(t, depErr, "Error depositing ETH")
 		context.Blockchain.Commit()
 
-		//	// snapshot current balances
+		// snapshot current balances
 		etBalNow, _ := deployed.EtherTokenContract.BalanceOf(nil, supporter.From)
 		if etBalNow.Cmp(oneHundredEth()) != 0 {
 			t.Errorf("Expected ether token balance of 100 eth, got: %v", etBalNow)
@@ -102,7 +102,7 @@ func TestTransferToReserveThenSupport(t *testing.T) {
 		}
 
 		_, sErr := deployed.ReserveContract.Support(test.GetTxOpts(supporter, nil,
-			big.NewInt(test.ONE_GWEI*2), 150000), oneHundredEth())
+			big.NewInt(test.ONE_GWEI*2), 250000), oneHundredEth())
 		test.IfNotNil(t, sErr, "Error supporting")
 		context.Blockchain.Commit()
 

@@ -91,7 +91,8 @@ def burn(amount: wei_value):
   @dev We only allow the market contract to call burn
   @param amount The amount to burn
   """
-  assert self.hasPrivilege(msg.sender)
+  # only the listing may call burn
+  assert msg.sender == self.listing_address
   self.balances[msg.sender] -= amount
   self.supply -= amount
   log.Burned(msg.sender, amount)
@@ -104,7 +105,8 @@ def burnAll(owner: address):
   @dev We only allow the market contract to call burnAll
   @param address The owner of the tokens being burnt
   """
-  assert self.hasPrivilege(msg.sender)
+  # only the reserve may call burn all
+  assert msg.sender == self.reserve_address
   bal: wei_value = self.balances[owner]
   self.supply -= bal
   clear(self.balances[owner])
@@ -145,13 +147,15 @@ def mint(amount: wei_value):
   @notice Create new Market Token funds and add them to the Market Contract balance
   @dev We only allow the Market Contract to call for minting
   """
-  assert self.hasPrivilege(msg.sender)
+  # either may call mint
+  assert msg.sender == self.reserve_address or msg.sender == self.listing_address
   self.supply += amount
   self.balances[msg.sender] += amount
   log.Minted(msg.sender, amount)
   # TODO look at implementing a mintFor method to avoid mint followed by immediate transfer
 
 
+# TODO look into the @noreentrant decorator
 @public
 def setPrivileged(reserve: address, listing: address):
   """
@@ -161,8 +165,8 @@ def setPrivileged(reserve: address, listing: address):
   @param listing The deployed address of the Listing Contract
   """
   assert msg.sender == self.owner_address
-  assert self.listing_address == ZERO_ADDRESS
   assert self.reserve_address == ZERO_ADDRESS
+  assert self.listing_address == ZERO_ADDRESS
   self.reserve_address = reserve
   self.listing_address = listing
 
