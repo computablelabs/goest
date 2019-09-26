@@ -35,14 +35,14 @@ contract Parameterizer:
   def getPlurality() -> uint256: constant
   def getVoteBy() -> uint256(sec): constant
 
+contract Reserve:
+  def getSupportPrice() -> uint256(wei): constant
+
 contract Datatrust:
   def getDataHash(hash: bytes32) -> bytes32: constant
   def removeDataHash(hash: bytes32): modifying
   def getBytesAccessed(hash: bytes32) -> uint256: constant
   def bytesAccessedClaimed(hash: bytes32, fee: uint256(wei)): modifying
-
-contract Reserve:
-  def getSupportPrice() -> uint256(wei): constant
 
 # events
 ApplicationFailed: event({hash: indexed(bytes32), applicant: indexed(address)})

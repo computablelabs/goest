@@ -46,6 +46,7 @@ def getPrivileged() -> (address, address, address):
   return (self.parameterizer_address, self.datatrust_address, self.listing_address)
 
 
+# TODO look at the decorator @noreentrant
 @public
 def setPrivileged(parameterizer: address, datatrust: address, listing: address):
   """
@@ -60,6 +61,14 @@ def setPrivileged(parameterizer: address, datatrust: address, listing: address):
   self.listing_address = listing
 
 
+@private
+@constant
+def _hasPrivilege(sender: address) -> bool:
+  """
+  Abstraction of the logic for the public method `hasPrivilege`
+  """
+  return (sender == self.parameterizer_address or sender == self.datatrust_address or sender == self.listing_address)
+
 @public
 @constant
 def hasPrivilege(sender: address) -> bool:
@@ -67,8 +76,7 @@ def hasPrivilege(sender: address) -> bool:
   @notice Return a bool indicating whether the given address is a member of this contracts privileged group
   @return bool
   """
-  return (sender == self.parameterizer_address or sender == self.datatrust_address or sender == self.listing_address)
-
+  return self._hasPrivilege(sender)
 
 @public
 @constant
@@ -124,7 +132,7 @@ def addCandidate(hash: bytes32, kind: uint256, owner: address, stake: wei_value,
   @param stake How much, in wei, must be staked to vote or challenge
   @param vote_by How long into the future until polls for this candidate close
   """
-  assert self.hasPrivilege(msg.sender)
+  assert self._hasPrivilege(msg.sender)
   assert self.candidates[hash].owner == ZERO_ADDRESS
   if kind == CHALLENGE: # a challenger must successfully stake a challenge
     self.market_token.transferFrom(owner, self, stake)
@@ -143,7 +151,7 @@ def removeCandidate(hash: bytes32):
   @notice Remove a candidate from the current list
   @dev Clears all members from a Candidate pointed to by a hash (enabling re-use)
   """
-  assert self.hasPrivilege(msg.sender)
+  assert self._hasPrivilege(msg.sender)
   assert self.candidates[hash].owner != ZERO_ADDRESS
   clear(self.candidates[hash]) # TODO assure this works vs individually setting to 0
   log.CandidateRemoved(hash)

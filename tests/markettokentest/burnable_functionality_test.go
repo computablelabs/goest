@@ -21,7 +21,7 @@ func TestBurn(t *testing.T) {
 
 	// MarketToken.Burn is only available to privileged contracts. Have user 3 pose as Listing...
 	_, privErr := marketTokenCont.SetPrivileged(test.GetTxOpts(context.AuthOwner, nil, big.NewInt(test.ONE_GWEI*2),
-		100000), context.AuthUser3.From, deployed.ReserveAddress)
+		100000), deployed.ReserveAddress, context.AuthUser3.From)
 	test.IfNotNil(t, privErr, "Error setting Market Token privileged contracts")
 
 	context.Blockchain.Commit()
@@ -35,6 +35,11 @@ func TestBurn(t *testing.T) {
 
 	context.Blockchain.Commit()
 
+	newBal, _ := marketTokenCont.BalanceOf(nil, context.AuthUser3.From)
+	if newBal.Cmp(bal) != 1 {
+		t.Errorf("Expected %v to be > %v", newBal, bal)
+	}
+
 	// burn 2 and check balance
 	_, burnErr := marketTokenCont.Burn(test.GetTxOpts(context.AuthUser3, nil, big.NewInt(test.ONE_GWEI*2),
 		100000), big.NewInt(test.ONE_ETH*2))
@@ -42,9 +47,9 @@ func TestBurn(t *testing.T) {
 
 	context.Blockchain.Commit()
 
-	expectedBal := bal.Add(bal, big.NewInt(test.ONE_ETH*2)) // minted 4, burned 2
-	newBal, _ := marketTokenCont.BalanceOf(nil, context.AuthUser3.From)
-	if newBal.Cmp(expectedBal) != 0 {
+	expectedBal := newBal.Sub(newBal, big.NewInt(test.ONE_ETH*2)) // burned 2
+	newerBal, _ := marketTokenCont.BalanceOf(nil, context.AuthUser3.From)
+	if newerBal.Cmp(expectedBal) != 0 {
 		t.Errorf("Expected new balance to be %v, got: %v", expectedBal, newBal)
 	}
 
@@ -54,7 +59,7 @@ func TestBurn(t *testing.T) {
 	test.IfNotNil(t, privErr2, "Error attempting to reset Market Token privileged contracts")
 
 	// Check that the listing address hasn't changed
-	actualListingAddress, _, getErr := marketTokenCont.GetPrivileged(test.GetCallOpts(context.AuthOwner))
+	_, actualListingAddress, getErr := marketTokenCont.GetPrivileged(test.GetCallOpts(context.AuthOwner))
 	test.IfNotNil(t, getErr, "Error attempting to get privileged contracts")
 	if actualListingAddress != context.AuthUser3.From {
 		t.Errorf("Listing address has been changed incorrectly")
