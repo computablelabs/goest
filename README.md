@@ -15,7 +15,7 @@ Alternatively, if you'd prefer, you can install Geth from source. See [instructi
 #### Developer Note: Build ABIGEN
 If you are editing and compiling the smart contracts you will need to ensure that `abigen` is available to your go environment.
 
-    cd $GOPATH/ethereum/go-ethereum && make all
+    cd $GOPATH/src/github.com/ethereum/go-ethereum && make devtools (or make all)
 
 ### Run Tests
 The test suites are written in Go, so you can run tests from the top level directory with
