@@ -14,6 +14,16 @@ func TestRegister(t *testing.T) {
 	// we may already have a backend registered
 	preUrl, _ := deployed.DatatrustContract.GetBackendUrl(nil)
 	if len(preUrl) == 0 {
+		// a new registrant must have some CMT
+		transErr := test.MaybeTransferMarketToken(context, deployed, context.AuthOwner, context.AuthBackend.From,
+			big.NewInt(test.ONE_GWEI))
+		test.IfNotNil(t, transErr, "Error maybe transferring market tokens")
+
+		// member will need to have approved the voting contract to spend at least the stake
+		incErr := test.MaybeIncreaseMarketTokenAllowance(context, deployed, context.AuthBackend, deployed.VotingAddress,
+			big.NewInt(test.ONE_GWEI))
+		test.IfNotNil(t, incErr, "Error maybe transferring market token approval")
+
 		_, regErr := deployed.DatatrustContract.Register(test.GetTxOpts(context.AuthBackend, nil,
 			big.NewInt(test.ONE_GWEI*2), 500000), "http://www.icanhazbackend.com")
 		test.IfNotNil(t, regErr, fmt.Sprintf("Error registering for backend status: %v", regErr))
