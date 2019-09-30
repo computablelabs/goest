@@ -4,28 +4,36 @@
 [![Build Status](https://travis-ci.org/computablelabs/goest.svg?branch=master)](https://travis-ci.org/computablelabs/goest)
 
 ### Installation
-- Python 3.6 is required. Hey, look at that next bullet...
-- We strongly recommend you use a dedicated virtual environment for goest. Here `virtualenv` is used, but you could use `venv` as well:
+
+    pip install -r requirements.txt
+
+Before running `pip` however, you may want to follow these steps for Python and Golang setup strategies (unless you have your own).
+
+#### Python
+Python 3.6 is required. We strongly recommend you use a dedicated virtual environment for goest. Here `virtualenv` is used, but you could use `venv` as well:
 
     virtualenv -p python3.6 --no-site-packages <path-to-virtual-env-dir>
     source <path-to-virtual-env-dir>/bin/activate
 
-- Make sure your Go environment is configured. See [go installation directions](https://golang.org/doc/install). Note that it is idiomatic go to have your
-  `$GOPATH` and `$GOROOT` exported to your shell. Of particular import is `$GOPATH` which is used by some of the `invoke` tasks in this project. _This_ dev,
-  for example, has:
+#### Go
+Make sure your Go environment is configured. See [go installation directions](https://golang.org/doc/install). Note that it is idiomatic go to have your
+`$GOPATH` and `$GOROOT` exported to your shell. Of particular import is `$GOPATH` which is used by some of the `invoke` tasks in this project. _This_ dev, for example, has:
 
     export GOROOT=$HOME/.go
     export GOPATH=$HOME/go
 
-- The test suite uses `geth` utilities and libraries. You can install `geth` with `go get`:
+The test suite uses `geth` utilities and libraries. You can install `geth` with `go get`:
 
     go get -d github.com/ethereum/go-ethereum
 
-Alternatively, if you'd prefer, you can install Geth from source. See [instructions](https://github.com/ethereum/go-ethereum/wiki/Installing-Geth).
-Once installed, ensure that `abigen` is available to your go environment by _at least_ building the `devtools`:
+Alternatively, if you'd prefer, you can install Geth from source. See [instructions](https://github.com/ethereum/go-ethereum/wiki/Installing-Geth). Once installed,
+ensure that `abigen` is available to your go environment by _at least_ building the `devtools`:
 
     cd $GOPATH/src/github.com/ethereum/go-ethereum
     make devtools (or make all)
+
+We use "latest" Go (currently at `1,13,1`), typically bumping our own environments quickly after each release. You can always check the `.travis.yml` file for Golang version.
+I have found it useful to employ a version manager, see [g](https://github.com/stefanmaric/g)
 
 ### Run Tests
 The test suites are written in Go, so you can run tests with the `invoke` task (from root directory):
