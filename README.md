@@ -18,16 +18,16 @@ If you are editing and compiling the smart contracts you will need to ensure tha
     cd $GOPATH/src/github.com/ethereum/go-ethereum && make devtools (or make all)
 
 ### Run Tests
-The test suites are written in Go, so you can run tests from the top level directory with
+The test suites are written in Go, so you can run tests with the `invoke` task (from root directory):
 
     invoke test
 
-You can also run individual tests by specifying a subdirectory. For example, here's how you would run the tests for `ethertoken`:
+You can also run individual tests by specifying a package. For example, here's how you would run the tests for `ethertoken`:
 
     go test -v ./tests/ethertokentest/
 
 #### Developer Note: Making changes to contract
-If you've changed a contract in this repo, you will need to regenerate the `.abi` and `.bin` files tied to that file. These files are used to regenerate the go API bindings for the contract. You finally need to generate the external vyper files. For example, let's suppose that you've changed the `Voting.vy` contract. Then you would run these commands
+If you've changed a contract in this repo, you will need to regenerate the `.abi` and `.bin` files for that file. These files are used to regenerate the go API bindings that power the spec suite. Finally, you should regenerate the external interface file for any changed contract. Here are the invoke tasks for performing these actions:
 
 ##### Precompilation
 Vyper contracts can have their ABI and BIN files created by using the `invoke` task dedicated to "precompiling"
@@ -35,8 +35,7 @@ Vyper contracts can have their ABI and BIN files created by using the `invoke` t
     invoke precompile
 
 ##### Compilation
-Once ABI and BIN files are created we need to create Golang bindings so that the spec suite can run. There is a dedicated
-task for compilation of these:
+Once ABI and BIN files are created we need to create Golang bindings so that the spec suite can run. There is a dedicated task for compilation of these:
 
     invoke compile (note this will also trigger precompilation)
 
