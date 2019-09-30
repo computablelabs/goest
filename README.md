@@ -14,8 +14,8 @@
   `$GOPATH` and `$GOROOT` exported to your shell. Of particular import is `$GOPATH` which is used by some of the `invoke` tasks in this project. _This_ dev,
   for example, has:
 
-    export GOROOT=~/.go
-    export GOPATH=~/go
+    export GOROOT=$HOME/.go
+    export GOPATH=$HOME/go
 
 - The test suite uses `geth` utilities and libraries. You can install `geth` with `go get`:
 
