@@ -136,7 +136,7 @@ def addCandidate(hash: bytes32, kind: uint256, owner: address, stake: wei_value,
   assert self.candidates[hash].owner == ZERO_ADDRESS
   if kind == CHALLENGE: # a challenger must successfully stake a challenge
     self.market_token.transferFrom(owner, self, stake)
-    self.stakes[owner][hash] = stake
+    self.stakes[owner][hash] += stake
   end: timestamp = block.timestamp + vote_by
   self.candidates[hash].kind = kind
   self.candidates[hash].owner = owner
