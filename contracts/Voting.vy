@@ -3,7 +3,7 @@
 # @author Computable
 
 # constants
-CHALLENGE: constant(uint256) = 2 # candidate.kind that voting knows about
+APPLICATION: constant(uint256) = 1 # lone candidate.kind that voting knows about
 
 struct Candidate:
   kind: uint256 # one of [1,2,3,4] representing an application, challenge, reparam or registration respectively
@@ -134,7 +134,7 @@ def addCandidate(hash: bytes32, kind: uint256, owner: address, stake: wei_value,
   """
   assert self._hasPrivilege(msg.sender)
   assert self.candidates[hash].owner == ZERO_ADDRESS
-  if kind == CHALLENGE: # a challenger must successfully stake a challenge
+  if kind != APPLICATION: # Only applications are unstaked
     self.market_token.transferFrom(owner, self, stake)
     self.stakes[owner][hash] += stake
   end: timestamp = block.timestamp + vote_by

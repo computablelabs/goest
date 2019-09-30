@@ -9,19 +9,19 @@ import (
 )
 
 func TestVote(t *testing.T) {
-	// auth member will need at least the stake
+	// auth member will need at least the stake * 2 (if we use them for reparam as well)
 	transErr := test.MaybeTransferMarketToken(context, deployed, context.AuthOwner, context.AuthUser1.From,
-		big.NewInt(test.ONE_GWEI))
+		big.NewInt(test.ONE_GWEI*2))
 	test.IfNotNil(t, transErr, "Error maybe transferring market tokens")
 
 	// member will need to have approved the voting contract to spend at least the stake
 	incErr := test.MaybeIncreaseMarketTokenAllowance(context, deployed, context.AuthUser1, deployed.VotingAddress,
-		big.NewInt(test.ONE_GWEI))
+		big.NewInt(test.ONE_GWEI*2))
 	test.IfNotNil(t, incErr, "Error maybe transferring market token approval")
 
-	// we need a candidate, a privileged contract must add it...
+	// we need a candidate, a privileged contract must add it...(NOTE: reparams are staked now)
 	_, candErr := deployed.ParameterizerContract.Reparameterize(test.GetTxOpts(context.AuthUser1, nil,
-		big.NewInt(test.ONE_GWEI*2), 200000), test.VOTE_BY, big.NewInt(99))
+		big.NewInt(test.ONE_GWEI*2), 500000), test.VOTE_BY, big.NewInt(99))
 	test.IfNotNil(t, candErr, fmt.Sprintf("Error adding candidate: %v", candErr))
 
 	context.Blockchain.Commit()
@@ -37,7 +37,7 @@ func TestVote(t *testing.T) {
 
 	// cast a yea vote
 	_, voteErr := deployed.VotingContract.Vote(test.GetTxOpts(context.AuthUser1, nil,
-		big.NewInt(test.ONE_GWEI*2), 150000), bytes, big.NewInt(1))
+		big.NewInt(test.ONE_GWEI*2), 500000), bytes, big.NewInt(1))
 	test.IfNotNil(t, voteErr, fmt.Sprintf("Error voting for candidate: %v", voteErr))
 
 	context.Blockchain.Commit()
