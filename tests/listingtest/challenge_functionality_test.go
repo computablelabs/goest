@@ -387,9 +387,9 @@ func TestStakeOverwrite(t *testing.T) {
 	}
 }
 
-// show that a user who votes about a list candidate -> list passes -> leave their stake -> challenge listing will overwrite their original vote stake
+// show that a user who votes about a list candidate -> list passes -> leave their stake -> challenge listing will not overwrite their original vote stake
 // that they did not unstake...
-func TestVoteStakeOverwrite(t *testing.T) {
+func TestVoteStakeNotOverwritten(t *testing.T) {
 	listingHash := test.GenBytes32("QuxMarket00")
 	// user3 has nothing staked at this hash
 	user3Stake, _ := deployed.VotingContract.GetStake(nil, listingHash, context.AuthUser3.From)
@@ -444,6 +444,7 @@ func TestVoteStakeOverwrite(t *testing.T) {
 	pStake, _ := deployed.ParameterizerContract.GetStake(nil)
 	// we'll leave user 3's stake in place...
 	user3StakeNow, _ := deployed.VotingContract.GetStake(nil, listingHash, context.AuthUser3.From)
+	t.Logf("User 3 stake %v", user3StakeNow)
 	if user3StakeNow.Cmp(pStake) != 0 {
 		t.Errorf("Expected %v to be %v", user3StakeNow, pStake)
 	}
@@ -474,9 +475,9 @@ func TestVoteStakeOverwrite(t *testing.T) {
 		t.Errorf("Expected user balance to be 0, got: %v", userBalNow)
 	}
 
-	// note that the stake is present, but did not aggregate
+	// note that the stake is present, and did aggregate (thus is GT the stake amt itself)
 	user3StakeAgain, _ := deployed.VotingContract.GetStake(nil, listingHash, context.AuthUser3.From)
-	if user3StakeNow.Cmp(pStake) != 0 {
+	if user3StakeAgain.Cmp(pStake) != 1 {
 		t.Errorf("Expected %v to be %v", user3StakeAgain, pStake)
 	}
 }
