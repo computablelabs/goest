@@ -148,10 +148,10 @@ func TestResolveChallenge(t *testing.T) {
 		t.Errorf("Expected supply to be 0, got: %v", supplyNow)
 	}
 
-	// note that the listing supply was simply burned, not transferred to the owner on removal
+	// note that the listing supply was not burned, and instead transferred to the owner on removal
 	ownerBalNow, _ := deployed.MarketTokenContract.BalanceOf(nil, context.AuthUser1.From)
-	if ownerBalNow.Cmp(ownerBal) != 0 {
-		t.Errorf("Expected %v to be %v", ownerBalNow, ownerBal)
+	if ownerBalNow.Cmp(ownerBal) != 1 {
+		t.Errorf("Expected %v to be > %v", ownerBalNow, ownerBal)
 	}
 
 	// the candidate should have been pruned
@@ -380,10 +380,10 @@ func TestStakeOverwrite(t *testing.T) {
 		t.Errorf("Expected member 2 stake to be 0, got: %v", member2StakeNow)
 	}
 
-	// member 1 should be credited that stake now, but notice the 2 stakes did not aggregate
+	// member 1 should be credited that stake now, but notice the 2 stakes have aggregated
 	user1StakeNow, _ := deployed.VotingContract.GetStake(nil, listingHash, context.AuthUser1.From)
-	if user1StakeNow.Cmp(pStake) != 0 {
-		t.Errorf("Expected member 1 stake to be %v, got: %v", pStake, user1StakeNow)
+	if user1StakeNow.Cmp(pStake) != 1 {
+		t.Errorf("Expected member 1 stake to be > %v, got: %v", pStake, user1StakeNow)
 	}
 }
 
