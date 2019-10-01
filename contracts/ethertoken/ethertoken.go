@@ -15,6 +15,18 @@ import (
 	"github.com/ethereum/go-ethereum/event"
 )
 
+// Reference imports to suppress errors if they are not otherwise used.
+var (
+	_ = big.NewInt
+	_ = strings.NewReader
+	_ = ethereum.NotFound
+	_ = abi.U256
+	_ = bind.Bind
+	_ = common.Big1
+	_ = types.BloomLookup
+	_ = event.NewSubscription
+)
+
 // EtherTokenABI is the input ABI used to generate the binding from.
 const EtherTokenABI = "[{\"name\":\"Approval\",\"inputs\":[{\"type\":\"address\",\"name\":\"owner\",\"indexed\":true},{\"type\":\"address\",\"name\":\"spender\",\"indexed\":true},{\"type\":\"uint256\",\"name\":\"amount\",\"indexed\":false,\"unit\":\"wei\"}],\"anonymous\":false,\"type\":\"event\"},{\"name\":\"Deposited\",\"inputs\":[{\"type\":\"address\",\"name\":\"source\",\"indexed\":true},{\"type\":\"uint256\",\"name\":\"amount\",\"indexed\":false,\"unit\":\"wei\"}],\"anonymous\":false,\"type\":\"event\"},{\"name\":\"Transfer\",\"inputs\":[{\"type\":\"address\",\"name\":\"source\",\"indexed\":true},{\"type\":\"address\",\"name\":\"to\",\"indexed\":true},{\"type\":\"uint256\",\"name\":\"amount\",\"indexed\":false,\"unit\":\"wei\"}],\"anonymous\":false,\"type\":\"event\"},{\"name\":\"Withdrawn\",\"inputs\":[{\"type\":\"address\",\"name\":\"to\",\"indexed\":true},{\"type\":\"uint256\",\"name\":\"amount\",\"indexed\":false,\"unit\":\"wei\"}],\"anonymous\":false,\"type\":\"event\"},{\"outputs\":[],\"inputs\":[],\"constant\":false,\"payable\":false,\"type\":\"constructor\"},{\"name\":\"allowance\",\"outputs\":[{\"type\":\"uint256\",\"unit\":\"wei\",\"name\":\"out\"}],\"inputs\":[{\"type\":\"address\",\"name\":\"owner\"},{\"type\":\"address\",\"name\":\"spender\"}],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":859},{\"name\":\"approve\",\"outputs\":[{\"type\":\"bool\",\"name\":\"out\"}],\"inputs\":[{\"type\":\"address\",\"name\":\"spender\"},{\"type\":\"uint256\",\"unit\":\"wei\",\"name\":\"amount\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":37763},{\"name\":\"balanceOf\",\"outputs\":[{\"type\":\"uint256\",\"unit\":\"wei\",\"name\":\"out\"}],\"inputs\":[{\"type\":\"address\",\"name\":\"owner\"}],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":765},{\"name\":\"decreaseAllowance\",\"outputs\":[{\"type\":\"bool\",\"name\":\"out\"}],\"inputs\":[{\"type\":\"address\",\"name\":\"spender\"},{\"type\":\"uint256\",\"unit\":\"wei\",\"name\":\"amount\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":38801},{\"name\":\"deposit\",\"outputs\":[],\"inputs\":[],\"constant\":false,\"payable\":true,\"type\":\"function\",\"gas\":73694},{\"name\":\"increaseAllowance\",\"outputs\":[{\"type\":\"bool\",\"name\":\"out\"}],\"inputs\":[{\"type\":\"address\",\"name\":\"spender\"},{\"type\":\"uint256\",\"unit\":\"wei\",\"name\":\"amount\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":39067},{\"name\":\"totalSupply\",\"outputs\":[{\"type\":\"uint256\",\"unit\":\"wei\",\"name\":\"out\"}],\"inputs\":[],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":731},{\"name\":\"transfer\",\"outputs\":[{\"type\":\"bool\",\"name\":\"out\"}],\"inputs\":[{\"type\":\"address\",\"name\":\"to\"},{\"type\":\"uint256\",\"unit\":\"wei\",\"name\":\"amount\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":74365},{\"name\":\"transferFrom\",\"outputs\":[{\"type\":\"bool\",\"name\":\"out\"}],\"inputs\":[{\"type\":\"address\",\"name\":\"source\"},{\"type\":\"address\",\"name\":\"to\"},{\"type\":\"uint256\",\"unit\":\"wei\",\"name\":\"amount\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":110329},{\"name\":\"withdraw\",\"outputs\":[],\"inputs\":[{\"type\":\"uint256\",\"unit\":\"wei\",\"name\":\"amount\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":108350},{\"name\":\"decimals\",\"outputs\":[{\"type\":\"uint256\",\"name\":\"out\"}],\"inputs\":[],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":851},{\"name\":\"symbol\",\"outputs\":[{\"type\":\"string\",\"name\":\"out\"}],\"inputs\":[],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":6904}]"
 
@@ -178,7 +190,7 @@ func (_EtherToken *EtherTokenTransactorRaw) Transact(opts *bind.TransactOpts, me
 
 // Allowance is a free data retrieval call binding the contract method 0xdd62ed3e.
 //
-// Solidity: function allowance(owner address, spender address) constant returns(out uint256)
+// Solidity: function allowance(address owner, address spender) constant returns(uint256 out)
 func (_EtherToken *EtherTokenCaller) Allowance(opts *bind.CallOpts, owner common.Address, spender common.Address) (*big.Int, error) {
 	var (
 		ret0 = new(*big.Int)
@@ -190,21 +202,21 @@ func (_EtherToken *EtherTokenCaller) Allowance(opts *bind.CallOpts, owner common
 
 // Allowance is a free data retrieval call binding the contract method 0xdd62ed3e.
 //
-// Solidity: function allowance(owner address, spender address) constant returns(out uint256)
+// Solidity: function allowance(address owner, address spender) constant returns(uint256 out)
 func (_EtherToken *EtherTokenSession) Allowance(owner common.Address, spender common.Address) (*big.Int, error) {
 	return _EtherToken.Contract.Allowance(&_EtherToken.CallOpts, owner, spender)
 }
 
 // Allowance is a free data retrieval call binding the contract method 0xdd62ed3e.
 //
-// Solidity: function allowance(owner address, spender address) constant returns(out uint256)
+// Solidity: function allowance(address owner, address spender) constant returns(uint256 out)
 func (_EtherToken *EtherTokenCallerSession) Allowance(owner common.Address, spender common.Address) (*big.Int, error) {
 	return _EtherToken.Contract.Allowance(&_EtherToken.CallOpts, owner, spender)
 }
 
 // BalanceOf is a free data retrieval call binding the contract method 0x70a08231.
 //
-// Solidity: function balanceOf(owner address) constant returns(out uint256)
+// Solidity: function balanceOf(address owner) constant returns(uint256 out)
 func (_EtherToken *EtherTokenCaller) BalanceOf(opts *bind.CallOpts, owner common.Address) (*big.Int, error) {
 	var (
 		ret0 = new(*big.Int)
@@ -216,21 +228,21 @@ func (_EtherToken *EtherTokenCaller) BalanceOf(opts *bind.CallOpts, owner common
 
 // BalanceOf is a free data retrieval call binding the contract method 0x70a08231.
 //
-// Solidity: function balanceOf(owner address) constant returns(out uint256)
+// Solidity: function balanceOf(address owner) constant returns(uint256 out)
 func (_EtherToken *EtherTokenSession) BalanceOf(owner common.Address) (*big.Int, error) {
 	return _EtherToken.Contract.BalanceOf(&_EtherToken.CallOpts, owner)
 }
 
 // BalanceOf is a free data retrieval call binding the contract method 0x70a08231.
 //
-// Solidity: function balanceOf(owner address) constant returns(out uint256)
+// Solidity: function balanceOf(address owner) constant returns(uint256 out)
 func (_EtherToken *EtherTokenCallerSession) BalanceOf(owner common.Address) (*big.Int, error) {
 	return _EtherToken.Contract.BalanceOf(&_EtherToken.CallOpts, owner)
 }
 
 // Decimals is a free data retrieval call binding the contract method 0x313ce567.
 //
-// Solidity: function decimals() constant returns(out uint256)
+// Solidity: function decimals() constant returns(uint256 out)
 func (_EtherToken *EtherTokenCaller) Decimals(opts *bind.CallOpts) (*big.Int, error) {
 	var (
 		ret0 = new(*big.Int)
@@ -242,21 +254,21 @@ func (_EtherToken *EtherTokenCaller) Decimals(opts *bind.CallOpts) (*big.Int, er
 
 // Decimals is a free data retrieval call binding the contract method 0x313ce567.
 //
-// Solidity: function decimals() constant returns(out uint256)
+// Solidity: function decimals() constant returns(uint256 out)
 func (_EtherToken *EtherTokenSession) Decimals() (*big.Int, error) {
 	return _EtherToken.Contract.Decimals(&_EtherToken.CallOpts)
 }
 
 // Decimals is a free data retrieval call binding the contract method 0x313ce567.
 //
-// Solidity: function decimals() constant returns(out uint256)
+// Solidity: function decimals() constant returns(uint256 out)
 func (_EtherToken *EtherTokenCallerSession) Decimals() (*big.Int, error) {
 	return _EtherToken.Contract.Decimals(&_EtherToken.CallOpts)
 }
 
 // Symbol is a free data retrieval call binding the contract method 0x95d89b41.
 //
-// Solidity: function symbol() constant returns(out string)
+// Solidity: function symbol() constant returns(string out)
 func (_EtherToken *EtherTokenCaller) Symbol(opts *bind.CallOpts) (string, error) {
 	var (
 		ret0 = new(string)
@@ -268,21 +280,21 @@ func (_EtherToken *EtherTokenCaller) Symbol(opts *bind.CallOpts) (string, error)
 
 // Symbol is a free data retrieval call binding the contract method 0x95d89b41.
 //
-// Solidity: function symbol() constant returns(out string)
+// Solidity: function symbol() constant returns(string out)
 func (_EtherToken *EtherTokenSession) Symbol() (string, error) {
 	return _EtherToken.Contract.Symbol(&_EtherToken.CallOpts)
 }
 
 // Symbol is a free data retrieval call binding the contract method 0x95d89b41.
 //
-// Solidity: function symbol() constant returns(out string)
+// Solidity: function symbol() constant returns(string out)
 func (_EtherToken *EtherTokenCallerSession) Symbol() (string, error) {
 	return _EtherToken.Contract.Symbol(&_EtherToken.CallOpts)
 }
 
 // TotalSupply is a free data retrieval call binding the contract method 0x18160ddd.
 //
-// Solidity: function totalSupply() constant returns(out uint256)
+// Solidity: function totalSupply() constant returns(uint256 out)
 func (_EtherToken *EtherTokenCaller) TotalSupply(opts *bind.CallOpts) (*big.Int, error) {
 	var (
 		ret0 = new(*big.Int)
@@ -294,56 +306,56 @@ func (_EtherToken *EtherTokenCaller) TotalSupply(opts *bind.CallOpts) (*big.Int,
 
 // TotalSupply is a free data retrieval call binding the contract method 0x18160ddd.
 //
-// Solidity: function totalSupply() constant returns(out uint256)
+// Solidity: function totalSupply() constant returns(uint256 out)
 func (_EtherToken *EtherTokenSession) TotalSupply() (*big.Int, error) {
 	return _EtherToken.Contract.TotalSupply(&_EtherToken.CallOpts)
 }
 
 // TotalSupply is a free data retrieval call binding the contract method 0x18160ddd.
 //
-// Solidity: function totalSupply() constant returns(out uint256)
+// Solidity: function totalSupply() constant returns(uint256 out)
 func (_EtherToken *EtherTokenCallerSession) TotalSupply() (*big.Int, error) {
 	return _EtherToken.Contract.TotalSupply(&_EtherToken.CallOpts)
 }
 
 // Approve is a paid mutator transaction binding the contract method 0x095ea7b3.
 //
-// Solidity: function approve(spender address, amount uint256) returns(out bool)
+// Solidity: function approve(address spender, uint256 amount) returns(bool out)
 func (_EtherToken *EtherTokenTransactor) Approve(opts *bind.TransactOpts, spender common.Address, amount *big.Int) (*types.Transaction, error) {
 	return _EtherToken.contract.Transact(opts, "approve", spender, amount)
 }
 
 // Approve is a paid mutator transaction binding the contract method 0x095ea7b3.
 //
-// Solidity: function approve(spender address, amount uint256) returns(out bool)
+// Solidity: function approve(address spender, uint256 amount) returns(bool out)
 func (_EtherToken *EtherTokenSession) Approve(spender common.Address, amount *big.Int) (*types.Transaction, error) {
 	return _EtherToken.Contract.Approve(&_EtherToken.TransactOpts, spender, amount)
 }
 
 // Approve is a paid mutator transaction binding the contract method 0x095ea7b3.
 //
-// Solidity: function approve(spender address, amount uint256) returns(out bool)
+// Solidity: function approve(address spender, uint256 amount) returns(bool out)
 func (_EtherToken *EtherTokenTransactorSession) Approve(spender common.Address, amount *big.Int) (*types.Transaction, error) {
 	return _EtherToken.Contract.Approve(&_EtherToken.TransactOpts, spender, amount)
 }
 
 // DecreaseAllowance is a paid mutator transaction binding the contract method 0xa457c2d7.
 //
-// Solidity: function decreaseAllowance(spender address, amount uint256) returns(out bool)
+// Solidity: function decreaseAllowance(address spender, uint256 amount) returns(bool out)
 func (_EtherToken *EtherTokenTransactor) DecreaseAllowance(opts *bind.TransactOpts, spender common.Address, amount *big.Int) (*types.Transaction, error) {
 	return _EtherToken.contract.Transact(opts, "decreaseAllowance", spender, amount)
 }
 
 // DecreaseAllowance is a paid mutator transaction binding the contract method 0xa457c2d7.
 //
-// Solidity: function decreaseAllowance(spender address, amount uint256) returns(out bool)
+// Solidity: function decreaseAllowance(address spender, uint256 amount) returns(bool out)
 func (_EtherToken *EtherTokenSession) DecreaseAllowance(spender common.Address, amount *big.Int) (*types.Transaction, error) {
 	return _EtherToken.Contract.DecreaseAllowance(&_EtherToken.TransactOpts, spender, amount)
 }
 
 // DecreaseAllowance is a paid mutator transaction binding the contract method 0xa457c2d7.
 //
-// Solidity: function decreaseAllowance(spender address, amount uint256) returns(out bool)
+// Solidity: function decreaseAllowance(address spender, uint256 amount) returns(bool out)
 func (_EtherToken *EtherTokenTransactorSession) DecreaseAllowance(spender common.Address, amount *big.Int) (*types.Transaction, error) {
 	return _EtherToken.Contract.DecreaseAllowance(&_EtherToken.TransactOpts, spender, amount)
 }
@@ -371,84 +383,84 @@ func (_EtherToken *EtherTokenTransactorSession) Deposit() (*types.Transaction, e
 
 // IncreaseAllowance is a paid mutator transaction binding the contract method 0x39509351.
 //
-// Solidity: function increaseAllowance(spender address, amount uint256) returns(out bool)
+// Solidity: function increaseAllowance(address spender, uint256 amount) returns(bool out)
 func (_EtherToken *EtherTokenTransactor) IncreaseAllowance(opts *bind.TransactOpts, spender common.Address, amount *big.Int) (*types.Transaction, error) {
 	return _EtherToken.contract.Transact(opts, "increaseAllowance", spender, amount)
 }
 
 // IncreaseAllowance is a paid mutator transaction binding the contract method 0x39509351.
 //
-// Solidity: function increaseAllowance(spender address, amount uint256) returns(out bool)
+// Solidity: function increaseAllowance(address spender, uint256 amount) returns(bool out)
 func (_EtherToken *EtherTokenSession) IncreaseAllowance(spender common.Address, amount *big.Int) (*types.Transaction, error) {
 	return _EtherToken.Contract.IncreaseAllowance(&_EtherToken.TransactOpts, spender, amount)
 }
 
 // IncreaseAllowance is a paid mutator transaction binding the contract method 0x39509351.
 //
-// Solidity: function increaseAllowance(spender address, amount uint256) returns(out bool)
+// Solidity: function increaseAllowance(address spender, uint256 amount) returns(bool out)
 func (_EtherToken *EtherTokenTransactorSession) IncreaseAllowance(spender common.Address, amount *big.Int) (*types.Transaction, error) {
 	return _EtherToken.Contract.IncreaseAllowance(&_EtherToken.TransactOpts, spender, amount)
 }
 
 // Transfer is a paid mutator transaction binding the contract method 0xa9059cbb.
 //
-// Solidity: function transfer(to address, amount uint256) returns(out bool)
+// Solidity: function transfer(address to, uint256 amount) returns(bool out)
 func (_EtherToken *EtherTokenTransactor) Transfer(opts *bind.TransactOpts, to common.Address, amount *big.Int) (*types.Transaction, error) {
 	return _EtherToken.contract.Transact(opts, "transfer", to, amount)
 }
 
 // Transfer is a paid mutator transaction binding the contract method 0xa9059cbb.
 //
-// Solidity: function transfer(to address, amount uint256) returns(out bool)
+// Solidity: function transfer(address to, uint256 amount) returns(bool out)
 func (_EtherToken *EtherTokenSession) Transfer(to common.Address, amount *big.Int) (*types.Transaction, error) {
 	return _EtherToken.Contract.Transfer(&_EtherToken.TransactOpts, to, amount)
 }
 
 // Transfer is a paid mutator transaction binding the contract method 0xa9059cbb.
 //
-// Solidity: function transfer(to address, amount uint256) returns(out bool)
+// Solidity: function transfer(address to, uint256 amount) returns(bool out)
 func (_EtherToken *EtherTokenTransactorSession) Transfer(to common.Address, amount *big.Int) (*types.Transaction, error) {
 	return _EtherToken.Contract.Transfer(&_EtherToken.TransactOpts, to, amount)
 }
 
 // TransferFrom is a paid mutator transaction binding the contract method 0x23b872dd.
 //
-// Solidity: function transferFrom(source address, to address, amount uint256) returns(out bool)
+// Solidity: function transferFrom(address source, address to, uint256 amount) returns(bool out)
 func (_EtherToken *EtherTokenTransactor) TransferFrom(opts *bind.TransactOpts, source common.Address, to common.Address, amount *big.Int) (*types.Transaction, error) {
 	return _EtherToken.contract.Transact(opts, "transferFrom", source, to, amount)
 }
 
 // TransferFrom is a paid mutator transaction binding the contract method 0x23b872dd.
 //
-// Solidity: function transferFrom(source address, to address, amount uint256) returns(out bool)
+// Solidity: function transferFrom(address source, address to, uint256 amount) returns(bool out)
 func (_EtherToken *EtherTokenSession) TransferFrom(source common.Address, to common.Address, amount *big.Int) (*types.Transaction, error) {
 	return _EtherToken.Contract.TransferFrom(&_EtherToken.TransactOpts, source, to, amount)
 }
 
 // TransferFrom is a paid mutator transaction binding the contract method 0x23b872dd.
 //
-// Solidity: function transferFrom(source address, to address, amount uint256) returns(out bool)
+// Solidity: function transferFrom(address source, address to, uint256 amount) returns(bool out)
 func (_EtherToken *EtherTokenTransactorSession) TransferFrom(source common.Address, to common.Address, amount *big.Int) (*types.Transaction, error) {
 	return _EtherToken.Contract.TransferFrom(&_EtherToken.TransactOpts, source, to, amount)
 }
 
 // Withdraw is a paid mutator transaction binding the contract method 0x2e1a7d4d.
 //
-// Solidity: function withdraw(amount uint256) returns()
+// Solidity: function withdraw(uint256 amount) returns()
 func (_EtherToken *EtherTokenTransactor) Withdraw(opts *bind.TransactOpts, amount *big.Int) (*types.Transaction, error) {
 	return _EtherToken.contract.Transact(opts, "withdraw", amount)
 }
 
 // Withdraw is a paid mutator transaction binding the contract method 0x2e1a7d4d.
 //
-// Solidity: function withdraw(amount uint256) returns()
+// Solidity: function withdraw(uint256 amount) returns()
 func (_EtherToken *EtherTokenSession) Withdraw(amount *big.Int) (*types.Transaction, error) {
 	return _EtherToken.Contract.Withdraw(&_EtherToken.TransactOpts, amount)
 }
 
 // Withdraw is a paid mutator transaction binding the contract method 0x2e1a7d4d.
 //
-// Solidity: function withdraw(amount uint256) returns()
+// Solidity: function withdraw(uint256 amount) returns()
 func (_EtherToken *EtherTokenTransactorSession) Withdraw(amount *big.Int) (*types.Transaction, error) {
 	return _EtherToken.Contract.Withdraw(&_EtherToken.TransactOpts, amount)
 }
@@ -530,7 +542,7 @@ type EtherTokenApproval struct {
 
 // FilterApproval is a free log retrieval operation binding the contract event 0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925.
 //
-// Solidity: e Approval(owner indexed address, spender indexed address, amount uint256)
+// Solidity: event Approval(address indexed owner, address indexed spender, uint256 amount)
 func (_EtherToken *EtherTokenFilterer) FilterApproval(opts *bind.FilterOpts, owner []common.Address, spender []common.Address) (*EtherTokenApprovalIterator, error) {
 
 	var ownerRule []interface{}
@@ -551,7 +563,7 @@ func (_EtherToken *EtherTokenFilterer) FilterApproval(opts *bind.FilterOpts, own
 
 // WatchApproval is a free log subscription operation binding the contract event 0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925.
 //
-// Solidity: e Approval(owner indexed address, spender indexed address, amount uint256)
+// Solidity: event Approval(address indexed owner, address indexed spender, uint256 amount)
 func (_EtherToken *EtherTokenFilterer) WatchApproval(opts *bind.WatchOpts, sink chan<- *EtherTokenApproval, owner []common.Address, spender []common.Address) (event.Subscription, error) {
 
 	var ownerRule []interface{}
@@ -671,7 +683,7 @@ type EtherTokenDeposited struct {
 
 // FilterDeposited is a free log retrieval operation binding the contract event 0x2da466a7b24304f47e87fa2e1e5a81b9831ce54fec19055ce277ca2f39ba42c4.
 //
-// Solidity: e Deposited(source indexed address, amount uint256)
+// Solidity: event Deposited(address indexed source, uint256 amount)
 func (_EtherToken *EtherTokenFilterer) FilterDeposited(opts *bind.FilterOpts, source []common.Address) (*EtherTokenDepositedIterator, error) {
 
 	var sourceRule []interface{}
@@ -688,7 +700,7 @@ func (_EtherToken *EtherTokenFilterer) FilterDeposited(opts *bind.FilterOpts, so
 
 // WatchDeposited is a free log subscription operation binding the contract event 0x2da466a7b24304f47e87fa2e1e5a81b9831ce54fec19055ce277ca2f39ba42c4.
 //
-// Solidity: e Deposited(source indexed address, amount uint256)
+// Solidity: event Deposited(address indexed source, uint256 amount)
 func (_EtherToken *EtherTokenFilterer) WatchDeposited(opts *bind.WatchOpts, sink chan<- *EtherTokenDeposited, source []common.Address) (event.Subscription, error) {
 
 	var sourceRule []interface{}
@@ -805,7 +817,7 @@ type EtherTokenTransfer struct {
 
 // FilterTransfer is a free log retrieval operation binding the contract event 0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef.
 //
-// Solidity: e Transfer(source indexed address, to indexed address, amount uint256)
+// Solidity: event Transfer(address indexed source, address indexed to, uint256 amount)
 func (_EtherToken *EtherTokenFilterer) FilterTransfer(opts *bind.FilterOpts, source []common.Address, to []common.Address) (*EtherTokenTransferIterator, error) {
 
 	var sourceRule []interface{}
@@ -826,7 +838,7 @@ func (_EtherToken *EtherTokenFilterer) FilterTransfer(opts *bind.FilterOpts, sou
 
 // WatchTransfer is a free log subscription operation binding the contract event 0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef.
 //
-// Solidity: e Transfer(source indexed address, to indexed address, amount uint256)
+// Solidity: event Transfer(address indexed source, address indexed to, uint256 amount)
 func (_EtherToken *EtherTokenFilterer) WatchTransfer(opts *bind.WatchOpts, sink chan<- *EtherTokenTransfer, source []common.Address, to []common.Address) (event.Subscription, error) {
 
 	var sourceRule []interface{}
@@ -946,7 +958,7 @@ type EtherTokenWithdrawn struct {
 
 // FilterWithdrawn is a free log retrieval operation binding the contract event 0x7084f5476618d8e60b11ef0d7d3f06914655adb8793e28ff7f018d4c76d505d5.
 //
-// Solidity: e Withdrawn(to indexed address, amount uint256)
+// Solidity: event Withdrawn(address indexed to, uint256 amount)
 func (_EtherToken *EtherTokenFilterer) FilterWithdrawn(opts *bind.FilterOpts, to []common.Address) (*EtherTokenWithdrawnIterator, error) {
 
 	var toRule []interface{}
@@ -963,7 +975,7 @@ func (_EtherToken *EtherTokenFilterer) FilterWithdrawn(opts *bind.FilterOpts, to
 
 // WatchWithdrawn is a free log subscription operation binding the contract event 0x7084f5476618d8e60b11ef0d7d3f06914655adb8793e28ff7f018d4c76d505d5.
 //
-// Solidity: e Withdrawn(to indexed address, amount uint256)
+// Solidity: event Withdrawn(address indexed to, uint256 amount)
 func (_EtherToken *EtherTokenFilterer) WatchWithdrawn(opts *bind.WatchOpts, sink chan<- *EtherTokenWithdrawn, to []common.Address) (event.Subscription, error) {
 
 	var toRule []interface{}

@@ -45,7 +45,6 @@ func setupSupporters(bal *big.Int, numSupporters int) {
 func TestMain(m *testing.M) {
 	// need this to create bigger ETH balances (literal will overflow)
 	var x big.Int
-	zeroEth := big.NewInt(0)
 	oneHundredEth := x.Mul(big.NewInt(test.ONE_ETH), big.NewInt(100))
 	oneHundredTwoEth := x.Add(oneHundredEth, big.NewInt(test.ONE_ETH*2))
 
@@ -55,18 +54,21 @@ func TestMain(m *testing.M) {
 	// override the original simulated backend now that we have appeneded to the allocation
 	context.Blockchain = backends.NewSimulatedBackend(context.Alloc, 4700000)
 
-	deployed, deployedError = test.Deploy(zeroEth,
+	deployed, deployedError = test.Deploy(big.NewInt(test.ONE_ETH),
 		context, &test.Params{
 			PriceFloor:  big.NewInt(test.ONE_MWEI),
 			Spread:      big.NewInt(110),
 			ListReward:  big.NewInt(250000000000000),   // 2.5 x 10**13
 			Stake:       big.NewInt(10000000000000000), // 1 X 10**16
-			VoteBy:      big.NewInt(100),               // no need to use a "real" voteBy
+			VoteBy:      big.NewInt(test.MIN_VOTE_BY),  // no need to use a "real" voteBy
 			Plurality:   big.NewInt(50),
 			BackendPct:  big.NewInt(25),
 			MakerPct:    big.NewInt(25),
 			CostPerByte: big.NewInt(test.ONE_GWEI * 100),
 		})
+	if deployed == nil {
+		log.Fatal(fmt.Sprintf("Error deploying contracts: %v", deployedError))
+	}
 
 	code := m.Run()
 	os.Exit(code)
