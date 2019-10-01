@@ -20,13 +20,13 @@ func TestParameterize(t *testing.T) {
 	test.IfNotNil(t, incErr, "Error maybe transferring market token approval")
 
 	_, err := deployed.ParameterizerContract.Reparameterize(test.GetTxOpts(context.AuthUser1, nil,
-		big.NewInt(test.ONE_GWEI*2), 500000), test.VOTE_BY, big.NewInt(25))
+		big.NewInt(test.ONE_GWEI*2), 500000), test.VOTE_BY, big.NewInt(2*test.MIN_VOTE_BY))
 	test.IfNotNil(t, err, fmt.Sprintf("Error creating proposal: %v", err))
 
 	context.Blockchain.Commit()
 
 	// we should see a candidate now
-	paramHash, _ := deployed.ParameterizerContract.GetHash(nil, big.NewInt(7), big.NewInt(25))
+	paramHash, _ := deployed.ParameterizerContract.GetHash(nil, big.NewInt(7), big.NewInt(2*test.MIN_VOTE_BY))
 	isCan, _ := deployed.VotingContract.IsCandidate(nil, paramHash)
 
 	if !isCan {
@@ -35,7 +35,7 @@ func TestParameterize(t *testing.T) {
 }
 
 func GetReparam(t *testing.T) {
-	paramHash, _ := deployed.ParameterizerContract.GetHash(nil, big.NewInt(7), big.NewInt(25))
+	paramHash, _ := deployed.ParameterizerContract.GetHash(nil, big.NewInt(7), big.NewInt(2*test.MIN_VOTE_BY))
 	name, val, _ := deployed.ParameterizerContract.GetReparam(nil, paramHash)
 
 	if name.Cmp(test.VOTE_BY) != 0 {
@@ -77,7 +77,7 @@ func ResolveReparam(t *testing.T) {
 	}
 
 	// move time forward so the poll is closed
-	context.Blockchain.AdjustTime(100 * time.Second)
+	context.Blockchain.AdjustTime(test.MIN_VOTE_BY * time.Second)
 	context.Blockchain.Commit()
 
 	// make sure its closed now
@@ -97,7 +97,7 @@ func ResolveReparam(t *testing.T) {
 	// voteBy should be changed now
 	newVoteBy, _ := deployed.ParameterizerContract.GetVoteBy(nil)
 
-	if newVoteBy.Cmp(big.NewInt(25)) != 0 {
+	if newVoteBy.Cmp(big.NewInt(2*test.MIN_VOTE_BY)) != 0 {
 		t.Errorf("Expected the new voteBy param to be 25, got: %v", newVoteBy)
 	}
 

@@ -20,7 +20,7 @@ func TestMain(m *testing.M) {
 			Spread:      big.NewInt(110),
 			ListReward:  big.NewInt(250000000000000),      // 2.5 x 10**13
 			Stake:       big.NewInt(test.ONE_FINNEY * 10), // 1 X 10**16
-			VoteBy:      big.NewInt(100),                  // no need to use a "real" voteBy
+			VoteBy:      big.NewInt(test.MIN_VOTE_BY),     // no need to use a "real" voteBy
 			Plurality:   big.NewInt(50),
 			BackendPct:  big.NewInt(39),
 			MakerPct:    big.NewInt(21),

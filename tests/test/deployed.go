@@ -99,6 +99,7 @@ func Deploy(mtBal *big.Int, c *Ctx, p *Params) (*Dep, error) {
 	paramAddr, paramTrans, paramCont, paramErr := parameterizer.DeployParameterizer(
 		c.AuthOwner,
 		c.Blockchain,
+		marketTokenAddr,
 		votingAddr,
 		p.PriceFloor,
 		p.Spread,

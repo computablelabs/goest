@@ -15,6 +15,18 @@ import (
 	"github.com/ethereum/go-ethereum/event"
 )
 
+// Reference imports to suppress errors if they are not otherwise used.
+var (
+	_ = big.NewInt
+	_ = strings.NewReader
+	_ = ethereum.NotFound
+	_ = abi.U256
+	_ = bind.Bind
+	_ = common.Big1
+	_ = types.BloomLookup
+	_ = event.NewSubscription
+)
+
 // DatatrustABI is the input ABI used to generate the binding from.
 const DatatrustABI = "[{\"name\":\"Registered\",\"inputs\":[{\"type\":\"bytes32\",\"name\":\"hash\",\"indexed\":true},{\"type\":\"address\",\"name\":\"registrant\",\"indexed\":true}],\"anonymous\":false,\"type\":\"event\"},{\"name\":\"RegistrationSucceeded\",\"inputs\":[{\"type\":\"bytes32\",\"name\":\"hash\",\"indexed\":true},{\"type\":\"address\",\"name\":\"registrant\",\"indexed\":true}],\"anonymous\":false,\"type\":\"event\"},{\"name\":\"RegistrationFailed\",\"inputs\":[{\"type\":\"bytes32\",\"name\":\"hash\",\"indexed\":true},{\"type\":\"address\",\"name\":\"registrant\",\"indexed\":true}],\"anonymous\":false,\"type\":\"event\"},{\"name\":\"DeliveryRequested\",\"inputs\":[{\"type\":\"bytes32\",\"name\":\"hash\",\"indexed\":true},{\"type\":\"address\",\"name\":\"requester\",\"indexed\":true},{\"type\":\"uint256\",\"name\":\"amount\",\"indexed\":false}],\"anonymous\":false,\"type\":\"event\"},{\"name\":\"Delivered\",\"inputs\":[{\"type\":\"bytes32\",\"name\":\"hash\",\"indexed\":true},{\"type\":\"address\",\"name\":\"owner\",\"indexed\":true},{\"type\":\"bytes32\",\"name\":\"url\",\"indexed\":false}],\"anonymous\":false,\"type\":\"event\"},{\"outputs\":[],\"inputs\":[{\"type\":\"address\",\"name\":\"ether_token_addr\"},{\"type\":\"address\",\"name\":\"voting_addr\"},{\"type\":\"address\",\"name\":\"p11r_addr\"},{\"type\":\"address\",\"name\":\"res_addr\"}],\"constant\":false,\"payable\":false,\"type\":\"constructor\"},{\"name\":\"getPrivileged\",\"outputs\":[{\"type\":\"address\",\"name\":\"out\"}],\"inputs\":[],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":551},{\"name\":\"getReserve\",\"outputs\":[{\"type\":\"address\",\"name\":\"out\"}],\"inputs\":[],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":581},{\"name\":\"setPrivileged\",\"outputs\":[],\"inputs\":[{\"type\":\"address\",\"name\":\"listing\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":35998},{\"name\":\"getHash\",\"outputs\":[{\"type\":\"bytes32\",\"name\":\"out\"}],\"inputs\":[{\"type\":\"string\",\"name\":\"url\"}],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":665},{\"name\":\"getBackendAddress\",\"outputs\":[{\"type\":\"address\",\"name\":\"out\"}],\"inputs\":[],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":671},{\"name\":\"getBackendUrl\",\"outputs\":[{\"type\":\"string\",\"name\":\"out\"}],\"inputs\":[],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":22831},{\"name\":\"setBackendUrl\",\"outputs\":[],\"inputs\":[{\"type\":\"string\",\"name\":\"url\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":176987},{\"name\":\"getDataHash\",\"outputs\":[{\"type\":\"bytes32\",\"name\":\"out\"}],\"inputs\":[{\"type\":\"bytes32\",\"name\":\"hash\"}],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":876},{\"name\":\"setDataHash\",\"outputs\":[],\"inputs\":[{\"type\":\"bytes32\",\"name\":\"listing\"},{\"type\":\"bytes32\",\"name\":\"data\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":35963},{\"name\":\"removeDataHash\",\"outputs\":[],\"inputs\":[{\"type\":\"bytes32\",\"name\":\"hash\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":20990},{\"name\":\"register\",\"outputs\":[],\"inputs\":[{\"type\":\"string\",\"name\":\"url\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":186333},{\"name\":\"resolveRegistration\",\"outputs\":[],\"inputs\":[{\"type\":\"bytes32\",\"name\":\"hash\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":48388},{\"name\":\"requestDelivery\",\"outputs\":[],\"inputs\":[{\"type\":\"bytes32\",\"name\":\"hash\"},{\"type\":\"uint256\",\"name\":\"amount\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":116397},{\"name\":\"getBytesPurchased\",\"outputs\":[{\"type\":\"uint256\",\"name\":\"out\"}],\"inputs\":[{\"type\":\"address\",\"name\":\"addr\"}],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":1095},{\"name\":\"getDelivery\",\"outputs\":[{\"type\":\"address\",\"name\":\"out\"},{\"type\":\"uint256\",\"name\":\"out\"},{\"type\":\"uint256\",\"name\":\"out\"}],\"inputs\":[{\"type\":\"bytes32\",\"name\":\"hash\"}],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":2037},{\"name\":\"listingAccessed\",\"outputs\":[],\"inputs\":[{\"type\":\"bytes32\",\"name\":\"listing\"},{\"type\":\"bytes32\",\"name\":\"delivery\"},{\"type\":\"uint256\",\"name\":\"amount\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":109369},{\"name\":\"getBytesAccessed\",\"outputs\":[{\"type\":\"uint256\",\"name\":\"out\"}],\"inputs\":[{\"type\":\"bytes32\",\"name\":\"hash\"}],\"constant\":true,\"payable\":false,\"type\":\"function\",\"gas\":1146},{\"name\":\"bytesAccessedClaimed\",\"outputs\":[],\"inputs\":[{\"type\":\"bytes32\",\"name\":\"hash\"},{\"type\":\"uint256\",\"unit\":\"wei\",\"name\":\"fee\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":23804},{\"name\":\"delivered\",\"outputs\":[],\"inputs\":[{\"type\":\"bytes32\",\"name\":\"delivery\"},{\"type\":\"bytes32\",\"name\":\"url\"}],\"constant\":false,\"payable\":false,\"type\":\"function\",\"gas\":77140}]"
 
@@ -178,7 +190,7 @@ func (_Datatrust *DatatrustTransactorRaw) Transact(opts *bind.TransactOpts, meth
 
 // GetBackendAddress is a free data retrieval call binding the contract method 0xedb39a40.
 //
-// Solidity: function getBackendAddress() constant returns(out address)
+// Solidity: function getBackendAddress() constant returns(address out)
 func (_Datatrust *DatatrustCaller) GetBackendAddress(opts *bind.CallOpts) (common.Address, error) {
 	var (
 		ret0 = new(common.Address)
@@ -190,21 +202,21 @@ func (_Datatrust *DatatrustCaller) GetBackendAddress(opts *bind.CallOpts) (commo
 
 // GetBackendAddress is a free data retrieval call binding the contract method 0xedb39a40.
 //
-// Solidity: function getBackendAddress() constant returns(out address)
+// Solidity: function getBackendAddress() constant returns(address out)
 func (_Datatrust *DatatrustSession) GetBackendAddress() (common.Address, error) {
 	return _Datatrust.Contract.GetBackendAddress(&_Datatrust.CallOpts)
 }
 
 // GetBackendAddress is a free data retrieval call binding the contract method 0xedb39a40.
 //
-// Solidity: function getBackendAddress() constant returns(out address)
+// Solidity: function getBackendAddress() constant returns(address out)
 func (_Datatrust *DatatrustCallerSession) GetBackendAddress() (common.Address, error) {
 	return _Datatrust.Contract.GetBackendAddress(&_Datatrust.CallOpts)
 }
 
 // GetBackendUrl is a free data retrieval call binding the contract method 0x76e12635.
 //
-// Solidity: function getBackendUrl() constant returns(out string)
+// Solidity: function getBackendUrl() constant returns(string out)
 func (_Datatrust *DatatrustCaller) GetBackendUrl(opts *bind.CallOpts) (string, error) {
 	var (
 		ret0 = new(string)
@@ -216,21 +228,21 @@ func (_Datatrust *DatatrustCaller) GetBackendUrl(opts *bind.CallOpts) (string, e
 
 // GetBackendUrl is a free data retrieval call binding the contract method 0x76e12635.
 //
-// Solidity: function getBackendUrl() constant returns(out string)
+// Solidity: function getBackendUrl() constant returns(string out)
 func (_Datatrust *DatatrustSession) GetBackendUrl() (string, error) {
 	return _Datatrust.Contract.GetBackendUrl(&_Datatrust.CallOpts)
 }
 
 // GetBackendUrl is a free data retrieval call binding the contract method 0x76e12635.
 //
-// Solidity: function getBackendUrl() constant returns(out string)
+// Solidity: function getBackendUrl() constant returns(string out)
 func (_Datatrust *DatatrustCallerSession) GetBackendUrl() (string, error) {
 	return _Datatrust.Contract.GetBackendUrl(&_Datatrust.CallOpts)
 }
 
 // GetBytesAccessed is a free data retrieval call binding the contract method 0xe80239d5.
 //
-// Solidity: function getBytesAccessed(hash bytes32) constant returns(out uint256)
+// Solidity: function getBytesAccessed(bytes32 hash) constant returns(uint256 out)
 func (_Datatrust *DatatrustCaller) GetBytesAccessed(opts *bind.CallOpts, hash [32]byte) (*big.Int, error) {
 	var (
 		ret0 = new(*big.Int)
@@ -242,21 +254,21 @@ func (_Datatrust *DatatrustCaller) GetBytesAccessed(opts *bind.CallOpts, hash [3
 
 // GetBytesAccessed is a free data retrieval call binding the contract method 0xe80239d5.
 //
-// Solidity: function getBytesAccessed(hash bytes32) constant returns(out uint256)
+// Solidity: function getBytesAccessed(bytes32 hash) constant returns(uint256 out)
 func (_Datatrust *DatatrustSession) GetBytesAccessed(hash [32]byte) (*big.Int, error) {
 	return _Datatrust.Contract.GetBytesAccessed(&_Datatrust.CallOpts, hash)
 }
 
 // GetBytesAccessed is a free data retrieval call binding the contract method 0xe80239d5.
 //
-// Solidity: function getBytesAccessed(hash bytes32) constant returns(out uint256)
+// Solidity: function getBytesAccessed(bytes32 hash) constant returns(uint256 out)
 func (_Datatrust *DatatrustCallerSession) GetBytesAccessed(hash [32]byte) (*big.Int, error) {
 	return _Datatrust.Contract.GetBytesAccessed(&_Datatrust.CallOpts, hash)
 }
 
 // GetBytesPurchased is a free data retrieval call binding the contract method 0xf2cbc3fe.
 //
-// Solidity: function getBytesPurchased(addr address) constant returns(out uint256)
+// Solidity: function getBytesPurchased(address addr) constant returns(uint256 out)
 func (_Datatrust *DatatrustCaller) GetBytesPurchased(opts *bind.CallOpts, addr common.Address) (*big.Int, error) {
 	var (
 		ret0 = new(*big.Int)
@@ -268,21 +280,21 @@ func (_Datatrust *DatatrustCaller) GetBytesPurchased(opts *bind.CallOpts, addr c
 
 // GetBytesPurchased is a free data retrieval call binding the contract method 0xf2cbc3fe.
 //
-// Solidity: function getBytesPurchased(addr address) constant returns(out uint256)
+// Solidity: function getBytesPurchased(address addr) constant returns(uint256 out)
 func (_Datatrust *DatatrustSession) GetBytesPurchased(addr common.Address) (*big.Int, error) {
 	return _Datatrust.Contract.GetBytesPurchased(&_Datatrust.CallOpts, addr)
 }
 
 // GetBytesPurchased is a free data retrieval call binding the contract method 0xf2cbc3fe.
 //
-// Solidity: function getBytesPurchased(addr address) constant returns(out uint256)
+// Solidity: function getBytesPurchased(address addr) constant returns(uint256 out)
 func (_Datatrust *DatatrustCallerSession) GetBytesPurchased(addr common.Address) (*big.Int, error) {
 	return _Datatrust.Contract.GetBytesPurchased(&_Datatrust.CallOpts, addr)
 }
 
 // GetDataHash is a free data retrieval call binding the contract method 0x7a639f6e.
 //
-// Solidity: function getDataHash(hash bytes32) constant returns(out bytes32)
+// Solidity: function getDataHash(bytes32 hash) constant returns(bytes32 out)
 func (_Datatrust *DatatrustCaller) GetDataHash(opts *bind.CallOpts, hash [32]byte) ([32]byte, error) {
 	var (
 		ret0 = new([32]byte)
@@ -294,21 +306,21 @@ func (_Datatrust *DatatrustCaller) GetDataHash(opts *bind.CallOpts, hash [32]byt
 
 // GetDataHash is a free data retrieval call binding the contract method 0x7a639f6e.
 //
-// Solidity: function getDataHash(hash bytes32) constant returns(out bytes32)
+// Solidity: function getDataHash(bytes32 hash) constant returns(bytes32 out)
 func (_Datatrust *DatatrustSession) GetDataHash(hash [32]byte) ([32]byte, error) {
 	return _Datatrust.Contract.GetDataHash(&_Datatrust.CallOpts, hash)
 }
 
 // GetDataHash is a free data retrieval call binding the contract method 0x7a639f6e.
 //
-// Solidity: function getDataHash(hash bytes32) constant returns(out bytes32)
+// Solidity: function getDataHash(bytes32 hash) constant returns(bytes32 out)
 func (_Datatrust *DatatrustCallerSession) GetDataHash(hash [32]byte) ([32]byte, error) {
 	return _Datatrust.Contract.GetDataHash(&_Datatrust.CallOpts, hash)
 }
 
 // GetDelivery is a free data retrieval call binding the contract method 0xedab743e.
 //
-// Solidity: function getDelivery(hash bytes32) constant returns(out address, out uint256, out uint256)
+// Solidity: function getDelivery(bytes32 hash) constant returns(address out, uint256 out, uint256 out)
 func (_Datatrust *DatatrustCaller) GetDelivery(opts *bind.CallOpts, hash [32]byte) (common.Address, *big.Int, *big.Int, error) {
 	var (
 		ret0 = new(common.Address)
@@ -326,21 +338,21 @@ func (_Datatrust *DatatrustCaller) GetDelivery(opts *bind.CallOpts, hash [32]byt
 
 // GetDelivery is a free data retrieval call binding the contract method 0xedab743e.
 //
-// Solidity: function getDelivery(hash bytes32) constant returns(out address, out uint256, out uint256)
+// Solidity: function getDelivery(bytes32 hash) constant returns(address out, uint256 out, uint256 out)
 func (_Datatrust *DatatrustSession) GetDelivery(hash [32]byte) (common.Address, *big.Int, *big.Int, error) {
 	return _Datatrust.Contract.GetDelivery(&_Datatrust.CallOpts, hash)
 }
 
 // GetDelivery is a free data retrieval call binding the contract method 0xedab743e.
 //
-// Solidity: function getDelivery(hash bytes32) constant returns(out address, out uint256, out uint256)
+// Solidity: function getDelivery(bytes32 hash) constant returns(address out, uint256 out, uint256 out)
 func (_Datatrust *DatatrustCallerSession) GetDelivery(hash [32]byte) (common.Address, *big.Int, *big.Int, error) {
 	return _Datatrust.Contract.GetDelivery(&_Datatrust.CallOpts, hash)
 }
 
 // GetHash is a free data retrieval call binding the contract method 0x5b6beeb9.
 //
-// Solidity: function getHash(url string) constant returns(out bytes32)
+// Solidity: function getHash(string url) constant returns(bytes32 out)
 func (_Datatrust *DatatrustCaller) GetHash(opts *bind.CallOpts, url string) ([32]byte, error) {
 	var (
 		ret0 = new([32]byte)
@@ -352,21 +364,21 @@ func (_Datatrust *DatatrustCaller) GetHash(opts *bind.CallOpts, url string) ([32
 
 // GetHash is a free data retrieval call binding the contract method 0x5b6beeb9.
 //
-// Solidity: function getHash(url string) constant returns(out bytes32)
+// Solidity: function getHash(string url) constant returns(bytes32 out)
 func (_Datatrust *DatatrustSession) GetHash(url string) ([32]byte, error) {
 	return _Datatrust.Contract.GetHash(&_Datatrust.CallOpts, url)
 }
 
 // GetHash is a free data retrieval call binding the contract method 0x5b6beeb9.
 //
-// Solidity: function getHash(url string) constant returns(out bytes32)
+// Solidity: function getHash(string url) constant returns(bytes32 out)
 func (_Datatrust *DatatrustCallerSession) GetHash(url string) ([32]byte, error) {
 	return _Datatrust.Contract.GetHash(&_Datatrust.CallOpts, url)
 }
 
 // GetPrivileged is a free data retrieval call binding the contract method 0xd4c17539.
 //
-// Solidity: function getPrivileged() constant returns(out address)
+// Solidity: function getPrivileged() constant returns(address out)
 func (_Datatrust *DatatrustCaller) GetPrivileged(opts *bind.CallOpts) (common.Address, error) {
 	var (
 		ret0 = new(common.Address)
@@ -378,21 +390,21 @@ func (_Datatrust *DatatrustCaller) GetPrivileged(opts *bind.CallOpts) (common.Ad
 
 // GetPrivileged is a free data retrieval call binding the contract method 0xd4c17539.
 //
-// Solidity: function getPrivileged() constant returns(out address)
+// Solidity: function getPrivileged() constant returns(address out)
 func (_Datatrust *DatatrustSession) GetPrivileged() (common.Address, error) {
 	return _Datatrust.Contract.GetPrivileged(&_Datatrust.CallOpts)
 }
 
 // GetPrivileged is a free data retrieval call binding the contract method 0xd4c17539.
 //
-// Solidity: function getPrivileged() constant returns(out address)
+// Solidity: function getPrivileged() constant returns(address out)
 func (_Datatrust *DatatrustCallerSession) GetPrivileged() (common.Address, error) {
 	return _Datatrust.Contract.GetPrivileged(&_Datatrust.CallOpts)
 }
 
 // GetReserve is a free data retrieval call binding the contract method 0x59bf5d39.
 //
-// Solidity: function getReserve() constant returns(out address)
+// Solidity: function getReserve() constant returns(address out)
 func (_Datatrust *DatatrustCaller) GetReserve(opts *bind.CallOpts) (common.Address, error) {
 	var (
 		ret0 = new(common.Address)
@@ -404,224 +416,224 @@ func (_Datatrust *DatatrustCaller) GetReserve(opts *bind.CallOpts) (common.Addre
 
 // GetReserve is a free data retrieval call binding the contract method 0x59bf5d39.
 //
-// Solidity: function getReserve() constant returns(out address)
+// Solidity: function getReserve() constant returns(address out)
 func (_Datatrust *DatatrustSession) GetReserve() (common.Address, error) {
 	return _Datatrust.Contract.GetReserve(&_Datatrust.CallOpts)
 }
 
 // GetReserve is a free data retrieval call binding the contract method 0x59bf5d39.
 //
-// Solidity: function getReserve() constant returns(out address)
+// Solidity: function getReserve() constant returns(address out)
 func (_Datatrust *DatatrustCallerSession) GetReserve() (common.Address, error) {
 	return _Datatrust.Contract.GetReserve(&_Datatrust.CallOpts)
 }
 
 // BytesAccessedClaimed is a paid mutator transaction binding the contract method 0x9d38d6da.
 //
-// Solidity: function bytesAccessedClaimed(hash bytes32, fee uint256) returns()
+// Solidity: function bytesAccessedClaimed(bytes32 hash, uint256 fee) returns()
 func (_Datatrust *DatatrustTransactor) BytesAccessedClaimed(opts *bind.TransactOpts, hash [32]byte, fee *big.Int) (*types.Transaction, error) {
 	return _Datatrust.contract.Transact(opts, "bytesAccessedClaimed", hash, fee)
 }
 
 // BytesAccessedClaimed is a paid mutator transaction binding the contract method 0x9d38d6da.
 //
-// Solidity: function bytesAccessedClaimed(hash bytes32, fee uint256) returns()
+// Solidity: function bytesAccessedClaimed(bytes32 hash, uint256 fee) returns()
 func (_Datatrust *DatatrustSession) BytesAccessedClaimed(hash [32]byte, fee *big.Int) (*types.Transaction, error) {
 	return _Datatrust.Contract.BytesAccessedClaimed(&_Datatrust.TransactOpts, hash, fee)
 }
 
 // BytesAccessedClaimed is a paid mutator transaction binding the contract method 0x9d38d6da.
 //
-// Solidity: function bytesAccessedClaimed(hash bytes32, fee uint256) returns()
+// Solidity: function bytesAccessedClaimed(bytes32 hash, uint256 fee) returns()
 func (_Datatrust *DatatrustTransactorSession) BytesAccessedClaimed(hash [32]byte, fee *big.Int) (*types.Transaction, error) {
 	return _Datatrust.Contract.BytesAccessedClaimed(&_Datatrust.TransactOpts, hash, fee)
 }
 
 // Delivered is a paid mutator transaction binding the contract method 0xd9680412.
 //
-// Solidity: function delivered(delivery bytes32, url bytes32) returns()
+// Solidity: function delivered(bytes32 delivery, bytes32 url) returns()
 func (_Datatrust *DatatrustTransactor) Delivered(opts *bind.TransactOpts, delivery [32]byte, url [32]byte) (*types.Transaction, error) {
 	return _Datatrust.contract.Transact(opts, "delivered", delivery, url)
 }
 
 // Delivered is a paid mutator transaction binding the contract method 0xd9680412.
 //
-// Solidity: function delivered(delivery bytes32, url bytes32) returns()
+// Solidity: function delivered(bytes32 delivery, bytes32 url) returns()
 func (_Datatrust *DatatrustSession) Delivered(delivery [32]byte, url [32]byte) (*types.Transaction, error) {
 	return _Datatrust.Contract.Delivered(&_Datatrust.TransactOpts, delivery, url)
 }
 
 // Delivered is a paid mutator transaction binding the contract method 0xd9680412.
 //
-// Solidity: function delivered(delivery bytes32, url bytes32) returns()
+// Solidity: function delivered(bytes32 delivery, bytes32 url) returns()
 func (_Datatrust *DatatrustTransactorSession) Delivered(delivery [32]byte, url [32]byte) (*types.Transaction, error) {
 	return _Datatrust.Contract.Delivered(&_Datatrust.TransactOpts, delivery, url)
 }
 
 // ListingAccessed is a paid mutator transaction binding the contract method 0x043b2166.
 //
-// Solidity: function listingAccessed(listing bytes32, delivery bytes32, amount uint256) returns()
+// Solidity: function listingAccessed(bytes32 listing, bytes32 delivery, uint256 amount) returns()
 func (_Datatrust *DatatrustTransactor) ListingAccessed(opts *bind.TransactOpts, listing [32]byte, delivery [32]byte, amount *big.Int) (*types.Transaction, error) {
 	return _Datatrust.contract.Transact(opts, "listingAccessed", listing, delivery, amount)
 }
 
 // ListingAccessed is a paid mutator transaction binding the contract method 0x043b2166.
 //
-// Solidity: function listingAccessed(listing bytes32, delivery bytes32, amount uint256) returns()
+// Solidity: function listingAccessed(bytes32 listing, bytes32 delivery, uint256 amount) returns()
 func (_Datatrust *DatatrustSession) ListingAccessed(listing [32]byte, delivery [32]byte, amount *big.Int) (*types.Transaction, error) {
 	return _Datatrust.Contract.ListingAccessed(&_Datatrust.TransactOpts, listing, delivery, amount)
 }
 
 // ListingAccessed is a paid mutator transaction binding the contract method 0x043b2166.
 //
-// Solidity: function listingAccessed(listing bytes32, delivery bytes32, amount uint256) returns()
+// Solidity: function listingAccessed(bytes32 listing, bytes32 delivery, uint256 amount) returns()
 func (_Datatrust *DatatrustTransactorSession) ListingAccessed(listing [32]byte, delivery [32]byte, amount *big.Int) (*types.Transaction, error) {
 	return _Datatrust.Contract.ListingAccessed(&_Datatrust.TransactOpts, listing, delivery, amount)
 }
 
 // Register is a paid mutator transaction binding the contract method 0xf2c298be.
 //
-// Solidity: function register(url string) returns()
+// Solidity: function register(string url) returns()
 func (_Datatrust *DatatrustTransactor) Register(opts *bind.TransactOpts, url string) (*types.Transaction, error) {
 	return _Datatrust.contract.Transact(opts, "register", url)
 }
 
 // Register is a paid mutator transaction binding the contract method 0xf2c298be.
 //
-// Solidity: function register(url string) returns()
+// Solidity: function register(string url) returns()
 func (_Datatrust *DatatrustSession) Register(url string) (*types.Transaction, error) {
 	return _Datatrust.Contract.Register(&_Datatrust.TransactOpts, url)
 }
 
 // Register is a paid mutator transaction binding the contract method 0xf2c298be.
 //
-// Solidity: function register(url string) returns()
+// Solidity: function register(string url) returns()
 func (_Datatrust *DatatrustTransactorSession) Register(url string) (*types.Transaction, error) {
 	return _Datatrust.Contract.Register(&_Datatrust.TransactOpts, url)
 }
 
 // RemoveDataHash is a paid mutator transaction binding the contract method 0xbd82badc.
 //
-// Solidity: function removeDataHash(hash bytes32) returns()
+// Solidity: function removeDataHash(bytes32 hash) returns()
 func (_Datatrust *DatatrustTransactor) RemoveDataHash(opts *bind.TransactOpts, hash [32]byte) (*types.Transaction, error) {
 	return _Datatrust.contract.Transact(opts, "removeDataHash", hash)
 }
 
 // RemoveDataHash is a paid mutator transaction binding the contract method 0xbd82badc.
 //
-// Solidity: function removeDataHash(hash bytes32) returns()
+// Solidity: function removeDataHash(bytes32 hash) returns()
 func (_Datatrust *DatatrustSession) RemoveDataHash(hash [32]byte) (*types.Transaction, error) {
 	return _Datatrust.Contract.RemoveDataHash(&_Datatrust.TransactOpts, hash)
 }
 
 // RemoveDataHash is a paid mutator transaction binding the contract method 0xbd82badc.
 //
-// Solidity: function removeDataHash(hash bytes32) returns()
+// Solidity: function removeDataHash(bytes32 hash) returns()
 func (_Datatrust *DatatrustTransactorSession) RemoveDataHash(hash [32]byte) (*types.Transaction, error) {
 	return _Datatrust.Contract.RemoveDataHash(&_Datatrust.TransactOpts, hash)
 }
 
 // RequestDelivery is a paid mutator transaction binding the contract method 0x0ee206f5.
 //
-// Solidity: function requestDelivery(hash bytes32, amount uint256) returns()
+// Solidity: function requestDelivery(bytes32 hash, uint256 amount) returns()
 func (_Datatrust *DatatrustTransactor) RequestDelivery(opts *bind.TransactOpts, hash [32]byte, amount *big.Int) (*types.Transaction, error) {
 	return _Datatrust.contract.Transact(opts, "requestDelivery", hash, amount)
 }
 
 // RequestDelivery is a paid mutator transaction binding the contract method 0x0ee206f5.
 //
-// Solidity: function requestDelivery(hash bytes32, amount uint256) returns()
+// Solidity: function requestDelivery(bytes32 hash, uint256 amount) returns()
 func (_Datatrust *DatatrustSession) RequestDelivery(hash [32]byte, amount *big.Int) (*types.Transaction, error) {
 	return _Datatrust.Contract.RequestDelivery(&_Datatrust.TransactOpts, hash, amount)
 }
 
 // RequestDelivery is a paid mutator transaction binding the contract method 0x0ee206f5.
 //
-// Solidity: function requestDelivery(hash bytes32, amount uint256) returns()
+// Solidity: function requestDelivery(bytes32 hash, uint256 amount) returns()
 func (_Datatrust *DatatrustTransactorSession) RequestDelivery(hash [32]byte, amount *big.Int) (*types.Transaction, error) {
 	return _Datatrust.Contract.RequestDelivery(&_Datatrust.TransactOpts, hash, amount)
 }
 
 // ResolveRegistration is a paid mutator transaction binding the contract method 0x84e1fe15.
 //
-// Solidity: function resolveRegistration(hash bytes32) returns()
+// Solidity: function resolveRegistration(bytes32 hash) returns()
 func (_Datatrust *DatatrustTransactor) ResolveRegistration(opts *bind.TransactOpts, hash [32]byte) (*types.Transaction, error) {
 	return _Datatrust.contract.Transact(opts, "resolveRegistration", hash)
 }
 
 // ResolveRegistration is a paid mutator transaction binding the contract method 0x84e1fe15.
 //
-// Solidity: function resolveRegistration(hash bytes32) returns()
+// Solidity: function resolveRegistration(bytes32 hash) returns()
 func (_Datatrust *DatatrustSession) ResolveRegistration(hash [32]byte) (*types.Transaction, error) {
 	return _Datatrust.Contract.ResolveRegistration(&_Datatrust.TransactOpts, hash)
 }
 
 // ResolveRegistration is a paid mutator transaction binding the contract method 0x84e1fe15.
 //
-// Solidity: function resolveRegistration(hash bytes32) returns()
+// Solidity: function resolveRegistration(bytes32 hash) returns()
 func (_Datatrust *DatatrustTransactorSession) ResolveRegistration(hash [32]byte) (*types.Transaction, error) {
 	return _Datatrust.Contract.ResolveRegistration(&_Datatrust.TransactOpts, hash)
 }
 
 // SetBackendUrl is a paid mutator transaction binding the contract method 0x41d28f90.
 //
-// Solidity: function setBackendUrl(url string) returns()
+// Solidity: function setBackendUrl(string url) returns()
 func (_Datatrust *DatatrustTransactor) SetBackendUrl(opts *bind.TransactOpts, url string) (*types.Transaction, error) {
 	return _Datatrust.contract.Transact(opts, "setBackendUrl", url)
 }
 
 // SetBackendUrl is a paid mutator transaction binding the contract method 0x41d28f90.
 //
-// Solidity: function setBackendUrl(url string) returns()
+// Solidity: function setBackendUrl(string url) returns()
 func (_Datatrust *DatatrustSession) SetBackendUrl(url string) (*types.Transaction, error) {
 	return _Datatrust.Contract.SetBackendUrl(&_Datatrust.TransactOpts, url)
 }
 
 // SetBackendUrl is a paid mutator transaction binding the contract method 0x41d28f90.
 //
-// Solidity: function setBackendUrl(url string) returns()
+// Solidity: function setBackendUrl(string url) returns()
 func (_Datatrust *DatatrustTransactorSession) SetBackendUrl(url string) (*types.Transaction, error) {
 	return _Datatrust.Contract.SetBackendUrl(&_Datatrust.TransactOpts, url)
 }
 
 // SetDataHash is a paid mutator transaction binding the contract method 0xb818bf02.
 //
-// Solidity: function setDataHash(listing bytes32, data bytes32) returns()
+// Solidity: function setDataHash(bytes32 listing, bytes32 data) returns()
 func (_Datatrust *DatatrustTransactor) SetDataHash(opts *bind.TransactOpts, listing [32]byte, data [32]byte) (*types.Transaction, error) {
 	return _Datatrust.contract.Transact(opts, "setDataHash", listing, data)
 }
 
 // SetDataHash is a paid mutator transaction binding the contract method 0xb818bf02.
 //
-// Solidity: function setDataHash(listing bytes32, data bytes32) returns()
+// Solidity: function setDataHash(bytes32 listing, bytes32 data) returns()
 func (_Datatrust *DatatrustSession) SetDataHash(listing [32]byte, data [32]byte) (*types.Transaction, error) {
 	return _Datatrust.Contract.SetDataHash(&_Datatrust.TransactOpts, listing, data)
 }
 
 // SetDataHash is a paid mutator transaction binding the contract method 0xb818bf02.
 //
-// Solidity: function setDataHash(listing bytes32, data bytes32) returns()
+// Solidity: function setDataHash(bytes32 listing, bytes32 data) returns()
 func (_Datatrust *DatatrustTransactorSession) SetDataHash(listing [32]byte, data [32]byte) (*types.Transaction, error) {
 	return _Datatrust.Contract.SetDataHash(&_Datatrust.TransactOpts, listing, data)
 }
 
 // SetPrivileged is a paid mutator transaction binding the contract method 0x2ecace9c.
 //
-// Solidity: function setPrivileged(listing address) returns()
+// Solidity: function setPrivileged(address listing) returns()
 func (_Datatrust *DatatrustTransactor) SetPrivileged(opts *bind.TransactOpts, listing common.Address) (*types.Transaction, error) {
 	return _Datatrust.contract.Transact(opts, "setPrivileged", listing)
 }
 
 // SetPrivileged is a paid mutator transaction binding the contract method 0x2ecace9c.
 //
-// Solidity: function setPrivileged(listing address) returns()
+// Solidity: function setPrivileged(address listing) returns()
 func (_Datatrust *DatatrustSession) SetPrivileged(listing common.Address) (*types.Transaction, error) {
 	return _Datatrust.Contract.SetPrivileged(&_Datatrust.TransactOpts, listing)
 }
 
 // SetPrivileged is a paid mutator transaction binding the contract method 0x2ecace9c.
 //
-// Solidity: function setPrivileged(listing address) returns()
+// Solidity: function setPrivileged(address listing) returns()
 func (_Datatrust *DatatrustTransactorSession) SetPrivileged(listing common.Address) (*types.Transaction, error) {
 	return _Datatrust.Contract.SetPrivileged(&_Datatrust.TransactOpts, listing)
 }
@@ -703,7 +715,7 @@ type DatatrustDelivered struct {
 
 // FilterDelivered is a free log retrieval operation binding the contract event 0xa6bd58fcd4da90af9fea785d8cf919f762887f0f05b0656fb2ac5f7227183d5a.
 //
-// Solidity: e Delivered(hash indexed bytes32, owner indexed address, url bytes32)
+// Solidity: event Delivered(bytes32 indexed hash, address indexed owner, bytes32 url)
 func (_Datatrust *DatatrustFilterer) FilterDelivered(opts *bind.FilterOpts, hash [][32]byte, owner []common.Address) (*DatatrustDeliveredIterator, error) {
 
 	var hashRule []interface{}
@@ -724,7 +736,7 @@ func (_Datatrust *DatatrustFilterer) FilterDelivered(opts *bind.FilterOpts, hash
 
 // WatchDelivered is a free log subscription operation binding the contract event 0xa6bd58fcd4da90af9fea785d8cf919f762887f0f05b0656fb2ac5f7227183d5a.
 //
-// Solidity: e Delivered(hash indexed bytes32, owner indexed address, url bytes32)
+// Solidity: event Delivered(bytes32 indexed hash, address indexed owner, bytes32 url)
 func (_Datatrust *DatatrustFilterer) WatchDelivered(opts *bind.WatchOpts, sink chan<- *DatatrustDelivered, hash [][32]byte, owner []common.Address) (event.Subscription, error) {
 
 	var hashRule []interface{}
@@ -845,7 +857,7 @@ type DatatrustDeliveryRequested struct {
 
 // FilterDeliveryRequested is a free log retrieval operation binding the contract event 0x898564ce29843afc6dc09bcabe85faaec3c18c45244d2c42e811a25bc0fd82c1.
 //
-// Solidity: e DeliveryRequested(hash indexed bytes32, requester indexed address, amount uint256)
+// Solidity: event DeliveryRequested(bytes32 indexed hash, address indexed requester, uint256 amount)
 func (_Datatrust *DatatrustFilterer) FilterDeliveryRequested(opts *bind.FilterOpts, hash [][32]byte, requester []common.Address) (*DatatrustDeliveryRequestedIterator, error) {
 
 	var hashRule []interface{}
@@ -866,7 +878,7 @@ func (_Datatrust *DatatrustFilterer) FilterDeliveryRequested(opts *bind.FilterOp
 
 // WatchDeliveryRequested is a free log subscription operation binding the contract event 0x898564ce29843afc6dc09bcabe85faaec3c18c45244d2c42e811a25bc0fd82c1.
 //
-// Solidity: e DeliveryRequested(hash indexed bytes32, requester indexed address, amount uint256)
+// Solidity: event DeliveryRequested(bytes32 indexed hash, address indexed requester, uint256 amount)
 func (_Datatrust *DatatrustFilterer) WatchDeliveryRequested(opts *bind.WatchOpts, sink chan<- *DatatrustDeliveryRequested, hash [][32]byte, requester []common.Address) (event.Subscription, error) {
 
 	var hashRule []interface{}
@@ -986,7 +998,7 @@ type DatatrustRegistered struct {
 
 // FilterRegistered is a free log retrieval operation binding the contract event 0x7d917fcbc9a29a9705ff9936ffa599500e4fd902e4486bae317414fe967b307c.
 //
-// Solidity: e Registered(hash indexed bytes32, registrant indexed address)
+// Solidity: event Registered(bytes32 indexed hash, address indexed registrant)
 func (_Datatrust *DatatrustFilterer) FilterRegistered(opts *bind.FilterOpts, hash [][32]byte, registrant []common.Address) (*DatatrustRegisteredIterator, error) {
 
 	var hashRule []interface{}
@@ -1007,7 +1019,7 @@ func (_Datatrust *DatatrustFilterer) FilterRegistered(opts *bind.FilterOpts, has
 
 // WatchRegistered is a free log subscription operation binding the contract event 0x7d917fcbc9a29a9705ff9936ffa599500e4fd902e4486bae317414fe967b307c.
 //
-// Solidity: e Registered(hash indexed bytes32, registrant indexed address)
+// Solidity: event Registered(bytes32 indexed hash, address indexed registrant)
 func (_Datatrust *DatatrustFilterer) WatchRegistered(opts *bind.WatchOpts, sink chan<- *DatatrustRegistered, hash [][32]byte, registrant []common.Address) (event.Subscription, error) {
 
 	var hashRule []interface{}
@@ -1127,7 +1139,7 @@ type DatatrustRegistrationFailed struct {
 
 // FilterRegistrationFailed is a free log retrieval operation binding the contract event 0xf83db24154eb020b1b0c94c9566e464732758c2c6bc070062458777d038baa3c.
 //
-// Solidity: e RegistrationFailed(hash indexed bytes32, registrant indexed address)
+// Solidity: event RegistrationFailed(bytes32 indexed hash, address indexed registrant)
 func (_Datatrust *DatatrustFilterer) FilterRegistrationFailed(opts *bind.FilterOpts, hash [][32]byte, registrant []common.Address) (*DatatrustRegistrationFailedIterator, error) {
 
 	var hashRule []interface{}
@@ -1148,7 +1160,7 @@ func (_Datatrust *DatatrustFilterer) FilterRegistrationFailed(opts *bind.FilterO
 
 // WatchRegistrationFailed is a free log subscription operation binding the contract event 0xf83db24154eb020b1b0c94c9566e464732758c2c6bc070062458777d038baa3c.
 //
-// Solidity: e RegistrationFailed(hash indexed bytes32, registrant indexed address)
+// Solidity: event RegistrationFailed(bytes32 indexed hash, address indexed registrant)
 func (_Datatrust *DatatrustFilterer) WatchRegistrationFailed(opts *bind.WatchOpts, sink chan<- *DatatrustRegistrationFailed, hash [][32]byte, registrant []common.Address) (event.Subscription, error) {
 
 	var hashRule []interface{}
@@ -1268,7 +1280,7 @@ type DatatrustRegistrationSucceeded struct {
 
 // FilterRegistrationSucceeded is a free log retrieval operation binding the contract event 0xf9749f013eb1a881b147fd6da901e63089fadfb6fb375d6e56babcbcb5e0be4e.
 //
-// Solidity: e RegistrationSucceeded(hash indexed bytes32, registrant indexed address)
+// Solidity: event RegistrationSucceeded(bytes32 indexed hash, address indexed registrant)
 func (_Datatrust *DatatrustFilterer) FilterRegistrationSucceeded(opts *bind.FilterOpts, hash [][32]byte, registrant []common.Address) (*DatatrustRegistrationSucceededIterator, error) {
 
 	var hashRule []interface{}
@@ -1289,7 +1301,7 @@ func (_Datatrust *DatatrustFilterer) FilterRegistrationSucceeded(opts *bind.Filt
 
 // WatchRegistrationSucceeded is a free log subscription operation binding the contract event 0xf9749f013eb1a881b147fd6da901e63089fadfb6fb375d6e56babcbcb5e0be4e.
 //
-// Solidity: e RegistrationSucceeded(hash indexed bytes32, registrant indexed address)
+// Solidity: event RegistrationSucceeded(bytes32 indexed hash, address indexed registrant)
 func (_Datatrust *DatatrustFilterer) WatchRegistrationSucceeded(opts *bind.WatchOpts, sink chan<- *DatatrustRegistrationSucceeded, hash [][32]byte, registrant []common.Address) (event.Subscription, error) {
 
 	var hashRule []interface{}

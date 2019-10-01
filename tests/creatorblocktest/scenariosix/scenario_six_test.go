@@ -22,6 +22,10 @@ func zeroEth() *big.Int {
 	return big.NewInt(0)
 }
 
+func oneEth() *big.Int {
+	return big.NewInt(test.ONE_ETH)
+}
+
 // as we start with 0 supply and balances, we'll need authOwner to deposit some
 func TestDeposit(t *testing.T) {
 	_, depErr := deployed.EtherTokenContract.Deposit(test.GetTxOpts(context.AuthOwner, oneHundredOneEth(),
@@ -44,8 +48,8 @@ func TestInitialBalance(t *testing.T) {
 	if etBal.Cmp(oneHundredOneEth()) != 0 {
 		t.Errorf("Expected ether token balance of %v, got: %v", oneHundredOneEth(), etBal)
 	}
-	if mtSup.Cmp(big.NewInt(0)) != 0 {
-		t.Errorf("Expected market token supply of 1 wei, got: %v", mtSup)
+	if mtSup.Cmp(oneEth()) != 0 {
+		t.Errorf("Expected market token supply of 1 whole, got: %v", mtSup)
 	}
 
 	t.Logf("Current Market Token total supply: %v", test.Commafy(mtSup))
@@ -59,7 +63,7 @@ func TestTransferToReserveThenSupport(t *testing.T) {
 
 	// got the 100
 	if resEthBal.Cmp(zeroEth()) != 0 {
-		t.Errorf("Expected reserve of 100 Eth, got: %v", resEthBal)
+		t.Errorf("Expected reserve of 0 Eth, got: %v", resEthBal)
 	}
 
 	t.Logf("Current Reserve balance: %v", test.Commafy(resEthBal))
