@@ -127,7 +127,7 @@ def removeListing(hash: bytes32):
   """
   supply: wei_value = self.listings[hash].supply
   if supply > 0:
-    self.market_token.burn(supply)
+    self.market_token.transfer(self.listings[hash].owner, supply)
   clear(self.listings[hash]) # TODO assure we don't need to do this by hand
   # datatrust now needs to clear the data hash
   self.datatrust.removeDataHash(hash)
