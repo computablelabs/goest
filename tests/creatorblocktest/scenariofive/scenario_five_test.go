@@ -335,7 +335,7 @@ func TestFullSimulation(t *testing.T) {
 		// Let's loop over the listings to assign credits
 		for _, listingHash := range listings {
 			// Get the original bytes accessed for this listing
-			accessBal, _ := deployed.DatatrustContract.GetBytesAccessed(nil, listingHash)
+			accessBal, _ := deployed.DatatrustContract.GetAccessRewardEarned(nil, listingHash)
 
 			_, accErr := deployed.DatatrustContract.ListingAccessed(test.GetTxOpts(context.AuthBackend, nil,
 				// let's say one listing was used for 1/2 the request
@@ -344,10 +344,9 @@ func TestFullSimulation(t *testing.T) {
 			context.Blockchain.Commit()
 
 			// Check the number of bytes accessed is stored correctly
-			accessBalAfter, _ := deployed.DatatrustContract.GetBytesAccessed(nil, listingHash)
-			accessBalAdded := accessBalAfter.Sub(accessBalAfter, accessBal)
-			if accessBalAdded.Cmp(creditPerListing) != 0 {
-				t.Errorf("Expected %v to be %v", accessBalAdded, creditPerListing)
+			accessBalAfter, _ := deployed.DatatrustContract.GetAccessRewardEarned(nil, listingHash)
+			if accessBalAfter.Cmp(accessBal) != 1 {
+				t.Errorf("Expected %v to be > %v", accessBalAfter, accessBal)
 			}
 		}
 		// After this credit loop, all byte credits should be used up
@@ -400,7 +399,7 @@ func TestFullSimulation(t *testing.T) {
 		// note the supply of those listings
 		_, supply, _ := deployed.ListingContract.GetListing(nil, listingHash)
 		// claim the listing for 1
-		_, clErr := deployed.ListingContract.ClaimBytesAccessed(test.GetTxOpts(maker, nil,
+		_, clErr := deployed.ListingContract.ClaimAccessReward(test.GetTxOpts(maker, nil,
 			big.NewInt(test.ONE_GWEI*2), 250000), listingHash)
 		test.IfNotNil(t, clErr, "Error claiming access")
 		context.Blockchain.Commit()
@@ -412,7 +411,7 @@ func TestFullSimulation(t *testing.T) {
 		}
 
 		// access bal should be cleared
-		accessBal, _ := deployed.DatatrustContract.GetBytesAccessed(nil, listingHash)
+		accessBal, _ := deployed.DatatrustContract.GetAccessRewardEarned(nil, listingHash)
 		if accessBal.Cmp(big.NewInt(0)) != 0 {
 			t.Errorf("Expected %v to be 0", accessBal)
 		}
