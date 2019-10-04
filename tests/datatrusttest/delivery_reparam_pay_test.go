@@ -268,13 +268,13 @@ func TestRequestDeliveryReparamPay(t *testing.T) {
 	beBalNow, _ := deployed.EtherTokenContract.BalanceOf(nil, beAddr)
 	dtBalNow, _ := deployed.EtherTokenContract.BalanceOf(nil, deployed.DatatrustAddress)
 
-	// newest bal will not have increased
-	if beBalNow.Cmp(beBal) != 0 {
+	// newest bal will have increased
+	if beBalNow.Cmp(beBal) != 1 {
 		t.Errorf("Expected %v to be %v", beBalNow, beBal)
 	}
 
-	// newest bal will not have decreased
-	if dtBalNow.Cmp(dtBal) != 0 {
+	// newest bal will have decreased
+	if dtBalNow.Cmp(dtBal) != -1 {
 		t.Errorf("Expected %v to be %v", dtBalNow, dtBal)
 	}
 
