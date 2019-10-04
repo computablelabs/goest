@@ -283,13 +283,14 @@ def getAccessRewardEarned(hash: bytes32) -> wei_value:
 
 
 @public
-def accessRewardClaimed(hash: bytes32, fee: wei_value):
+def accessRewardClaimed(hash: bytes32):
   """
   @notice Called by the Listing contract when a maker claims their listing access rewards
   @param hash The listing identifier
   @param fee Amount of ether token to transfer to the reserve
   """
   assert msg.sender == self.listing_address
+  fee: wei_value = self.access_reward_earned[hash]
   clear(self.access_reward_earned[hash]) # clear before paying
   self.ether_token.transfer(self.reserve_address, fee)
   # NOTE bytes accessed claimed event published by Listing contract

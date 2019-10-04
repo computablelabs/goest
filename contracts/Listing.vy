@@ -42,7 +42,7 @@ contract Datatrust:
   def getDataHash(hash: bytes32) -> bytes32: constant
   def removeDataHash(hash: bytes32): modifying
   def getAccessRewardEarned(hash: bytes32) -> wei_value: constant
-  def accessRewardClaimed(hash: bytes32, fee: uint256(wei)): modifying
+  def accessRewardClaimed(hash: bytes32): modifying
 
 # events
 ApplicationFailed: event({hash: indexed(bytes32), applicant: indexed(address)})
@@ -174,7 +174,7 @@ def claimAccessReward(hash: bytes32):
   # if credits accumulated are too low for support, exit now
   assert maker_fee >= price
   # clear the credits before proceeding (also transfers fee to reserve)
-  self.datatrust.accessRewardClaimed(hash, maker_fee)
+  self.datatrust.accessRewardClaimed(hash)
   # support is now called, according to the buy-curve.
   minted: uint256 = (maker_fee * 1000000000) / price # 1Billionth token is the smallest denomination...
   self.market_token.mint(minted)
