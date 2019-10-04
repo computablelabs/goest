@@ -19,7 +19,7 @@ func TestRequestDelivery(t *testing.T) {
 
 	// make a deposit in ETH, resulting in a 1:1 ethertoken balance
 	_, depErr := deployed.EtherTokenContract.Deposit(test.GetTxOpts(context.AuthUser3,
-		big.NewInt(test.ONE_ETH*2), big.NewInt(test.ONE_GWEI*2), 1000000))
+		big.NewInt(test.ONE_ETH*2), big.NewInt(test.ONE_GWEI*2), 100000))
 	test.IfNotNil(t, depErr, fmt.Sprintf("Error depositing funds from member to ether token: %v", depErr))
 
 	context.Blockchain.Commit()
