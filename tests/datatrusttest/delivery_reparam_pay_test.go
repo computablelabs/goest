@@ -10,6 +10,11 @@ import (
 
 func TestRequestDeliveryReparamPay(t *testing.T) {
 
+	// Record parameters at start before reparam
+	costPerByte, _ := deployed.ParameterizerContract.GetCostPerByte(nil)
+	backendPayment, _ := deployed.ParameterizerContract.GetBackendPayment(nil)
+	requested := big.NewInt(1024 * 1024)
+
 	// user has no credits atm
 	purchased, _ := deployed.DatatrustContract.GetBytesPurchased(nil, context.AuthUser2.From)
 
@@ -49,7 +54,7 @@ func TestRequestDeliveryReparamPay(t *testing.T) {
 
 	// the actual request for a delivery...
 	_, delErr := deployed.DatatrustContract.RequestDelivery(test.GetTxOpts(
-		context.AuthUser2, nil, big.NewInt(test.ONE_GWEI*2), 250000), query, big.NewInt(1024*1024)) // ~1MB
+		context.AuthUser2, nil, big.NewInt(test.ONE_GWEI*2), 250000), query, requested) // ~1MB
 	test.IfNotNil(t, delErr, fmt.Sprintf("Error requesting delivery: %v", delErr))
 	context.Blockchain.Commit()
 
@@ -271,6 +276,19 @@ func TestRequestDeliveryReparamPay(t *testing.T) {
 	// newest bal will have increased
 	if beBalNow.Cmp(beBal) != 1 {
 		t.Errorf("Expected %v to be %v", beBalNow, beBal)
+	}
+
+	// Compute theoretic backend payment
+	// (costPerByte * requested * backendPayment) / 100
+	bePayment := big.NewInt(1)
+	bePayment = bePayment.Mul(bePayment, costPerByte)
+	bePayment = bePayment.Mul(bePayment, requested)
+	bePayment = bePayment.Mul(bePayment, backendPayment)
+	bePayment = bePayment.Div(bePayment, big.NewInt(100))
+	// Here is the actual backend payment. They should match
+	beActualPayment := beBalNow.Sub(beBalNow, beBal)
+	if beActualPayment.Cmp(bePayment) != 0 {
+		t.Errorf("Expected %v to be %v", beActualPayment, bePayment)
 	}
 
 	// newest bal will have decreased

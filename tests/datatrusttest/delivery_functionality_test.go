@@ -379,10 +379,26 @@ func TestClaimAccessReward(t *testing.T) {
 	test.IfNotNil(t, clErr, "Error claiming access")
 	context.Blockchain.Commit()
 
+	// Compute Listing Reward per listing
+	costPerByte, _ := deployed.ParameterizerContract.GetCostPerByte(nil)
+	makerPayment, _ := deployed.ParameterizerContract.GetMakerPayment(nil)
+	amount := big.NewInt(1024 * 512)
+	// (costPerByte * amount * makerPayment) / 100
+	accessPayment := big.NewInt(1)
+	accessPayment = accessPayment.Mul(accessPayment, costPerByte)
+	accessPayment = accessPayment.Mul(accessPayment, amount)
+	accessPayment = accessPayment.Mul(accessPayment, makerPayment)
+	accessPayment = accessPayment.Div(accessPayment, big.NewInt(100))
+
 	// supply should have increased
 	_, supply1Now, _ := deployed.ListingContract.GetListing(nil, listingHash1)
 	if supply1Now.Cmp(supply1) != 1 {
 		t.Errorf("expected %v to be > %v", supply1Now, supply1)
+	}
+	// Here is actual payment. Should match theoretical payment above
+	supply1ActualPayment := supply1Now.Sub(supply1Now, supply1)
+	if supply1ActualPayment.Cmp(accessPayment) != 0 {
+		t.Errorf("Expected %v to be %v", supply1ActualPayment, accessPayment)
 	}
 
 	// access bal should be cleared
@@ -410,6 +426,11 @@ func TestClaimAccessReward(t *testing.T) {
 	_, supply2Now, _ := deployed.ListingContract.GetListing(nil, listingHash2)
 	if supply2Now.Cmp(supply2) != 1 {
 		t.Errorf("Expected %v to be > %v", supply2Now, supply2)
+	}
+	// Here is actual payment. Should match theoretical payment above
+	supply2ActualPayment := supply2Now.Sub(supply2Now, supply2)
+	if supply2ActualPayment.Cmp(accessPayment) != 0 {
+		t.Errorf("Expected %v to be %v", supply2ActualPayment, accessPayment)
 	}
 
 	// access bal should be cleared

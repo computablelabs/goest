@@ -211,14 +211,15 @@ def requestDelivery(hash: bytes32, amount: uint256):
   @param amount The number of bytes the user is paying for.
   """
   assert self.deliveries[hash].owner == ZERO_ADDRESS # not already a request
-  total: wei_value = self.parameterizer.getCostPerByte() * amount
+  cost_per_byte: wei_value = self.parameterizer.getCostPerByte()
+  total: wei_value = cost_per_byte * amount
   res_fee: wei_value = (total * self.parameterizer.getReservePayment()) / 100
   self.ether_token.transferFrom(msg.sender, self, total) # take the total payment
   self.ether_token.transfer(self.reserve_address, res_fee) # transfer res_pct to reserve
   self.bytes_purchased[msg.sender] += amount # all purchases by this user. deducted from via listing access
   self.deliveries[hash].owner = msg.sender
   self.deliveries[hash].bytes_requested = amount
-  self.deliveries[hash].cost_per_byte = self.parameterizer.getCostPerByte()
+  self.deliveries[hash].cost_per_byte = cost_per_byte 
   self.deliveries[hash].backend_payment = self.parameterizer.getBackendPayment()
   self.deliveries[hash].maker_payment = self.parameterizer.getMakerPayment()
 
@@ -242,16 +243,6 @@ def getDelivery(hash: bytes32) -> (address, uint256, uint256):
   return (self.deliveries[hash].owner, self.deliveries[hash].bytes_requested,
     self.deliveries[hash].bytes_delivered)
 
-@private
-@constant
-def _getAccessRewardForAmount(delivery: bytes32, amount: uint256) -> wei_value:
-  cost_per_byte: wei_value = self.deliveries[delivery].cost_per_byte
-  maker_payment: uint256 = self.deliveries[delivery].maker_payment
-  # The rounding issues are fine since at most 99 wei can be lost in
-  # rounding
-  access_reward: wei_value = (cost_per_byte * amount * maker_payment) / 100
-  return access_reward
-
 
 @public
 def listingAccessed(listing: bytes32, delivery: bytes32, amount: uint256):
@@ -269,7 +260,11 @@ def listingAccessed(listing: bytes32, delivery: bytes32, amount: uint256):
   # bytes_delivered must eq (or exceed) bytes_requested in order for a datatrust to claim delivery
   self.deliveries[delivery].bytes_delivered += amount
   # Compute the maker fee earned
-  access_reward: wei_value = self._getAccessRewardForAmount(delivery, amount)
+  cost_per_byte: wei_value = self.deliveries[delivery].cost_per_byte
+  maker_payment: uint256 = self.deliveries[delivery].maker_payment
+  # The rounding issues are fine since at most 99 wei can be lost in
+  # rounding
+  access_reward: wei_value = (cost_per_byte * amount * maker_payment) / 100
   self.access_reward_earned[listing] += access_reward
 
 
@@ -295,17 +290,6 @@ def accessRewardClaimed(hash: bytes32):
   self.ether_token.transfer(self.reserve_address, fee)
   # NOTE bytes accessed claimed event published by Listing contract
 
-@private
-@constant
-def _getDatatrustFee(delivery: bytes32) -> wei_value:
-  cost_per_byte: wei_value = self.deliveries[delivery].cost_per_byte
-  backend_payment: uint256 = self.deliveries[delivery].backend_payment
-  requested: uint256 = self.deliveries[delivery].bytes_requested
-  # The rounding issues are fine since at most 99 wei can be lost in
-  # rounding
-  back_fee: wei_value = (cost_per_byte * requested * backend_payment) / 100
-  return back_fee
-
 @public
 def delivered(delivery: bytes32, url: bytes32):
   """
@@ -319,7 +303,12 @@ def delivered(delivery: bytes32, url: bytes32):
   owner: address = self.deliveries[delivery].owner
   requested: uint256 = self.deliveries[delivery].bytes_requested
   assert self.deliveries[delivery].bytes_delivered >= requested
-  back_fee: wei_value = self._getDatatrustFee(delivery)
+  cost_per_byte: wei_value = self.deliveries[delivery].cost_per_byte
+  backend_payment: uint256 = self.deliveries[delivery].backend_payment
+  # The rounding issues are fine since at most 99 wei can be lost in
+  # rounding
+  back_fee: wei_value = (cost_per_byte * requested * backend_payment) / 100
+  #back_fee: wei_value = self._getDatatrustFee(delivery)
   # clear the delivery record now that we have the fee
   clear(self.deliveries[delivery])
   # now pay the datatrust from the banked delivery request
