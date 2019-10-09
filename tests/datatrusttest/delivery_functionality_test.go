@@ -55,7 +55,7 @@ func TestRequestDelivery(t *testing.T) {
 
 	// the actual request for a delivery...
 	_, delErr := deployed.DatatrustContract.RequestDelivery(test.GetTxOpts(
-		context.AuthUser3, nil, big.NewInt(test.ONE_GWEI*2), 250000), query, big.NewInt(1024*1024)) // ~1MB
+		context.AuthUser3, nil, big.NewInt(test.ONE_GWEI*2), 500000), query, big.NewInt(1024*1024)) // ~1MB
 	test.IfNotNil(t, delErr, fmt.Sprintf("Error requesting delivery: %v", delErr))
 
 	context.Blockchain.Commit()
@@ -198,8 +198,8 @@ func TestListingAccessed(t *testing.T) {
 	query := test.GenBytes32("select * from SPAM where EGGS eq TRUE")
 	// current bytes purchased, should decrease with listing access reporting
 	bytesBal, _ := deployed.DatatrustContract.GetBytesPurchased(nil, context.AuthUser3.From)
-	// current bytes_accessed for listiing, should increase with reporting
-	accessBal, _ := deployed.DatatrustContract.GetBytesAccessed(nil, listingHash)
+	// current reward earned for listing, should increase with reporting
+	accessBal, _ := deployed.DatatrustContract.GetAccessRewardEarned(nil, listingHash)
 	// none delivered yet...
 	_, _, delivered, _ := deployed.DatatrustContract.GetDelivery(nil, query)
 
@@ -214,8 +214,8 @@ func TestListingAccessed(t *testing.T) {
 	if bytesBalNow.Cmp(bytesBal) != -1 {
 		t.Errorf("Expected %v to be > %v", bytesBal, bytesBalNow)
 	}
-	// current bytes_accessed for listing, should increase with reporting
-	accessBalNow, _ := deployed.DatatrustContract.GetBytesAccessed(nil, listingHash)
+	// current access reward earned for listing, should increase with reporting
+	accessBalNow, _ := deployed.DatatrustContract.GetAccessRewardEarned(nil, listingHash)
 	if accessBalNow.Cmp(accessBal) != 1 {
 		t.Errorf("Expected %v to be > %v", accessBalNow, accessBal)
 	}
@@ -314,8 +314,8 @@ func TestDelivered(t *testing.T) {
 
 	// we should see equal access for both listings
 	ogListingHash := test.GenBytes32("LookAtMyJunk")
-	ogAccessBal, _ := deployed.DatatrustContract.GetBytesAccessed(nil, ogListingHash)
-	accessBal, _ := deployed.DatatrustContract.GetBytesAccessed(nil, listingHash)
+	ogAccessBal, _ := deployed.DatatrustContract.GetAccessRewardEarned(nil, ogListingHash)
+	accessBal, _ := deployed.DatatrustContract.GetAccessRewardEarned(nil, listingHash)
 	if accessBal.Cmp(ogAccessBal) != 0 {
 		t.Errorf("Expected %v to be %v", accessBal, ogAccessBal)
 	}
@@ -352,8 +352,19 @@ func TestDelivered(t *testing.T) {
 	}
 }
 
-// testing bytes access claiming here as it is, technically, part of the delivery flow.
-func TestClaimBytesAccessed(t *testing.T) {
+func TestGetAccessRewardEarned(t *testing.T) {
+	// get the current accumulated byte access balance for the listings used
+	listingHash := test.GenBytes32("LookAtMyJunk")
+	// user has no credits atm
+	earned, _ := deployed.DatatrustContract.GetAccessRewardEarned(nil, listingHash)
+	if earned.Cmp(big.NewInt(0)) != 1 {
+		t.Errorf("expected %v to be > 0", earned)
+	}
+
+}
+
+// testing claim access reward here as it is, technically, part of the delivery flow.
+func TestClaimAccessReward(t *testing.T) {
 	// get the current accumulated byte access balance for the listings used
 	listingHash1 := test.GenBytes32("LookAtMyJunk")
 	listingHash2 := test.GenBytes32("LookAtMyJunkToo")
@@ -363,19 +374,32 @@ func TestClaimBytesAccessed(t *testing.T) {
 	// note the current datatrust banked eth token amount, at this point it should only be the maker split(s) from the outstanding bytes accessed
 	dataBal, _ := deployed.EtherTokenContract.BalanceOf(nil, deployed.DatatrustAddress)
 	// claim the listing for 1
-	_, clErr := deployed.ListingContract.ClaimBytesAccessed(test.GetTxOpts(context.AuthUser2, nil,
+	_, clErr := deployed.ListingContract.ClaimAccessReward(test.GetTxOpts(context.AuthUser2, nil,
 		big.NewInt(test.ONE_GWEI*2), 250000), listingHash1)
 	test.IfNotNil(t, clErr, "Error claiming access")
 	context.Blockchain.Commit()
 
+	// Compute Listing Reward per listing
+	costPerByte, _ := deployed.ParameterizerContract.GetCostPerByte(nil)
+	makerPayment, _ := deployed.ParameterizerContract.GetMakerPayment(nil)
+	amount := big.NewInt(1024 * 512)
+	// (costPerByte * amount * makerPayment) / 100
+	accessPayment := big.NewInt(1)
+	accessPayment = accessPayment.Mul(accessPayment, costPerByte).Mul(accessPayment, amount).Mul(accessPayment, makerPayment).Div(accessPayment, big.NewInt(100))
+
 	// supply should have increased
 	_, supply1Now, _ := deployed.ListingContract.GetListing(nil, listingHash1)
 	if supply1Now.Cmp(supply1) != 1 {
-		t.Errorf("Expected %v to be > %v", supply1Now, supply1)
+		t.Errorf("expected %v to be > %v", supply1Now, supply1)
+	}
+	// Here is actual payment. Should match theoretical payment above
+	supply1ActualPayment := supply1Now.Sub(supply1Now, supply1)
+	if supply1ActualPayment.Cmp(accessPayment) != 0 {
+		t.Errorf("Expected %v to be %v", supply1ActualPayment, accessPayment)
 	}
 
 	// access bal should be cleared
-	accessBal1, _ := deployed.DatatrustContract.GetBytesAccessed(nil, listingHash1)
+	accessBal1, _ := deployed.DatatrustContract.GetAccessRewardEarned(nil, listingHash1)
 	if accessBal1.Cmp(big.NewInt(0)) != 0 {
 		t.Errorf("Expected %v to be 0", accessBal1)
 	}
@@ -390,7 +414,7 @@ func TestClaimBytesAccessed(t *testing.T) {
 	// maker_fee is too low for support. Which is _not_ erroneous, but worth noting...
 
 	// claim the other listing access
-	_, clErr2 := deployed.ListingContract.ClaimBytesAccessed(test.GetTxOpts(context.AuthUser1, nil,
+	_, clErr2 := deployed.ListingContract.ClaimAccessReward(test.GetTxOpts(context.AuthUser1, nil,
 		big.NewInt(test.ONE_GWEI*2), 250000), listingHash2)
 	test.IfNotNil(t, clErr2, "Error claiming access")
 	context.Blockchain.Commit()
@@ -400,9 +424,14 @@ func TestClaimBytesAccessed(t *testing.T) {
 	if supply2Now.Cmp(supply2) != 1 {
 		t.Errorf("Expected %v to be > %v", supply2Now, supply2)
 	}
+	// Here is actual payment. Should match theoretical payment above
+	supply2ActualPayment := supply2Now.Sub(supply2Now, supply2)
+	if supply2ActualPayment.Cmp(accessPayment) != 0 {
+		t.Errorf("Expected %v to be %v", supply2ActualPayment, accessPayment)
+	}
 
 	// access bal should be cleared
-	accessBal2, _ := deployed.DatatrustContract.GetBytesAccessed(nil, listingHash2)
+	accessBal2, _ := deployed.DatatrustContract.GetAccessRewardEarned(nil, listingHash2)
 	if accessBal2.Cmp(big.NewInt(0)) != 0 {
 		t.Errorf("Expected %v to be 0", accessBal2)
 	}
