@@ -259,12 +259,9 @@ def listingAccessed(listing: bytes32, delivery: bytes32, amount: uint256):
   self.bytes_purchased[self.deliveries[delivery].owner] -= amount
   # bytes_delivered must eq (or exceed) bytes_requested in order for a datatrust to claim delivery
   self.deliveries[delivery].bytes_delivered += amount
-  # Compute the maker fee earned
-  cost_per_byte: wei_value = self.deliveries[delivery].cost_per_byte
-  maker_payment: uint256 = self.deliveries[delivery].maker_payment
   # The rounding issues are fine since at most 99 wei can be lost in
   # rounding
-  access_reward: wei_value = (cost_per_byte * amount * maker_payment) / 100
+  access_reward: wei_value = (self.deliveries[delivery].cost_per_byte * amount * self.deliveries[delivery].maker_payment) / 100
   self.access_reward_earned[listing] += access_reward
 
 
@@ -303,12 +300,9 @@ def delivered(delivery: bytes32, url: bytes32):
   owner: address = self.deliveries[delivery].owner
   requested: uint256 = self.deliveries[delivery].bytes_requested
   assert self.deliveries[delivery].bytes_delivered >= requested
-  cost_per_byte: wei_value = self.deliveries[delivery].cost_per_byte
-  backend_payment: uint256 = self.deliveries[delivery].backend_payment
   # The rounding issues are fine since at most 99 wei can be lost in
   # rounding
-  back_fee: wei_value = (cost_per_byte * requested * backend_payment) / 100
-  #back_fee: wei_value = self._getDatatrustFee(delivery)
+  back_fee: wei_value = (self.deliveries[delivery].cost_per_byte * requested * self.deliveries[delivery].backend_payment) / 100
   # clear the delivery record now that we have the fee
   clear(self.deliveries[delivery])
   # now pay the datatrust from the banked delivery request

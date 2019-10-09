@@ -385,10 +385,7 @@ func TestClaimAccessReward(t *testing.T) {
 	amount := big.NewInt(1024 * 512)
 	// (costPerByte * amount * makerPayment) / 100
 	accessPayment := big.NewInt(1)
-	accessPayment = accessPayment.Mul(accessPayment, costPerByte)
-	accessPayment = accessPayment.Mul(accessPayment, amount)
-	accessPayment = accessPayment.Mul(accessPayment, makerPayment)
-	accessPayment = accessPayment.Div(accessPayment, big.NewInt(100))
+	accessPayment = accessPayment.Mul(accessPayment, costPerByte).Mul(accessPayment, amount).Mul(accessPayment, makerPayment).Div(accessPayment, big.NewInt(100))
 
 	// supply should have increased
 	_, supply1Now, _ := deployed.ListingContract.GetListing(nil, listingHash1)

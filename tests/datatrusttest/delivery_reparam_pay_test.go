@@ -281,10 +281,7 @@ func TestRequestDeliveryReparamPay(t *testing.T) {
 	// Compute theoretic backend payment
 	// (costPerByte * requested * backendPayment) / 100
 	bePayment := big.NewInt(1)
-	bePayment = bePayment.Mul(bePayment, costPerByte)
-	bePayment = bePayment.Mul(bePayment, requested)
-	bePayment = bePayment.Mul(bePayment, backendPayment)
-	bePayment = bePayment.Div(bePayment, big.NewInt(100))
+	bePayment = bePayment.Mul(bePayment, costPerByte).Mul(bePayment, requested).Mul(bePayment, backendPayment).Div(bePayment, big.NewInt(100))
 	// Here is the actual backend payment. They should match
 	beActualPayment := beBalNow.Sub(beBalNow, beBal)
 	if beActualPayment.Cmp(bePayment) != 0 {
