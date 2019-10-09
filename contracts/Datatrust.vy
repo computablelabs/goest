@@ -43,6 +43,7 @@ RegistrationSucceeded: event({hash: indexed(bytes32), registrant: indexed(addres
 RegistrationFailed: event({hash: indexed(bytes32), registrant: indexed(address)})
 DeliveryRequested: event({hash: indexed(bytes32), requester: indexed(address), amount: uint256})
 Delivered: event({hash: indexed(bytes32), owner: indexed(address), url: bytes32})
+ListingAccessed: event({hash: indexed(bytes32), delivery: indexed(bytes32), amount: uint256})
 
 # state vars
 data_hashes: map(bytes32, bytes32) # listing_hash -> data_hash
@@ -263,6 +264,7 @@ def listingAccessed(listing: bytes32, delivery: bytes32, amount: uint256):
   # rounding
   access_reward: wei_value = (self.deliveries[delivery].cost_per_byte * amount * self.deliveries[delivery].maker_payment) / 100
   self.access_reward_earned[listing] += access_reward
+  log.ListingAccessed(listing, delivery, amount)
 
 
 @public
