@@ -43,7 +43,7 @@ RegistrationSucceeded: event({hash: indexed(bytes32), registrant: indexed(addres
 RegistrationFailed: event({hash: indexed(bytes32), registrant: indexed(address)})
 DeliveryRequested: event({hash: indexed(bytes32), requester: indexed(address), amount: uint256})
 Delivered: event({hash: indexed(bytes32), owner: indexed(address), url: bytes32})
-ListingAccessed: event({listing_hash: indexed(bytes32), delivery_hash: indexed(bytes32), amount: uint256})
+ListingAccessed: event({hash: indexed(bytes32), delivery: indexed(bytes32), amount: uint256})
 
 # state vars
 data_hashes: map(bytes32, bytes32) # listing_hash -> data_hash
