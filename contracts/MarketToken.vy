@@ -24,6 +24,7 @@ def __init__(initial_account: address, initial_balance: wei_value):
   self.decimals = 18
   self.symbol = "CMT"
   self.supply = initial_balance
+  log.Transfer(ZERO_ADDRESS, initial_account, initial_balance)
 
 
 @public
