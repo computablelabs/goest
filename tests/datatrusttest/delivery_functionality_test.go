@@ -3,7 +3,10 @@ package datatrusttest
 import (
 	"fmt"
 	"github.com/computablelabs/goest/tests/test"
+	"github.com/ethereum/go-ethereum/accounts/abi/bind"
+	// "github.com/ethereum/go-ethereum/common"
 	"math/big"
+	"strings"
 	"testing"
 	"time"
 )
@@ -441,4 +444,48 @@ func TestClaimAccessReward(t *testing.T) {
 	if dataBalAgain.Cmp(big.NewInt(0)) != 0 {
 		t.Errorf("Expected %v to be 0", dataBalAgain)
 	}
+}
+
+// ABIGEN creates custom log filters for us, see if we can use them.
+func TestReadDeliveredLog(t *testing.T) {
+	// the log reader expects a *bind.FilterOpts, and [delivery hash] and [owner] are optional
+	opts := &bind.FilterOpts{Start: 0}
+	// hash := [][32]byte{test.GenBytes32("select * from SPAM where EGGS eq TRUE")}
+	// owner := []common.Address{context.AuthUser3.From}
+	// the custom log readers return an iterator
+	it, fErr := deployed.DatatrustContract.FilterDelivered(opts, nil, nil)
+	test.IfNotNil(t, fErr, "Error getting event filter iterator")
+
+	// the string builder should be used vs concat...
+	var bHash, bUrl strings.Builder
+
+	// no event yet...
+	t.Log(it.Event)
+
+	// load in an event...
+	hasEvent := it.Next()
+	if hasEvent != true {
+		t.Error("No event present")
+	}
+
+	// we'd want the hash as a string
+	bHash.Grow(32)
+	// TODO why cant builder.Write just take the [32]byte?
+	for _, b := range it.Event.Hash {
+		bHash.WriteByte(b)
+	}
+	t.Log(bHash.String())
+
+	// same for URL
+	bUrl.Grow(32)
+	for _, b := range it.Event.Url {
+		bUrl.WriteByte(b)
+	}
+	t.Log(bUrl.String())
+
+	// address we'd want to see as hex (Address type has hex method)
+	t.Log(it.Event.Owner.Hex())
+
+	// the raw EVM event itself
+	// t.Log(it.Event.Raw)
 }
