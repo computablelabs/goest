@@ -456,7 +456,8 @@ func TestReadDeliveredLog(t *testing.T) {
 	it, fErr := deployed.DatatrustContract.FilterDelivered(opts, nil, nil)
 	test.IfNotNil(t, fErr, "Error getting event filter iterator")
 
-	// the string builder should be used vs concat...
+	// the string builder should be used vs concat on the [32]bytes
+	// TODO is there a GETH hexutil for this? Maybe not as they have been encoded once?
 	var bHash, bUrl strings.Builder
 
 	// no event yet...
@@ -487,5 +488,6 @@ func TestReadDeliveredLog(t *testing.T) {
 	t.Log(it.Event.Owner.Hex())
 
 	// the raw EVM event itself
-	// t.Log(it.Event.Raw)
+	t.Log("The raw EVM event log")
+	t.Logf("Transaction Hash: %v", it.Event.Raw.TxHash.Hex())
 }
